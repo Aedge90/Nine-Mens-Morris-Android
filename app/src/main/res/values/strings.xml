@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">LeMiRoApp</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="bluetooth_enabled">Bluetooth enabled</string>
+    <string name="bt_couldnt_be_activated">Bluetooth could not be activated.</string>
+    <string name="ok">OK</string>
+    <string name="app_unusable">Application can not be used</string>
+    <string name="no_bt_adapter">No Bluetooth Adapter found!</string>
+    <string name="choose_connection">Choose Connection</string>
+    <string name="player_turn">It is your turn!</string>
+    <string name="bot_turn">It is the bots turn!</string>
+    <string name="select_gameMode">Select Game Mode:</string>
+    <string name="select_millMode">Select Mill Mode:</string>
+    <string name="select_difficulty1">Select Difficulty of Bot 1:</string>
+    <string name="select_difficulty2">Select Difficulty of Bot 2:</string>
+    <string name="select_whoStarts">Who Starts?</string>
+    <string name="select_color">Choose your Color:</string>
+    <string name="button_not_ready">Select all Options first!</string>
+
+</resources>
