@@ -43,17 +43,17 @@ public class HumanVsHuman extends GameModeActivity{
 		if (options.millMode == Options.MillMode.MILL5) {
 			setCountHuman1 = 5;
 			setCountHuman2 = 5;
-			field = new Mill5(options.millMode);
+			field = new Mill5();
 			fieldLayout.setBackgroundResource(R.drawable.brett5);
 		} else if (options.millMode == Options.MillMode.MILL7) {
 			setCountHuman1 = 7;
 			setCountHuman2 = 7;
-			field = new Mill7(options.millMode);
+			field = new Mill7();
 			fieldLayout.setBackgroundResource(R.drawable.brett7);
 		} else if (options.millMode == Options.MillMode.MILL9) {
 			setCountHuman1 = 9; 
 			setCountHuman2 = 9;
-			field = new Mill9(options.millMode);
+			field = new Mill9();
 			fieldLayout.setBackgroundResource(R.drawable.brett9);
 		}
 		selected = false;

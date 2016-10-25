@@ -26,17 +26,17 @@ public class BotVsBot extends GameModeActivity{
 		if (options.millMode == Options.MillMode.MILL5) {
 			setCountBot1 = 5;
 			setCountBot2 = 5;
-			field = new Mill5(options.millMode);
+			field = new Mill5();
 			fieldLayout.setBackgroundResource(R.drawable.brett5);
 		} else if (options.millMode == Options.MillMode.MILL7) {
 			setCountBot1 = 7;
 			setCountBot2 = 7;
-			field = new Mill7(options.millMode);
+			field = new Mill7();
 			fieldLayout.setBackgroundResource(R.drawable.brett7);
 		} else if (options.millMode == Options.MillMode.MILL9) {
 			setCountBot1 = 9; 
 			setCountBot2 = 9;
-			field = new Mill9(options.millMode);
+			field = new Mill9();
 			fieldLayout.setBackgroundResource(R.drawable.brett9);
 		}
 		

@@ -11,7 +11,7 @@ public class Mill9 extends Spielfeld{
 		{ N, O, N, O, N, O, N },
 		{ O, N, N, O, N, N, O }};
 
-	Mill9(Options.MillMode opt) {
+	Mill9() {
 		this.field = mill9;
 		millMode =  Options.MillMode.MILL9;
 	}

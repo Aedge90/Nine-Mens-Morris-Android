@@ -35,15 +35,22 @@ public class Position {
 	public String toString(){
 		return "x = " + x + "; y = " + y;
 	}
-	
-	public boolean equals(Position pos){
-		if(pos == null){
+
+	@Override
+	public boolean equals(Object pos){
+		if (pos == null) {
 			return false;
 		}
-		if (this.x == pos.getX() && this.y == pos.getY()){
-			return true;
-		}else{
+		if (!Position.class.isAssignableFrom(pos.getClass())) {
 			return false;
 		}
+		final Position other = (Position) pos;
+		if (this.x != other.x) {
+			return false;
+		}
+		if (this.y != other.y) {
+			return false;
+		}
+		return true;
 	}
 }
