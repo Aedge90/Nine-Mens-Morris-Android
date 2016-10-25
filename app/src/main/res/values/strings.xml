@@ -4,11 +4,8 @@
     <string name="app_name">LeMiRoApp</string>
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
-    <string name="bluetooth_enabled">Bluetooth enabled</string>
-    <string name="bt_couldnt_be_activated">Bluetooth could not be activated.</string>
     <string name="ok">OK</string>
     <string name="app_unusable">Application can not be used</string>
-    <string name="no_bt_adapter">No Bluetooth Adapter found!</string>
     <string name="choose_connection">Choose Connection</string>
     <string name="player_turn">It is your turn!</string>
     <string name="bot_turn">It is the bots turn!</string>

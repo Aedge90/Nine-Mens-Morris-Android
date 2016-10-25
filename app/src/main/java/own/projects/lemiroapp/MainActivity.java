@@ -1,54 +1,19 @@
 package own.projects.lemiroapp;
 
-import java.io.IOException;
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Set;
-import java.util.Stack;
-import java.util.UUID;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import own.projects.lemiroapp.Options.MillMode;
-
-import android.R.layout;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Point;
-import android.graphics.drawable.Drawable;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Display;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.GridLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
 
 public class MainActivity extends Activity {
-
-	private final static int REQUEST_ENABLE_BT = 1;
 	
 	private final static int RUN_GAME = 67;
 	private final static int SET_OPTIONS = 100;
@@ -87,29 +52,9 @@ public class MainActivity extends Activity {
 		return true;
 	}
 
-	// receives notification when bluetooth was inactive
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == REQUEST_ENABLE_BT) {
-			if (resultCode == RESULT_OK) {
-				Toast.makeText(this, R.string.bluetooth_enabled,
-						Toast.LENGTH_SHORT);
-				Intent setOptionsIntent = new Intent(this, OptionsActivity.class);
-				startActivityForResult(setOptionsIntent, SET_OPTIONS);
-			} else {
-				new AlertDialog.Builder(this)
-						.setCancelable(false)
-						.setTitle(R.string.bt_couldnt_be_activated)
-						.setMessage(R.string.app_unusable)
-						.setPositiveButton(R.string.ok,
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int whichButton) {
-									finish();
-								}
-						}).show();
-			}
-		}else if(requestCode == SET_OPTIONS) {
+		if(requestCode == SET_OPTIONS) {
 			if (resultCode == RESULT_OK) {
 				
 				options = data.getParcelableExtra("own.projects.lemiroapp.Options");
