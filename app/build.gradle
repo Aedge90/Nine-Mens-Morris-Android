@@ -19,5 +19,7 @@ android {
 }
 
 dependencies {
+    //JUnit 4 framework
+    testCompile 'junit:junit:4.12'
     compile 'com.android.support:support-v4:25.0.0'
 }
