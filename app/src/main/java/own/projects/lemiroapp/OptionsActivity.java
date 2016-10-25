@@ -16,6 +16,7 @@
 
 package own.projects.lemiroapp;
 
+import android.support.v4.content.ContextCompat;
 import java.util.ArrayList;
 import android.R.layout;
 import android.app.Activity;
@@ -157,9 +158,9 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
 		items.add("Nine Mens Morris", R.drawable.brett9);
 		items.add("Seven Mens Morris", R.drawable.brett7);
 		items.add("Five Mens Morris", R.drawable.brett5);
-		Drawable img0 = this.getResources().getDrawable(R.drawable.brett9);
-		Drawable img1 = this.getResources().getDrawable(R.drawable.brett7);
-		Drawable img2 = this.getResources().getDrawable(R.drawable.brett5);
+		Drawable img0 = ContextCompat.getDrawable(this, R.drawable.brett9);
+		Drawable img1 = ContextCompat.getDrawable(this, R.drawable.brett7);
+		Drawable img2 = ContextCompat.getDrawable(this, R.drawable.brett5);
 		img0.setBounds(0, 0, 60, 60);
 		img1.setBounds(0, 0, 60, 60);
 		img2.setBounds(0, 0, 60, 60);
