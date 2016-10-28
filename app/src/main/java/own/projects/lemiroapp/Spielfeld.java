@@ -16,6 +16,15 @@ public abstract class Spielfeld {
 
 	private LinkedList<Position> positionsWhite = new LinkedList<Position>();
 	private LinkedList<Position> positionsBlack = new LinkedList<Position>();
+
+    void assertValidandNotNull(Position p) {
+        if (p == null) {
+            throw new IllegalArgumentException("getPossibleMillX: p is null");
+        }
+        if (field[p.getY()][p.getX()] == N) {
+            throw new IllegalArgumentException("getPossibleMillX: p is not valid");
+        }
+    }
 	
 	LinkedList<Position> getPositions(Options.Color player) {
 		if(player.equals(Options.Color.WHITE)){

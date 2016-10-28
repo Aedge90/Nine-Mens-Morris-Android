@@ -18,12 +18,7 @@ public class Mill5 extends Spielfeld{
 	
 	@Override
 	Position[] getPossibleMillX(Position p){
-		if(p == null){
-			throw new IllegalArgumentException("getPossibleMillX: p is null");
-		}
-        if(mill5[p.getY()][p.getX()] == N){
-            throw new IllegalArgumentException("getPossibleMillX: p is not valid");
-        }
+        assertValidandNotNull(p);
 		Position[] millX = new Position[3];
 		if(p.getY() == 0 && (p.getX() == 0 || p.getX() == 3 || p.getX() == 6)){
 			millX[0] = new Position(0,0);
@@ -50,9 +45,7 @@ public class Mill5 extends Spielfeld{
 	
 	@Override
 	Position[] getPossibleMillY(Position p){
-		if(p == null){
-			throw new IllegalArgumentException("getPossibleMillY: p is not valid");
-		}
+        assertValidandNotNull(p);
 		Position[] millY = new Position[3];
 		if(p.getX() == 0 && (p.getY() == 0 || p.getY() == 3 || p.getY() == 6)){
 			millY[0] = new Position(0,0);
