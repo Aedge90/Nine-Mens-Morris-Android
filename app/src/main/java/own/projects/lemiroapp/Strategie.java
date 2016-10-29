@@ -3,7 +3,6 @@ package own.projects.lemiroapp;
 import java.util.LinkedList;
 
 import android.util.Log;
-import android.widget.ProgressBar;
 
 public class Strategie {
 
@@ -11,8 +10,8 @@ public class Strategie {
 	Zug move;
 	int startDepth;
 	private ProgressUpdater up;
-	private static final int BEST = Integer.MAX_VALUE - 10;
-	private static final int WORST = Integer.MIN_VALUE + 10;
+	static final int MAX = Integer.MAX_VALUE;
+	static final int MIN = Integer.MIN_VALUE;
 
 	Strategie(Spielfeld field, ProgressUpdater up) {
 		this.field = field;
@@ -123,11 +122,11 @@ public class Strategie {
 		
 		if (field.getPositions(player.getColor()).size() < 3 && player.getSetCount() <= 0) {
 			//worst case: player has less than 3 pieces and has no pieces left to set --> game is lost
-			return WORST;
+			return MIN;
 		}
 		if (field.getPositions(player.getOtherPlayer().getColor()).size() < 3 && player.getOtherPlayer().getSetCount() <= 0) {
 			//best case: other player has less than 3 pieces and has no pieces left to set --> he has lost
-			return BEST;
+			return MAX;
 		}
 
         //TODO think about this problem: if player could win, he would proceed to make moves until the depth is reached
@@ -141,7 +140,7 @@ public class Strategie {
 		LinkedList<Zug> moves = possibleMoves(player);
 		if (moves.size() == 0) {
             //worst case: player can not make any moves --> game is lost
-			return WORST;
+			return MIN;
 		}
 
 		/*
@@ -151,7 +150,7 @@ public class Strategie {
 		//as the minimizing player will use that
 		moves = possibleMoves(player.getOtherPlayer());
 		if (moves.size() == 0) {
-			return BEST;
+			return MAX;
 		}
 		*/
 
