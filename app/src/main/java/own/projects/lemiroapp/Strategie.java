@@ -98,60 +98,78 @@ public class Strategie {
 				possibleMovessoFar.add(move);
 			}
 	}
-	
-	LinkedList<Zug> possibleMoves(Options.Color player, int setCount) {
-		LinkedList<Zug> poss = new LinkedList<Zug>(); // pos : possibility
-		if(setCount > 0){
-			addSetMoves(poss, player);
+
+	//returns a list of moves that the player is able to do
+	LinkedList<Zug> possibleMoves(Player player) {
+		LinkedList<Zug> poss = new LinkedList<Zug>();
+		if(player.getSetCount() > 0){
+			addSetMoves(poss, player.getColor());
 		}else{
 			boolean jump = false;
-			if (field.getPositions(player).size() <= 3){
+			if (field.getPositions(player.getColor()).size() <= 3){
 				jump = true;
 			}
 			if (!jump) {
-				addnonJumpMoves(poss, player);
+				addnonJumpMoves(poss, player.getColor());
 			} else {
-				addJumpMoves(poss, player);
+				addJumpMoves(poss, player.getColor());
 			}
 		}
 		return poss;
 	}
 
-	//setCount: setCount of Player to evaluate
-	//setCountOther: setCount of other Player
-	int bewertung(Options.Color player, int setCount, int setCountOther) {
+	//player: player to evaluate
+	int bewertung(Player player) {
 		
-		if (field.getPositions(player).size() < 3 && setCount <= 0)
+		if (field.getPositions(player.getColor()).size() < 3 && player.getSetCount() <= 0) {
+			//worst case: player has less than 3 pieces and has no pieces left to set --> game is lost
 			return WORST;
-		if (field.getPositions(getOtherPlayer(player)).size() < 3 && setCountOther <= 0)
-			return BEST ;
-		
-		int ret = 0;
-		ret += field.getPositions(player).size() * 500;
-		ret += field.getPositions(getOtherPlayer(player)).size() * (-1000);
+		}
+		if (field.getPositions(player.getOtherPlayer().getColor()).size() < 3 && player.getOtherPlayer().getSetCount() <= 0) {
+			//best case: other player has less than 3 pieces and has no pieces left to set --> he has lost
+			return BEST;
+		}
 
-		LinkedList<Zug> moves = possibleMoves(player, setCount);
-		if (moves.size() == 0)
+        //TODO think about this problem: if player could win, he would proceed to make moves until the depth is reached
+        //TODO only in the end, he would realize (in bewertung()) that he could win although he could win earlier
+
+		int ret = 0;
+		ret += field.getPositions(player.getColor()).size() * 500;
+		ret += field.getPositions(player.getOtherPlayer().getColor()).size() * (-1000);
+
+		//TODO dont compute moves again although it has been computed before
+		LinkedList<Zug> moves = possibleMoves(player);
+		if (moves.size() == 0) {
+            //worst case: player can not make any moves --> game is lost
 			return WORST;
-		moves = possibleMoves(getOtherPlayer(player), setCountOther);
-		if (moves.size() == 0)
-			return BEST ;
-		
+		}
+
+		/*
+		//this is probably false, as we only evaluate the current situation. This would mean the other player can
+		//move this round which isnt true
+		//also it should be enough to say that its a worst case if you cant move anymore
+		//as the minimizing player will use that
+		moves = possibleMoves(player.getOtherPlayer());
+		if (moves.size() == 0) {
+			return BEST;
+		}
+		*/
+
 		return ret;
 	}
 
 	//setCountMax: number of stones to set for max player
 	//setCountMin: analog
-	int max(int depth, int alpha, int beta, Options.Color player, final int setCountMax, final int setCountMin) throws InterruptedException {
+	int max(int depth, int alpha, int beta, Player player) throws InterruptedException {
 		if(Thread.interrupted()){
 			throw new InterruptedException("Computation of Bot Move was interrupted!");
 		}
-		LinkedList<Zug> moves = possibleMoves(player, setCountMax);
+		LinkedList<Zug> moves = possibleMoves(player);
 		if(depth == startDepth){
 			up.initialize(moves.size());
 		}
 		if (depth == 0 || moves.size() == 0){
-			int bewertung = bewertung(player, setCountMax, setCountMin);
+			int bewertung = bewertung(player);
 			return bewertung;
 		}
 		int maxWert = alpha;
@@ -160,7 +178,7 @@ public class Strategie {
 				up.update();
 			}
 			field.makeWholeMove(z, player);
-			int wert = min(depth-1, maxWert, beta, getOtherPlayer(player), setCountMax-1, setCountMin);    
+			int wert = min(depth-1, maxWert, beta, player.getOtherPlayer());
 			field.reverseWholeMove(z, player);
 			if (wert > maxWert) {
 				maxWert = wert;
@@ -173,16 +191,16 @@ public class Strategie {
 		return maxWert;
 	}
 
-	int min(int depth, int alpha, int beta, Options.Color player, final int setCountMax, final int setCountMin) throws InterruptedException {
-		LinkedList<Zug> moves = possibleMoves(player, setCountMin);
+	int min(int depth, int alpha, int beta, Player player) throws InterruptedException {
+		LinkedList<Zug> moves = possibleMoves(player);
 		if (depth == 0 || moves.size() == 0){
-			int bewertung = bewertung( player, setCountMin, setCountMax);
+			int bewertung = bewertung(player);
 			return bewertung;
 		}
 		int minWert = beta;
 		for (Zug z : moves) {
 			field.makeWholeMove(z, player);
-			int wert = max(depth-1, alpha, minWert, getOtherPlayer(player),setCountMax, setCountMin-1); 
+			int wert = max(depth-1, alpha, minWert, player.getOtherPlayer());
 			field.reverseWholeMove(z, player);
 			if (wert < minWert) {
 				minWert = wert;
@@ -195,22 +213,22 @@ public class Strategie {
 
 	}
 
-	Zug computeMove(Options.Color player, Options.Difficulties hisDifficulty, final int setCountMax, final int setCountMin) throws InterruptedException {
+	Zug computeMove(Player player) throws InterruptedException {
 				
-		startDepth = hisDifficulty.ordinal() + 2;
+		startDepth = player.getDifficulty().ordinal() + 2;
 		//decrease startDepth if there are too much possible moves to save time
 		int actualDepth = startDepth;
 		if(startDepth > 4){
-			if (field.getPositions(player).size() <= 3 || field.getPositions(getOtherPlayer(player)).size() <= 3){
+			if (field.getPositions(player.getColor()).size() <= 3 || field.getPositions(player.getOtherPlayer().getColor()).size() <= 3){
 				startDepth = 4;
 			}
 		}
 		
-		Log.i("Strategie", "computeMove started for Player " + player + " setCountMax: " + setCountMax + " setCountMin: " + setCountMin + " startDepth: " + startDepth);
+		Log.i("Strategie", "computeMove started for Player " + player + " startDepth: " + startDepth);
 		
 		move = new Zug(null, null, null, null);
 
-		max(startDepth, Integer.MIN_VALUE, Integer.MAX_VALUE, player, setCountMax, setCountMin);
+		max(startDepth, Integer.MIN_VALUE, Integer.MAX_VALUE, player);
 		
 		up.reset();
 		

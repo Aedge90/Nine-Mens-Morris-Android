@@ -29,18 +29,31 @@ public class StrategyTest {
     @Test
     public void bewertungShouldBe0() {
 
+        Player playerBlack = new Player(Options.Color.BLACK);
+        Player playerWhite = new Player(Options.Color.WHITE);
+        playerBlack.setOtherPlayer(playerWhite);
+        playerWhite.setOtherPlayer(playerBlack);
+
         mGameboard.setPos(new Position(0,0), Options.Color.BLACK);
         mGameboard.setPos(new Position(3,0), Options.Color.WHITE);
         mGameboard.setPos(new Position(6,6), Options.Color.BLACK);
 
+        playerBlack.setSetCount(3);
+        playerWhite.setSetCount(4);
+
         //result should be 500 +500 -1000 = 0 (500 for having own pieces on the gameboard, -1000 for enemies piece
 
-        int result = mStrategy.bewertung(Options.Color.BLACK, 3, 4);
+        int result = mStrategy.bewertung(playerBlack);
         assertEquals(0, result);
     }
 
     @Test
-    public void bewertungOfMillShouldBe() {
+    public void bewertungOfMillShouldBe500() {
+
+        Player playerBlack = new Player(Options.Color.BLACK);
+        Player playerWhite = new Player(Options.Color.WHITE);
+        playerBlack.setOtherPlayer(playerWhite);
+        playerWhite.setOtherPlayer(playerBlack);
 
         mGameboard.setPos(new Position(0,0), Options.Color.BLACK);
         mGameboard.setPos(new Position(3,0), Options.Color.WHITE);
@@ -48,12 +61,15 @@ public class StrategyTest {
         mGameboard.setPos(new Position(6,0), Options.Color.WHITE);
         mGameboard.setPos(new Position(0,6), Options.Color.BLACK);
 
+        playerBlack.setSetCount(2);
+        playerWhite.setSetCount(3);
+
         //last move contains a kill, which is contained in the move and is also evaluated
         mGameboard.setPos(new Position(3,0), Options.Color.NOTHING);
 
         //result should be 500 +500 +500 -1000 = 500 (500 for having own pieces on the gameboard, -1000 for enemies piece
 
-        int result = mStrategy.bewertung(Options.Color.BLACK, 2, 3);
+        int result = mStrategy.bewertung(playerBlack);
         assertEquals(500, result);
     }
 

@@ -11,8 +11,6 @@ public abstract class Spielfeld {
 	final Options.Color O = Options.Color.NOTHING;
 	final Options.Color N = Options.Color.INVALID;
 	Options.MillMode millMode;
-	
-	// 0 = leer, -1 ungueltig, 1 = wei�, 2 = schwarz
 
 	private LinkedList<Position> positionsWhite = new LinkedList<Position>();
 	private LinkedList<Position> positionsBlack = new LinkedList<Position>();
@@ -26,10 +24,10 @@ public abstract class Spielfeld {
         }
     }
 	
-	LinkedList<Position> getPositions(Options.Color player) {
-		if(player.equals(Options.Color.WHITE)){
+	LinkedList<Position> getPositions(Options.Color color) {
+		if(color.equals(Options.Color.WHITE)){
 			return positionsWhite;
-		}else if(player.equals(Options.Color.BLACK)){
+		}else if(color.equals(Options.Color.BLACK)){
 			return positionsBlack;
 		}else{
 			throw new IllegalArgumentException("unknown Color in get Positions");
@@ -88,36 +86,32 @@ public abstract class Spielfeld {
 		field[src.getY()][src.getX()] = Options.Color.NOTHING;
 		field[dest.getY()][dest.getX()] = color;
 	}
-	
-	void makeWholeMove(Zug move, Options.Color color){
+
+    //this executes the complete turn of a player, including setting or moving and killing
+	void makeWholeMove(Zug move, Player player){
 		if(move.getSet() != null){
-			setPos(move.getSet(), color);
+			setPos(move.getSet(), player.getColor());
+            player.setSetCount(player.getSetCount() - 1);
 		}
 		if(move.getDest() != null){
-			makeMove(move.getSrc(), move.getDest(), color);
+			makeMove(move.getSrc(), move.getDest(), player.getColor());
 		}
 		if(move.getKill() != null){
 			setPos(move.getKill(), Options.Color.NOTHING);
 		}
 	}
 
-	public void reverseWholeMove(Zug move, Options.Color color) {
-		Options.Color opponentColor;
-		if(color.equals(Options.Color.BLACK)){
-			opponentColor = Options.Color.WHITE;
-		}else if(color.equals(Options.Color.WHITE)){
-			opponentColor = Options.Color.BLACK;
-		}else{
-			throw new IllegalArgumentException("player not found!");
-		}
+    //undoes a complete turn of a player, including setting or moving and killing
+	public void reverseWholeMove(Zug move, Player player) {
 		if(move.getSet() != null){
 			setPos(move.getSet(), Options.Color.NOTHING);
+            player.setSetCount(player.getSetCount() + 1);
 		}
 		if(move.getDest() != null){
-			makeMove(move.getDest(), move.getSrc(), color);
+			makeMove(move.getDest(), move.getSrc(), player.getColor());
 		}
 		if(move.getKill() != null){
-			setPos(move.getKill(), opponentColor);
+			setPos(move.getKill(), player.getOtherPlayer().getColor());
 		}	
 	}
 	

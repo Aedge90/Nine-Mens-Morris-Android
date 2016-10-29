@@ -22,8 +22,8 @@ public class HumanVsBot extends GameModeActivity{
     private volatile boolean selected;
     
 	private Strategie brain;
-	private volatile int setCountHuman;
-	private volatile int setCountBot;
+    private Player human;
+    private Player bot;
 	private volatile State state;
 	private static enum State {
 		SET, MOVEFROM, MOVETO, IGNORE, KILL, GAMEOVER
@@ -33,22 +33,28 @@ public class HumanVsBot extends GameModeActivity{
     protected void init(){
 
     	state = State.IGNORE;
+
+        human = new Player(options.colorPlayer1);
+        bot = new Player(options.colorPlayer2);
+        human.setOtherPlayer(bot);
+        bot.setOtherPlayer(human);
+        bot.setDifficulty(options.difficulty1);
     	
 		progressBar.setMax(options.difficulty1.ordinal() + 2);
 		// Mill Settings are Set
 		if (options.millMode == Options.MillMode.MILL5) {
-			setCountHuman = 5;
-			setCountBot = 5;
+			human.setSetCount(5);
+			bot.setSetCount(5);
 			field = new Mill5();
 			fieldLayout.setBackgroundResource(R.drawable.brett5);
 		} else if (options.millMode == Options.MillMode.MILL7) {
-			setCountHuman = 7;
-			setCountBot = 7;
+            human.setSetCount(7);
+            bot.setSetCount(7);
 			field = new Mill7();
 			fieldLayout.setBackgroundResource(R.drawable.brett7);
 		} else if (options.millMode == Options.MillMode.MILL9) {
-			setCountHuman = 9; 
-			setCountBot = 9;
+            human.setSetCount(9);
+            bot.setSetCount(9);
 			field = new Mill9();
 			fieldLayout.setBackgroundResource(R.drawable.brett9);
 		}
@@ -144,7 +150,7 @@ public class HumanVsBot extends GameModeActivity{
     
     private void humanTurn() throws InterruptedException{
     	Position newPosition = null;
-		if(setCountHuman <= 0){
+		if(human.getSetCount() <= 0){
 			while(currMove.getDest() == null){
 				state = State.MOVEFROM;
 				//wait for Human to select source
@@ -165,7 +171,7 @@ public class HumanVsBot extends GameModeActivity{
 			field.setPos(currMove.getSet(), options.colorPlayer1);
 			fieldView.setPos(currMove.getSet(), options.colorPlayer1);
 			fieldView.getPos(currMove.getSet()).setOnClickListener(new OnFieldClickListener(currMove.getSet()));
-			setCountHuman--;
+			human.setSetCount(human.getSetCount() - 1);
 			newPosition = currMove.getSet();
 		}
 		if (field.inMill(newPosition, options.colorPlayer1)) {
@@ -185,8 +191,8 @@ public class HumanVsBot extends GameModeActivity{
     
     private void botTurn() throws InterruptedException{
     	Position newPosition = null;
-    	if(setCountBot <= 0){
-			currMove = brain.computeMove(options.colorPlayer2, options.difficulty1, setCountBot, setCountHuman);
+    	if(bot.getSetCount() <= 0){
+			currMove = brain.computeMove(bot);
 
 			setTextinUIThread(progressText, "Bot is moving!");
 			
@@ -201,7 +207,7 @@ public class HumanVsBot extends GameModeActivity{
 		}else{
 			long time = SystemClock.elapsedRealtime();
 			
-			currMove = brain.computeMove(options.colorPlayer2, options.difficulty1, setCountBot, setCountHuman);
+			currMove = brain.computeMove(bot);
 	    	
 			setTextinUIThread(progressText, "Bot is moving!");
 			
@@ -217,7 +223,7 @@ public class HumanVsBot extends GameModeActivity{
 	    	fieldView.getPos(currMove.getSet()).setOnClickListener(
 	    			new OnFieldClickListener(currMove.getSet()));
 	    	newPosition = currMove.getSet();
-	    	setCountBot --;
+	    	bot.setSetCount(bot.getSetCount() - 1);
 		}
     	if (currMove.getKill() != null) {
     		Position[] mill = field.getMill(newPosition, options.colorPlayer2);
@@ -240,16 +246,16 @@ public class HumanVsBot extends GameModeActivity{
 			}
 		}
 		
-		if(!field.movesPossible(options.colorPlayer1, setCountHuman)){
+		if(!field.movesPossible(options.colorPlayer1, human.getSetCount())){
 			showGameOverMsg("You have lost!", "You could not make any further move.");
 			return true;
-		}else if ((field.getPositions(options.colorPlayer1).size() < 3 && setCountHuman <= 0)) {
+		}else if ((field.getPositions(options.colorPlayer1).size() < 3 && human.getSetCount() <= 0)) {
 			showGameOverMsg("You have lost!", "You lost all of your stones.");
 			return true;
-		}else if(!field.movesPossible(options.colorPlayer2, setCountBot)){
+		}else if(!field.movesPossible(options.colorPlayer2, bot.getSetCount())){
 			showGameOverMsg("Bot has lost!", "He could not make any further move.");
 			return true;
-		}else if ((field.getPositions(options.colorPlayer2).size() < 3 && setCountBot <= 0)) {
+		}else if ((field.getPositions(options.colorPlayer2).size() < 3 && bot.getSetCount() <= 0)) {
 			showGameOverMsg("Bot has lost!", "He has lost all of his stones.");
 			return true;
 		}

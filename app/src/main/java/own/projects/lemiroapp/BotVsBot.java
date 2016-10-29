@@ -1,4 +1,7 @@
 
+//TODO include this file again
+
+/*
 
 package own.projects.lemiroapp;
 
@@ -44,7 +47,7 @@ public class BotVsBot extends GameModeActivity{
 		
 		game();
 	}
-    
+
     public void game(){
 
     	Runnable game = new Runnable(){
@@ -92,7 +95,7 @@ public class BotVsBot extends GameModeActivity{
     	gameThread.start();
 
     }
-    
+
     private void botTurn(Options.Color botColor, Options.Difficulties hisDifficulty, int hisSetCount, int otherSetCount, int botNR) throws InterruptedException{
     	Position newPosition = null;
     	if(hisSetCount <= 0){
@@ -139,7 +142,7 @@ public class BotVsBot extends GameModeActivity{
     		fieldView.unpaintMill(millSectors);
     	}
     }
-    
+
 	private boolean whoWon() {
 		if(field.getPositions(options.colorPlayer1).size() == 3 && field.getPositions(options.colorPlayer2).size() == 3){
 			remiCount --;
@@ -165,3 +168,5 @@ public class BotVsBot extends GameModeActivity{
 		return false;
 	}
 }
+
+*/
