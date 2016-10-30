@@ -64,7 +64,7 @@ public abstract class Spielfeld {
 		return false;
 	}
 	
-	void setPos(Position pos, Options.Color color) {
+	private void setPos(Position pos, Options.Color color) {
 		//kill
 		if(color.equals(Options.Color.NOTHING)){
 			Options.Color killcolor = field[pos.getY()][pos.getX()];
@@ -78,7 +78,7 @@ public abstract class Spielfeld {
 		}
 	}
 	
-	void makeMove(Position src, Position dest, Options.Color color) {
+	private void makeMove(Position src, Position dest, Options.Color color) {
 		if(false == removePos(getPositions(color), src)){
 			throw new IllegalArgumentException("trying to delete " + color + " Src Position thats is not found!");
 		}

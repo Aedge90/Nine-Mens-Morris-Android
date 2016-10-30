@@ -59,8 +59,9 @@ public class HumanVsHuman extends GameModeActivity{
 		selected = false;
 		
 		setSectorListeners();
-		
-		game();
+
+        gameThread = createGameThread();
+
 	}
     
     private void setSectorListeners() {
@@ -75,7 +76,7 @@ public class HumanVsHuman extends GameModeActivity{
 		}
 	}
 
-    public void game(){
+    public Thread createGameThread(){
 
     	Runnable game = new Runnable(){
 
@@ -122,10 +123,9 @@ public class HumanVsHuman extends GameModeActivity{
 
     	};
 
-    	gameThread = new Thread(game);
-    	gameThread.start();
+		return new Thread(game);
 
-    }
+	}
     
     private void waitforSelection() throws InterruptedException{
 		lock.lock();

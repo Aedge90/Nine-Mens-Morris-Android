@@ -3,7 +3,6 @@
 package own.projects.lemiroapp;
 
 import java.util.LinkedList;
-import java.util.Stack;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -13,7 +12,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.GridLayout;
-import android.widget.ImageView;
 
 public class HumanVsBot extends GameModeActivity{
 
@@ -21,9 +19,9 @@ public class HumanVsBot extends GameModeActivity{
     private Condition selection = lock.newCondition();
     private volatile boolean selected;
     
-	private Strategie brain;
-    private Player human;
-    private Player bot;
+	Strategie brain;
+    Player human;
+    Player bot;
 	private volatile State state;
 	private static enum State {
 		SET, MOVEFROM, MOVETO, IGNORE, KILL, GAMEOVER
@@ -63,7 +61,8 @@ public class HumanVsBot extends GameModeActivity{
 		
 		setSectorListeners();
 		
-		game();
+		gameThread = createGameThread();
+
 	}
     
     private void setSectorListeners() {
@@ -78,7 +77,7 @@ public class HumanVsBot extends GameModeActivity{
 		}
 	}
 
-    public void game(){
+    Thread createGameThread(){
 
     	Runnable game = new Runnable(){
 
@@ -124,8 +123,7 @@ public class HumanVsBot extends GameModeActivity{
 
     	};
 
-    	gameThread = new Thread(game);
-    	gameThread.start();
+    	return new Thread(game);
 
     }
     
@@ -159,7 +157,6 @@ public class HumanVsBot extends GameModeActivity{
 				//wait for Human to select destination
 				waitforSelection();
 			}
-			field.makeMove(currMove.getSrc(), currMove.getDest(), options.colorPlayer1);
 			fieldView.makeMove(currMove, options.colorPlayer1);
 			fieldView.getPos(currMove.getSrc()).setOnClickListener(new OnFieldClickListener(currMove.getSrc()));
 			fieldView.getPos(currMove.getDest()).setOnClickListener(new OnFieldClickListener(currMove.getDest()));
@@ -168,10 +165,8 @@ public class HumanVsBot extends GameModeActivity{
 			state = State.SET;
 			// wait for human to set
 			waitforSelection();
-			field.setPos(currMove.getSet(), options.colorPlayer1);
 			fieldView.setPos(currMove.getSet(), options.colorPlayer1);
 			fieldView.getPos(currMove.getSet()).setOnClickListener(new OnFieldClickListener(currMove.getSet()));
-			human.setSetCount(human.getSetCount() - 1);
 			newPosition = currMove.getSet();
 		}
 		if (field.inMill(newPosition, options.colorPlayer1)) {
@@ -180,23 +175,24 @@ public class HumanVsBot extends GameModeActivity{
 			fieldView.paintMill(mill, millSectors);
 			//wait until kill is chosen
 			waitforSelection();
-			field.setPos(currMove.getKill(), Options.Color.NOTHING);
 			fieldView.setPos(currMove.getKill(), Options.Color.NOTHING);
 			fieldView.getPos(currMove.getKill()).setOnClickListener(new OnFieldClickListener(currMove.getKill()));
 			fieldView.unpaintMill(millSectors);
 		}
+
+        //whole move was displayed and set. Now manipulate the underlying data structure accordingly
+        field.makeWholeMove(currMove, human);
+
 		state = State.IGNORE;
     }
 
     
-    private void botTurn() throws InterruptedException{
+    protected void botTurn() throws InterruptedException{
     	Position newPosition = null;
     	if(bot.getSetCount() <= 0){
 			currMove = brain.computeMove(bot);
 
 			setTextinUIThread(progressText, "Bot is moving!");
-			
-	    	field.makeMove(currMove.getSrc(), currMove.getDest() , options.colorPlayer2);
 
 	    	fieldView.makeMove(currMove, options.colorPlayer2);
 	    	fieldView.getPos(currMove.getSrc()).setOnClickListener(
@@ -216,8 +212,6 @@ public class HumanVsBot extends GameModeActivity{
 			if(computationTime < 1000){
 				Thread.sleep(1000 - computationTime);
 			}
-			
-	    	field.setPos(currMove.getSet(), options.colorPlayer2);
 
 	    	fieldView.setPos(currMove.getSet(),options.colorPlayer2);
 	    	fieldView.getPos(currMove.getSet()).setOnClickListener(
@@ -228,13 +222,16 @@ public class HumanVsBot extends GameModeActivity{
     	if (currMove.getKill() != null) {
     		Position[] mill = field.getMill(newPosition, options.colorPlayer2);
     		fieldView.paintMill(mill, millSectors);
-    		field.setPos(currMove.getKill(), Options.Color.NOTHING);
+
     		fieldView.setPos(currMove.getKill(), Options.Color.NOTHING);
     		fieldView.getPos(currMove.getKill()).setOnClickListener(
     				new OnFieldClickListener(currMove.getKill()));
     		Thread.sleep(1500);
     		fieldView.unpaintMill(millSectors);
     	}
+
+        //whole move was displayed and set. Now manipulate the underlying data structure accordingly
+        field.makeWholeMove(currMove, bot);
     }
     
 	private boolean whoWon() {

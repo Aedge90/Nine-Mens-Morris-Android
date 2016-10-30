@@ -58,8 +58,7 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
 	ImageView redSector;
 	ImageView[] millSectors;
 	final GameModeActivity THIS = this;
-	
-	
+
 	private static void setDefaultUncaughtExceptionHandler() {
 	    try {
 	        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
@@ -85,7 +84,9 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
 		
 		setDefaultUncaughtExceptionHandler();
 		
-		options = getIntent().getParcelableExtra("own.projects.lemiroapp.Options");
+		Options o = getIntent().getParcelableExtra("own.projects.lemiroapp.Options");
+
+		setOptions(o);
 		
 		millSectors = new ImageView[3];
 
@@ -109,6 +110,8 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
 		fieldView = new SpielfeldView(THIS, fieldLayout);
 		
 		init();
+
+		gameThread.start();
 		
 	}
 	

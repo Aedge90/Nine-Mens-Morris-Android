@@ -45,10 +45,11 @@ public class BotVsBot extends GameModeActivity{
 		
 		brain = new Strategie(field , progressUpdater);
 		
-		game();
+		gameThread = createGameThread();
+
 	}
 
-    public void game(){
+    public Thread createGameThread(){
 
     	Runnable game = new Runnable(){
 
@@ -91,8 +92,7 @@ public class BotVsBot extends GameModeActivity{
 
     	};
 
-    	gameThread = new Thread(game);
-    	gameThread.start();
+    	return new Thread(game);
 
     }
 
