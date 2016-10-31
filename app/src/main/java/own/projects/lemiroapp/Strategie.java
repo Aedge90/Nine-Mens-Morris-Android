@@ -17,21 +17,11 @@ public class Strategie {
 		this.field = field;
 		this.up = up;
 	}
-
-	private Options.Color getOtherPlayer(Options.Color player){
-		if(player.equals(Options.Color.BLACK)){
-			return Options.Color.WHITE;
-		}else if(player.equals(Options.Color.WHITE)){
-			return Options.Color.BLACK;
-		}else{
-			throw new IllegalArgumentException("player not found!");
-		}
-	}
 	
-	private void addnonJumpMoves(LinkedList<Zug> moves,Options.Color player){
-		for (int i = 0; i<field.getPositions(player).size(); i++) { 
+	private void addnonJumpMoves(LinkedList<Zug> moves, Player player){
+		for (int i = 0; i<field.getPositions(player.getColor()).size(); i++) {
 			//no iterator here to avoid concurrent modification exception
-			Position p = field.getPositions(player).get(i);
+			Position p = field.getPositions(player.getColor()).get(i);
 			if (field.moveUp(p).isValid())
 				addpossibleKillstoMove(moves, field.moveUp(p), player);
 			if (field.moveDown(p).isValid())
@@ -43,13 +33,13 @@ public class Strategie {
 		}
 	}
 
-	private void addJumpMoves(LinkedList<Zug> moves, Options.Color player){
+	private void addJumpMoves(LinkedList<Zug> moves, Player player){
 		for (int x = 0; x < field.LENGTH; x++) {
 			for (int y = 0; y < field.LENGTH; y++) {
 				if (field.getPos(x, y).equals(Options.Color.NOTHING)) {
-					for (int i = 0; i<field.getPositions(player).size(); i++) { 
+					for (int i = 0; i<field.getPositions(player.getColor()).size(); i++) {
 						//no iterator here to avoid concurrent modification exception
-						Position p = field.getPositions(player).get(i);
+						Position p = field.getPositions(player.getColor()).get(i);
 						addpossibleKillstoMove(moves, new Zug(new Position(x, y), p, null, null), player);
 					}
 				}
@@ -57,7 +47,7 @@ public class Strategie {
 		}
 	}
 	
-	private void addSetMoves(LinkedList<Zug> moves, Options.Color player){
+	private void addSetMoves(LinkedList<Zug> moves, Player player){
 		for (int x = 0; x < field.LENGTH; x++) {
 			for (int y = 0; y < field.LENGTH; y++) {
 				if (field.getPos(x, y).equals(Options.Color.NOTHING)) {
@@ -67,24 +57,27 @@ public class Strategie {
 		}
 	}
 
-	private void addpossibleKillstoMove(LinkedList<Zug> possibleMovessoFar, Zug move, Options.Color player){
+	private void addpossibleKillstoMove(LinkedList<Zug> possibleMovessoFar, Zug move, Player player){
 			boolean inMill = false;
 			if(move.getSet()!= null){
-				inMill = field.inMill(move.getSet(), player);
+				inMill = field.inMill(move.getSet(), player.getColor());
 			}else{
-				inMill = field.inMill(move.getDest(), player);
+				inMill = field.inMill(move.getDest(), player.getColor());
 			}
+            //player has a mill after doing this move --> he can kill a piece of the opponent
 			if(inMill){
 				int added = 0;
-				for (Position kill : field.getPositions(getOtherPlayer(player))) {
-					if(!field.inMill(kill, getOtherPlayer(player))){
+				for (Position kill : field.getPositions(player.getOtherPlayer().getColor())) {
+					if(!field.inMill(kill, player.getOtherPlayer().getColor())){
 						Zug killMove = new Zug(move.getDest(), move.getSrc(), move.getSet(), kill);
 						possibleMovessoFar.add(killMove);
 						added++;
 					}
 				}
+                //no pieces to kill because all are in a mill --> do it again but now add all pieces
+                //as you are allowed to kill if all pieces are part of a mill
 				if(added == 0){
-					for (Position kill2 : field.getPositions(getOtherPlayer(player))) {
+					for (Position kill2 : field.getPositions(player.getOtherPlayer().getColor())) {
 						Zug killMove = new Zug(move.getDest(), move.getSrc(), move.getSet(), kill2);
 						possibleMovessoFar.add(killMove);
 					}
@@ -98,16 +91,16 @@ public class Strategie {
 	LinkedList<Zug> possibleMoves(Player player) {
 		LinkedList<Zug> poss = new LinkedList<Zug>();
 		if(player.getSetCount() > 0){
-			addSetMoves(poss, player.getColor());
+			addSetMoves(poss, player);
 		}else{
 			boolean jump = false;
 			if (field.getPositions(player.getColor()).size() <= 3){
 				jump = true;
 			}
 			if (!jump) {
-				addnonJumpMoves(poss, player.getColor());
+				addnonJumpMoves(poss, player);
 			} else {
-				addJumpMoves(poss, player.getColor());
+				addJumpMoves(poss, player);
 			}
 		}
 		return poss;
