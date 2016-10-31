@@ -217,7 +217,6 @@ public class HumanVsBot extends GameModeActivity{
 	    	fieldView.getPos(currMove.getSet()).setOnClickListener(
 	    			new OnFieldClickListener(currMove.getSet()));
 	    	newPosition = currMove.getSet();
-	    	bot.setSetCount(bot.getSetCount() - 1);
 		}
     	if (currMove.getKill() != null) {
     		Position[] mill = field.getMill(newPosition, options.colorPlayer2);
