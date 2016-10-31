@@ -5,6 +5,9 @@ import android.widget.ProgressBar;
 import org.junit.Before;
 import org.junit.Test;
 import android.test.mock.MockContext;
+
+import java.util.LinkedList;
+
 import static junit.framework.Assert.assertEquals;
 
 
@@ -32,18 +35,20 @@ public class StrategyTest {
         mPlayerWhite = new Player(Options.Color.WHITE);
         mPlayerBlack.setOtherPlayer(mPlayerWhite);
         mPlayerWhite.setOtherPlayer(mPlayerBlack);
+        mPlayerBlack.setSetCount(5);
+        mPlayerWhite.setSetCount(5);
 
     }
 
     @Test
     public void bewertungShouldBe0() {
 
-        mGameboard.setPos(new Position(0,0), Options.Color.BLACK);
-        mGameboard.setPos(new Position(3,0), Options.Color.WHITE);
-        mGameboard.setPos(new Position(6,6), Options.Color.BLACK);
+        LinkedList<Zug> moves = new LinkedList<Zug>();
+        moves.add(new Zug(null, null, new Position(0,0), null));
+        moves.add(new Zug(null, null, new Position(3,0), null));
+        moves.add(new Zug(null, null, new Position(6,6), null));
 
-        mPlayerBlack.setSetCount(3);
-        mPlayerWhite.setSetCount(4);
+        executeMoveSeries(moves, mPlayerBlack);
 
         //result should be 500 +500 -1000 = 0 (500 for having own pieces on the gameboard, -1000 for enemies piece
 
@@ -54,17 +59,15 @@ public class StrategyTest {
     @Test
     public void bewertungOfMillShouldBe500() {
 
-        mGameboard.setPos(new Position(0,0), Options.Color.BLACK);
-        mGameboard.setPos(new Position(3,0), Options.Color.WHITE);
-        mGameboard.setPos(new Position(0,3), Options.Color.BLACK);
-        mGameboard.setPos(new Position(6,0), Options.Color.WHITE);
-        mGameboard.setPos(new Position(0,6), Options.Color.BLACK);
+        LinkedList<Zug> moves = new LinkedList<Zug>();
+        moves.add(new Zug(null, null, new Position(0,0), null));
+        moves.add(new Zug(null, null, new Position(3,0), null));
+        moves.add(new Zug(null, null, new Position(0,3), null));
+        moves.add(new Zug(null, null, new Position(6,0), null));
+        //last move contains a kill
+        moves.add(new Zug(null, null, new Position(0,6), new Position(3,0)));
 
-        mPlayerBlack.setSetCount(2);
-        mPlayerWhite.setSetCount(3);
-
-        //last move contains a kill, which is contained in the move and is also evaluated
-        mGameboard.setPos(new Position(3,0), Options.Color.NOTHING);
+        executeMoveSeries(moves, mPlayerBlack);
 
         //result should be 500 +500 +500 -1000 = 500 (500 for having own pieces on the gameboard, -1000 for enemies piece
 
@@ -75,19 +78,25 @@ public class StrategyTest {
     @Test
     public void bewertungOfLoosingOrWinning() {
 
-        mGameboard.setPos(new Position(0,0), Options.Color.BLACK);
-        mGameboard.setPos(new Position(0,6), Options.Color.BLACK);
-        mGameboard.setPos(new Position(0,6), Options.Color.BLACK);
-        mGameboard.setPos(new Position(6,6), Options.Color.BLACK);
-        mGameboard.setPos(new Position(6,3), Options.Color.BLACK);
-
-        mGameboard.setPos(new Position(3,0), Options.Color.WHITE);
-        mGameboard.setPos(new Position(3,2), Options.Color.WHITE);
+        //Game in which black player starts, and kills white player
+        LinkedList<Zug> moves = new LinkedList<Zug>();
+        moves.add(new Zug(null, null, new Position(0,0), null));
+        moves.add(new Zug(null, null, new Position(3,0), null));
+        moves.add(new Zug(null, null, new Position(0,6), null));
+        moves.add(new Zug(null, null, new Position(3,2), null));
+        moves.add(new Zug(null, null, new Position(0,3), new Position(3,0)));
+        moves.add(new Zug(null, null, new Position(3,0), null));
+        moves.add(new Zug(null, null, new Position(6,6), null));
+        moves.add(new Zug(null, null, new Position(3,4), null));
+        moves.add(new Zug(null, null, new Position(3,6), new Position(3,0)));
+        moves.add(new Zug(null, null, new Position(3,0), null));
+        moves.add(new Zug(new Position(6,3), new Position(6,6), null, null));
+        moves.add(new Zug(new Position(4,4), new Position(3,4), null, null));
+        moves.add(new Zug(new Position(6,6), new Position(6,3), null, new Position(3,0)));
 
         //white player has lost now
 
-        mPlayerBlack.setSetCount(0);
-        mPlayerWhite.setSetCount(0);
+        executeMoveSeries(moves, mPlayerBlack);
 
         int result = mStrategy.bewertung(mPlayerBlack);
         assertEquals(mStrategy.MAX, result);
@@ -96,4 +105,17 @@ public class StrategyTest {
         assertEquals(mStrategy.MIN, result);
     }
 
+    @Test
+    public void addpossibleKillstoMove () {
+
+    }
+
+    public void executeMoveSeries (LinkedList<Zug> series, Player startingPlayer) {
+        Player currentPlayer = startingPlayer;
+        int nMoves = series.size();
+        for(int i = 0; i<nMoves; i++){
+            mGameboard.makeWholeMove(series.removeFirst(), currentPlayer);
+            currentPlayer = currentPlayer.getOtherPlayer();
+        }
+    }
 }
