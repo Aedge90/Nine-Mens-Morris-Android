@@ -70,13 +70,9 @@ public class Strategie {
 	private void addpossibleKillstoMove(LinkedList<Zug> possibleMovessoFar, Zug move, Options.Color player){
 			boolean inMill = false;
 			if(move.getSet()!= null){
-				field.setPos(move.getSet(), player); // set to check if mill
 				inMill = field.inMill(move.getSet(), player);
-				field.setPos(move.getSet(), Options.Color.NOTHING); //undo set
 			}else{
-				field.makeMove(move.getSrc(), move.getDest(), player); // make move to check if mill
 				inMill = field.inMill(move.getDest(), player);
-				field.makeMove(move.getDest(), move.getSrc(), player);
 			}
 			if(inMill){
 				int added = 0;

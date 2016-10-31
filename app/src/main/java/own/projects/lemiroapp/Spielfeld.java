@@ -114,44 +114,17 @@ public abstract class Spielfeld {
 			setPos(move.getKill(), player.getOtherPlayer().getColor());
 		}	
 	}
-	
-	//returns true if 3 stones of player are found in am possible mill constellation
-	boolean inMill(Position p, Options.Color player) {
 
-		Position[] millX = getPossibleMillX(p);
-		
-		if(millX != null){ //its null here if there is no possible mill in x direction
-			int count = 0;
-			for(int i = 0; i<3; i++){
-				if(getPos(millX[i]).equals(player)){
-					count ++;
-				}
-			}
-			if(count == 3){
-				return true;
-			}
-		}
-		
-		Position[] millY = getPossibleMillY(p);
-		
-		if(millY != null){ //its null here if there is no possible mill in y direction
-			int count = 0;
-			for(int i = 0; i<3; i++){
-				if(getPos(millY[i]).equals(player)){
-					count ++;
-				}
-			}
-			if(count == 3){
-				return true;
-			}
-		}
-		
-		if(millMode.equals(Options.MillMode.MILL7)){
-			return inMill7(p, player);
-		}
-	
-		return false;
-	}
+    //returns true if two pieces of same color are found, that form a mill together with position
+    //assumes that position is of the same color that is passed here !
+	boolean inMill(Position p, Options.Color player) {
+        if(null != getMill(p, player)){
+            //mill was found
+            return true;
+        }else{
+            return false;
+        }
+    }
 
 	Position[] getMill(Position p, Options.Color player) {
 		
