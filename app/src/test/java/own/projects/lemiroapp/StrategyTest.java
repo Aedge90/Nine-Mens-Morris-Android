@@ -108,6 +108,42 @@ public class StrategyTest {
     @Test
     public void addpossibleKillstoMove () {
 
+        LinkedList<Zug> possibleMovessoFar = new LinkedList<Zug>();
+
+        LinkedList<Zug> moves = new LinkedList<Zug>();
+        moves.add(new Zug(null, null, new Position(0,0), null));
+        moves.add(new Zug(null, null, new Position(3,0), null));
+        moves.add(new Zug(null, null, new Position(0,6), null));
+        moves.add(new Zug(null, null, new Position(3,2), null));
+
+        executeMoveSeries(moves, mPlayerBlack);
+
+        //black closes his mill, kill should be added to this move
+        Zug killMove = new Zug(null, null, new Position(0,3), null);
+        mStrategy.addpossibleKillstoMove(possibleMovessoFar, killMove, mPlayerBlack);
+
+        Zug expected0 = new Zug(null, null, new Position(0,3), new Position(3,0));
+        Zug expected1 = new Zug(null, null, new Position(0,3), new Position(3,2));
+
+        assertEquals(2, possibleMovessoFar.size());
+        assertEquals(expected0, possibleMovessoFar.get(0));
+        assertEquals(expected1, possibleMovessoFar.get(1));
+
+        killMove = possibleMovessoFar.get(1);
+
+        //now (3,2) of white is actually killed
+        mGameboard.makeWholeMove(killMove, mPlayerBlack);
+
+        possibleMovessoFar = new LinkedList<Zug>();
+
+        //now white sets to (6,6)
+        Zug nextMove = new Zug(null, null, new Position(6,6), null);
+        mStrategy.addpossibleKillstoMove(possibleMovessoFar, nextMove, mPlayerWhite);
+
+        //assert that white can not kill
+        assertEquals(1, possibleMovessoFar.size());
+        assertEquals(nextMove, possibleMovessoFar.get(0));
+
     }
 
     public void executeMoveSeries (LinkedList<Zug> series, Player startingPlayer) {
