@@ -2,6 +2,7 @@ package own.projects.lemiroapp;
 
 import java.util.LinkedList;
 
+import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
 public class Strategie {
@@ -57,7 +58,8 @@ public class Strategie {
 		}
 	}
 
-	private void addpossibleKillstoMove(LinkedList<Zug> possibleMovessoFar, Zug move, Player player){
+    @VisibleForTesting
+	void addpossibleKillstoMove(LinkedList<Zug> possibleMovessoFar, Zug move, Player player){
 			boolean inMill = false;
 			if(move.getSet()!= null){
 				inMill = field.inMill(move.getSet(), player.getColor());
@@ -107,6 +109,7 @@ public class Strategie {
 	}
 
 	//player: player to evaluate
+    @VisibleForTesting
 	int bewertung(Player player) {
 		
 		if (field.getPositions(player.getColor()).size() < 3 && player.getSetCount() <= 0) {
@@ -148,7 +151,7 @@ public class Strategie {
 
 	//setCountMax: number of stones to set for max player
 	//setCountMin: analog
-	int max(int depth, int alpha, int beta, Player player) throws InterruptedException {
+	private int max(int depth, int alpha, int beta, Player player) throws InterruptedException {
 		if(Thread.interrupted()){
 			throw new InterruptedException("Computation of Bot Move was interrupted!");
 		}
@@ -179,7 +182,7 @@ public class Strategie {
 		return maxWert;
 	}
 
-	int min(int depth, int alpha, int beta, Player player) throws InterruptedException {
+	private int min(int depth, int alpha, int beta, Player player) throws InterruptedException {
 		LinkedList<Zug> moves = possibleMoves(player);
 		if (depth == 0 || moves.size() == 0){
 			int bewertung = bewertung(player);
@@ -201,7 +204,7 @@ public class Strategie {
 
 	}
 
-	Zug computeMove(Player player) throws InterruptedException {
+	public Zug computeMove(Player player) throws InterruptedException {
 				
 		startDepth = player.getDifficulty().ordinal() + 2;
 		//decrease startDepth if there are too much possible moves to save time

@@ -178,8 +178,6 @@ public abstract class Spielfeld {
 		
 		return null;
 	}
-	
-	
 
 	//is any move possible?
 	boolean movesPossible(Options.Color player, int setCount) {
