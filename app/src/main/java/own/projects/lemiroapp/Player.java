@@ -26,10 +26,19 @@ public class Player {
     }
 
     public void setSetCount (int setCount) {
+        if(setCount < 0){
+            throw new IllegalArgumentException("setSetCount: setCount of player: " + getColor() + " may not be set below 0");
+        }
         this.setCount = setCount;
     }
 
     public void setOtherPlayer (Player otherPlayer) {
+        if(this == otherPlayer){
+            throw new IllegalArgumentException("setOtherPlayer: other player may not reference the same player");
+        }
+        if(this.getColor().equals(otherPlayer.getColor())){
+            throw new IllegalArgumentException("setOtherPlayer: other player may not have the same color");
+        }
         this.otherPlayer = otherPlayer;
     }
 
