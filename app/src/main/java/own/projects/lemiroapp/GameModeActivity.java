@@ -59,7 +59,7 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
 	ImageView[] millSectors;
 	final GameModeActivity THIS = this;
 
-	private static void setDefaultUncaughtExceptionHandler() {
+	private void setDefaultUncaughtExceptionHandler() {
 	    try {
 	        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 
@@ -71,6 +71,27 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
 	            		tracem += trace[i] + "\n";
 	            	}
 	                Log.e("GameModeActivity", "Uncaught Exception detected in thread {}" + t + e + "\n" + tracem);
+
+                    final String message = e.getMessage();
+
+                    //display message so that the user sees that something went wrong
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run(){
+                            new AlertDialog.Builder(THIS)
+                            .setIcon(android.R.drawable.ic_dialog_info)
+                            .setTitle("Error")
+                            .setMessage(message)
+                            .setCancelable(false)
+                            .setNeutralButton("Quit", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    finish();
+                                }
+                            })
+                            .show();
+                        }
+                    });
+
 	            }
 	        });
 	    } catch (SecurityException e) {
