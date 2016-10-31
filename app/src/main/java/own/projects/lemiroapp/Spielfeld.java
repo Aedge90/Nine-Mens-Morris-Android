@@ -2,6 +2,7 @@ package own.projects.lemiroapp;
 
 import java.util.LinkedList;
 
+import android.graphics.Path;
 import android.util.Log;
 
 public abstract class Spielfeld {
@@ -90,13 +91,25 @@ public abstract class Spielfeld {
     //this executes the complete turn of a player, including setting or moving and killing
 	void makeWholeMove(Zug move, Player player){
 		if(move.getSet() != null){
+            if(!getPos(move.getSet()).equals(Options.Color.NOTHING)){
+                throw new IllegalArgumentException("Player " + player.getColor() + " is trying to set to an occupied field by: " + getPos(move.getSet()));
+            }
 			setPos(move.getSet(), player.getColor());
             player.setSetCount(player.getSetCount() - 1);
 		}
 		if(move.getDest() != null){
+            if(!getPos(move.getDest()).equals(Options.Color.NOTHING)){
+                throw new IllegalArgumentException("Player " + player.getColor() + " is trying to move to an occupied field by: " + getPos(move.getDest()));
+            }
 			makeMove(move.getSrc(), move.getDest(), player.getColor());
 		}
 		if(move.getKill() != null){
+            if(getPos(move.getKill()).equals(player.getColor())){
+                throw new IllegalArgumentException("Trying to kill own piece of color: " + player.getColor());
+            }
+            if(getPos(move.getKill()).equals(Options.Color.NOTHING)){
+                throw new IllegalArgumentException("Player " + player.getColor() + " is trying to kill an empty field");
+            }
 			setPos(move.getKill(), Options.Color.NOTHING);
 		}
 	}
