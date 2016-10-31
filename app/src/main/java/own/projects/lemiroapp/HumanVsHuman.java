@@ -1,5 +1,5 @@
 
-
+/*
 package own.projects.lemiroapp;
 
 import java.util.LinkedList;
@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.GridLayout;
 import android.widget.ImageView;
+
 
 public class HumanVsHuman extends GameModeActivity{
 
@@ -306,3 +307,4 @@ public class HumanVsHuman extends GameModeActivity{
 		}
 	}
 }
+*/

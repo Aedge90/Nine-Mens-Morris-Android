@@ -83,12 +83,10 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
 		super.onCreate(savedInstanceState);
 		
 		setDefaultUncaughtExceptionHandler();
-		
-		Options o = getIntent().getParcelableExtra("own.projects.lemiroapp.Options");
 
-		setOptions(o);
-		
-		millSectors = new ImageView[3];
+        options = getIntent().getParcelableExtra("own.projects.lemiroapp.Options");
+
+        millSectors = new ImageView[3];
 
 		Display display = getWindowManager().getDefaultDisplay();
 		Point size = new Point();
