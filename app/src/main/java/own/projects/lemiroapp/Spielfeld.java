@@ -16,6 +16,16 @@ public abstract class Spielfeld {
 	private LinkedList<Position> positionsWhite = new LinkedList<Position>();
 	private LinkedList<Position> positionsBlack = new LinkedList<Position>();
 
+    //checks if this Position is allowed or an invalid Position
+    boolean isValid(Position p){
+        if (field[p.getY()][p.getX()] == N) {
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    //asserts this Position is allowed. In case of an invalid Position (or null) an Exception is thrown
     void assertValidandNotNull(Position p) {
         if (p == null) {
             throw new IllegalArgumentException("getPossibleMillX: p is null");
