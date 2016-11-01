@@ -168,9 +168,9 @@ public class Strategie {
 			if(depth == startDepth){
 				up.update();
 			}
-			field.makeWholeMove(z, player);
+			field.executeCompleteTurn(z, player);
 			int wert = min(depth-1, maxWert, beta, player.getOtherPlayer());
-			field.reverseWholeMove(z, player);
+			field.reverseCompleteTurn(z, player);
 			if (wert > maxWert) {
 				maxWert = wert;
 				if (maxWert >= beta)             
@@ -190,9 +190,9 @@ public class Strategie {
 		}
 		int minWert = beta;
 		for (Zug z : moves) {
-			field.makeWholeMove(z, player);
+			field.executeCompleteTurn(z, player);
 			int wert = max(depth-1, alpha, minWert, player.getOtherPlayer());
-			field.reverseWholeMove(z, player);
+			field.reverseCompleteTurn(z, player);
 			if (wert < minWert) {
 				minWert = wert;
 				if (minWert <= alpha){ 

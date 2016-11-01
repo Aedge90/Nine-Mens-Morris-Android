@@ -12,6 +12,9 @@ public class Zug {
 		this.dest = dest;
 		this.kill = kill;
 		this.set = set;
+        if (!isPossible()){
+            throw new IllegalArgumentException("Zug: invalid arguments for constructor: " + toString() );
+        }
 	}
 	
 	public Position getSrc(){
@@ -30,32 +33,6 @@ public class Zug {
 		return set;
 	}
 	
-	void changeTo (Zug m){
-		this.dest = m.getDest();
-		this.src = m.getSrc();
-		this.kill = m.getKill();
-	}
-
-	public void setSrc(Position src){
-		this.src = src;
-		checkState();
-	}
-	
-	public void setDest(Position dest){
-		this.dest = dest;
-		checkState();
-	}
-	
-	public void setKill(Position kill) {
-		this.kill = kill;
-		checkState();
-	}
-
-	public void setSet(Position set) {
-		this.set = set;
-		checkState();
-	}
-	
 	@Override
 	public String toString(){
 		return "src: " + src + " dest: " + dest + " kill: " + kill + " set: " + set;
@@ -69,11 +46,23 @@ public class Zug {
 		}
 	}
 	
-	//only for asserting that there are no set and move moves mixed up
-	private void checkState(){
+	private boolean isPossible(){
 		if(set != null && (dest != null || src != null)){
-			throw new IllegalStateException("Illegal State in Zug!" + this);
+			return false;
 		}
+        if(src == null && dest == null && kill != null && set == null){
+            return false;
+        }
+        if(src != null && dest == null){
+            return false;
+        }
+        if(src == null && dest !=null){
+            return false;
+        }
+        if(src != null && src.equals(dest)){
+            return false;
+        }
+        return true;
 	}
 
     @Override

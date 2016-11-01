@@ -92,7 +92,6 @@ public class HumanVsBot extends GameModeActivity{
     					state = State.IGNORE;
     					setTextinUIThread(progressText, "Bot is Computing!");
     					botTurn();
-    					currMove = new Zug(null, null, null, null);
     				}
     				while(true){
 
@@ -103,7 +102,6 @@ public class HumanVsBot extends GameModeActivity{
     					if(whoWon()){
     						break;
     					}
-    					currMove = new Zug(null, null, null, null);
 
     					setTextinUIThread(progressText, "Bot is Computing!");
 
@@ -112,7 +110,7 @@ public class HumanVsBot extends GameModeActivity{
     					if(whoWon()){
     						break;
     					}
-    					currMove = new Zug(null, null, null, null);
+
     				}
     			} catch ( InterruptedException e ) {
     				Log.d("HumanVsBot", "Interrupted!");
@@ -169,6 +167,9 @@ public class HumanVsBot extends GameModeActivity{
 			fieldView.getPos(currMove.getSet()).setOnClickListener(new OnFieldClickListener(currMove.getSet()));
 			newPosition = currMove.getSet();
 		}
+
+        field.executeSetOrMovePhase(currMove, human);
+
 		if (field.inMill(newPosition, options.colorPlayer1)) {
 			state = State.KILL;
 			Position[] mill = field.getMill(newPosition, options.colorPlayer1);
@@ -178,10 +179,9 @@ public class HumanVsBot extends GameModeActivity{
 			fieldView.setPos(currMove.getKill(), Options.Color.NOTHING);
 			fieldView.getPos(currMove.getKill()).setOnClickListener(new OnFieldClickListener(currMove.getKill()));
 			fieldView.unpaintMill(millSectors);
-		}
 
-        //whole move was displayed and set. Now manipulate the underlying data structure accordingly
-        field.makeWholeMove(currMove, human);
+            field.executeKillPhase(currMove, human);
+		}
 
 		state = State.IGNORE;
     }
@@ -218,8 +218,12 @@ public class HumanVsBot extends GameModeActivity{
 	    			new OnFieldClickListener(currMove.getSet()));
 	    	newPosition = currMove.getSet();
 		}
+
+        field.executeSetOrMovePhase(currMove, bot);
+
     	if (currMove.getKill() != null) {
     		Position[] mill = field.getMill(newPosition, options.colorPlayer2);
+
     		fieldView.paintMill(mill, millSectors);
 
     		fieldView.setPos(currMove.getKill(), Options.Color.NOTHING);
@@ -227,10 +231,10 @@ public class HumanVsBot extends GameModeActivity{
     				new OnFieldClickListener(currMove.getKill()));
     		Thread.sleep(1500);
     		fieldView.unpaintMill(millSectors);
+
+            field.executeKillPhase(currMove, bot);
     	}
 
-        //whole move was displayed and set. Now manipulate the underlying data structure accordingly
-        field.makeWholeMove(currMove, bot);
     }
     
 	private boolean whoWon() {
@@ -282,7 +286,7 @@ public class HumanVsBot extends GameModeActivity{
 					showToast("You can not set to this Position!");
 				}else{
 					Position pos = new Position(x, y);
-					currMove.setSet(pos);
+					currMove = new Zug(null, null, pos, null);
 					signalSelection();
 				}
 			} else if (state == State.MOVEFROM) {
@@ -293,7 +297,7 @@ public class HumanVsBot extends GameModeActivity{
 					redSector.setLayoutParams(new GridLayout.LayoutParams(
 							GridLayout.spec(y, 1), GridLayout.spec(x, 1)));
 					fieldLayout.addView(redSector);
-					currMove.setSrc(new Position(x,y));
+					currMove = new Zug(null, new Position(x,y), null, null);
 					signalSelection();
 				}
 			} else if (state == State.MOVETO) {
@@ -303,7 +307,7 @@ public class HumanVsBot extends GameModeActivity{
 					showToast("You can not move to this Position!");
 				}else{
 					fieldLayout.removeView(redSector);
-					currMove.setDest(new Position(x, y));
+					currMove = new Zug(new Position(x,y), currMove.getSrc(), null, null);
 				}
 				signalSelection();
 			} else if (state == State.IGNORE) {
@@ -323,14 +327,14 @@ public class HumanVsBot extends GameModeActivity{
 					}
 					if(allInMill){
 						Position killPos = new Position(x, y);
-						currMove.setKill(killPos);
+						currMove = new Zug(currMove.getDest(), currMove.getSrc(), null, killPos);
 						signalSelection();
 					}else{
 						showToast("You can not kill a mill! Choose another target!");
 					}
 				}else{
 					Position killPos = new Position(x, y);
-					currMove.setKill(killPos);
+                    currMove = new Zug(currMove.getDest(), currMove.getSrc(), null, killPos);
 					signalSelection();
 				}
 			}

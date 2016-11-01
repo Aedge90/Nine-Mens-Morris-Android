@@ -7,14 +7,11 @@ import android.util.Log;
 
 public abstract class Spielfeld {
 
-	protected final int LENGTH = 7;
+	final int LENGTH = 7;
 	Options.Color[][] field;
 	final Options.Color O = Options.Color.NOTHING;
 	final Options.Color N = Options.Color.INVALID;
 	Options.MillMode millMode;
-
-	private LinkedList<Position> positionsWhite = new LinkedList<Position>();
-	private LinkedList<Position> positionsBlack = new LinkedList<Position>();
 
     //checks if this Position is allowed or an invalid Position
     boolean isValid(Position p){
@@ -36,13 +33,15 @@ public abstract class Spielfeld {
     }
 	
 	LinkedList<Position> getPositions(Options.Color color) {
-		if(color.equals(Options.Color.WHITE)){
-			return positionsWhite;
-		}else if(color.equals(Options.Color.BLACK)){
-			return positionsBlack;
-		}else{
-			throw new IllegalArgumentException("unknown Color in get Positions");
-		}
+        LinkedList<Position> positions = new LinkedList<Position>();
+        for (int x=0; x < LENGTH; x++) {
+            for (int y = 0; y < LENGTH; y++) {
+                if(getPos(x,y).equals(color)) {
+                    positions.add(new Position(x,y));
+                }
+            }
+        }
+        return positions;
 	}
 	
 	Options.MillMode getMillVar(){
@@ -59,73 +58,58 @@ public abstract class Spielfeld {
 		}
 		return getPos(pos.getX(), pos.getY());
 	}
-
-	int getStoneCount(){
-		return positionsWhite.size() + positionsBlack.size();
-	}
-
-	//return false if the position wasnt found
-	private boolean removePos(LinkedList<Position> positions, Position del){
-		for (Position pos : positions){
-			if (pos.getX() == del.getX() && pos.getY() == del.getY()) {
-				positions.remove(pos);
-				return true;
-			}
-		}
-		return false;
-	}
 	
 	private void setPos(Position pos, Options.Color color) {
-		//kill
-		if(color.equals(Options.Color.NOTHING)){
-			Options.Color killcolor = field[pos.getY()][pos.getX()];
-			if(false == removePos(getPositions(killcolor), pos)){
-				throw new IllegalArgumentException("trying to delete Set Position thats is not found!");
-			}
-			field[pos.getY()][pos.getX()] = Options.Color.NOTHING;
-		}else{	//set
-			getPositions(color).add(pos);
-			field[pos.getY()][pos.getX()] = color;
-		}
+        field[pos.getY()][pos.getX()] = color;
 	}
 	
 	private void makeMove(Position src, Position dest, Options.Color color) {
-		if(false == removePos(getPositions(color), src)){
-			throw new IllegalArgumentException("trying to delete " + color + " Src Position thats is not found!");
-		}
-		getPositions(color).add(dest);
 		field[src.getY()][src.getX()] = Options.Color.NOTHING;
 		field[dest.getY()][dest.getX()] = color;
 	}
 
-    //this executes the complete turn of a player, including setting or moving and killing
-	void makeWholeMove(Zug move, Player player){
-		if(move.getSet() != null){
+    //this executes only the setting or moving phase of a player, regardless if a kill is contained in move
+    //necessary to make is separate as the user can only add the kill after this move was done
+    void executeSetOrMovePhase(Zug move, Player player) {
+        if(move.getSet() != null){
             if(!getPos(move.getSet()).equals(Options.Color.NOTHING)){
                 throw new IllegalArgumentException("Player " + player.getColor() + " is trying to set to an occupied field by: " + getPos(move.getSet()));
             }
-			setPos(move.getSet(), player.getColor());
+            setPos(move.getSet(), player.getColor());
             player.setSetCount(player.getSetCount() - 1);
-		}
-		if(move.getDest() != null){
+        }
+        if(move.getDest() != null){
             if(!getPos(move.getDest()).equals(Options.Color.NOTHING)){
                 throw new IllegalArgumentException("Player " + player.getColor() + " is trying to move to an occupied field by: " + getPos(move.getDest()));
             }
-			makeMove(move.getSrc(), move.getDest(), player.getColor());
-		}
-		if(move.getKill() != null){
+            if(getPos(move.getSrc()).equals(Options.Color.NOTHING)){
+                throw new IllegalArgumentException("Player " + player.getColor() + " is trying to move from an empty field, which is: " + getPos(move.getSrc()));
+            }
+            makeMove(move.getSrc(), move.getDest(), player.getColor());
+        }
+    }
+
+    //this executes a kill if the move contains one
+    void executeKillPhase(Zug move, Player player){
+        if(move.getKill() != null){
             if(getPos(move.getKill()).equals(player.getColor())){
                 throw new IllegalArgumentException("Trying to kill own piece of color: " + player.getColor());
             }
             if(getPos(move.getKill()).equals(Options.Color.NOTHING)){
                 throw new IllegalArgumentException("Player " + player.getColor() + " is trying to kill an empty field");
             }
-			setPos(move.getKill(), Options.Color.NOTHING);
-		}
+            setPos(move.getKill(), Options.Color.NOTHING);
+        }
+    }
+
+    //this executes the complete turn of a player, including setting or moving and killing
+	void executeCompleteTurn(Zug move, Player player){
+        executeSetOrMovePhase(move, player);
+        executeKillPhase(move, player);
 	}
 
     //undoes a complete turn of a player, including setting or moving and killing
-	public void reverseWholeMove(Zug move, Player player) {
+	public void reverseCompleteTurn(Zug move, Player player) {
 		if(move.getSet() != null){
 			setPos(move.getSet(), Options.Color.NOTHING);
             player.setSetCount(player.getSetCount() + 1);
