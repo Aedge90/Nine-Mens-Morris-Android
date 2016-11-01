@@ -101,18 +101,18 @@ public class Mill9 extends Spielfeld{
 		if (p.getX() == 3	&& p.getY() > 3) {
 			for (int i =  (p.getY()- 1); i > 3; i--)
 				if (this.getPos(p.getX(), i).equals(Options.Color.NOTHING))
-					return new Zug(new Position(p.getX(), i), new Position(p), null,  null);
+					return new Zug(new Position(p.getX(), i), new Position(p), null);
 				else if (!this.getPos(p.getX(), i).equals(Options.Color.INVALID))
 					break;
 
 		} else {
 			for (int i =  (p.getY()- 1); i >= 0; i--)
 				if (this.getPos(p.getX(), i).equals(Options.Color.NOTHING))
-					return new Zug(new Position(p.getX(), i), new Position(p), null,  null);
+					return new Zug(new Position(p.getX(), i), new Position(p), null);
 				else if (!this.getPos(p.getX(), i).equals(Options.Color.INVALID))
 					break;
 		}
-		return new Zug(null, null, null,  null);
+		return new Zug(null, null, null);
 	}
 
 	@Override
@@ -120,18 +120,18 @@ public class Mill9 extends Spielfeld{
 		if (p.getX() == 3 && p.getY() < 3) {
 			for (int i =  (p.getY()+ 1); i < 3; i++)
 				if (this.getPos(p.getX(), i).equals(Options.Color.NOTHING))
-					return new Zug(new Position(p.getX(), i), new Position(p), null,  null);
+					return new Zug(new Position(p.getX(), i), new Position(p), null);
 				else if (!this.getPos(p.getX(), i).equals(Options.Color.INVALID))
 					break;
 
 		} else {
 			for (int i =  (p.getY()+ 1); i <= 6; i++)
 				if (this.getPos(p.getX(), i).equals(Options.Color.NOTHING))
-					return new Zug(new Position(p.getX(), i), new Position(p), null,  null);
+					return new Zug(new Position(p.getX(), i), new Position(p), null);
 				else if (!this.getPos(p.getX(), i).equals(Options.Color.INVALID))
 					break;
 		}
-		return new Zug(null, null, null,  null);
+		return new Zug(null, null, null);
 	}
 
 	@Override
@@ -139,17 +139,17 @@ public class Mill9 extends Spielfeld{
 		if (p.getY() == 3	&& p.getX() < 3) {
 			for (int i =  (p.getX()+ 1); i < 3; i++)
 				if (this.getPos(i, p.getY()).equals(Options.Color.NOTHING))
-					return new Zug(new Position(i, p.getY()), new Position(p), null,  null);
+					return new Zug(new Position(i, p.getY()), new Position(p), null);
 				else if (!this.getPos(i, p.getY()).equals(Options.Color.INVALID))
 					break;
 		} else {
 			for (int i =  (p.getX()+ 1); i <= 6; i++)
 				if (this.getPos(i, p.getY()).equals(Options.Color.NOTHING))
-					return new Zug(new Position(i, p.getY()), new Position(p), null,  null);
+					return new Zug(new Position(i, p.getY()), new Position(p), null);
 				else if (!this.getPos(i, p.getY()).equals(Options.Color.INVALID))
 					break;
 		}
-		return new Zug(null, null, null,  null);
+		return new Zug(null, null, null);
 	}
 
 	@Override
@@ -157,18 +157,18 @@ public class Mill9 extends Spielfeld{
 		if (p.getY() == 3	&& p.getX() > 3) {
 			for (int i =  (p.getX()- 1); i > 3; i--)
 				if (this.getPos(i, p.getY()).equals(Options.Color.NOTHING))
-					return new Zug(new Position(i, p.getY()), new Position(p), null,  null);
+					return new Zug(new Position(i, p.getY()), new Position(p), null);
 				else if (!this.getPos(i, p.getY()).equals(Options.Color.INVALID))
 					break;
 
 		} else {
 			for (int i =  (p.getX()- 1); i >= 0; i--)
 				if (this.getPos(i, p.getY()).equals(Options.Color.NOTHING))
-					return new Zug(new Position(i, p.getY()), new Position(p), null,  null);
+					return new Zug(new Position(i, p.getY()), new Position(p), null);
 				else if (!this.getPos(i, p.getY()).equals(Options.Color.INVALID))
 					break;
 		}
-		return new Zug(null, null, null,  null);
+		return new Zug(null, null, null);
 	}
 
 }

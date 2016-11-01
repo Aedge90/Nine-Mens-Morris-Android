@@ -41,7 +41,7 @@ public class Strategie {
 					for (int i = 0; i<field.getPositions(player.getColor()).size(); i++) {
 						//no iterator here to avoid concurrent modification exception
 						Position p = field.getPositions(player.getColor()).get(i);
-						addpossibleKillstoMove(moves, new Zug(new Position(x, y), p, null, null), player);
+						addpossibleKillstoMove(moves, new Zug(new Position(x, y), p, null), player);
 					}
 				}
 			}
@@ -52,7 +52,7 @@ public class Strategie {
 		for (int x = 0; x < field.LENGTH; x++) {
 			for (int y = 0; y < field.LENGTH; y++) {
 				if (field.getPos(x, y).equals(Options.Color.NOTHING)) {
-					addpossibleKillstoMove(moves, new Zug(null, null,new Position(x, y), null), player);
+					addpossibleKillstoMove(moves, new Zug(new Position(x, y), null, null), player);
 				}
 			}
 		}
@@ -61,17 +61,15 @@ public class Strategie {
     @VisibleForTesting
 	void addpossibleKillstoMove(LinkedList<Zug> possibleMovessoFar, Zug move, Player player){
 			boolean inMill = false;
-			if(move.getSet()!= null){
-				inMill = field.inMill(move.getSet(), player.getColor());
-			}else{
-				inMill = field.inMill(move.getDest(), player.getColor());
-			}
+            field.executeSetOrMovePhase(move, player);
+			inMill = field.inMill(move.getDest(), player.getColor());
+            field.reverseCompleteTurn(move, player);
             //player has a mill after doing this move --> he can kill a piece of the opponent
 			if(inMill){
 				int added = 0;
 				for (Position kill : field.getPositions(player.getOtherPlayer().getColor())) {
 					if(!field.inMill(kill, player.getOtherPlayer().getColor())){
-						Zug killMove = new Zug(move.getDest(), move.getSrc(), move.getSet(), kill);
+						Zug killMove = new Zug(move.getDest(), move.getSrc(), kill);
 						possibleMovessoFar.add(killMove);
 						added++;
 					}
@@ -80,7 +78,7 @@ public class Strategie {
                 //as you are allowed to kill if all pieces are part of a mill
 				if(added == 0){
 					for (Position kill2 : field.getPositions(player.getOtherPlayer().getColor())) {
-						Zug killMove = new Zug(move.getDest(), move.getSrc(), move.getSet(), kill2);
+						Zug killMove = new Zug(move.getDest(), move.getSrc(), kill2);
 						possibleMovessoFar.add(killMove);
 					}
 				}
@@ -217,7 +215,7 @@ public class Strategie {
 		
 		Log.i("Strategie", "computeMove started for Player " + player + " startDepth: " + startDepth);
 		
-		move = new Zug(null, null, null, null);
+		move = new Zug(null, null, null);
 
 		max(startDepth, Integer.MIN_VALUE, Integer.MAX_VALUE, player);
 		

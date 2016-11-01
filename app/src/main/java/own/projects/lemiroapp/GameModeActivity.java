@@ -124,7 +124,7 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
 
 		progressUpdater = new ProgressUpdater(progressBar, this);
 		
-		currMove = new Zug(null, null, null,  null);
+		currMove = new Zug(null, null,  null);
 		remiCount = 20;
 		fieldView = new SpielfeldView(THIS, fieldLayout);
 		

@@ -145,9 +145,12 @@ public class HumanVsBot extends GameModeActivity{
 	}
     
     private void humanTurn() throws InterruptedException{
+
+        currMove = null;
     	Position newPosition = null;
 		if(human.getSetCount() <= 0){
-			while(currMove.getDest() == null){
+            //this has to be a loop as the user may select an invalid destination in MOVETO phase
+			while(currMove == null){
 				state = State.MOVEFROM;
 				//wait for Human to select source
 				waitforSelection();
@@ -163,9 +166,9 @@ public class HumanVsBot extends GameModeActivity{
 			state = State.SET;
 			// wait for human to set
 			waitforSelection();
-			fieldView.setPos(currMove.getSet(), options.colorPlayer1);
-			fieldView.getPos(currMove.getSet()).setOnClickListener(new OnFieldClickListener(currMove.getSet()));
-			newPosition = currMove.getSet();
+			fieldView.setPos(currMove.getDest(), options.colorPlayer1);
+			fieldView.getPos(currMove.getDest()).setOnClickListener(new OnFieldClickListener(currMove.getDest()));
+			newPosition = currMove.getDest();
 		}
 
         field.executeSetOrMovePhase(currMove, human);
@@ -213,10 +216,10 @@ public class HumanVsBot extends GameModeActivity{
 				Thread.sleep(1000 - computationTime);
 			}
 
-	    	fieldView.setPos(currMove.getSet(),options.colorPlayer2);
-	    	fieldView.getPos(currMove.getSet()).setOnClickListener(
-	    			new OnFieldClickListener(currMove.getSet()));
-	    	newPosition = currMove.getSet();
+	    	fieldView.setPos(currMove.getDest(),options.colorPlayer2);
+	    	fieldView.getPos(currMove.getDest()).setOnClickListener(
+	    			new OnFieldClickListener(currMove.getDest()));
+	    	newPosition = currMove.getDest();
 		}
 
         field.executeSetOrMovePhase(currMove, bot);
@@ -286,7 +289,7 @@ public class HumanVsBot extends GameModeActivity{
 					showToast("You can not set to this Position!");
 				}else{
 					Position pos = new Position(x, y);
-					currMove = new Zug(null, null, pos, null);
+					currMove = new Zug(pos, null, null);
 					signalSelection();
 				}
 			} else if (state == State.MOVEFROM) {
@@ -297,17 +300,20 @@ public class HumanVsBot extends GameModeActivity{
 					redSector.setLayoutParams(new GridLayout.LayoutParams(
 							GridLayout.spec(y, 1), GridLayout.spec(x, 1)));
 					fieldLayout.addView(redSector);
-					currMove = new Zug(null, new Position(x,y), null, null);
+                    //set invalid position for now so that constructor doesnt throw IllegalArgumentException
+					currMove = new Zug(new Position(-1,-1), new Position(x,y), null);
 					signalSelection();
 				}
 			} else if (state == State.MOVETO) {
 				if(!field.movePossible(currMove.getSrc(), new Position(x,y))){
 					state = State.MOVEFROM;
+                    //signal that currMove could not be set
+                    currMove = null;
 					fieldLayout.removeView(redSector);
 					showToast("You can not move to this Position!");
 				}else{
 					fieldLayout.removeView(redSector);
-					currMove = new Zug(new Position(x,y), currMove.getSrc(), null, null);
+					currMove = new Zug(new Position(x,y), currMove.getSrc(), null);
 				}
 				signalSelection();
 			} else if (state == State.IGNORE) {
@@ -327,14 +333,14 @@ public class HumanVsBot extends GameModeActivity{
 					}
 					if(allInMill){
 						Position killPos = new Position(x, y);
-						currMove = new Zug(currMove.getDest(), currMove.getSrc(), null, killPos);
+						currMove = new Zug(currMove.getDest(), currMove.getSrc(), killPos);
 						signalSelection();
 					}else{
 						showToast("You can not kill a mill! Choose another target!");
 					}
 				}else{
 					Position killPos = new Position(x, y);
-                    currMove = new Zug(currMove.getDest(), currMove.getSrc(), null, killPos);
+                    currMove = new Zug(currMove.getDest(), currMove.getSrc(), killPos);
 					signalSelection();
 				}
 			}

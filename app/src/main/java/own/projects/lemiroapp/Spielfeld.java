@@ -71,14 +71,13 @@ public abstract class Spielfeld {
     //this executes only the setting or moving phase of a player, regardless if a kill is contained in move
     //necessary to make is separate as the user can only add the kill after this move was done
     void executeSetOrMovePhase(Zug move, Player player) {
-        if(move.getSet() != null){
-            if(!getPos(move.getSet()).equals(Options.Color.NOTHING)){
-                throw new IllegalArgumentException("Player " + player.getColor() + " is trying to set to an occupied field by: " + getPos(move.getSet()));
+        if(player.getSetCount() > 0){
+            if(!getPos(move.getDest()).equals(Options.Color.NOTHING)){
+                throw new IllegalArgumentException("Player " + player.getColor() + " is trying to set to an occupied field by: " + getPos(move.getDest()));
             }
-            setPos(move.getSet(), player.getColor());
+            setPos(move.getDest(), player.getColor());
             player.setSetCount(player.getSetCount() - 1);
-        }
-        if(move.getDest() != null){
+        }else{
             if(!getPos(move.getDest()).equals(Options.Color.NOTHING)){
                 throw new IllegalArgumentException("Player " + player.getColor() + " is trying to move to an occupied field by: " + getPos(move.getDest()));
             }
@@ -110,11 +109,10 @@ public abstract class Spielfeld {
 
     //undoes a complete turn of a player, including setting or moving and killing
 	public void reverseCompleteTurn(Zug move, Player player) {
-		if(move.getSet() != null){
-			setPos(move.getSet(), Options.Color.NOTHING);
+		if(move.getSrc() == null && move.getDest() != null){
+			setPos(move.getDest(), Options.Color.NOTHING);
             player.setSetCount(player.getSetCount() + 1);
-		}
-		if(move.getDest() != null){
+		}else{
 			makeMove(move.getDest(), move.getSrc(), player.getColor());
 		}
 		if(move.getKill() != null){

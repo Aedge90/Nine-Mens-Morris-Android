@@ -2,16 +2,14 @@ package own.projects.lemiroapp;
 
 public class Zug {
 
-	private Position set; //used during Set Phase
 	private Position src;
-	private Position dest;
+	private Position dest; //if only dest is set, then this is a move in the set phase
 	private Position kill;
 	
-	Zug(Position dest, Position src, Position set, Position kill){
+	Zug(Position dest, Position src, Position kill){
 		this.src = src;
 		this.dest = dest;
 		this.kill = kill;
-		this.set = set;
         if (!isPossible()){
             throw new IllegalArgumentException("Zug: invalid arguments for constructor: " + toString() );
         }
@@ -29,17 +27,13 @@ public class Zug {
 		return kill;
 	}
 	
-	public Position getSet(){
-		return set;
-	}
-	
 	@Override
 	public String toString(){
-		return "src: " + src + " dest: " + dest + " kill: " + kill + " set: " + set;
+		return "src: " + src + " dest: " + dest + " kill: " + kill;
 	}
 
 	public boolean isValid(){
-		if(src != null || dest != null || kill != null || set != null){
+		if(src != null || dest != null || kill != null){
 			return true;
 		}else{
 			return false;
@@ -47,16 +41,10 @@ public class Zug {
 	}
 	
 	private boolean isPossible(){
-		if(set != null && (dest != null || src != null)){
-			return false;
-		}
-        if(src == null && dest == null && kill != null && set == null){
+        if(src == null && dest == null && kill != null){
             return false;
         }
         if(src != null && dest == null){
-            return false;
-        }
-        if(src == null && dest !=null){
             return false;
         }
         if(src != null && src.equals(dest)){
@@ -72,7 +60,6 @@ public class Zug {
 
         Zug zug = (Zug) o;
 
-        if (set != null ? !set.equals(zug.set) : zug.set != null) return false;
         if (src != null ? !src.equals(zug.src) : zug.src != null) return false;
         if (dest != null ? !dest.equals(zug.dest) : zug.dest != null) return false;
         return kill != null ? kill.equals(zug.kill) : zug.kill == null;
@@ -81,8 +68,7 @@ public class Zug {
 
     @Override
     public int hashCode() {
-        int result = set != null ? set.hashCode() : 0;
-        result = 31 * result + (src != null ? src.hashCode() : 0);
+        int result = src != null ? src.hashCode() : 0;
         result = 31 * result + (dest != null ? dest.hashCode() : 0);
         result = 31 * result + (kill != null ? kill.hashCode() : 0);
         return result;
