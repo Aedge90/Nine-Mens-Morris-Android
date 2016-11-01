@@ -1,6 +1,5 @@
 package own.projects.lemiroapp;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.LinkedList;
@@ -102,8 +101,8 @@ public class GameBoardTest {
                 Position p = new Position(x, y);
                 if(gameBoard.isValid(p)) {
                     try {
-                        gameBoard.makeWholeMove(new Zug(null, null, p, null), playerBlack);
-                        gameBoard.makeWholeMove(new Zug(null, null, p, null), playerWhite);
+                        gameBoard.executeCompleteTurn(new Zug(null, null, p, null), playerBlack);
+                        gameBoard.executeCompleteTurn(new Zug(null, null, p, null), playerWhite);
                         fail("Expected an IllegalArgumentException to be thrown");
                     } catch (IllegalArgumentException e) {}
                 }
@@ -132,8 +131,8 @@ public class GameBoardTest {
                 Position p = new Position(x, y);
                 if(gameBoard.isValid(p)) {
                     try {
-                        gameBoard.makeWholeMove(new Zug(dest, p, null, null), playerBlack);
-                        gameBoard.makeWholeMove(new Zug(dest, p, null, null), playerWhite);
+                        gameBoard.executeCompleteTurn(new Zug(dest, p, null, null), playerBlack);
+                        gameBoard.executeCompleteTurn(new Zug(dest, p, null, null), playerWhite);
                         fail("Expected an IllegalArgumentException to be thrown");
                     } catch (IllegalArgumentException e) {}
                 }
@@ -160,7 +159,7 @@ public class GameBoardTest {
                 Position p = new Position(x, y);
                 if(gameBoard.isValid(p)) {
                     try {
-                        gameBoard.makeWholeMove(new Zug(null, null, p, p), playerBlack);
+                        gameBoard.executeCompleteTurn(new Zug(null, null, p, p), playerBlack);
                         fail("Expected an IllegalArgumentException to be thrown");
                     } catch (IllegalArgumentException e) {}
                 }
@@ -183,18 +182,79 @@ public class GameBoardTest {
     public void makeWholeMove_KillNotExistingPieceShouldThrowException(Spielfeld gameBoard){
 
         Player playerBlack = new Player(Options.Color.BLACK);
+        //TODO dont use 7 but LENGTH from Gameoard
         for (int x=0; x<7; x++) {
             for (int y = 0; y < 7; y++) {
                 Position p = new Position(x, y);
                 if(gameBoard.isValid(p)) {
                     try {
-                        gameBoard.makeWholeMove(new Zug(null, null, null, p), playerBlack);
+                        gameBoard.executeCompleteTurn(new Zug(null, null, null, p), playerBlack);
                         fail("Expected an IllegalArgumentException to be thrown");
                     } catch (IllegalArgumentException e) {}
                 }
             }
         }
 
+    }
+
+    @Test
+    public void reverseCompleteTurn_ShouldReverse(){
+
+        Player playerBlack = new Player(Options.Color.BLACK);
+        Player playerWhite = new Player(Options.Color.WHITE);
+        playerBlack.setOtherPlayer(playerWhite);
+        playerWhite.setOtherPlayer(playerBlack);
+        playerBlack.setSetCount(0);
+        playerWhite.setSetCount(0);
+
+        Options.Color WHITE = Options.Color.WHITE;
+        Options.Color BLACK = Options.Color.BLACK;
+        Options.Color NOTHING = Options.Color.NOTHING;
+        Options.Color I = Options.Color.INVALID;
+
+        final Options.Color[][] before = {{BLACK, I, I,    BLACK ,I ,I ,    NOTHING},
+                                          { I, I, I, I, I, I, I },
+                                          { I, I,    WHITE, WHITE, BLACK,   I, I },
+                                          {NOTHING,I,BLACK  ,I ,   NOTHING,I,WHITE},
+                                          { I, I,    WHITE, BLACK ,NOTHING, I, I },
+                                          { I, I, I, I, I, I, I },
+                                          {WHITE, I, I,  NOTHING, I, I,      NOTHING}};
+
+        final Spielfeld gameBoardBefore = new Mill5(before);
+
+        //copy the original field, so we can compare it later
+        Options.Color [][] field = new Options.Color[before.length][];
+        for(int i = 0; i < before.length; i++) {
+            field[i] = before[i].clone();
+        }
+        Spielfeld gameBoard = new Mill5(field);
+
+
+        //TODO write a test for strategy which verifies that the number of possible Moves is correct... should be calculatable
+
+        Strategie strategy = new Strategie(gameBoardBefore, null);
+
+        LinkedList<Zug> allPossibleMoves =  strategy.possibleMoves(playerBlack);
+
+        System.out.println(allPossibleMoves.size());
+
+        for (int i = 0; i < allPossibleMoves.size(); i++) {
+            gameBoard.executeCompleteTurn(allPossibleMoves.get(i), playerBlack);
+            gameBoard.reverseCompleteTurn(allPossibleMoves.get(i), playerBlack);
+            assertEqualGameboards(gameBoardBefore, gameBoard, allPossibleMoves.get(i));
+        }
+
+    }
+
+    public void assertEqualGameboards(Spielfeld expected, Spielfeld actual, Zug z){
+        for (int x = 0; x < expected.LENGTH; x++) {
+            for (int y = 0; y < expected.LENGTH; y++) {
+                if(!expected.getPos(x,y).equals(actual.getPos(x,y))){
+                    fail("expected: " + expected.getPos(x,y) + ", actual: " + actual.getPos(x,y) + "; on position: (" + x + "," + y + ")" +
+                    "\nmove was: " + z);
+                }
+            }
+        }
     }
 
 }
