@@ -23,14 +23,6 @@ public class Position {
 		return y;
 	}
 	
-	void changeTo (Position m){
-		if(m==null){
-			return;
-		}
-		this.x = m.getX();
-		this.y = m.getY();
-	}
-	
 	@Override
 	public String toString(){
 		return "x = " + x + "; y = " + y;
