@@ -15,6 +15,11 @@ public class Mill5 extends Spielfeld{
 			this.field = mill5;
 			millMode =  Options.MillMode.MILL5;
 	}
+
+    Mill5(Options.Color[][] field) {
+        this.field = field;
+        millMode =  Options.MillMode.MILL5;
+    }
 	
 	@Override
 	Position[] getPossibleMillX(Position p){

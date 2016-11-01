@@ -1,5 +1,6 @@
 package own.projects.lemiroapp;
 
+import android.graphics.Path;
 import android.widget.ProgressBar;
 
 import org.junit.Before;
@@ -132,7 +133,7 @@ public class StrategyTest {
         killMove = possibleMovessoFar.get(1);
 
         //now (3,2) of white is actually killed
-        mGameboard.makeWholeMove(killMove, mPlayerBlack);
+        mGameboard.executeCompleteTurn(killMove, mPlayerBlack);
 
         possibleMovessoFar = new LinkedList<Zug>();
 
@@ -150,8 +151,37 @@ public class StrategyTest {
         Player currentPlayer = startingPlayer;
         int nMoves = series.size();
         for(int i = 0; i<nMoves; i++){
-            mGameboard.makeWholeMove(series.removeFirst(), currentPlayer);
+            mGameboard.executeCompleteTurn(series.removeFirst(), currentPlayer);
             currentPlayer = currentPlayer.getOtherPlayer();
         }
+    }
+
+    @Test
+    public void addpossibleKillstoMove_ShouldNotAddKill(){
+        Options.Color WHITE = Options.Color.WHITE;
+        Options.Color BLACK = Options.Color.BLACK;
+        Options.Color NOTHING = Options.Color.NOTHING;
+        Options.Color I = Options.Color.INVALID;
+
+        Options.Color[][] field = {{BLACK, I, I,    BLACK ,I ,I ,    NOTHING},
+                                  { I, I, I, I, I, I, I },
+                                  { I, I,    WHITE, WHITE, BLACK,   I, I },
+                                  {NOTHING,I,BLACK  ,I ,   NOTHING,I,WHITE},
+                                  { I, I,    WHITE, BLACK ,NOTHING, I, I },
+                                  { I, I, I, I, I, I, I },
+                                  {WHITE, I, I,  NOTHING, I, I,      NOTHING}};
+
+        mGameboard = new Mill5(field);
+
+        LinkedList<Zug> possibleMovessoFar = new LinkedList<Zug>();
+
+        Zug move = new Zug(null, null, new Position(6,6), null);
+
+        mStrategy.addpossibleKillstoMove(possibleMovessoFar, move, mPlayerBlack);
+
+        //assert that black can not kill in this scenario
+        assertEquals(1, possibleMovessoFar.size());
+        assertEquals(move, possibleMovessoFar.get(0));
+
     }
 }
