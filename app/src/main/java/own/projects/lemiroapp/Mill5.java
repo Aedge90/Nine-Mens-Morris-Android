@@ -1,8 +1,10 @@
 package own.projects.lemiroapp;
 
+import android.support.annotation.VisibleForTesting;
+
 public class Mill5 extends GameBoard {
 
-	private Options.Color[][] mill5 = // ERSTES Y ZWEITES X
+	private Options.Color[][] field = // ERSTES Y ZWEITES X
 		{{O, N, N, O, N, N, O },
 		{ N, N, N, N, N, N, N },
 		{ N, N, O, O, O, N, N },
@@ -12,15 +14,20 @@ public class Mill5 extends GameBoard {
 		{ O, N, N, O, N, N, O }};
 	
 	Mill5() {
-			this.field = mill5;
-			millMode =  Options.MillMode.MILL5;
+        millMode =  Options.MillMode.MILL5;
 	}
 
+    @VisibleForTesting
     Mill5(Options.Color[][] field) {
-        this.field = field;
+        super(field);
         millMode =  Options.MillMode.MILL5;
     }
-	
+
+    //copy constructor
+    Mill5(Mill5 other){
+        super(other);
+    }
+
 	@Override
 	Position[] getPossibleMillX(Position p){
         assertValidandNotNull(p);

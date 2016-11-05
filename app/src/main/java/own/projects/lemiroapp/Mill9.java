@@ -1,5 +1,7 @@
 package own.projects.lemiroapp;
 
+import android.support.annotation.VisibleForTesting;
+
 public class Mill9 extends GameBoard {
 	
 	private Options.Color[][] mill9 = // ERSTES Y ZWEITES X
@@ -12,8 +14,18 @@ public class Mill9 extends GameBoard {
 		{ O, N, N, O, N, N, O }};
 
 	Mill9() {
-		this.field = mill9;
 		millMode =  Options.MillMode.MILL9;
+	}
+
+	@VisibleForTesting
+	Mill9(Options.Color[][] field) {
+		super(field);
+		millMode =  Options.MillMode.MILL9;
+	}
+
+	//copy constructor
+	Mill9(Mill9 other){
+		super(other);
 	}
 	
 	@Override

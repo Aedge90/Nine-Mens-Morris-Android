@@ -3,6 +3,7 @@ package own.projects.lemiroapp;
 import java.util.LinkedList;
 
 import android.graphics.Path;
+import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
 public abstract class GameBoard {
@@ -12,6 +13,23 @@ public abstract class GameBoard {
 	final Options.Color O = Options.Color.NOTHING;
 	final Options.Color N = Options.Color.INVALID;
 	Options.MillMode millMode;
+
+    GameBoard(){}
+
+    @VisibleForTesting
+    GameBoard(Options.Color[][] field) {
+        this.field = field;
+    }
+
+        //copy constructor
+    GameBoard(GameBoard other){
+        //copy the field from other
+        field = new Options.Color[other.field.length][];
+        for(int i = 0; i < other.field.length; i++) {
+            field[i] = other.field[i].clone();
+        }
+        millMode = other.millMode;
+    }
 
     //checks if this Position is allowed or an invalid Position
     boolean isValid(Position p){
