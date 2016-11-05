@@ -38,14 +38,14 @@ public class GameBoardMill5Test extends GameBoardTestBase<Mill5> {
                                           { I, I, I, I, I, I, I },
                                           {WHITE, I, I,  NOTHING, I, I,      NOTHING}};
 
-        final Spielfeld gameBoardBefore = new Mill5(before);
+        final GameBoard gameBoardBefore = new Mill5(before);
 
         //copy the original field, so we can compare it later
         Options.Color [][] field = new Options.Color[before.length][];
         for(int i = 0; i < before.length; i++) {
             field[i] = before[i].clone();
         }
-        Spielfeld mGameBoard = new Mill5(field);
+        GameBoard mGameBoard = new Mill5(field);
 
 
         //TODO write a test for strategy which verifies that the number of possible Moves is correct... should be calculatable
@@ -64,7 +64,7 @@ public class GameBoardMill5Test extends GameBoardTestBase<Mill5> {
 
     }
 
-    public void assertEqualGameboards(Spielfeld expected, Spielfeld actual, Zug z){
+    public void assertEqualGameboards(GameBoard expected, GameBoard actual, Zug z){
         for (int x = 0; x < expected.LENGTH; x++) {
             for (int y = 0; y < expected.LENGTH; y++) {
                 if(!expected.getPos(x,y).equals(actual.getPos(x,y))){

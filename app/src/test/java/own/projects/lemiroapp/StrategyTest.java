@@ -1,6 +1,5 @@
 package own.projects.lemiroapp;
 
-import android.graphics.Path;
 import android.widget.ProgressBar;
 
 import org.junit.Before;
@@ -17,7 +16,7 @@ public class StrategyTest {
 
     private Strategie strategy;
 
-    private Spielfeld mGameboard;
+    private GameBoard mGameboard;
 
     private Strategie mStrategy;
 

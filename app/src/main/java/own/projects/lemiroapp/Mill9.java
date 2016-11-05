@@ -1,6 +1,6 @@
 package own.projects.lemiroapp;
 
-public class Mill9 extends Spielfeld{
+public class Mill9 extends GameBoard {
 	
 	private Options.Color[][] mill9 = // ERSTES Y ZWEITES X
 		{{O, N, N, O, N, N, O },

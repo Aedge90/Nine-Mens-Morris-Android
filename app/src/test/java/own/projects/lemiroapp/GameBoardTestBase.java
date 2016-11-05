@@ -7,7 +7,7 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.fail;
 
 
-public abstract class GameBoardTestBase<T extends Spielfeld> {
+public abstract class GameBoardTestBase<T extends GameBoard> {
 
     private T mGameBoard;
 

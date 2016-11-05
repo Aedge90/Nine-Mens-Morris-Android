@@ -52,7 +52,7 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
 	TextView progressText;
 	ProgressBar progressBar;
 	ProgressUpdater progressUpdater;
-	Spielfeld field;
+	GameBoard field;
 	Handler handler;
 	int screenWidth;
 	ImageView redSector;

@@ -7,14 +7,14 @@ import android.util.Log;
 
 public class Strategie {
 
-	Spielfeld field;
+	GameBoard field;
 	Zug move;
 	int startDepth;
 	private ProgressUpdater up;
 	static final int MAX = Integer.MAX_VALUE;
 	static final int MIN = Integer.MIN_VALUE;
 
-	Strategie(Spielfeld field, ProgressUpdater up) {
+	Strategie(GameBoard field, ProgressUpdater up) {
 		this.field = field;
 		this.up = up;
 	}

@@ -158,7 +158,9 @@ public class HumanVsBot extends GameModeActivity{
 				//wait for Human to select destination
 				waitforSelection();
 			}
+            Log.i("HumanVsBot", "before make Move human");
 			fieldView.makeMove(currMove, options.colorPlayer1);
+            Log.i("HumanVsBot", "afetr make Move human");
 			fieldView.getPos(currMove.getSrc()).setOnClickListener(new OnFieldClickListener(currMove.getSrc()));
 			fieldView.getPos(currMove.getDest()).setOnClickListener(new OnFieldClickListener(currMove.getDest()));
 			newPosition = currMove.getDest();
@@ -197,7 +199,9 @@ public class HumanVsBot extends GameModeActivity{
 
 			setTextinUIThread(progressText, "Bot is moving!");
 
+            Log.i("HumanVsBot", "before make Move bot");
 	    	fieldView.makeMove(currMove, options.colorPlayer2);
+            Log.i("HumanVsBot", "after make Move bot");
 	    	fieldView.getPos(currMove.getSrc()).setOnClickListener(
 	    			new OnFieldClickListener(currMove.getSrc()));
 	    	fieldView.getPos(currMove.getDest()).setOnClickListener(

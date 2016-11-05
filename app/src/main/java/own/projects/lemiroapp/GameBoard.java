@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import android.graphics.Path;
 import android.util.Log;
 
-public abstract class Spielfeld {
+public abstract class GameBoard {
 
 	final int LENGTH = 7;
 	Options.Color[][] field;
@@ -54,7 +54,7 @@ public abstract class Spielfeld {
 
 	Options.Color getPos(Position pos) {
 		if (pos == null){
-			Log.e("Spielfeld", "Error: getPos: Position was null!");
+			Log.e("GameBoard", "Error: getPos: Position was null!");
 		}
 		return getPos(pos.getX(), pos.getY());
 	}
