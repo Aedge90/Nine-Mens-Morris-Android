@@ -25,6 +25,14 @@ public class Player {
         this.color = color;
     }
 
+    //copy constructor
+    public Player (Player other){
+        this.setCount = other.setCount;
+        this.color = other.color;
+        this.difficulty = other.difficulty;
+        this.otherPlayer = other.otherPlayer;
+    }
+
     public void setSetCount (int setCount) {
         if(setCount < 0){
             throw new IllegalArgumentException("setSetCount: setCount of player: " + getColor() + " may not be set below 0");

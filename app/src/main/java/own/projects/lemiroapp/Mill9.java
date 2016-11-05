@@ -14,6 +14,7 @@ public class Mill9 extends GameBoard {
 		{ O, N, N, O, N, N, O }};
 
 	Mill9() {
+		field = mill9;
 		millMode =  Options.MillMode.MILL9;
 	}
 
