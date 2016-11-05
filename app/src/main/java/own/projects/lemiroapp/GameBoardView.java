@@ -17,7 +17,7 @@ import android.widget.GridLayout;
 import android.widget.ImageView;
 
 
-public class SpielfeldView {
+public class GameBoardView {
 
 	private volatile boolean uiupdated = false;
 	private Lock lock;
@@ -30,7 +30,7 @@ public class SpielfeldView {
 	protected final static int ANIMATION_DONE_HUMAN_APP = 11;
 	protected final static int ANIMATION_DONE_HUMAN_PHYSICAL = 12;
 	
-	SpielfeldView (GameModeActivity c ,GridLayout fieldLayout) {
+	GameBoardView(GameModeActivity c , GridLayout fieldLayout) {
 		this.c = c;
 		this.fieldLayout = fieldLayout;
 

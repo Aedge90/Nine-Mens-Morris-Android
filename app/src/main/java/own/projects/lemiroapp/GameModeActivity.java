@@ -48,7 +48,7 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
 	Thread gameThread;
 	Options options;
 	GridLayout fieldLayout;
-	SpielfeldView fieldView;
+	GameBoardView fieldView;
 	TextView progressText;
 	ProgressBar progressBar;
 	ProgressUpdater progressUpdater;
@@ -126,7 +126,7 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
 		
 		currMove = new Zug(null, null,  null);
 		remiCount = 20;
-		fieldView = new SpielfeldView(THIS, fieldLayout);
+		fieldView = new GameBoardView(THIS, fieldLayout);
 		
 		init();
 
