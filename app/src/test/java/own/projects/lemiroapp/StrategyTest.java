@@ -45,9 +45,9 @@ public class StrategyTest {
     public void bewertungShouldBe0() {
 
         LinkedList<Zug> moves = new LinkedList<Zug>();
-        moves.add(new Zug(null, null, new Position(0,0), null));
-        moves.add(new Zug(null, null, new Position(3,0), null));
-        moves.add(new Zug(null, null, new Position(6,6), null));
+        moves.add(new Zug(new Position(0,0),null, null));
+        moves.add(new Zug(new Position(3,0),null, null));
+        moves.add(new Zug(new Position(6,6),null, null));
 
         executeMoveSeries(moves, mPlayerBlack);
 
@@ -61,12 +61,12 @@ public class StrategyTest {
     public void bewertungOfMillShouldBe500() {
 
         LinkedList<Zug> moves = new LinkedList<Zug>();
-        moves.add(new Zug(null, null, new Position(0,0), null));
-        moves.add(new Zug(null, null, new Position(3,0), null));
-        moves.add(new Zug(null, null, new Position(0,3), null));
-        moves.add(new Zug(null, null, new Position(6,0), null));
+        moves.add(new Zug(new Position(0,0), null, null));
+        moves.add(new Zug(new Position(3,0), null, null));
+        moves.add(new Zug(new Position(0,3), null, null));
+        moves.add(new Zug(new Position(6,0), null, null));
         //last move contains a kill
-        moves.add(new Zug(null, null, new Position(0,6), new Position(3,0)));
+        moves.add(new Zug(new Position(0,6), null, new Position(3,0)));
 
         executeMoveSeries(moves, mPlayerBlack);
 
@@ -81,19 +81,19 @@ public class StrategyTest {
 
         //Game in which black player starts, and kills white player
         LinkedList<Zug> moves = new LinkedList<Zug>();
-        moves.add(new Zug(null, null, new Position(0,0), null));
-        moves.add(new Zug(null, null, new Position(3,0), null));
-        moves.add(new Zug(null, null, new Position(0,6), null));
-        moves.add(new Zug(null, null, new Position(3,2), null));
-        moves.add(new Zug(null, null, new Position(0,3), new Position(3,0)));
-        moves.add(new Zug(null, null, new Position(3,0), null));
-        moves.add(new Zug(null, null, new Position(6,6), null));
-        moves.add(new Zug(null, null, new Position(3,4), null));
-        moves.add(new Zug(null, null, new Position(3,6), new Position(3,0)));
-        moves.add(new Zug(null, null, new Position(3,0), null));
-        moves.add(new Zug(new Position(6,3), new Position(6,6), null, null));
-        moves.add(new Zug(new Position(4,4), new Position(3,4), null, null));
-        moves.add(new Zug(new Position(6,6), new Position(6,3), null, new Position(3,0)));
+        moves.add(new Zug(new Position(0,0), null, null));
+        moves.add(new Zug(new Position(3,0), null, null));
+        moves.add(new Zug(new Position(0,6), null, null));
+        moves.add(new Zug(new Position(3,2), null, null));
+        moves.add(new Zug(new Position(0,3), null, new Position(3,0)));
+        moves.add(new Zug(new Position(3,0), null, null));
+        moves.add(new Zug(new Position(6,6), null, null));
+        moves.add(new Zug(new Position(3,4), null, null));
+        moves.add(new Zug(new Position(3,6), null, new Position(3,0)));
+        moves.add(new Zug(new Position(3,0), null, null));
+        moves.add(new Zug(new Position(6,3), new Position(6,6), null));
+        moves.add(new Zug(new Position(4,4), new Position(3,4), null));
+        moves.add(new Zug(new Position(6,6), new Position(6,3), new Position(3,0)));
 
         //white player has lost now
 
@@ -112,19 +112,19 @@ public class StrategyTest {
         LinkedList<Zug> possibleMovessoFar = new LinkedList<Zug>();
 
         LinkedList<Zug> moves = new LinkedList<Zug>();
-        moves.add(new Zug(null, null, new Position(0,0), null));
-        moves.add(new Zug(null, null, new Position(3,0), null));
-        moves.add(new Zug(null, null, new Position(0,6), null));
-        moves.add(new Zug(null, null, new Position(3,2), null));
+        moves.add(new Zug(new Position(0,0), null, null));
+        moves.add(new Zug(new Position(3,0), null, null));
+        moves.add(new Zug(new Position(0,6), null, null));
+        moves.add(new Zug(new Position(3,2), null, null));
 
         executeMoveSeries(moves, mPlayerBlack);
 
         //black closes his mill, kill should be added to this move
-        Zug killMove = new Zug(null, null, new Position(0,3), null);
+        Zug killMove = new Zug(new Position(0,3), null, null);
         mStrategy.addpossibleKillstoMove(possibleMovessoFar, killMove, mPlayerBlack);
 
-        Zug expected0 = new Zug(null, null, new Position(0,3), new Position(3,0));
-        Zug expected1 = new Zug(null, null, new Position(0,3), new Position(3,2));
+        Zug expected0 = new Zug(new Position(0,3), null, new Position(3,0));
+        Zug expected1 = new Zug(new Position(0,3), null, new Position(3,2));
 
         assertEquals(2, possibleMovessoFar.size());
         assertEquals(expected0, possibleMovessoFar.get(0));
@@ -138,7 +138,7 @@ public class StrategyTest {
         possibleMovessoFar = new LinkedList<Zug>();
 
         //now white sets to (6,6)
-        Zug nextMove = new Zug(null, null, new Position(6,6), null);
+        Zug nextMove = new Zug(new Position(6,6), null, null);
         mStrategy.addpossibleKillstoMove(possibleMovessoFar, nextMove, mPlayerWhite);
 
         //assert that white can not kill
@@ -175,7 +175,7 @@ public class StrategyTest {
 
         LinkedList<Zug> possibleMovessoFar = new LinkedList<Zug>();
 
-        Zug move = new Zug(null, null, new Position(6,6), null);
+        Zug move = new Zug(new Position(6,6), null, null);
 
         mStrategy.addpossibleKillstoMove(possibleMovessoFar, move, mPlayerBlack);
 

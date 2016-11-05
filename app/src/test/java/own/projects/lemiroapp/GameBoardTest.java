@@ -94,15 +94,17 @@ public class GameBoardTest {
 
     public void makeWholeMove_WithSetMoveOnNonEmptyPosShouldThrowException(Spielfeld gameBoard){
 
-        Player playerBlack = new Player(Options.Color.BLACK);
-        Player playerWhite = new Player(Options.Color.WHITE);
         for (int x=0; x<7; x++) {
             for (int y = 0; y < 7; y++) {
                 Position p = new Position(x, y);
                 if(gameBoard.isValid(p)) {
                     try {
-                        gameBoard.executeCompleteTurn(new Zug(null, null, p, null), playerBlack);
-                        gameBoard.executeCompleteTurn(new Zug(null, null, p, null), playerWhite);
+                        Player playerBlack = new Player(Options.Color.BLACK);
+                        Player playerWhite = new Player(Options.Color.WHITE);
+                        playerBlack.setSetCount(5);
+                        playerWhite.setSetCount(5);
+                        gameBoard.executeCompleteTurn(new Zug(p, null, null), playerBlack);
+                        gameBoard.executeCompleteTurn(new Zug(p, null, null), playerWhite);
                         fail("Expected an IllegalArgumentException to be thrown");
                     } catch (IllegalArgumentException e) {}
                 }
@@ -131,8 +133,8 @@ public class GameBoardTest {
                 Position p = new Position(x, y);
                 if(gameBoard.isValid(p)) {
                     try {
-                        gameBoard.executeCompleteTurn(new Zug(dest, p, null, null), playerBlack);
-                        gameBoard.executeCompleteTurn(new Zug(dest, p, null, null), playerWhite);
+                        gameBoard.executeCompleteTurn(new Zug(dest, p, null), playerBlack);
+                        gameBoard.executeCompleteTurn(new Zug(dest, p, null), playerWhite);
                         fail("Expected an IllegalArgumentException to be thrown");
                     } catch (IllegalArgumentException e) {}
                 }
@@ -153,13 +155,14 @@ public class GameBoardTest {
 
     public void makeWholeMove_KillOwnPieceShouldThrowException(Spielfeld gameBoard){
 
-        Player playerBlack = new Player(Options.Color.BLACK);
         for (int x=0; x<7; x++) {
             for (int y = 0; y < 7; y++) {
                 Position p = new Position(x, y);
                 if(gameBoard.isValid(p)) {
                     try {
-                        gameBoard.executeCompleteTurn(new Zug(null, null, p, p), playerBlack);
+                        Player playerBlack = new Player(Options.Color.BLACK);
+                        playerBlack.setSetCount(5);
+                        gameBoard.executeCompleteTurn(new Zug(p, null, p), playerBlack);
                         fail("Expected an IllegalArgumentException to be thrown");
                     } catch (IllegalArgumentException e) {}
                 }
@@ -188,7 +191,7 @@ public class GameBoardTest {
                 Position p = new Position(x, y);
                 if(gameBoard.isValid(p)) {
                     try {
-                        gameBoard.executeCompleteTurn(new Zug(null, null, null, p), playerBlack);
+                        gameBoard.executeCompleteTurn(new Zug(null, null, p), playerBlack);
                         fail("Expected an IllegalArgumentException to be thrown");
                     } catch (IllegalArgumentException e) {}
                 }
