@@ -8,7 +8,7 @@ import android.util.Log;
 
 public abstract class GameBoard {
 
-	final int LENGTH = 7;
+	final static int LENGTH = 7;
 	Options.Color[][] field;
 	final Options.Color O = Options.Color.NOTHING;
 	final Options.Color N = Options.Color.INVALID;

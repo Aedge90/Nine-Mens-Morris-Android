@@ -95,8 +95,8 @@ public abstract class GameBoardTestBase<T extends GameBoard> {
         Position[] possibleMillX;
 
         //assert that y value does not change for a mill in x direction
-        for (int x = 0; x < 7; x++) {
-            for (int y = 0; y < 7; y++) {
+        for (int x = 0; x < GameBoard.LENGTH; x++) {
+            for (int y = 0; y < GameBoard.LENGTH; y++) {
                 Position p = new Position(x, y);
                 //its okay to throw an exception for impossible positions as all positions are tried here
                 try {
@@ -143,8 +143,8 @@ public abstract class GameBoardTestBase<T extends GameBoard> {
     @Test
     public void makeWholeMove_WithSetMoveOnNonEmptyPosShouldThrowException(){
 
-        for (int x=0; x<7; x++) {
-            for (int y = 0; y < 7; y++) {
+        for (int x=0; x < GameBoard.LENGTH; x++) {
+            for (int y = 0; y < GameBoard.LENGTH; y++) {
                 Position p = new Position(x, y);
                 if(mGameBoard.isValid(p)) {
                     try {
@@ -164,8 +164,8 @@ public abstract class GameBoardTestBase<T extends GameBoard> {
     public void makeWholeMove_WithMoveMoveOnNonEmptyPosShouldThrowException(){
 
         Position dest = new Position(6,3);
-        for (int x=0; x<7; x++) {
-            for (int y = 0; y < 7; y++) {
+        for (int x=0; x < GameBoard.LENGTH; x++) {
+            for (int y = 0; y < GameBoard.LENGTH; y++) {
                 Position p = new Position(x, y);
                 if(mGameBoard.isValid(p)) {
                     try {
@@ -184,8 +184,8 @@ public abstract class GameBoardTestBase<T extends GameBoard> {
     @Test
     public void makeWholeMove_KillOwnPieceShouldThrowException(){
 
-        for (int x=0; x<7; x++) {
-            for (int y = 0; y < 7; y++) {
+        for (int x=0; x < GameBoard.LENGTH; x++) {
+            for (int y = 0; y < GameBoard.LENGTH; y++) {
                 Position p = new Position(x, y);
                 if(mGameBoard.isValid(p)) {
                     try {
@@ -205,9 +205,8 @@ public abstract class GameBoardTestBase<T extends GameBoard> {
     @Test
     public void makeWholeMove_KillNotExistingPieceShouldThrowException(){
 
-        //TODO dont use 7 but LENGTH from Gameoard
-        for (int x=0; x<7; x++) {
-            for (int y = 0; y < 7; y++) {
+        for (int x=0; x < GameBoard.LENGTH; x++) {
+            for (int y = 0; y < GameBoard.LENGTH; y++) {
                 Position p = new Position(x, y);
                 if(mGameBoard.isValid(p)) {
                     try {
