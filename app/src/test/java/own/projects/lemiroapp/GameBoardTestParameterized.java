@@ -16,7 +16,7 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.fail;
 
 @RunWith(value = Parameterized.class)
-public class GameBoardTest {
+public class GameBoardTestParameterized {
 
     private GameBoard mGameBoard;
     private Player mPlayerWhite;
@@ -40,15 +40,14 @@ public class GameBoardTest {
     }
 
     // Inject paremeters via constructor, constructor is called before each test
-    public GameBoardTest(GameBoard gameBoard, Player playerBlack, Player playerWhite, String testDescription){
+    public GameBoardTestParameterized(GameBoard gameBoard, Player playerBlack, Player playerWhite, String testDescription){
         //call copy constructors otherwise tests will change the parameters which should be the same for all tests
-        System.out.println("living " + testDescription);
         mGameBoard = gameBoard.getCopy();
         mPlayerBlack = new Player(playerBlack);
         mPlayerWhite = new Player(playerWhite);
-        System.out.println(mGameBoard);
-        System.out.println(mPlayerBlack.getSetCount());
-        System.out.println(mPlayerWhite.getSetCount());
+        //System.out.println(mGameBoard);
+        //System.out.println(mPlayerBlack.getSetCount());
+        //System.out.println(mPlayerWhite.getSetCount());
     }
 
 
@@ -107,7 +106,6 @@ public class GameBoardTest {
         }
     }
 
-
     @Test
     public void getPossibleMillX_DoesNotChangeYValue() {
 
@@ -158,85 +156,6 @@ public class GameBoardTest {
         }
     }
 
-
-    @Test
-    public void makeWholeMove_WithSetMoveOnNonEmptyPosShouldThrowException(){
-
-        for (int x=0; x < GameBoard.LENGTH; x++) {
-            for (int y = 0; y < GameBoard.LENGTH; y++) {
-                Position p = new Position(x, y);
-                if(mGameBoard.isValid(p)) {
-                    try {
-                        mPlayerBlack.setSetCount(5);
-                        mPlayerWhite.setSetCount(5);
-                        mGameBoard.executeCompleteTurn(new Zug(p, null, null), mPlayerBlack);
-                        mGameBoard.executeCompleteTurn(new Zug(p, null, null), mPlayerWhite);
-                        fail("Expected an IllegalArgumentException to be thrown");
-                    } catch (IllegalArgumentException e) {}
-                }
-            }
-        }
-
-    }
-
-    @Test
-    public void makeWholeMove_WithMoveMoveOnNonEmptyPosShouldThrowException(){
-
-        Position dest = new Position(6,3);
-        for (int x=0; x < GameBoard.LENGTH; x++) {
-            for (int y = 0; y < GameBoard.LENGTH; y++) {
-                Position p = new Position(x, y);
-                if(mGameBoard.isValid(p)) {
-                    try {
-                        mPlayerBlack.setSetCount(0);
-                        mPlayerWhite.setSetCount(0);
-                        mGameBoard.executeCompleteTurn(new Zug(dest, p, null), mPlayerBlack);
-                        mGameBoard.executeCompleteTurn(new Zug(dest, p, null), mPlayerWhite);
-                        fail("Expected an IllegalArgumentException to be thrown");
-                    } catch (IllegalArgumentException e) {}
-                }
-            }
-        }
-
-    }
-
-    @Test
-    public void makeWholeMove_KillOwnPieceShouldThrowException(){
-
-        for (int x=0; x < GameBoard.LENGTH; x++) {
-            for (int y = 0; y < GameBoard.LENGTH; y++) {
-                Position p = new Position(x, y);
-                if(mGameBoard.isValid(p)) {
-                    try {
-                        mPlayerBlack.setSetCount(5);
-                        mGameBoard.executeCompleteTurn(new Zug(p, null, p), mPlayerBlack);
-                        fail("Expected an IllegalArgumentException to be thrown");
-                    } catch (IllegalArgumentException e) {}
-
-                    //TODO check which exception was thrown
-                }
-            }
-        }
-
-    }
-
-
-    @Test
-    public void makeWholeMove_KillNotExistingPieceShouldThrowException(){
-
-        for (int x=0; x < GameBoard.LENGTH; x++) {
-            for (int y = 0; y < GameBoard.LENGTH; y++) {
-                Position p = new Position(x, y);
-                if(mGameBoard.isValid(p)) {
-                    try {
-                        mGameBoard.executeCompleteTurn(new Zug(null, null, p), mPlayerBlack);
-                        fail("Expected an IllegalArgumentException to be thrown");
-                    } catch (IllegalArgumentException e) {}
-                }
-            }
-        }
-
-    }
 
 }
 
