@@ -24,6 +24,11 @@ public class Mill9 extends GameBoard {
 		millMode =  Options.MillMode.MILL9;
 	}
 
+    @Override
+    GameBoard getCopy() {
+        return new Mill9(this);
+    }
+
 	//copy constructor
 	Mill9(Mill9 other){
 		super(other);

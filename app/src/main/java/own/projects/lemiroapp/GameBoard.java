@@ -21,7 +21,7 @@ public abstract class GameBoard {
         this.field = field;
     }
 
-        //copy constructor
+    //copy constructor
     GameBoard(GameBoard other){
         //copy the field from other
         field = new Options.Color[other.field.length][];
@@ -30,6 +30,10 @@ public abstract class GameBoard {
         }
         millMode = other.millMode;
     }
+
+    @VisibleForTesting
+    abstract GameBoard getCopy();
+
 
     //checks if this Position is allowed or an invalid Position
     boolean isValid(Position p){

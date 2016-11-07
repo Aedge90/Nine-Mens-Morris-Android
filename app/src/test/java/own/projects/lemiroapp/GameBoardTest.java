@@ -7,31 +7,50 @@ import org.junit.runners.Parameterized;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.fail;
 
 @RunWith(value = Parameterized.class)
-public abstract class GameBoardTestBase<T extends GameBoard> {
+public class GameBoardTest {
 
-    protected T mGameBoard;
-    protected Player mPlayerWhite;
-    protected Player mPlayerBlack;
+    private GameBoard mGameBoard;
+    private Player mPlayerWhite;
+    private Player mPlayerBlack;
 
-    // Inject paremeters via constructor, constructor is called before each test
-    public GameBoardTestBase(T gameBoard, Player playerBlack, Player playerWhite){
-        //call copy constructors otherwise tests will change the parameters which should be the same for all tests
-        mGameBoard = callCopyConstructor(gameBoard);
-        mPlayerBlack = new Player(playerBlack);
-        mPlayerWhite = new Player(playerWhite);
-        //System.out.println(mGameBoard);
-        //System.out.println(mPlayerBlack.getSetCount());
-        //System.out.println(mPlayerWhite.getSetCount());
+    // name attribute is optional, provide an unique name for test
+    // multiple parameters, uses Collection<Object[]>
+    @Parameterized.Parameters(name = "Param{index}: {3}")
+    public static Collection<Object[] > data() {
+
+        Collection<Object[]> parameters = Arrays.asList(new Object[][]{
+                createPlayersandExecuteMoves(new Mill5(), 0),
+                createPlayersandExecuteMoves(new Mill7(), 0),
+                createPlayersandExecuteMoves(new Mill9(), 0),
+                createPlayersandExecuteMoves(new Mill5(), 10),
+                createPlayersandExecuteMoves(new Mill7(), 10),
+                createPlayersandExecuteMoves(new Mill9(), 10)
+        });
+
+        return parameters;
     }
 
-    //creates a new object of type <T extends GameBoard>
-    protected abstract T callCopyConstructor(T copyThis);
+    // Inject paremeters via constructor, constructor is called before each test
+    public GameBoardTest(GameBoard gameBoard, Player playerBlack, Player playerWhite, String testDescription){
+        //call copy constructors otherwise tests will change the parameters which should be the same for all tests
+        System.out.println("living " + testDescription);
+        mGameBoard = gameBoard.getCopy();
+        mPlayerBlack = new Player(playerBlack);
+        mPlayerWhite = new Player(playerWhite);
+        System.out.println(mGameBoard);
+        System.out.println(mPlayerBlack.getSetCount());
+        System.out.println(mPlayerWhite.getSetCount());
+    }
+
 
     //common code thats used to create the parameter for each subclass
     public static Object[] createPlayersandExecuteMoves(GameBoard gameBoard, int nMovesPerPlayer){
@@ -56,14 +75,14 @@ public abstract class GameBoardTestBase<T extends GameBoard> {
             gameBoard.executeCompleteTurn(allPossibleMoves.get(2), playerWhite);
         }
 
-        return new Object[]{gameBoard, playerBlack, playerWhite};
+        return new Object[]{gameBoard, playerBlack, playerWhite, "" + gameBoard.millMode + " after " + nMovesPerPlayer + " moves per player"};
     }
 
 
     @Test
     public void reverseCompleteTurn_ShouldReverse(){
 
-        final GameBoard gameBoardBefore = callCopyConstructor(mGameBoard);
+        final GameBoard gameBoardBefore = mGameBoard.getCopy();
 
         Strategie strategy = new Strategie(mGameBoard, null);
 
