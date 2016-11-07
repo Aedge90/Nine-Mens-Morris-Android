@@ -25,7 +25,7 @@ public class GameBoardTestNonParameterized {
 
 
     @Test
-    public void makeWholeMove_WithSetMoveOnNonEmptyPosShouldThrowException(){
+    public void executeCompleteTurn_WithSetMoveOnNonEmptyPosShouldThrowException(){
 
         GameBoard mGameBoard = new Mill9();
 
@@ -47,7 +47,7 @@ public class GameBoardTestNonParameterized {
     }
 
     @Test
-    public void makeWholeMove_WithMoveMoveOnNonEmptyPosShouldThrowException(){
+    public void executeCompleteTurn_WithMoveMoveOnNonEmptyPosShouldThrowException(){
 
         Position src1 = new Position(6,0);
         Position src2 = new Position(6,6);
@@ -71,7 +71,7 @@ public class GameBoardTestNonParameterized {
     }
 
     @Test
-    public void makeWholeMove_KillOwnPieceShouldThrowException(){
+    public void executeCompleteTurn_KillOwnPieceShouldThrowException(){
 
         Position p = new Position(6,6);
         try {
@@ -89,7 +89,7 @@ public class GameBoardTestNonParameterized {
 
 
     @Test
-    public void makeWholeMove_KillNotExistingPieceShouldThrowException(){
+    public void executeCompleteTurn_KillNotExistingPieceShouldThrowException(){
 
         Position set = new Position(0,0);
         Position kill = new Position(6,3);
