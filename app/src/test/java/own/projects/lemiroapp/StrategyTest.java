@@ -52,7 +52,7 @@ public class StrategyTest {
 
         //result should be 500 +500 -1000 = 0 (500 for having own pieces on the gameboard, -1000 for enemies piece
 
-        int result = mStrategy.bewertung(mPlayerBlack);
+        int result = mStrategy.bewertung(mPlayerBlack, moves);
         assertEquals(0, result);
     }
 
@@ -71,7 +71,7 @@ public class StrategyTest {
 
         //result should be 500 +500 +500 -1000 = 500 (500 for having own pieces on the gameboard, -1000 for enemies piece
 
-        int result = mStrategy.bewertung(mPlayerBlack);
+        int result = mStrategy.bewertung(mPlayerBlack, moves);
         assertEquals(500, result);
     }
 
@@ -98,10 +98,10 @@ public class StrategyTest {
 
         executeMoveSeries(moves, mPlayerBlack);
 
-        int result = mStrategy.bewertung(mPlayerBlack);
+        int result = mStrategy.bewertung(mPlayerBlack, moves);
         assertEquals(mStrategy.MAX, result);
 
-        result = mStrategy.bewertung(mPlayerWhite);
+        result = mStrategy.bewertung(mPlayerWhite, moves);
         assertEquals(mStrategy.MIN, result);
     }
 

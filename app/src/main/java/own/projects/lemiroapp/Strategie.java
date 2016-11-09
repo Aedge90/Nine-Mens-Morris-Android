@@ -11,8 +11,9 @@ public class Strategie {
 	Zug move;
 	int startDepth;
 	private ProgressUpdater up;
-	static final int MAX = Integer.MAX_VALUE;
-	static final int MIN = Integer.MIN_VALUE;
+    private Player maxPlayer;
+	static final int MAX = 100000;
+    static final int MIN = -100000;
 
 	Strategie(GameBoard field, ProgressUpdater up) {
 		this.field = field;
@@ -90,6 +91,11 @@ public class Strategie {
 	//returns a list of moves that the player is able to do
 	LinkedList<Zug> possibleMoves(Player player) {
 		LinkedList<Zug> poss = new LinkedList<Zug>();
+        //do not compute possible moves if the player has lost, otherwise it breaks the evaluation
+        //as a state AFTER loosing would be evaluated instead of the final state after the final kill
+        if(field.getPositions(player.getColor()).size() < 3 && player.getSetCount() <= 0){
+            return poss;
+        }
 		if(player.getSetCount() > 0){
 			addSetMoves(poss, player);
 		}else{
@@ -103,49 +109,42 @@ public class Strategie {
 				addJumpMoves(poss, player);
 			}
 		}
-        Log.i("Stratgie" , player.getColor() + " " + poss.get(0));
 		return poss;
 	}
 
-	//player: player to evaluate
+	//maximizing player has got to return higher values for better situations
+    //minimizing player has got to return lower values the better his situation
     @VisibleForTesting
-	int bewertung(Player player) {
-		
-		if (field.getPositions(player.getColor()).size() < 3 && player.getSetCount() <= 0) {
-			//worst case: player has less than 3 pieces and has no pieces left to set --> game is lost
-			return MIN;
-		}
-		if (field.getPositions(player.getOtherPlayer().getColor()).size() < 3 && player.getOtherPlayer().getSetCount() <= 0) {
-			//best case: other player has less than 3 pieces and has no pieces left to set --> he has lost
-			return MAX;
-		}
+	int bewertung(Player player, LinkedList<Zug> moves) {
 
-        //TODO think about this problem: if player could win, he would proceed to make moves until the depth is reached
-        //TODO only in the end, he would realize (in bewertung()) that he could win although he could win earlier
+        if (moves.size() == 0) {
+            //worst case: player can not make any moves --> game is lost
+            //or player has less than 3 pieces and has no pieces left to set --> game is lost
+            if (player.equals(maxPlayer)) {
+                //Log.i("Strategie", "bewertung: size: " + moves.size() + " ret: " + MIN);
+                return MIN;
+            }else{
+                //Log.i("Strategie", "bewertung: size: " + moves.size() + " ret: " + MAX);
+                return MAX;
+            }
+        }
 
 		int ret = 0;
-		ret += field.getPositions(player.getColor()).size() * 500;
-		ret += field.getPositions(player.getOtherPlayer().getColor()).size() * (-1000);
+		//ret += field.getPositions(player.getColor()).size() * 500;
+		//ret += field.getPositions(player.getOtherPlayer().getColor()).size() * (-1000);
 
-		//TODO dont compute moves again although it has been computed before
-		LinkedList<Zug> moves = possibleMoves(player);
-		if (moves.size() == 0) {
-            //worst case: player can not make any moves --> game is lost
-			return MIN;
-		}
+        //simply try to always have more pieces than the enemy. This should motivate to kill to make ret bigger
+        ret = field.getPositions(player.getColor()).size() - field.getPositions(player.getOtherPlayer().getColor()).size();
 
-		/*
-		//this is probably false, as we only evaluate the current situation. This would mean the other player can
-		//move this round which isnt true
-		//also it should be enough to say that its a worst case if you cant move anymore
-		//as the minimizing player will use that
-		moves = possibleMoves(player.getOtherPlayer());
-		if (moves.size() == 0) {
-			return MAX;
-		}
-		*/
 
-		return ret;
+
+        //Log.i("Strategie", "bewertung: ret: " + ret);
+
+        if (player.equals(maxPlayer)) {
+            return ret;
+        }else{
+            return -ret;
+        }
 	}
 
 	//setCountMax: number of stones to set for max player
@@ -160,7 +159,7 @@ public class Strategie {
 		}
         //end reached or no more moves available, maybe because he is trapped or because he lost
 		if (depth == 0 || moves.size() == 0){
-			int bewertung = bewertung(player);
+			int bewertung = bewertung(player, moves);
 			return bewertung;
 		}
 		int maxWert = alpha;
@@ -172,6 +171,7 @@ public class Strategie {
 			int wert = min(depth-1, maxWert, beta, player.getOtherPlayer());
 			field.reverseCompleteTurn(z, player);
 			if (wert > maxWert) {
+                Log.i("Strategie", "bewertung was: " + wert + "  " + z + " depth:  " + depth );
 				maxWert = wert;
 				if (maxWert >= beta)             
 					break;
@@ -185,7 +185,7 @@ public class Strategie {
 	private int min(int depth, int alpha, int beta, Player player) throws InterruptedException {
 		LinkedList<Zug> moves = possibleMoves(player);
 		if (depth == 0 || moves.size() == 0){
-			int bewertung = bewertung(player);
+			int bewertung = bewertung(player, moves);
 			return bewertung;
 		}
 		int minWert = beta;
@@ -218,6 +218,8 @@ public class Strategie {
 		Log.i("Strategie", "computeMove started for Player " + player.getColor() + " startDepth: " + startDepth);
 
         move = null;
+
+        maxPlayer = player;
 
 		max(startDepth, Integer.MIN_VALUE, Integer.MAX_VALUE, player);
 		
