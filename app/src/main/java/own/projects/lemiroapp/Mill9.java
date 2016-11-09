@@ -130,7 +130,7 @@ public class Mill9 extends GameBoard {
 				else if (!this.getPos(p.getX(), i).equals(Options.Color.INVALID))
 					break;
 		}
-		return new Zug(null, null, null);
+		return null;
 	}
 
 	@Override
@@ -149,7 +149,7 @@ public class Mill9 extends GameBoard {
 				else if (!this.getPos(p.getX(), i).equals(Options.Color.INVALID))
 					break;
 		}
-		return new Zug(null, null, null);
+		return null;
 	}
 
 	@Override
@@ -167,7 +167,7 @@ public class Mill9 extends GameBoard {
 				else if (!this.getPos(i, p.getY()).equals(Options.Color.INVALID))
 					break;
 		}
-		return new Zug(null, null, null);
+		return null;
 	}
 
 	@Override
@@ -186,7 +186,7 @@ public class Mill9 extends GameBoard {
 				else if (!this.getPos(i, p.getY()).equals(Options.Color.INVALID))
 					break;
 		}
-		return new Zug(null, null, null);
+		return null;
 	}
 
 }

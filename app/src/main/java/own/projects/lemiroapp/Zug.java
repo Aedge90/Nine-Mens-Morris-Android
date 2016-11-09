@@ -31,16 +31,11 @@ public class Zug {
 	public String toString(){
 		return "src: " + src + " dest: " + dest + " kill: " + kill;
 	}
-
-	public boolean isValid(){
-		if(src != null || dest != null || kill != null){
-			return true;
-		}else{
-			return false;
-		}
-	}
 	
 	private boolean isPossible(){
+		if(src == null && dest == null && kill == null){
+			return false;
+		}
         if(src == null && dest == null && kill != null){
             return false;
         }

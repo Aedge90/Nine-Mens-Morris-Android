@@ -205,13 +205,13 @@ public abstract class GameBoard {
 
 		if (!jump){
 			for (Position p : getPositions(player)) {
-				if (moveUp(p).isValid())
+				if (moveUp(p) != null)
 					return true;
-				if (moveDown(p).isValid())
+				if (moveDown(p) != null)
 					return true;
-				if (moveRight(p).isValid())
+				if (moveRight(p) != null)
 					return true;
-				if (moveLeft(p).isValid())
+				if (moveLeft(p) != null)
 					return true;
 			}
 		} else {
@@ -229,8 +229,17 @@ public abstract class GameBoard {
 		if(getPositions(getPos(src)).size() == 3){
 			return true;
 		}
-		if(dest.equals(moveUp(src).getDest()) ||dest.equals(moveDown(src).getDest())
-				||dest.equals(moveRight(src).getDest()) ||dest.equals(moveLeft(src).getDest())){
+
+		if(moveUp(src) != null && dest.equals(moveUp(src).getDest())){
+			return true;
+		}
+		if(moveDown(src) != null && dest.equals(moveDown(src).getDest())) {
+			return true;
+		}
+		if(moveRight(src) != null && dest.equals(moveRight(src).getDest())) {
+			return true;
+		}
+		if(moveLeft(src) != null && dest.equals(moveLeft(src).getDest())) {
 			return true;
 		}
 		return false;

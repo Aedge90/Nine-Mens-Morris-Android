@@ -199,7 +199,7 @@ public class HumanVsBot extends GameModeActivity{
 
 			setTextinUIThread(progressText, "Bot is moving!");
 
-            Log.i("HumanVsBot", "before make Move bot");
+            Log.i("HumanVsBot", "before make Move bot: currMove: " + currMove);
 	    	fieldView.makeMove(currMove, options.colorPlayer2);
             Log.i("HumanVsBot", "after make Move bot");
 	    	fieldView.getPos(currMove.getSrc()).setOnClickListener(

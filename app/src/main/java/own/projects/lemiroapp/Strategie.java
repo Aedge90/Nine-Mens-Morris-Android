@@ -23,13 +23,13 @@ public class Strategie {
 		for (int i = 0; i<field.getPositions(player.getColor()).size(); i++) {
 			//no iterator here to avoid concurrent modification exception
 			Position p = field.getPositions(player.getColor()).get(i);
-			if (field.moveUp(p).isValid())
+			if (field.moveUp(p) != null)
 				addpossibleKillstoMove(moves, field.moveUp(p), player);
-			if (field.moveDown(p).isValid())
+			if (field.moveDown(p) != null)
 				addpossibleKillstoMove(moves, field.moveDown(p), player);
-			if (field.moveRight(p).isValid())
+			if (field.moveRight(p) != null)
 				addpossibleKillstoMove(moves, field.moveRight(p), player);
-			if (field.moveLeft(p).isValid())
+			if (field.moveLeft(p) != null)
 				addpossibleKillstoMove(moves, field.moveLeft(p), player);
 		}
 	}
@@ -103,6 +103,7 @@ public class Strategie {
 				addJumpMoves(poss, player);
 			}
 		}
+        Log.i("Stratgie" , player.getColor() + " " + poss.get(0));
 		return poss;
 	}
 
@@ -157,6 +158,7 @@ public class Strategie {
 		if(depth == startDepth){
 			up.initialize(moves.size());
 		}
+        //end reached or no more moves available, maybe because he is trapped or because he lost
 		if (depth == 0 || moves.size() == 0){
 			int bewertung = bewertung(player);
 			return bewertung;
@@ -172,7 +174,7 @@ public class Strategie {
 			if (wert > maxWert) {
 				maxWert = wert;
 				if (maxWert >= beta)             
-					break;          
+					break;
 				if (depth == startDepth)
 					move = z;
 			}
@@ -194,7 +196,7 @@ public class Strategie {
 			if (wert < minWert) {
 				minWert = wert;
 				if (minWert <= alpha){ 
-					break;       
+					break;
 				}
 			}
 		}
@@ -213,9 +215,9 @@ public class Strategie {
 			}
 		}
 		
-		Log.i("Strategie", "computeMove started for Player " + player + " startDepth: " + startDepth);
-		
-		move = new Zug(null, null, null);
+		Log.i("Strategie", "computeMove started for Player " + player.getColor() + " startDepth: " + startDepth);
+
+        move = null;
 
 		max(startDepth, Integer.MIN_VALUE, Integer.MAX_VALUE, player);
 		
