@@ -2,7 +2,6 @@ package own.projects.lemiroapp;
 
 import java.util.LinkedList;
 
-import android.graphics.Path;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
@@ -10,8 +9,8 @@ public abstract class GameBoard {
 
 	final static int LENGTH = 7;
 	Options.Color[][] field;
-	final Options.Color O = Options.Color.NOTHING;
-	final Options.Color N = Options.Color.INVALID;
+	final Options.Color N = Options.Color.NOTHING;
+	final Options.Color I = Options.Color.INVALID;
 	Options.MillMode millMode;
 
     GameBoard(){}
@@ -37,7 +36,7 @@ public abstract class GameBoard {
 
     //checks if this Position is allowed or an invalid Position
     boolean isValid(Position p){
-        if (field[p.getY()][p.getX()] == N) {
+        if (field[p.getY()][p.getX()] == I) {
             return false;
         }else{
             return true;
@@ -49,7 +48,7 @@ public abstract class GameBoard {
         if (p == null) {
             throw new IllegalArgumentException("getPossibleMillX: p is null");
         }
-        if (field[p.getY()][p.getX()] == N) {
+        if (field[p.getY()][p.getX()] == I) {
             throw new IllegalArgumentException("getPossibleMillX: p is not valid");
         }
     }

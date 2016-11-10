@@ -228,7 +228,7 @@ public class GameBoardView {
 		for (int y = 0; y < fieldView.length; y++) {
 			print += y + " | ";
 			for (int x = 0; x < fieldView[y].length; x++) {
-				print += getPos(new Position(x, y)) !=null ? "O " : "  ";
+				print += getPos(new Position(x, y)) !=null ? "N " : "  ";
 			}
 			print += '\n';
 		}

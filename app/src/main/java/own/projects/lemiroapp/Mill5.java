@@ -5,13 +5,13 @@ import android.support.annotation.VisibleForTesting;
 public class Mill5 extends GameBoard {
 
 	private Options.Color[][] mill5 = // ERSTES Y ZWEITES X
-		{{O, N, N, O, N, N, O },
-		{ N, N, N, N, N, N, N },
-		{ N, N, O, O, O, N, N },
-		{ O, N, O, N, O, N, O },
-		{ N, N, O, O, O, N, N },
-		{ N, N, N, N, N, N, N },
-		{ O, N, N, O, N, N, O }};
+		{{N, I, I, N, I, I, N},
+		{ I, I, I, I, I, I, I},
+		{ I, I, N, N, N, I, I},
+		{ N, I, N, I, N, I, N},
+		{ I, I, N, N, N, I, I},
+		{ I, I, I, I, I, I, I},
+		{ N, I, I, N, I, I, N}};
 	
 	Mill5() {
         field = mill5;
