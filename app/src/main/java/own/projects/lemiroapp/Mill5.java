@@ -12,10 +12,33 @@ public class Mill5 extends GameBoard {
 		{ I, I, N, N, N, I, I},
 		{ I, I, I, I, I, I, I},
 		{ N, I, I, N, I, I, N}};
+
 	
 	Mill5() {
         field = mill5;
         millMode =  Options.MillMode.MILL5;
+
+		GameBoardPosition N00 = new GameBoardPosition(0,0);
+		GameBoardPosition N30 = new GameBoardPosition(3,0);
+		GameBoardPosition N60 = new GameBoardPosition(6,0);
+
+		GameBoardPosition N22 = new GameBoardPosition(2,2);
+		GameBoardPosition N32 = new GameBoardPosition(3,2);
+		GameBoardPosition N42 = new GameBoardPosition(4,2);
+
+		GameBoardPosition N03 = new GameBoardPosition(0,3);
+		GameBoardPosition N23 = new GameBoardPosition(2,3);
+		GameBoardPosition N43 = new GameBoardPosition(4,3);
+		GameBoardPosition N63 = new GameBoardPosition(6,3);
+
+		GameBoardPosition N24 = new GameBoardPosition(2,4);
+		GameBoardPosition N34 = new GameBoardPosition(3,4);
+		GameBoardPosition N44 = new GameBoardPosition(4,4);
+
+		GameBoardPosition N06 = new GameBoardPosition(0,6);
+		GameBoardPosition N36 = new GameBoardPosition(3,6);
+		GameBoardPosition N66 = new GameBoardPosition(6,6);
+
 	}
 
     @VisibleForTesting
