@@ -149,7 +149,7 @@ public class Strategie {
 
 	//setCountMax: number of stones to set for max player
 	//setCountMin: analog
-	private int max(int depth, int alpha, int beta, Player player) throws InterruptedException {
+	private int max(int depth, int alpha, int beta, Player player, int bewertung) throws InterruptedException {
 		if(Thread.interrupted()){
 			throw new InterruptedException("Computation of Bot Move was interrupted!");
 		}
@@ -157,9 +157,14 @@ public class Strategie {
 		if(depth == startDepth){
 			up.initialize(moves.size());
 		}
-        //end reached or no more moves available, maybe because he is trapped or because he lost
+        //evaluate every move and add evaluations together rather than just evaluating the last state of the gameboard.
+        //By this we avoid the bot not killing because the evaluation of a kill in a move in the future
+        //will be the same as a kill in the current move, thus sometimes the bot will not kill in his current move
+		if (depth != startDepth){
+			bewertung += bewertung(player, moves);
+		}
+		//end reached or no more moves available, maybe because he is trapped or because he lost
 		if (depth == 0 || moves.size() == 0){
-			int bewertung = bewertung(player, moves);
 			return bewertung;
 		}
 		int maxWert = alpha;
@@ -168,7 +173,7 @@ public class Strategie {
 				up.update();
 			}
 			field.executeCompleteTurn(z, player);
-			int wert = min(depth-1, maxWert, beta, player.getOtherPlayer());
+			int wert = min(depth-1, maxWert, beta, player.getOtherPlayer(), bewertung);
 			field.reverseCompleteTurn(z, player);
 			if (wert > maxWert) {
                 Log.i("Strategie", "bewertung was: " + wert + "  " + z + " depth:  " + depth );
@@ -182,16 +187,16 @@ public class Strategie {
 		return maxWert;
 	}
 
-	private int min(int depth, int alpha, int beta, Player player) throws InterruptedException {
+	private int min(int depth, int alpha, int beta, Player player, int bewertung) throws InterruptedException {
 		LinkedList<Zug> moves = possibleMoves(player);
+		bewertung += bewertung(player, moves);
 		if (depth == 0 || moves.size() == 0){
-			int bewertung = bewertung(player, moves);
 			return bewertung;
 		}
 		int minWert = beta;
 		for (Zug z : moves) {
 			field.executeCompleteTurn(z, player);
-			int wert = max(depth-1, alpha, minWert, player.getOtherPlayer());
+			int wert = max(depth-1, alpha, minWert, player.getOtherPlayer(), bewertung);
 			field.reverseCompleteTurn(z, player);
 			if (wert < minWert) {
 				minWert = wert;
@@ -221,7 +226,7 @@ public class Strategie {
 
         maxPlayer = player;
 
-		max(startDepth, Integer.MIN_VALUE, Integer.MAX_VALUE, player);
+		max(startDepth, Integer.MIN_VALUE, Integer.MAX_VALUE, player,0);
 		
 		up.reset();
 		
