@@ -1,14 +1,18 @@
 package own.projects.lemiroapp;
 
+import android.graphics.Path;
 import android.widget.ProgressBar;
 
 import org.junit.Before;
 import org.junit.Test;
 import android.test.mock.MockContext;
 
+import junit.framework.AssertionFailedError;
+
 import java.util.LinkedList;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.fail;
 
 
 
@@ -65,12 +69,51 @@ public class StrategyTest {
         mPlayerBlack.setSetCount(0);
         mPlayerWhite.setSetCount(0);
 
-        mPlayerBlack.setDifficulty(Options.Difficulties.NORMAL);
+        for(int i = 0; i < Options.Difficulties.values().length; i++) {
 
-        Zug result = strategy.computeMove(mPlayerBlack);
+            mPlayerBlack.setDifficulty(Options.Difficulties.values()[i]);
+            Zug result = strategy.computeMove(mPlayerBlack);
+            try {
+                assertEquals(new Position(0, 0), result.getDest());
+                assertEquals(new Position(3, 0), result.getSrc());
+            }catch(AssertionError e){
+                fail(e + "\ndifficulty was: " + Options.Difficulties.values()[i]);
+            }
+        }
 
-        assertEquals(new Position(0,0), result.getDest());
-        assertEquals(new Position(3,0), result.getSrc());
+    }
+
+    @Test
+    public void computeMoveShouldWinAsNoMovesLeft() throws InterruptedException {
+
+        Options.Color[][] mill5 =
+                {{B, I, I, N, I, I, N},
+                { I, I, I, I, I, I, I},
+                { I, I, W, B, W, I, I},
+                { N, I, B, I, N, I, B},
+                { I, I, W, B, W, I, I},
+                { I, I, I, I, I, I, I},
+                { N, I, I, N, I, I, N}};
+
+        GameBoard gameBoard = new Mill5(mill5);
+        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
+        Strategie strategy = new Strategie(gameBoard, updater);
+
+        mPlayerBlack.setSetCount(0);
+        mPlayerWhite.setSetCount(0);
+
+        for(int i = 0; i < Options.Difficulties.values().length; i++) {
+
+            mPlayerBlack.setDifficulty(Options.Difficulties.values()[i]);
+            Zug result = strategy.computeMove(mPlayerBlack);
+            try {
+                assertEquals(new Position(4, 3), result.getDest());
+                assertEquals(new Position(6, 3), result.getSrc());
+            }catch(AssertionError e){
+                fail(e + "\ndifficulty was: " + Options.Difficulties.values()[i]);
+            }
+        }
     }
 
     @Test
