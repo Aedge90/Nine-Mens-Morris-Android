@@ -121,24 +121,15 @@ public class Strategie {
             //worst case: player can not make any moves --> game is lost
             //or player has less than 3 pieces and has no pieces left to set --> game is lost
             if (player.equals(maxPlayer)) {
-                //Log.i("Strategie", "bewertung: size: " + moves.size() + " ret: " + MIN);
                 return MIN;
             }else{
-                //Log.i("Strategie", "bewertung: size: " + moves.size() + " ret: " + MAX);
                 return MAX;
             }
         }
 
 		int ret = 0;
-		//ret += field.getPositions(player.getColor()).size() * 500;
-		//ret += field.getPositions(player.getOtherPlayer().getColor()).size() * (-1000);
-
         //simply try to always have more pieces than the enemy. This should motivate to kill to make ret bigger
         ret = field.getPositions(player.getColor()).size() - field.getPositions(player.getOtherPlayer().getColor()).size();
-
-
-
-        //Log.i("Strategie", "bewertung: ret: " + ret);
 
         if (player.equals(maxPlayer)) {
             return ret;
@@ -147,8 +138,6 @@ public class Strategie {
         }
 	}
 
-	//setCountMax: number of stones to set for max player
-	//setCountMin: analog
 	private int max(int depth, int alpha, int beta, Player player, int bewertung) throws InterruptedException {
 		if(Thread.interrupted()){
 			throw new InterruptedException("Computation of Bot Move was interrupted!");
@@ -176,7 +165,7 @@ public class Strategie {
 			int wert = min(depth-1, maxWert, beta, player.getOtherPlayer(), bewertung);
 			field.reverseCompleteTurn(z, player);
 			if (wert > maxWert) {
-                Log.i("Strategie", "bewertung was: " + wert + "  " + z + " depth:  " + depth );
+                //Log.i("Strategie", "bewertung was: " + wert + "  " + z + " depth:  " + depth );
 				maxWert = wert;
 				if (maxWert >= beta)             
 					break;
