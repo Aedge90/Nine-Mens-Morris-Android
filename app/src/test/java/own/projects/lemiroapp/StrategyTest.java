@@ -23,6 +23,11 @@ public class StrategyTest {
     private Player mPlayerBlack;
     private Player mPlayerWhite;
 
+    private final Options.Color B = Options.Color.BLACK;
+    private final Options.Color W = Options.Color.WHITE;
+    private final Options.Color N = Options.Color.NOTHING;
+    private final Options.Color I = Options.Color.INVALID;
+
     @Before
     public void beforeTests() {
         mGameboard = new Mill5();
@@ -41,38 +46,59 @@ public class StrategyTest {
     }
 
     @Test
-    public void bewertungShouldBe0() {
+    public void computeMoveShouldCloseMill() throws InterruptedException {
 
-        LinkedList<Zug> moves = new LinkedList<Zug>();
-        moves.add(new Zug(new Position(0,0),null, null));
-        moves.add(new Zug(new Position(3,0),null, null));
-        moves.add(new Zug(new Position(6,6),null, null));
+        Options.Color[][] mill5 =
+                {{N, I, I, B, I, I, W},
+                { I, I, I, I, I, I, I},
+                { I, I, B, N, W, I, I},
+                { B, I, B, I, N, I, N},
+                { I, I, W, N, N, I, I},
+                { I, I, I, I, I, I, I},
+                { B, I, I, W, I, I, N}};
 
-        executeMoveSeries(moves, mPlayerBlack);
+        GameBoard gameBoard = new Mill5(mill5);
+        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
+        Strategie strategy = new Strategie(gameBoard, updater);
 
-        //result should be 500 +500 -1000 = 0 (500 for having own pieces on the gameboard, -1000 for enemies piece
+        mPlayerBlack.setSetCount(0);
+        mPlayerWhite.setSetCount(0);
 
-        int result = mStrategy.bewertung(mPlayerBlack, moves);
-        assertEquals(0, result);
+        mPlayerBlack.setDifficulty(Options.Difficulties.NORMAL);
+
+        Zug result = strategy.computeMove(mPlayerBlack);
+
+        assertEquals(new Position(0,0), result.getDest());
+        assertEquals(new Position(3,0), result.getSrc());
     }
 
     @Test
-    public void bewertungOfMillShouldBe500() {
+    public void bewertungMinimizingPlayeronNormalDiffShouldBe2() {
 
-        LinkedList<Zug> moves = new LinkedList<Zug>();
-        moves.add(new Zug(new Position(0,0), null, null));
-        moves.add(new Zug(new Position(3,0), null, null));
-        moves.add(new Zug(new Position(0,3), null, null));
-        moves.add(new Zug(new Position(6,0), null, null));
-        //last move contains a kill
-        moves.add(new Zug(new Position(0,6), null, new Position(3,0)));
+        Options.Color[][] mill5 =
+                {{N, I, I, B, I, I, W},
+                { I, I, I, I, I, I, I},
+                { I, I, B, N, W, I, I},
+                { B, I, B, I, N, I, N},
+                { I, I, W, N, N, I, I},
+                { I, I, I, I, I, I, I},
+                { B, I, I, W, I, I, N}};
 
-        executeMoveSeries(moves, mPlayerBlack);
+        GameBoard gameBoard = new Mill5(mill5);
+        Strategie strategy = new Strategie(gameBoard,null);
 
-        //result should be 500 +500 +500 -1000 = 500 (500 for having own pieces on the gameboard, -1000 for enemies piece
+        mPlayerBlack.setSetCount(0);
+        mPlayerWhite.setSetCount(0);
 
-        int result = mStrategy.bewertung(mPlayerBlack, moves);
-        assertEquals(500, result);
+        gameBoard.executeCompleteTurn(new Zug(new Position(0,0), new Position(3,0), new Position(4,2)), mPlayerBlack);
+        gameBoard.executeCompleteTurn(new Zug(new Position(6,3), new Position(6,0), null), mPlayerWhite);
+        gameBoard.executeCompleteTurn(new Zug(new Position(3,0), new Position(0,0), null), mPlayerBlack);
+
+        //minimizing player evaluates now
+        int result = strategy.bewertung(mPlayerWhite, strategy.possibleMoves(mPlayerWhite));
+
+        assertEquals(2, result);
     }
 
     @Test
@@ -98,11 +124,12 @@ public class StrategyTest {
 
         executeMoveSeries(moves, mPlayerBlack);
 
-        int result = mStrategy.bewertung(mPlayerBlack, moves);
-        assertEquals(mStrategy.MAX, result);
+        LinkedList<Zug> possibleMoves = mStrategy.possibleMoves(mPlayerWhite);
+        assertEquals(0, possibleMoves.size());
 
-        result = mStrategy.bewertung(mPlayerWhite, moves);
-        assertEquals(mStrategy.MIN, result);
+        //minimizing players worst case is MAX. black is the maximizing player
+        int result = mStrategy.bewertung(mPlayerWhite, possibleMoves);
+        assertEquals(mStrategy.MAX, result);
     }
 
     @Test
@@ -157,18 +184,14 @@ public class StrategyTest {
 
     @Test
     public void addpossibleKillstoMove_ShouldNotAddKill(){
-        Options.Color WHITE = Options.Color.WHITE;
-        Options.Color BLACK = Options.Color.BLACK;
-        Options.Color NOTHING = Options.Color.NOTHING;
-        Options.Color I = Options.Color.INVALID;
 
-        Options.Color[][] field = {{BLACK, I, I,    BLACK ,I ,I ,    NOTHING},
+        Options.Color[][] field = {{B, I, I, B, I, I, N},
                                   { I, I, I, I, I, I, I },
-                                  { I, I,    WHITE, WHITE, BLACK,   I, I },
-                                  {NOTHING,I,BLACK  ,I ,   NOTHING,I,WHITE},
-                                  { I, I,    WHITE, BLACK ,NOTHING, I, I },
+                                  { I, I, W, W, B, I, I },
+                                  { N, I, B, I, N, I, W },
+                                  { I, I, W, B, N, I, I },
                                   { I, I, I, I, I, I, I },
-                                  {WHITE, I, I,  NOTHING, I, I,      NOTHING}};
+                                  { W, I, I, N, I, I, N}};
 
         mGameboard = new Mill5(field);
 
