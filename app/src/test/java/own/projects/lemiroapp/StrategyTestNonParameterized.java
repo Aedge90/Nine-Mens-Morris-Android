@@ -57,7 +57,7 @@ public class StrategyTestNonParameterized {
         gameBoard.executeCompleteTurn(new Zug(new Position(3,0), new Position(0,0), null), mPlayerBlack);
 
         //minimizing player evaluates now
-        int result = strategy.bewertung(mPlayerWhite, strategy.possibleMoves(mPlayerWhite));
+        int result = strategy.bewertung(mPlayerWhite, strategy.possibleMoves(mPlayerWhite),0);
 
         assertEquals(2, result);
     }
@@ -93,7 +93,7 @@ public class StrategyTestNonParameterized {
         assertEquals(0, possibleMoves.size());
 
         //minimizing players worst case is MAX. black is the maximizing player
-        int result = strategy.bewertung(mPlayerWhite, possibleMoves);
+        int result = strategy.bewertung(mPlayerWhite, possibleMoves,0);
         assertEquals(strategy.MAX, result);
     }
 

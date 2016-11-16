@@ -12,6 +12,7 @@ public class Strategie {
 	int startDepth;
 	private ProgressUpdater up;
     private Player maxPlayer;
+	//not Int.Max as the evaluation function would create overflows
 	static final int MAX = 100000;
     static final int MIN = -100000;
 
@@ -115,15 +116,17 @@ public class Strategie {
 	//maximizing player has got to return higher values for better situations
     //minimizing player has got to return lower values the better his situation
     @VisibleForTesting
-	int bewertung(Player player, LinkedList<Zug> moves) {
+	int bewertung(Player player, LinkedList<Zug> moves, int depth) {
 
         if (moves.size() == 0) {
             //worst case: player can not make any moves --> game is lost
             //or player has less than 3 pieces and has no pieces left to set --> game is lost
             if (player.equals(maxPlayer)) {
-                return MIN;
+                //multiply with an number (which is bigger than 1) depending on depth
+                //necessary as the evaluation has to be higher if the player can win after fewer moves
+                return MIN * (depth + 1);
             }else{
-                return MAX;
+                return MAX * (depth + 1);
             }
         }
 
@@ -150,7 +153,7 @@ public class Strategie {
         //By this we avoid the bot not killing because the evaluation of a kill in a move in the future
         //will be the same as a kill in the current move, thus sometimes the bot will not kill in his current move
 		if (depth != startDepth){
-			bewertung += bewertung(player, moves);
+			bewertung += bewertung(player, moves, depth);
 		}
 		//end reached or no more moves available, maybe because he is trapped or because he lost
 		if (depth == 0 || moves.size() == 0){
@@ -164,7 +167,7 @@ public class Strategie {
 			field.executeCompleteTurn(z, player);
 			int wert = min(depth-1, maxWert, beta, player.getOtherPlayer(), bewertung);
 			field.reverseCompleteTurn(z, player);
-			if (wert > maxWert) {
+            if (wert > maxWert) {
                 //Log.i("Strategie", "bewertung was: " + wert + "  " + z + " depth:  " + depth );
 				maxWert = wert;
 				if (maxWert >= beta)             
@@ -178,7 +181,7 @@ public class Strategie {
 
 	private int min(int depth, int alpha, int beta, Player player, int bewertung) throws InterruptedException {
 		LinkedList<Zug> moves = possibleMoves(player);
-		bewertung += bewertung(player, moves);
+		bewertung += bewertung(player, moves, depth);
 		if (depth == 0 || moves.size() == 0){
 			return bewertung;
 		}
