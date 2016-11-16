@@ -14,6 +14,7 @@ import java.util.Collection;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.fail;
+import static org.junit.Assert.assertNotEquals;
 
 
 @RunWith(value = Parameterized.class)
@@ -60,11 +61,6 @@ public class StrategyTestParameterized {
     @Test
     public void computeMoveShouldCloseMill() throws InterruptedException {
 
-        // problem: player will often do the same move over and over again with no purpose
-        // but thats because the other player, as soon as he has only 3 stones can
-        // prohibit any mill and the alpha beta algorithm assumes the other player will always make
-        // his best possible move, thus the evaluation is never better
-
         Options.Color[][] mill5 =
                 {{N, I, I, B, I, I, W},
                 { I, I, I, I, I, I, I},
@@ -86,6 +82,35 @@ public class StrategyTestParameterized {
 
         assertEquals(new Position(0, 0), result.getDest());
         assertEquals(new Position(3, 0), result.getSrc());
+
+    }
+
+    @Test
+    public void computeMoveShouldCloseMillAndPreventOtherPlayersMill() throws InterruptedException {
+
+        Options.Color[][] mill5 =
+                {{N, I, I, B, I, I, W},
+                { I, I, I, I, I, I, I},
+                { I, I, B, N, N, I, I},
+                { B, I, B, I, W, I, N},
+                { I, I, W, N, N, I, I},
+                { I, I, I, I, I, I, I},
+                { B, I, I, W, I, I, W}};
+
+        GameBoard gameBoard = new Mill5(mill5);
+        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
+        Strategie strategy = new Strategie(gameBoard, updater);
+
+        mPlayerBlack.setSetCount(0);
+        mPlayerWhite.setSetCount(0);
+
+        Zug result = strategy.computeMove(mPlayerBlack);
+
+        assertEquals(new Position(0, 0), result.getDest());
+        assertEquals(new Position(3, 0), result.getSrc());
+
+        assertNotEquals(new Position(2, 4), result.getKill());
 
     }
 

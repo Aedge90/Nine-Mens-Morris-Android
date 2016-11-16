@@ -35,34 +35,6 @@ public class StrategyTestNonParameterized {
     }
 
     @Test
-    public void bewertungMinimizingPlayeronNormalDiffShouldBe2() {
-
-        Options.Color[][] mill5 =
-                {{N, I, I, B, I, I, W},
-                { I, I, I, I, I, I, I},
-                { I, I, B, N, W, I, I},
-                { B, I, B, I, N, I, N},
-                { I, I, W, N, N, I, I},
-                { I, I, I, I, I, I, I},
-                { B, I, I, W, I, I, N}};
-
-        GameBoard gameBoard = new Mill5(mill5);
-        Strategie strategy = new Strategie(gameBoard,null);
-
-        mPlayerBlack.setSetCount(0);
-        mPlayerWhite.setSetCount(0);
-
-        gameBoard.executeCompleteTurn(new Zug(new Position(0,0), new Position(3,0), new Position(4,2)), mPlayerBlack);
-        gameBoard.executeCompleteTurn(new Zug(new Position(6,3), new Position(6,0), null), mPlayerWhite);
-        gameBoard.executeCompleteTurn(new Zug(new Position(3,0), new Position(0,0), null), mPlayerBlack);
-
-        //minimizing player evaluates now
-        int result = strategy.bewertung(mPlayerWhite, strategy.possibleMoves(mPlayerWhite),0);
-
-        assertEquals(2, result);
-    }
-
-    @Test
     public void bewertungOfLoosingOrWinning() {
 
         //Game in which black player starts, and kills white player
