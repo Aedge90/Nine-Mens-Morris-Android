@@ -15,10 +15,12 @@ public class Strategie {
 	//not Int.Max as the evaluation function would create overflows
 	static final int MAX = 100000;
     static final int MIN = -100000;
+    LinkedList<Zug> movesToEvaluate;
 
 	Strategie(GameBoard field, ProgressUpdater up) {
 		this.field = field;
 		this.up = up;
+        this.movesToEvaluate = new LinkedList<Zug>();
 	}
 	
 	private void addnonJumpMoves(LinkedList<Zug> moves, Player player){
@@ -113,8 +115,8 @@ public class Strategie {
 		return poss;
 	}
 
-	//maximizing player has got to return higher values for better situations
-    //minimizing player has got to return lower values the better his situation
+	// maximizing player has got to return higher values for better situations
+    // minimizing player has got to return lower values the better his situation
     @VisibleForTesting
 	int bewertung(Player player, LinkedList<Zug> moves, int depth) {
 
@@ -131,17 +133,39 @@ public class Strategie {
         }
 
 		int ret = 0;
-        //simply try to always have more pieces than the enemy. This should motivate to kill to make ret bigger
-        ret = field.getPositions(player.getColor()).size() - field.getPositions(player.getOtherPlayer().getColor()).size();
-
-        if (player.equals(maxPlayer)) {
-            return ret;
-        }else{
-            return -ret;
+        //evaluate how often the players can kill, and prefer kills that are in the near future
+        int weight = 512;
+        for(int i = 0; i < movesToEvaluate.size(); i++){
+            if (movesToEvaluate.get(i).getKill() != null) {
+                if(i % 2 == 0) {    //even numbers are moves of the maximizing player
+                    ret += weight;
+                }else{
+                    ret -= weight;
+                }
+            }
+            // next weight will be half the weight
+            // this has to be done so players wont do the same move over and over again
+            // as they would not choose a path in which they kill but the other player kills in a
+            // distant future (which is seen in higher difficulties, when he can make jump moves)
+            // thus lowers the evaluation drastically and the game is stalled
+            // also this prefers kill in the near future, so they are done now and not later
+            // as could be the case if alle were weighted equally
+            weight /= 2;
         }
+
+        /*
+        if(movesToEvaluate.get(0).getDest().equals(new Position(0,0))){
+            for(int i = 0; i < movesToEvaluate.size(); i++) {
+                System.out.println(movesToEvaluate.get(i) + "  "  + ret);
+            }
+            System.out.println();
+        }*/
+
+        return ret;
+
 	}
 
-	private int max(int depth, int alpha, int beta, Player player, int bewertung) throws InterruptedException {
+	private int max(int depth, int alpha, int beta, Player player) throws InterruptedException {
 		if(Thread.interrupted()){
 			throw new InterruptedException("Computation of Bot Move was interrupted!");
 		}
@@ -152,12 +176,11 @@ public class Strategie {
         //evaluate every move and add evaluations together rather than just evaluating the last state of the gameboard.
         //By this we avoid the bot not killing because the evaluation of a kill in a move in the future
         //will be the same as a kill in the current move, thus sometimes the bot will not kill in his current move
-		if (depth != startDepth){
-			bewertung += bewertung(player, moves, depth);
-		}
+
 		//end reached or no more moves available, maybe because he is trapped or because he lost
 		if (depth == 0 || moves.size() == 0){
-			return bewertung;
+            int bewertung = bewertung(player, moves, depth);
+            return bewertung;
 		}
 		int maxWert = alpha;
 		for (Zug z : moves) {
@@ -165,30 +188,36 @@ public class Strategie {
 				up.update();
 			}
 			field.executeCompleteTurn(z, player);
-			int wert = min(depth-1, maxWert, beta, player.getOtherPlayer(), bewertung);
+            movesToEvaluate.add(z);
+			int wert = min(depth-1, maxWert, beta, player.getOtherPlayer());
+            movesToEvaluate.remove(z);
 			field.reverseCompleteTurn(z, player);
             if (wert > maxWert) {
-                //Log.i("Strategie", "bewertung was: " + wert + "  " + z + " depth:  " + depth );
 				maxWert = wert;
-				if (maxWert >= beta)             
-					break;
-				if (depth == startDepth)
-					move = z;
+				if (maxWert >= beta) {
+                    break;
+                }
+				if (depth == startDepth) {
+                    System.out.println("new move was found: " + z + " wert: " + wert);
+                    move = z;
+                }
 			}
 		}
 		return maxWert;
 	}
 
-	private int min(int depth, int alpha, int beta, Player player, int bewertung) throws InterruptedException {
+	private int min(int depth, int alpha, int beta, Player player) throws InterruptedException {
 		LinkedList<Zug> moves = possibleMoves(player);
-		bewertung += bewertung(player, moves, depth);
 		if (depth == 0 || moves.size() == 0){
-			return bewertung;
+            int bewertung = bewertung(player, moves, depth);
+            return bewertung;
 		}
 		int minWert = beta;
 		for (Zug z : moves) {
 			field.executeCompleteTurn(z, player);
-			int wert = max(depth-1, alpha, minWert, player.getOtherPlayer(), bewertung);
+            movesToEvaluate.add(z);
+			int wert = max(depth-1, alpha, minWert, player.getOtherPlayer());
+            movesToEvaluate.remove(z);
 			field.reverseCompleteTurn(z, player);
 			if (wert < minWert) {
 				minWert = wert;
@@ -218,7 +247,7 @@ public class Strategie {
 
         maxPlayer = player;
 
-		max(startDepth, Integer.MIN_VALUE, Integer.MAX_VALUE, player,0);
+		max(startDepth, Integer.MIN_VALUE, Integer.MAX_VALUE, player);
 		
 		up.reset();
 		
