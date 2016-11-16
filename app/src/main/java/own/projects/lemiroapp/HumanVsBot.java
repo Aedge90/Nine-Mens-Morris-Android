@@ -245,6 +245,9 @@ public class HumanVsBot extends GameModeActivity{
     }
     
 	private boolean whoWon() {
+
+		//TODO show remiCount somewhere
+
 		if(field.getPositions(options.colorPlayer1).size() == 3 && field.getPositions(options.colorPlayer2).size() == 3){
 			remiCount --;
 			if(remiCount == 0){

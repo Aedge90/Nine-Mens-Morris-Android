@@ -86,6 +86,41 @@ public class StrategyTestParameterized {
     }
 
     @Test
+    public void computeMoveShouldUseDoubleMill() throws InterruptedException {
+
+        Options.Color[][] mill5 =
+                {{B, I, I, N, I, I, W},
+                { I, I, I, I, I, I, I},
+                { I, I, B, N, W, I, I},
+                { B, I, N, I, N, I, N},
+                { I, I, B, N, W, I, I},
+                { I, I, I, I, I, I, I},
+                { B, I, I, W, I, I, W}};
+
+        GameBoard gameBoard = new Mill5(mill5);
+        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
+        Strategie strategy = new Strategie(gameBoard, updater);
+
+        mPlayerBlack.setSetCount(0);
+        mPlayerWhite.setSetCount(0);
+
+        Zug result1 = strategy.computeMove(mPlayerBlack);
+
+        assertEquals(new Position(2,3), result1.getDest());
+        assertEquals(new Position(0,3), result1.getSrc());
+
+        gameBoard.executeCompleteTurn(result1, mPlayerBlack);
+
+        //just let black do the next move again, white cant do anything
+        Zug result2 = strategy.computeMove(mPlayerBlack);
+
+        assertEquals(new Position(0,3), result2.getDest());
+        assertEquals(new Position(2,3), result2.getSrc());
+
+    }
+
+    @Test
     public void computeMoveShouldCloseMillAndPreventOtherPlayersMill() throws InterruptedException {
 
         Options.Color[][] mill5 =
