@@ -60,6 +60,11 @@ public class StrategyTestParameterized {
     @Test
     public void computeMoveShouldCloseMill() throws InterruptedException {
 
+        // problem: player will often do the same move over and over again with no purpose
+        // but thats because the other player, as soon as he has only 3 stones can
+        // prohibit any mill and the alpha beta algorithm assumes the other player will always make
+        // his best possible move, thus the evaluation is never better
+
         Options.Color[][] mill5 =
                 {{N, I, I, B, I, I, W},
                 { I, I, I, I, I, I, I},
