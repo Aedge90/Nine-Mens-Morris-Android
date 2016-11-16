@@ -143,6 +143,10 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+		//TODO dont cover the gameboard after the game is lost with the game over message
+		//TODO as the player probably wants to see why he lost
+
 		if(keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
 			new AlertDialog.Builder(THIS)
 			.setIcon(android.R.drawable.ic_dialog_info)
