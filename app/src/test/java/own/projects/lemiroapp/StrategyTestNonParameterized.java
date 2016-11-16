@@ -7,22 +7,12 @@ import org.junit.Before;
 import org.junit.Test;
 import android.test.mock.MockContext;
 
-import junit.framework.AssertionFailedError;
-
 import java.util.LinkedList;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.fail;
 
 
-
-public class StrategyTest {
-
-    private Strategie strategy;
-
-    private GameBoard mGameboard;
-
-    private Strategie mStrategy;
+public class StrategyTestNonParameterized {
 
     private Player mPlayerBlack;
     private Player mPlayerWhite;
@@ -34,11 +24,6 @@ public class StrategyTest {
 
     @Before
     public void beforeTests() {
-        mGameboard = new Mill5();
-        ProgressBar progBar = new ProgressBar(new MockContext());
-        ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
-
-        mStrategy = new Strategie(mGameboard, updater);
 
         mPlayerBlack = new Player(Options.Color.BLACK);
         mPlayerWhite = new Player(Options.Color.WHITE);
@@ -47,73 +32,6 @@ public class StrategyTest {
         mPlayerBlack.setSetCount(5);
         mPlayerWhite.setSetCount(5);
 
-    }
-
-    @Test
-    public void computeMoveShouldCloseMill() throws InterruptedException {
-
-        Options.Color[][] mill5 =
-                {{N, I, I, B, I, I, W},
-                { I, I, I, I, I, I, I},
-                { I, I, B, N, W, I, I},
-                { B, I, B, I, N, I, N},
-                { I, I, W, N, N, I, I},
-                { I, I, I, I, I, I, I},
-                { B, I, I, W, I, I, N}};
-
-        GameBoard gameBoard = new Mill5(mill5);
-        ProgressBar progBar = new ProgressBar(new MockContext());
-        ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
-        Strategie strategy = new Strategie(gameBoard, updater);
-
-        mPlayerBlack.setSetCount(0);
-        mPlayerWhite.setSetCount(0);
-
-        for(int i = 0; i < Options.Difficulties.values().length; i++) {
-
-            mPlayerBlack.setDifficulty(Options.Difficulties.values()[i]);
-            Zug result = strategy.computeMove(mPlayerBlack);
-            try {
-                assertEquals(new Position(0, 0), result.getDest());
-                assertEquals(new Position(3, 0), result.getSrc());
-            }catch(AssertionError e){
-                fail(e + "\ndifficulty was: " + Options.Difficulties.values()[i]);
-            }
-        }
-
-    }
-
-    @Test
-    public void computeMoveShouldWinAsNoMovesLeft() throws InterruptedException {
-
-        Options.Color[][] mill5 =
-                {{B, I, I, N, I, I, N},
-                { I, I, I, I, I, I, I},
-                { I, I, W, B, W, I, I},
-                { N, I, B, I, N, I, B},
-                { I, I, W, B, W, I, I},
-                { I, I, I, I, I, I, I},
-                { N, I, I, N, I, I, N}};
-
-        GameBoard gameBoard = new Mill5(mill5);
-        ProgressBar progBar = new ProgressBar(new MockContext());
-        ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
-        Strategie strategy = new Strategie(gameBoard, updater);
-
-        mPlayerBlack.setSetCount(0);
-        mPlayerWhite.setSetCount(0);
-
-        for(int i = 0; i < Options.Difficulties.values().length; i++) {
-
-            mPlayerBlack.setDifficulty(Options.Difficulties.values()[i]);
-            Zug result = strategy.computeMove(mPlayerBlack);
-            try {
-                assertEquals(new Position(4, 3), result.getDest());
-                assertEquals(new Position(6, 3), result.getSrc());
-            }catch(AssertionError e){
-                fail(e + "\ndifficulty was: " + Options.Difficulties.values()[i]);
-            }
-        }
     }
 
     @Test
@@ -165,18 +83,25 @@ public class StrategyTest {
 
         //white player has lost now
 
-        executeMoveSeries(moves, mPlayerBlack);
+        GameBoard gameBoard = new Mill5();
 
-        LinkedList<Zug> possibleMoves = mStrategy.possibleMoves(mPlayerWhite);
+        executeMoveSeries(gameBoard, moves, mPlayerBlack);
+
+        Strategie strategy = new Strategie(gameBoard, null);
+
+        LinkedList<Zug> possibleMoves = strategy.possibleMoves(mPlayerWhite);
         assertEquals(0, possibleMoves.size());
 
         //minimizing players worst case is MAX. black is the maximizing player
-        int result = mStrategy.bewertung(mPlayerWhite, possibleMoves);
-        assertEquals(mStrategy.MAX, result);
+        int result = strategy.bewertung(mPlayerWhite, possibleMoves);
+        assertEquals(strategy.MAX, result);
     }
 
     @Test
     public void addpossibleKillstoMove () {
+
+        GameBoard gameBoard = new Mill5();
+        Strategie strategy = new Strategie(gameBoard, null);
 
         LinkedList<Zug> possibleMovessoFar = new LinkedList<Zug>();
 
@@ -186,11 +111,11 @@ public class StrategyTest {
         moves.add(new Zug(new Position(0,6), null, null));
         moves.add(new Zug(new Position(3,2), null, null));
 
-        executeMoveSeries(moves, mPlayerBlack);
+        executeMoveSeries(gameBoard, moves, mPlayerBlack);
 
         //black closes his mill, kill should be added to this move
         Zug killMove = new Zug(new Position(0,3), null, null);
-        mStrategy.addpossibleKillstoMove(possibleMovessoFar, killMove, mPlayerBlack);
+        strategy.addpossibleKillstoMove(possibleMovessoFar, killMove, mPlayerBlack);
 
         Zug expected0 = new Zug(new Position(0,3), null, new Position(3,0));
         Zug expected1 = new Zug(new Position(0,3), null, new Position(3,2));
@@ -202,13 +127,13 @@ public class StrategyTest {
         killMove = possibleMovessoFar.get(1);
 
         //now (3,2) of white is actually killed
-        mGameboard.executeCompleteTurn(killMove, mPlayerBlack);
+        gameBoard.executeCompleteTurn(killMove, mPlayerBlack);
 
         possibleMovessoFar = new LinkedList<Zug>();
 
         //now white sets to (6,6)
         Zug nextMove = new Zug(new Position(6,6), null, null);
-        mStrategy.addpossibleKillstoMove(possibleMovessoFar, nextMove, mPlayerWhite);
+        strategy.addpossibleKillstoMove(possibleMovessoFar, nextMove, mPlayerWhite);
 
         //assert that white can not kill
         assertEquals(1, possibleMovessoFar.size());
@@ -216,11 +141,11 @@ public class StrategyTest {
 
     }
 
-    public void executeMoveSeries (LinkedList<Zug> series, Player startingPlayer) {
+    public void executeMoveSeries (GameBoard gameBoard, LinkedList<Zug> series, Player startingPlayer) {
         Player currentPlayer = startingPlayer;
         int nMoves = series.size();
         for(int i = 0; i<nMoves; i++){
-            mGameboard.executeCompleteTurn(series.removeFirst(), currentPlayer);
+            gameBoard.executeCompleteTurn(series.removeFirst(), currentPlayer);
             currentPlayer = currentPlayer.getOtherPlayer();
         }
     }
@@ -236,13 +161,14 @@ public class StrategyTest {
                                   { I, I, I, I, I, I, I },
                                   { W, I, I, N, I, I, N}};
 
-        mGameboard = new Mill5(field);
+        GameBoard gameBoard = new Mill5(field);
+        Strategie strategy = new Strategie(gameBoard, null);
 
         LinkedList<Zug> possibleMovessoFar = new LinkedList<Zug>();
 
         Zug move = new Zug(new Position(6,6), null, null);
 
-        mStrategy.addpossibleKillstoMove(possibleMovessoFar, move, mPlayerBlack);
+        strategy.addpossibleKillstoMove(possibleMovessoFar, move, mPlayerBlack);
 
         //assert that black can not kill in this scenario
         assertEquals(1, possibleMovessoFar.size());
