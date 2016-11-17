@@ -1,8 +1,6 @@
 package own.projects.lemiroapp;
 
 
-import android.app.VoiceInteractor;
-import android.graphics.Path;
 import android.test.mock.MockContext;
 import android.widget.ProgressBar;
 
@@ -21,8 +19,8 @@ import static org.junit.Assert.assertNotEquals;
 @RunWith(value = Parameterized.class)
 public class StrategyTestParameterized {
 
-    private final Options.Color B = Options.Color.BLACK;
-    private final Options.Color W = Options.Color.WHITE;
+    private final Options.Color P1;
+    private final Options.Color P2;
     private final Options.Color N = Options.Color.NOTHING;
     private final Options.Color I = Options.Color.INVALID;
 
@@ -31,7 +29,7 @@ public class StrategyTestParameterized {
 
     // name attribute is optional, provide an unique name for test
     // multiple parameters, uses Collection<Object[]>
-    @Parameterized.Parameters(name = "Param{index}: {0}")
+    @Parameterized.Parameters(name = "P1 is {0}")
     public static Collection<Object[] > data() {
 
         Object[][] player1List = new Player[Options.Difficulties.values().length*2][1];
@@ -66,19 +64,22 @@ public class StrategyTestParameterized {
         mPlayer2.setSetCount(mPlayer1.getSetCount());
         mPlayer2.setOtherPlayer(mPlayer1);
         mPlayer1.setOtherPlayer(mPlayer2);
+
+        P1 = mPlayer1.getColor();
+        P2 = mPlayer2.getColor();
     }
 
     @Test
     public void computeMoveShouldCloseMill() throws InterruptedException {
 
         Options.Color[][] mill5 =
-                {{N, I, I, B, I, I, W},
-                { I, I, I, I, I, I, I},
-                { I, I, B, N, W, I, I},
-                { B, I, B, I, N, I, N},
-                { I, I, W, N, N, I, I},
-                { I, I, I, I, I, I, I},
-                { B, I, I, W, I, I, N}};
+                {{N , I , I , P1, I , I , P2},
+                { I , I , I , I , I , I , I },
+                { I , I , P1, N , P2, I , I },
+                { P1, I , P1, I , N , I , N},
+                { I , I , P2, N , N , I , I },
+                { I , I , I , I , I , I , I },
+                { P1, I , I , P2, I , I , N}};
 
         GameBoard gameBoard = new Mill5(mill5);
         ProgressBar progBar = new ProgressBar(new MockContext());
@@ -99,13 +100,13 @@ public class StrategyTestParameterized {
     public void computeMoveShouldUseDoubleMill() throws InterruptedException {
 
         Options.Color[][] mill5 =
-                {{B, I, I, N, I, I, W},
-                { I, I, I, I, I, I, I},
-                { I, I, B, N, W, I, I},
-                { B, I, N, I, N, I, N},
-                { I, I, B, N, W, I, I},
-                { I, I, I, I, I, I, I},
-                { B, I, I, W, I, I, W}};
+                {{P1, I , I , N , I , I , P2},
+                { I , I , I , I , I , I , I },
+                { I , I , P1, N , P2, I , I },
+                { P1, I , N , I , N , I , N},
+                { I , I , P1, N , P2, I , I },
+                { I , I , I , I , I , I , I },
+                { P1, I , I , P2, I , I , P2}};
 
         GameBoard gameBoard = new Mill5(mill5);
         ProgressBar progBar = new ProgressBar(new MockContext());
@@ -134,13 +135,13 @@ public class StrategyTestParameterized {
     public void computeMoveShouldCloseMillAndPreventOtherPlayersMill() throws InterruptedException {
 
         Options.Color[][] mill5 =
-                {{N, I, I, B, I, I, W},
-                { I, I, I, I, I, I, I},
-                { I, I, B, N, N, I, I},
-                { B, I, B, I, W, I, N},
-                { I, I, W, N, N, I, I},
-                { I, I, I, I, I, I, I},
-                { B, I, I, W, I, I, W}};
+                {{N , I , I , P1, I , I , P2},
+                { I , I , I , I , I , I , I },
+                { I , I , P1, N , N , I , I },
+                { P1, I , P1, I , P2, I , N},
+                { I , I , P2, N , N , I , I },
+                { I , I , I , I , I , I , I },
+                { P1, I , I , P2, I , I , P2}};
 
         GameBoard gameBoard = new Mill5(mill5);
         ProgressBar progBar = new ProgressBar(new MockContext());
@@ -163,13 +164,13 @@ public class StrategyTestParameterized {
     public void computeMoveShouldWinAsNoMovesLeft() throws InterruptedException {
 
         Options.Color[][] mill5 =
-                {{B, I, I, N, I, I, N},
-                { I, I, I, I, I, I, I},
-                { I, I, W, B, W, I, I},
-                { N, I, B, I, N, I, B},
-                { I, I, W, B, W, I, I},
-                { I, I, I, I, I, I, I},
-                { N, I, I, N, I, I, N}};
+                {{P1, I , I , N , I , I , N},
+                { I , I , I , I , I , I , I },
+                { I , I , P2, P1, P2, I , I },
+                { N , I , P1, I , N , I , P1},
+                { I , I , P2, P1, P2, I , I },
+                { I , I , I , I , I , I , I },
+                { N , I , I , N , I , I , N}};
 
         GameBoard gameBoard = new Mill5(mill5);
         ProgressBar progBar = new ProgressBar(new MockContext());
