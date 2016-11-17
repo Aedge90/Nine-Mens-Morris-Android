@@ -70,4 +70,10 @@ public class Player {
         return this.difficulty;
     }
 
+
+    @Override
+    public String toString(){
+        return "Player " + color + " on " + difficulty;
+    }
+
 }

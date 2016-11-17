@@ -1,10 +1,11 @@
 package own.projects.lemiroapp;
 
 
+import android.app.VoiceInteractor;
+import android.graphics.Path;
 import android.test.mock.MockContext;
 import android.widget.ProgressBar;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -25,37 +26,46 @@ public class StrategyTestParameterized {
     private final Options.Color N = Options.Color.NOTHING;
     private final Options.Color I = Options.Color.INVALID;
 
-    private Player mPlayerWhite;
-    private Player mPlayerBlack;
+    private Player mPlayer1;
+    private Player mPlayer2;
 
     // name attribute is optional, provide an unique name for test
     // multiple parameters, uses Collection<Object[]>
     @Parameterized.Parameters(name = "Param{index}: {0}")
     public static Collection<Object[] > data() {
 
-        Collection<Object[]> parameters = Arrays.asList(new Object[][]{
-                {Options.Difficulties.EASY},
-                {Options.Difficulties.NORMAL},
-                {Options.Difficulties.HARD},
-                {Options.Difficulties.HARDER},
-                {Options.Difficulties.HARDEST}
-        });
+        Object[][] player1List = new Player[Options.Difficulties.values().length*2][1];
+        for(int i = 0; i < Options.Difficulties.values().length; i++) {
+
+            Player playerBlack = new Player(Options.Color.BLACK);
+            Player playerWhite = new Player(Options.Color.WHITE);
+            playerBlack.setDifficulty(Options.Difficulties.values()[i]);
+            playerWhite.setDifficulty(Options.Difficulties.values()[i]);
+            playerBlack.setSetCount(5);
+            playerWhite.setSetCount(5);
+
+            player1List[i*2][0] = playerBlack;
+            player1List[i*2+1][0] = playerWhite;
+        }
+
+        Collection<Object[]> parameters = Arrays.asList(player1List);
 
         return parameters;
     }
 
     // Inject paremeters via constructor, constructor is called before each test
-    public StrategyTestParameterized(Options.Difficulties difficulty){
+    public StrategyTestParameterized(Player player1){
 
-        mPlayerBlack = new Player(Options.Color.BLACK);
-        mPlayerWhite = new Player(Options.Color.WHITE);
-        mPlayerBlack.setOtherPlayer(mPlayerWhite);
-        mPlayerWhite.setOtherPlayer(mPlayerBlack);
-        mPlayerBlack.setSetCount(5);
-        mPlayerWhite.setSetCount(5);
-        mPlayerBlack.setDifficulty(difficulty);
-        mPlayerWhite.setDifficulty(difficulty);
-
+        mPlayer1 = player1;
+        if(mPlayer1.getColor().equals(Options.Color.BLACK)){
+            mPlayer2 = new Player(Options.Color.WHITE);
+        } else {
+            mPlayer2 = new Player(Options.Color.BLACK);
+        }
+        mPlayer2.setDifficulty(mPlayer1.getDifficulty());
+        mPlayer2.setSetCount(mPlayer1.getSetCount());
+        mPlayer2.setOtherPlayer(mPlayer1);
+        mPlayer1.setOtherPlayer(mPlayer2);
     }
 
     @Test
@@ -75,10 +85,10 @@ public class StrategyTestParameterized {
         ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
         Strategie strategy = new Strategie(gameBoard, updater);
 
-        mPlayerBlack.setSetCount(0);
-        mPlayerWhite.setSetCount(0);
+        mPlayer1.setSetCount(0);
+        mPlayer2.setSetCount(0);
 
-        Zug result = strategy.computeMove(mPlayerBlack);
+        Zug result = strategy.computeMove(mPlayer1);
 
         assertEquals(new Position(0, 0), result.getDest());
         assertEquals(new Position(3, 0), result.getSrc());
@@ -102,18 +112,18 @@ public class StrategyTestParameterized {
         ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
         Strategie strategy = new Strategie(gameBoard, updater);
 
-        mPlayerBlack.setSetCount(0);
-        mPlayerWhite.setSetCount(0);
+        mPlayer1.setSetCount(0);
+        mPlayer2.setSetCount(0);
 
-        Zug result1 = strategy.computeMove(mPlayerBlack);
+        Zug result1 = strategy.computeMove(mPlayer1);
 
         assertEquals(new Position(2,3), result1.getDest());
         assertEquals(new Position(0,3), result1.getSrc());
 
-        gameBoard.executeCompleteTurn(result1, mPlayerBlack);
+        gameBoard.executeCompleteTurn(result1, mPlayer1);
 
         //just let black do the next move again, white cant do anything
-        Zug result2 = strategy.computeMove(mPlayerBlack);
+        Zug result2 = strategy.computeMove(mPlayer1);
 
         assertEquals(new Position(0,3), result2.getDest());
         assertEquals(new Position(2,3), result2.getSrc());
@@ -137,10 +147,10 @@ public class StrategyTestParameterized {
         ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
         Strategie strategy = new Strategie(gameBoard, updater);
 
-        mPlayerBlack.setSetCount(0);
-        mPlayerWhite.setSetCount(0);
+        mPlayer1.setSetCount(0);
+        mPlayer2.setSetCount(0);
 
-        Zug result = strategy.computeMove(mPlayerBlack);
+        Zug result = strategy.computeMove(mPlayer1);
 
         assertEquals(new Position(0, 0), result.getDest());
         assertEquals(new Position(3, 0), result.getSrc());
@@ -166,10 +176,10 @@ public class StrategyTestParameterized {
         ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
         Strategie strategy = new Strategie(gameBoard, updater);
 
-        mPlayerBlack.setSetCount(0);
-        mPlayerWhite.setSetCount(0);
+        mPlayer1.setSetCount(0);
+        mPlayer2.setSetCount(0);
 
-        Zug result = strategy.computeMove(mPlayerBlack);
+        Zug result = strategy.computeMove(mPlayer1);
 
         assertEquals(new Position(4, 3), result.getDest());
         assertEquals(new Position(6, 3), result.getSrc());
