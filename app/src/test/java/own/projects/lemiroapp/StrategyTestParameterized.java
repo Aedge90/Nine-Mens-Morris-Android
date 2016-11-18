@@ -103,7 +103,7 @@ public class StrategyTestParameterized {
                 {{P1, I , I , N , I , I , P2},
                 { I , I , I , I , I , I , I },
                 { I , I , P1, N , P2, I , I },
-                { P1, I , N , I , N , I , N},
+                { P1, I , N , I , N , I , N },
                 { I , I , P1, N , P2, I , I },
                 { I , I , I , I , I , I , I },
                 { P1, I , I , P2, I , I , P2}};
@@ -138,7 +138,7 @@ public class StrategyTestParameterized {
                 {{N , I , I , P1, I , I , P2},
                 { I , I , I , I , I , I , I },
                 { I , I , P1, N , N , I , I },
-                { P1, I , P1, I , P2, I , N},
+                { P1, I , P1, I , P2, I , N },
                 { I , I , P2, N , N , I , I },
                 { I , I , I , I , I , I , I },
                 { P1, I , I , P2, I , I , P2}};
@@ -157,6 +157,35 @@ public class StrategyTestParameterized {
         assertEquals(new Position(3, 0), result.getSrc());
 
         assertNotEquals(new Position(2, 4), result.getKill());
+
+    }
+
+    @Test
+    public void computeMoveShouldCloseMillAndPreventOtherPlayersMillWhenJumping() throws InterruptedException {
+
+        Options.Color[][] mill5 =
+                {{N , I , I , N , I , I , N },
+                { I , I , I , I , I , I , I },
+                { I , I , N , P2, P1, I , I },
+                { N , I , N , I , P2, I , P1},
+                { I , I , N , N , P2, I , I },
+                { I , I , I , I , I , I , I },
+                { P2, I , I , N , I , I , P1}};
+
+        GameBoard gameBoard = new Mill5(mill5);
+        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
+        Strategie strategy = new Strategie(gameBoard, updater);
+
+        mPlayer1.setSetCount(0);
+        mPlayer2.setSetCount(0);
+
+        Zug result = strategy.computeMove(mPlayer1);
+
+        assertEquals(new Position(6, 0), result.getDest());
+        assertEquals(new Position(4, 2), result.getSrc());
+
+        assertNotEquals(new Position(0, 6), result.getKill());
 
     }
 
