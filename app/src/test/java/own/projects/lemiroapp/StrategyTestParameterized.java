@@ -1,6 +1,7 @@
 package own.projects.lemiroapp;
 
 
+import android.graphics.Path;
 import android.test.mock.MockContext;
 import android.widget.ProgressBar;
 
@@ -157,6 +158,65 @@ public class StrategyTestParameterized {
         assertEquals(new Position(3, 0), result.getSrc());
 
         assertNotEquals(new Position(2, 4), result.getKill());
+        assertNotEquals(new Position(3, 6), result.getKill());
+
+    }
+
+    @Test
+    // on difficulties, when the bot can see the field after 3 of his moves, he must see he has a closed mill then
+    // the other player can do nothing about it in this constellation
+    public void computeMoveShouldCloseMillOnHighDifficulties() throws InterruptedException {
+
+        //workaround to skip easier difficulties
+        if(mPlayer1.getDifficulty().equals(Options.Difficulties.EASY)
+                || mPlayer1.getDifficulty().equals(Options.Difficulties.NORMAL)
+                || mPlayer1.getDifficulty().equals(Options.Difficulties.HARD)){
+            return;
+        }
+
+        Options.Color[][] mill5 =
+                {{N , I , I , N , I , I , P2 },
+                { I , I , I , I , I , I , I },
+                { I , I , P1, P2, N , I , I },
+                { P1, I , N , I , N , I , P1},
+                { I , I , P2, N , P2, I , I },
+                { I , I , I , I , I , I , I },
+                { N , I , I , N , I , I , P1}};
+
+        GameBoard gameBoard = new Mill5(mill5);
+        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
+        Strategie strategy = new Strategie(gameBoard, updater);
+
+        mPlayer1.setSetCount(0);
+        mPlayer2.setSetCount(0);
+
+        Zug result1 = strategy.computeMove(mPlayer1);
+        gameBoard.executeCompleteTurn(result1, mPlayer1);
+
+        System.out.println(gameBoard);
+
+        Zug result2 = strategy.computeMove(mPlayer2);
+        gameBoard.executeCompleteTurn(result2, mPlayer2);
+
+        System.out.println(gameBoard);
+
+        Zug result3 = strategy.computeMove(mPlayer1);
+        gameBoard.executeCompleteTurn(result3, mPlayer1);
+
+        System.out.println(gameBoard);
+
+        Zug result4 = strategy.computeMove(mPlayer2);
+        gameBoard.executeCompleteTurn(result4, mPlayer2);
+
+        System.out.println(gameBoard);
+
+        Zug result5 = strategy.computeMove(mPlayer1);
+        gameBoard.executeCompleteTurn(result5, mPlayer1);
+
+        System.out.println(gameBoard);
+
+        assertEquals(3, gameBoard.getPositions(mPlayer2.getColor()).size());
 
     }
 
