@@ -11,6 +11,7 @@ import org.junit.runners.Parameterized;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedList;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.fail;
@@ -194,27 +195,17 @@ public class StrategyTestParameterized {
         Zug result1 = strategy.computeMove(mPlayer1);
         gameBoard.executeCompleteTurn(result1, mPlayer1);
 
-        System.out.println(gameBoard);
-
         Zug result2 = strategy.computeMove(mPlayer2);
         gameBoard.executeCompleteTurn(result2, mPlayer2);
-
-        System.out.println(gameBoard);
 
         Zug result3 = strategy.computeMove(mPlayer1);
         gameBoard.executeCompleteTurn(result3, mPlayer1);
 
-        System.out.println(gameBoard);
-
         Zug result4 = strategy.computeMove(mPlayer2);
         gameBoard.executeCompleteTurn(result4, mPlayer2);
 
-        System.out.println(gameBoard);
-
         Zug result5 = strategy.computeMove(mPlayer1);
         gameBoard.executeCompleteTurn(result5, mPlayer1);
-
-        System.out.println(gameBoard);
 
         assertEquals(3, gameBoard.getPositions(mPlayer2.getColor()).size());
 
@@ -246,6 +237,110 @@ public class StrategyTestParameterized {
         assertEquals(new Position(4, 2), result.getSrc());
 
         assertNotEquals(new Position(0, 6), result.getKill());
+
+    }
+
+    @Test
+    public void computeMoveShouldNotUndoHisMove() throws InterruptedException {
+
+        Options.Color[][] mill5 =
+                {{N , I , I , P1, I , I , N },
+                { I , I , I , I , I , I , I },
+                { I , I , P1, P2, P1, I , I },
+                { P1, I , N , I , N , I , N },
+                { I , I , P2, P2, N , I , I },
+                { I , I , I , I , I , I , I },
+                { P2, I , I , P1, I , I , P2}};
+
+        GameBoard gameBoard = new Mill5(mill5);
+        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
+        Strategie strategy = new Strategie(gameBoard, updater);
+
+        mPlayer1.setSetCount(0);
+        mPlayer2.setSetCount(0);
+
+        LinkedList<Position> positionsP1Before = gameBoard.getPositions(mPlayer1.getColor());
+
+        Zug result1 = strategy.computeMove(mPlayer1);
+        gameBoard.executeCompleteTurn(result1, mPlayer1);
+
+        gameBoard.executeCompleteTurn(new Zug(new Position(4,4), new Position(3,4), null), mPlayer2);
+
+        Zug result2 = strategy.computeMove(mPlayer1);
+        gameBoard.executeCompleteTurn(result2, mPlayer1);
+
+        LinkedList<Position> positionsP1After = gameBoard.getPositions(mPlayer1.getColor());
+
+        assertNotEquals(positionsP1Before, positionsP1After);
+
+    }
+
+    @Test
+    public void computeMoveShouldUndoHisMoveIfItClosesMill1() throws InterruptedException {
+
+        Options.Color[][] mill5 =
+                {{N , I , I , P1, I , I , P1 },
+                { I , I , I , I , I , I , I },
+                { I , I , P1, P2, N , I , I },
+                { P1, I , N , I , N , I , P2},
+                { I , I , P2, P2, N , I , I },
+                { I , I , I , I , I , I , I },
+                { N , I , I , P1, I , I , P2}};
+
+        GameBoard gameBoard = new Mill5(mill5);
+        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
+        Strategie strategy = new Strategie(gameBoard, updater);
+
+        mPlayer1.setSetCount(0);
+        mPlayer2.setSetCount(0);
+
+        Zug result1 = strategy.computeMove(mPlayer1);
+        gameBoard.executeCompleteTurn(result1, mPlayer1);
+
+        assertEquals(new Position(0,0), result1.getDest());
+
+        gameBoard.executeCompleteTurn(new Zug(new Position(4,4), new Position(3,4), null), mPlayer2);
+
+        Zug result2 = strategy.computeMove(mPlayer1);
+        gameBoard.executeCompleteTurn(result2, mPlayer1);
+
+        assertEquals(new Position(0,3), result2.getDest());
+
+    }
+
+    @Test
+    public void computeMoveShouldUndoHisMoveIfItClosesMill2() throws InterruptedException {
+
+        Options.Color[][] mill5 =
+                {{P1, I , I , P1, I , I , P1 },
+                { I , I , I , I , I , I , I },
+                { I , I , P1, P2, N , I , I },
+                { N , I , N , I , N , I , P2},
+                { I , I , P2, P2, N , I , I },
+                { I , I , I , I , I , I , I },
+                { N , I , I , P1, I , I , P2}};
+
+        GameBoard gameBoard = new Mill5(mill5);
+        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
+        Strategie strategy = new Strategie(gameBoard, updater);
+
+        mPlayer1.setSetCount(0);
+        mPlayer2.setSetCount(0);
+
+        Zug result1 = strategy.computeMove(mPlayer1);
+        gameBoard.executeCompleteTurn(result1, mPlayer1);
+
+        assertEquals(new Position(0,3), result1.getDest());
+
+        gameBoard.executeCompleteTurn(new Zug(new Position(4,4), new Position(3,4), null), mPlayer2);
+
+        Zug result2 = strategy.computeMove(mPlayer1);
+        gameBoard.executeCompleteTurn(result2, mPlayer1);
+
+        assertEquals(new Position(0,0), result2.getDest());
 
     }
 
