@@ -9,6 +9,7 @@ public class Strategie {
 
 	GameBoard field;
 	Zug move;
+    Zug prevMove;
 	int startDepth;
 	private ProgressUpdater up;
     private Player maxPlayer;
@@ -134,7 +135,7 @@ public class Strategie {
 
 		int ret = 0;
         //evaluate how often the players can kill, and prefer kills that are in the near future
-        int weight = 512;
+        int weight = 2048;
         for(int i = 0; i < movesToEvaluate.size(); i++){
             if (movesToEvaluate.get(i).getKill() != null) {
                 if(i % 2 == 0) {    //even numbers are moves of the maximizing player
@@ -151,6 +152,18 @@ public class Strategie {
             // also this prefers kill in the near future, so they are done now and not later
             // as could be the case if alle were weighted equally
             weight /= 2;
+        }
+
+        //evaluate undoing a move, as its probably of no use. If it is, the other evaluation should overwrite this
+        //this should break endless undoing and redoing of moves if all have the same evaluation so far
+        if(prevMove != null){
+            // closing and opening a mill should not be downgraded. Ignore setting phase
+            if (prevMove.getKill() != null || movesToEvaluate.get(0).getKill() != null || prevMove.getSrc() == null){
+                //do nothing
+            }else if (prevMove.getSrc().equals(movesToEvaluate.get(0).getDest())
+                    && prevMove.getDest().equals(movesToEvaluate.get(0).getSrc())) {
+                ret -= 1;
+            }
         }
 
         /*
@@ -188,9 +201,9 @@ public class Strategie {
 				up.update();
 			}
 			field.executeCompleteTurn(z, player);
-            movesToEvaluate.add(z);
+            movesToEvaluate.addLast(z);
 			int wert = min(depth-1, maxWert, beta, player.getOtherPlayer());
-            movesToEvaluate.remove(z);
+            movesToEvaluate.removeLast();
 			field.reverseCompleteTurn(z, player);
             if (wert > maxWert) {
 				maxWert = wert;
@@ -215,9 +228,9 @@ public class Strategie {
 		int minWert = beta;
 		for (Zug z : moves) {
 			field.executeCompleteTurn(z, player);
-            movesToEvaluate.add(z);
+            movesToEvaluate.addLast(z);
 			int wert = max(depth-1, alpha, minWert, player.getOtherPlayer());
-            movesToEvaluate.remove(z);
+            movesToEvaluate.removeLast();
 			field.reverseCompleteTurn(z, player);
 			if (wert < minWert) {
 				minWert = wert;
@@ -242,6 +255,8 @@ public class Strategie {
 		}
 		
 		Log.i("Strategie", "computeMove started for Player " + player.getColor() + " startDepth: " + startDepth);
+
+        prevMove = move;
 
         move = null;
 
