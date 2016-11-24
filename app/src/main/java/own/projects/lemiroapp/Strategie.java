@@ -166,14 +166,6 @@ public class Strategie {
             }
         }
 
-        /*
-        if(movesToEvaluate.get(0).getDest().equals(new Position(0,0))){
-            for(int i = 0; i < movesToEvaluate.size(); i++) {
-                System.out.println(movesToEvaluate.get(i) + "  "  + ret);
-            }
-            System.out.println();
-        }*/
-
         return ret;
 
 	}
@@ -186,10 +178,6 @@ public class Strategie {
 		if(depth == startDepth){
 			up.initialize(moves.size());
 		}
-        //evaluate every move and add evaluations together rather than just evaluating the last state of the gameboard.
-        //By this we avoid the bot not killing because the evaluation of a kill in a move in the future
-        //will be the same as a kill in the current move, thus sometimes the bot will not kill in his current move
-
 		//end reached or no more moves available, maybe because he is trapped or because he lost
 		if (depth == 0 || moves.size() == 0){
             int bewertung = bewertung(player, moves, depth);
