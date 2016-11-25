@@ -2,49 +2,67 @@ package own.projects.lemiroapp;
 
 import android.support.annotation.VisibleForTesting;
 
+import java.util.LinkedList;
+
 public class Mill5 extends GameBoard {
-
-	private Options.Color[][] mill5 = // ERSTES Y ZWEITES X
-		{{N, I, I, N, I, I, N},
-		{ I, I, I, I, I, I, I},
-		{ I, I, N, N, N, I, I},
-		{ N, I, N, I, N, I, N},
-		{ I, I, N, N, N, I, I},
-		{ I, I, I, I, I, I, I},
-		{ N, I, I, N, I, I, N}};
-
 	
 	Mill5() {
-        field = mill5;
-        millMode =  Options.MillMode.MILL5;
 
-		GameBoardPosition N00 = new GameBoardPosition(0,0);
-		GameBoardPosition N30 = new GameBoardPosition(3,0);
-		GameBoardPosition N60 = new GameBoardPosition(6,0);
+        field = new GameBoardPosition[][] // ERSTES Y ZWEITES X
 
-		GameBoardPosition N22 = new GameBoardPosition(2,2);
-		GameBoardPosition N32 = new GameBoardPosition(3,2);
-		GameBoardPosition N42 = new GameBoardPosition(4,2);
+            {{N, I, I, N, I, I, N},
+            { I, I, I, I, I, I, I},
+            { I, I, N, N, N, I, I},
+            { N, I, N, I, N, I, N},
+            { I, I, N, N, N, I, I},
+            { I, I, I, I, I, I, I},
+            { N, I, I, N, I, I, N}};
 
-		GameBoardPosition N03 = new GameBoardPosition(0,3);
-		GameBoardPosition N23 = new GameBoardPosition(2,3);
-		GameBoardPosition N43 = new GameBoardPosition(4,3);
-		GameBoardPosition N63 = new GameBoardPosition(6,3);
+        for(int i = 0; i < LENGTH; i++){
+            for(int j = 0; j < LENGTH; j++){
+                if(field[i][j].equals(N)) {
+                    field[i][j] = new GameBoardPosition(j,i);
+                }
+            }
+        }
 
-		GameBoardPosition N24 = new GameBoardPosition(2,4);
-		GameBoardPosition N34 = new GameBoardPosition(3,4);
-		GameBoardPosition N44 = new GameBoardPosition(4,4);
+        //horizontal connections
+        getPos(0,0).connectRight(getPos(3,0));
+        getPos(3,0).connectRight(getPos(6,0));
 
-		GameBoardPosition N06 = new GameBoardPosition(0,6);
-		GameBoardPosition N36 = new GameBoardPosition(3,6);
-		GameBoardPosition N66 = new GameBoardPosition(6,6);
+        getPos(2,2).connectRight(getPos(3,2));
+        getPos(3,2).connectRight(getPos(4,2));
+
+        getPos(0,3).connectRight(getPos(2,3));
+        getPos(4,3).connectRight(getPos(6,3));
+
+        getPos(2,4).connectRight(getPos(3,4));
+        getPos(3,4).connectRight(getPos(4,4));
+
+        getPos(0,6).connectRight(getPos(3,6));
+        getPos(3,6).connectRight(getPos(6,6));
+
+        //vertical connections
+        getPos(0,0).connectDown(getPos(0,3));
+        getPos(0,3).connectDown(getPos(0,6));
+
+        getPos(2,2).connectDown(getPos(2,3));
+        getPos(2,3).connectDown(getPos(2,4));
+
+        getPos(3,0).connectDown(getPos(3,2));
+        getPos(3,4).connectDown(getPos(3,6));
+
+        getPos(4,2).connectDown(getPos(4,3));
+        getPos(4,3).connectDown(getPos(4,4));
+
+        getPos(6,0).connectDown(getPos(6,3));
+        getPos(6,3).connectDown(getPos(6,6));
 
 	}
 
     @VisibleForTesting
-    Mill5(Options.Color[][] field) {
-        super(field);
-        millMode =  Options.MillMode.MILL5;
+    Mill5(GameBoardPosition[][] inputField) {
+        super(inputField);
     }
 
     @Override
