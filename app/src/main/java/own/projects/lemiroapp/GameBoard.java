@@ -8,26 +8,37 @@ import android.util.Log;
 public abstract class GameBoard {
 
 	final static int LENGTH = 7;
-	Options.Color[][] field;
-	final Options.Color N = Options.Color.NOTHING;
-	final Options.Color I = Options.Color.INVALID;
-	Options.MillMode millMode;
+	GameBoardPosition[][] field;
+	final GameBoardPosition N = new GameBoardPosition(0,0);
+	final GameBoardPosition I = null;
 
     GameBoard(){}
 
     @VisibleForTesting
-    GameBoard(Options.Color[][] field) {
-        this.field = field;
+    GameBoard(GameBoardPosition[][] inputField) {
+		if (inputField.length != LENGTH || inputField[0].length != LENGTH){
+			throw new IllegalArgumentException("Constructor called with wrong size of array");
+		}
+		for(int i = 0; i < LENGTH; i++){
+			for(int j = 0; j < LENGTH; j++){
+				if(field[i][j].equals(I) && !inputField[i][j].equals(I)) {
+					throw new IllegalArgumentException("Constructor called with invalid input field");
+				}
+				if(field[i][j].equals(N)){
+					field[i][j] = inputField[i][j];
+				}
+			}
+		}
     }
 
     //copy constructor
     GameBoard(GameBoard other){
         //copy the field from other
-        field = new Options.Color[other.field.length][];
-        for(int i = 0; i < other.field.length; i++) {
-            field[i] = other.field[i].clone();
-        }
-        millMode = other.millMode;
+		for(int i = 0; i < LENGTH; i++){
+			for(int j = 0; j < LENGTH; j++){
+				field[i][j] = other.field[i][j];
+			}
+		}
     }
 
     @VisibleForTesting
@@ -64,16 +75,12 @@ public abstract class GameBoard {
         }
         return positions;
 	}
-	
-	Options.MillMode getMillVar(){
-		return millMode;
-	}
-	
-	Options.Color getPos(int x, int y) {
+
+	GameBoardPosition getPos(int x, int y) {
 		return field[y][x];
 	}
 
-	Options.Color getPos(Position pos) {
+	GameBoardPosition getPos(Position pos) {
 		if (pos == null){
 			Log.e("GameBoard", "Error: getPos: Position was null!");
 		}
@@ -81,12 +88,12 @@ public abstract class GameBoard {
 	}
 	
 	private void setPos(Position pos, Options.Color color) {
-        field[pos.getY()][pos.getX()] = color;
+        field[pos.getY()][pos.getX()].setColor(color);
 	}
 	
 	private void makeMove(Position src, Position dest, Options.Color color) {
-		field[src.getY()][src.getX()] = Options.Color.NOTHING;
-		field[dest.getY()][dest.getX()] = color;
+		field[src.getY()][src.getX()].setColor(Options.Color.NOTHING);
+		field[dest.getY()][dest.getX()].setColor(color);
 	}
 
     //this executes only the setting or moving phase of a player, regardless if a kill is contained in move
@@ -185,7 +192,7 @@ public abstract class GameBoard {
 			}
 		}
 		
-		if(millMode.equals(Options.MillMode.MILL7)){
+		if(this.getClass() == Mill7.class){
 			return getMill7(p, player);
 		}
 		
@@ -225,7 +232,7 @@ public abstract class GameBoard {
 		if(!getPos(dest).equals(Options.Color.NOTHING)){
 			return false;
 		}
-		if(getPositions(getPos(src)).size() == 3){
+		if(getPositions(getPos(src).getColor()).size() == 3){
 			return true;
 		}
 
