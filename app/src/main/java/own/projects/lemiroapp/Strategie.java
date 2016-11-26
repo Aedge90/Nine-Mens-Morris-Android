@@ -42,7 +42,7 @@ public class Strategie {
 	private void addJumpMoves(LinkedList<Zug> moves, Player player){
 		for (int x = 0; x < field.LENGTH; x++) {
 			for (int y = 0; y < field.LENGTH; y++) {
-				if (field.getPos(x, y).equals(Options.Color.NOTHING)) {
+				if (field.getColorAt(x, y).equals(Options.Color.NOTHING)) {
 					for (int i = 0; i<field.getPositions(player.getColor()).size(); i++) {
 						//no iterator here to avoid concurrent modification exception
 						Position p = field.getPositions(player.getColor()).get(i);
@@ -56,7 +56,7 @@ public class Strategie {
 	private void addSetMoves(LinkedList<Zug> moves, Player player){
 		for (int x = 0; x < field.LENGTH; x++) {
 			for (int y = 0; y < field.LENGTH; y++) {
-				if (field.getPos(x, y).equals(Options.Color.NOTHING)) {
+				if (field.getColorAt(x, y).equals(Options.Color.NOTHING)) {
 					addpossibleKillstoMove(moves, new Zug(new Position(x, y), null, null), player);
 				}
 			}

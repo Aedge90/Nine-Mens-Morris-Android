@@ -3,7 +3,7 @@ package own.projects.lemiroapp;
 import android.support.annotation.VisibleForTesting;
 
 public class Mill7 extends GameBoard {
-
+/*
 	private Options.Color[][] mill7 = // ERSTES Y ZWEITES X
 		{{N, I, I, N, I, I, N},
 		{I, N, I, N, I, N, I},
@@ -23,8 +23,19 @@ public class Mill7 extends GameBoard {
 		super(field);
 		millMode =  Options.MillMode.MILL7;
 	}
+*/
 
-    @Override
+	Mill7() {
+		field = null;
+	}
+
+	@Override
+	public void initField() {
+
+	}
+
+
+	@Override
     GameBoard getCopy() {
         return new Mill7(this);
     }
@@ -104,7 +115,7 @@ public class Mill7 extends GameBoard {
 			millX[2] = new Position(6,3);
 			int count = 0;
 			for(int i = 0; i<3; i++){
-				if(getPos(millX[i]).equals(player)){
+				if(getColorAt(millX[i]).equals(player)){
 					count ++;
 				}
 			}
@@ -119,7 +130,7 @@ public class Mill7 extends GameBoard {
 			millY[2] = new Position(3,6);
 			int count = 0;
 			for(int i = 0; i<3; i++){
-				if(getPos(millY[i]).equals(player)){
+				if(getColorAt(millY[i]).equals(player)){
 					count ++;
 				}
 			}
@@ -141,7 +152,7 @@ public class Mill7 extends GameBoard {
 				int count = 0;
 				for(int i = 0; i<3; i++){
 					if(!millX[i].equals(p)){
-						if(getPos(millX[i]).equals(player)){
+						if(getColorAt(millX[i]).equals(player)){
 							count ++;
 						}
 					}
@@ -158,7 +169,7 @@ public class Mill7 extends GameBoard {
 				int count = 0;
 				for(int i = 0; i<3; i++){
 					if(!millY[i].equals(p)){
-						if(getPos(millY[i]).equals(player)){
+						if(getColorAt(millY[i]).equals(player)){
 							count ++;
 						}
 					}
@@ -176,9 +187,9 @@ public class Mill7 extends GameBoard {
 	Zug moveUp(Position p) {
 
 		for (int i =  (p.getY()- 1); i >= 0; i--)
-			if (this.getPos(p.getX(), i).equals(Options.Color.NOTHING))
+			if (this.getColorAt(p.getX(), i).equals(Options.Color.NOTHING))
 				return new Zug(new Position(p.getX(), i), new Position(p), null);
-			else if (!this.getPos(p.getX(), i).equals(Options.Color.INVALID))
+			else if (!this.getColorAt(p.getX(), i).equals(Options.Color.INVALID))
 				break;
 
 		return null;
@@ -188,9 +199,9 @@ public class Mill7 extends GameBoard {
 	Zug moveDown(Position p) {
 
 		for (int i =  (p.getY()+ 1); i <= 6; i++)
-			if (this.getPos(p.getX(), i).equals(Options.Color.NOTHING))
+			if (this.getColorAt(p.getX(), i).equals(Options.Color.NOTHING))
 				return new Zug(new Position(p.getX(), i), new Position(p), null);
-			else if (!this.getPos(p.getX(), i).equals(Options.Color.INVALID))
+			else if (!this.getColorAt(p.getX(), i).equals(Options.Color.INVALID))
 				break;
 
 		return null;
@@ -200,9 +211,9 @@ public class Mill7 extends GameBoard {
 	Zug moveRight(Position p) {
 
 		for (int i =  (p.getX()+ 1); i <= 6; i++)
-			if (this.getPos(i, p.getY()).equals(Options.Color.NOTHING))
+			if (this.getColorAt(i, p.getY()).equals(Options.Color.NOTHING))
 				return new Zug(new Position(i, p.getY()), new Position(p), null);
-			else if (!this.getPos(i, p.getY()).equals(Options.Color.INVALID))
+			else if (!this.getColorAt(i, p.getY()).equals(Options.Color.INVALID))
 				break;
 
 		return null;
@@ -212,9 +223,9 @@ public class Mill7 extends GameBoard {
 	Zug moveLeft(Position p) {
 
 		for (int i =  (p.getX()- 1); i >= 0; i--)
-			if (this.getPos(i, p.getY()).equals(Options.Color.NOTHING))
+			if (this.getColorAt(i, p.getY()).equals(Options.Color.NOTHING))
 				return new Zug(new Position(i, p.getY()), new Position(p), null);
-			else if (!this.getPos(i, p.getY()).equals(Options.Color.INVALID))
+			else if (!this.getColorAt(i, p.getY()).equals(Options.Color.INVALID))
 				break;
 
 		return null;

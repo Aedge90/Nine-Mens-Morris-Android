@@ -84,6 +84,9 @@ public class StrategyTestParameterized {
                 { P1, I , I , P2, I , I , N}};
 
         GameBoard gameBoard = new Mill5(mill5);
+
+        System.out.println(gameBoard);
+
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
         Strategie strategy = new Strategie(gameBoard, updater);

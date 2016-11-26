@@ -69,7 +69,7 @@ public class HumanVsBot extends GameModeActivity{
 
 		for (int y = 0; y < LENGTH; y++) {
 			for (int x = 0; x < LENGTH; x++) {
-				if (!field.getPos(x, y).equals(Options.Color.INVALID)) {
+				if (!field.getColorAt(x, y).equals(Options.Color.INVALID)) {
 					fieldView.getPos(new Position(x, y)).setOnClickListener(
 							new  OnFieldClickListener(x,y));			
 				}
@@ -291,8 +291,8 @@ public class HumanVsBot extends GameModeActivity{
 		public void onClick(View arg0) {
 
 			if (state == State.SET) {
-				if(field.getPos(new Position(x,y)).equals(options.colorPlayer1)
-						|| field.getPos(new Position(x,y)).equals((options.colorPlayer2))){
+				if(field.getColorAt(new Position(x,y)).equals(options.colorPlayer1)
+						|| field.getColorAt(new Position(x,y)).equals((options.colorPlayer2))){
 					showToast("You can not set to this Position!");
 				}else{
 					Position pos = new Position(x, y);
@@ -300,7 +300,7 @@ public class HumanVsBot extends GameModeActivity{
 					signalSelection();
 				}
 			} else if (state == State.MOVEFROM) {
-				if(!(field.getPos(new Position(x,y)).equals(options.colorPlayer1))){
+				if(!(field.getColorAt(new Position(x,y)).equals(options.colorPlayer1))){
 					showToast("Nothing to move here!");
 				}else{
 					redSector = fieldView.createSector(Options.Color.RED);
@@ -326,7 +326,7 @@ public class HumanVsBot extends GameModeActivity{
 			} else if (state == State.IGNORE) {
 				showToast("It is not your turn!");
 			}else if (state == State.KILL) { 
-				if(!(field.getPos(new Position(x,y)) == options.colorPlayer2)){
+				if(!(field.getColorAt(new Position(x,y)) == options.colorPlayer2)){
 					showToast("Nothing to kill here!");
 				}else if(field.inMill(new Position(x,y), options.colorPlayer2)){
 					//if every single stone of enemy is part of a mill we are allowed to kill

@@ -3,7 +3,7 @@ package own.projects.lemiroapp;
 import android.support.annotation.VisibleForTesting;
 
 public class Mill9 extends GameBoard {
-	
+	/*
 	private Options.Color[][] mill9 = // ERSTES Y ZWEITES X
 		{{N, I, I, N, I, I, N},
 		{I, N, I, N, I, N, I},
@@ -23,8 +23,18 @@ public class Mill9 extends GameBoard {
 		super(field);
 		millMode =  Options.MillMode.MILL9;
 	}
+*/
 
-    @Override
+	Mill9() {
+		field = null;
+	}
+
+	@Override
+	public void initField() {
+
+	}
+
+	@Override
     GameBoard getCopy() {
         return new Mill9(this);
     }
@@ -118,16 +128,16 @@ public class Mill9 extends GameBoard {
 	Zug moveUp(Position p) {
 		if (p.getX() == 3	&& p.getY() > 3) {
 			for (int i =  (p.getY()- 1); i > 3; i--)
-				if (this.getPos(p.getX(), i).equals(Options.Color.NOTHING))
+				if (this.getColorAt(p.getX(), i).equals(Options.Color.NOTHING))
 					return new Zug(new Position(p.getX(), i), new Position(p), null);
-				else if (!this.getPos(p.getX(), i).equals(Options.Color.INVALID))
+				else if (!this.getColorAt(p.getX(), i).equals(Options.Color.INVALID))
 					break;
 
 		} else {
 			for (int i =  (p.getY()- 1); i >= 0; i--)
-				if (this.getPos(p.getX(), i).equals(Options.Color.NOTHING))
+				if (this.getColorAt(p.getX(), i).equals(Options.Color.NOTHING))
 					return new Zug(new Position(p.getX(), i), new Position(p), null);
-				else if (!this.getPos(p.getX(), i).equals(Options.Color.INVALID))
+				else if (!this.getColorAt(p.getX(), i).equals(Options.Color.INVALID))
 					break;
 		}
 		return null;
@@ -137,16 +147,16 @@ public class Mill9 extends GameBoard {
 	Zug moveDown(Position p) {
 		if (p.getX() == 3 && p.getY() < 3) {
 			for (int i =  (p.getY()+ 1); i < 3; i++)
-				if (this.getPos(p.getX(), i).equals(Options.Color.NOTHING))
+				if (this.getColorAt(p.getX(), i).equals(Options.Color.NOTHING))
 					return new Zug(new Position(p.getX(), i), new Position(p), null);
-				else if (!this.getPos(p.getX(), i).equals(Options.Color.INVALID))
+				else if (!this.getColorAt(p.getX(), i).equals(Options.Color.INVALID))
 					break;
 
 		} else {
 			for (int i =  (p.getY()+ 1); i <= 6; i++)
-				if (this.getPos(p.getX(), i).equals(Options.Color.NOTHING))
+				if (this.getColorAt(p.getX(), i).equals(Options.Color.NOTHING))
 					return new Zug(new Position(p.getX(), i), new Position(p), null);
-				else if (!this.getPos(p.getX(), i).equals(Options.Color.INVALID))
+				else if (!this.getColorAt(p.getX(), i).equals(Options.Color.INVALID))
 					break;
 		}
 		return null;
@@ -156,15 +166,15 @@ public class Mill9 extends GameBoard {
 	Zug moveRight(Position p) {
 		if (p.getY() == 3	&& p.getX() < 3) {
 			for (int i =  (p.getX()+ 1); i < 3; i++)
-				if (this.getPos(i, p.getY()).equals(Options.Color.NOTHING))
+				if (this.getColorAt(i, p.getY()).equals(Options.Color.NOTHING))
 					return new Zug(new Position(i, p.getY()), new Position(p), null);
-				else if (!this.getPos(i, p.getY()).equals(Options.Color.INVALID))
+				else if (!this.getColorAt(i, p.getY()).equals(Options.Color.INVALID))
 					break;
 		} else {
 			for (int i =  (p.getX()+ 1); i <= 6; i++)
-				if (this.getPos(i, p.getY()).equals(Options.Color.NOTHING))
+				if (this.getColorAt(i, p.getY()).equals(Options.Color.NOTHING))
 					return new Zug(new Position(i, p.getY()), new Position(p), null);
-				else if (!this.getPos(i, p.getY()).equals(Options.Color.INVALID))
+				else if (!this.getColorAt(i, p.getY()).equals(Options.Color.INVALID))
 					break;
 		}
 		return null;
@@ -174,16 +184,16 @@ public class Mill9 extends GameBoard {
 	Zug moveLeft(Position p) {
 		if (p.getY() == 3	&& p.getX() > 3) {
 			for (int i =  (p.getX()- 1); i > 3; i--)
-				if (this.getPos(i, p.getY()).equals(Options.Color.NOTHING))
+				if (this.getColorAt(i, p.getY()).equals(Options.Color.NOTHING))
 					return new Zug(new Position(i, p.getY()), new Position(p), null);
-				else if (!this.getPos(i, p.getY()).equals(Options.Color.INVALID))
+				else if (!this.getColorAt(i, p.getY()).equals(Options.Color.INVALID))
 					break;
 
 		} else {
 			for (int i =  (p.getX()- 1); i >= 0; i--)
-				if (this.getPos(i, p.getY()).equals(Options.Color.NOTHING))
+				if (this.getColorAt(i, p.getY()).equals(Options.Color.NOTHING))
 					return new Zug(new Position(i, p.getY()), new Position(p), null);
-				else if (!this.getPos(i, p.getY()).equals(Options.Color.INVALID))
+				else if (!this.getColorAt(i, p.getY()).equals(Options.Color.INVALID))
 					break;
 		}
 		return null;

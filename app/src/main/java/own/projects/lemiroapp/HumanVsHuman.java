@@ -69,8 +69,8 @@ public class HumanVsHuman extends GameModeActivity{
 
 		for (int y = 0; y < LENGTH; y++) {
 			for (int x = 0; x < LENGTH; x++) {
-				if (!field.getPos(x, y).equals(Options.Color.INVALID)) {
-					fieldView.getPos(new Position(x, y)).setOnClickListener(
+				if (!field.getColorAt(x, y).equals(Options.Color.INVALID)) {
+					fieldView.getColorAt(new Position(x, y)).setOnClickListener(
 							new  OnFieldClickListener(x,y));			
 				}
 			}
@@ -160,8 +160,8 @@ public class HumanVsHuman extends GameModeActivity{
 			}
 			field.makeMove(currMove.getSrc(), currMove.getDest(), humanColor);
 			fieldView.makeMove(currMove, humanColor);
-			fieldView.getPos(currMove.getSrc()).setOnClickListener(new OnFieldClickListener(currMove.getSrc()));
-			fieldView.getPos(currMove.getDest()).setOnClickListener(new OnFieldClickListener(currMove.getDest()));
+			fieldView.getColorAt(currMove.getSrc()).setOnClickListener(new OnFieldClickListener(currMove.getSrc()));
+			fieldView.getColorAt(currMove.getDest()).setOnClickListener(new OnFieldClickListener(currMove.getDest()));
 			newPosition = currMove.getDest();
 		}else{
 			state = State.SET;
@@ -169,7 +169,7 @@ public class HumanVsHuman extends GameModeActivity{
 			waitforSelection();
 			field.setPos(currMove.getSet(), humanColor);
 			fieldView.setPos(currMove.getSet(), humanColor);
-			fieldView.getPos(currMove.getSet()).setOnClickListener(new OnFieldClickListener(currMove.getSet()));
+			fieldView.getColorAt(currMove.getSet()).setOnClickListener(new OnFieldClickListener(currMove.getSet()));
 			if(humanNR == 1){
 	    		setCountHuman1 --;
 	    	}else{
@@ -185,7 +185,7 @@ public class HumanVsHuman extends GameModeActivity{
 			waitforSelection();
 			field.setPos(currMove.getKill(), Options.Color.NOTHING);
 			fieldView.setPos(currMove.getKill(), Options.Color.NOTHING);
-			fieldView.getPos(currMove.getKill()).setOnClickListener(new OnFieldClickListener(currMove.getKill()));
+			fieldView.getColorAt(currMove.getKill()).setOnClickListener(new OnFieldClickListener(currMove.getKill()));
 			fieldView.unpaintMill(millSectors);
 		}
 		state = State.IGNORE;
@@ -244,8 +244,8 @@ public class HumanVsHuman extends GameModeActivity{
 		public void onClick(View arg0) {
 
 			if (state == State.SET) {
-				if(field.getPos(new Position(x,y)).equals(currPlayer)
-						|| field.getPos(new Position(x,y)).equals((opponentPlayer))){
+				if(field.getColorAt(new Position(x,y)).equals(currPlayer)
+						|| field.getColorAt(new Position(x,y)).equals((opponentPlayer))){
 					showToast("You can not set to this Position!");
 				}else{
 					Position pos = new Position(x, y);
@@ -253,7 +253,7 @@ public class HumanVsHuman extends GameModeActivity{
 					signalSelection();
 				}
 			} else if (state == State.MOVEFROM) {
-				if(!(field.getPos(new Position(x,y)).equals(currPlayer))){
+				if(!(field.getColorAt(new Position(x,y)).equals(currPlayer))){
 					showToast("Nothing to move here!");
 				}else{
 					redSector = fieldView.createSector(Options.Color.RED);
@@ -276,7 +276,7 @@ public class HumanVsHuman extends GameModeActivity{
 			} else if (state == State.IGNORE) {
 				showToast("It is not your turn!");
 			}else if (state == State.KILL) { 
-				if(!(field.getPos(new Position(x,y)) == opponentPlayer)){
+				if(!(field.getColorAt(new Position(x,y)) == opponentPlayer)){
 					showToast("Nothing to kill here!");
 				}else if(field.inMill(new Position(x,y), opponentPlayer)){
 					//if every single stone of enemy is part of a mill we are allowed to kill

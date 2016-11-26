@@ -15,17 +15,26 @@ public abstract class GameBoard {
     GameBoard(){}
 
     @VisibleForTesting
-    GameBoard(GameBoardPosition[][] inputField) {
+    GameBoard(Options.Color[][] inputField) {
+        initField();
 		if (inputField.length != LENGTH || inputField[0].length != LENGTH){
 			throw new IllegalArgumentException("Constructor called with wrong size of array");
 		}
-		for(int i = 0; i < LENGTH; i++){
-			for(int j = 0; j < LENGTH; j++){
-				if(field[i][j].equals(I) && !inputField[i][j].equals(I)) {
+		for(int y = 0; y < LENGTH; y++){
+			for(int x = 0; x < LENGTH; x++){
+				if(getPosAt(x,y) == I && !inputField[y][x].equals(Options.Color.INVALID)) {
 					throw new IllegalArgumentException("Constructor called with invalid input field");
 				}
-				if(field[i][j].equals(N)){
-					field[i][j] = inputField[i][j];
+				if(getPosAt(x,y) != I && getPosAt(x,y).equals(N)){
+                    GameBoardPosition pos = new GameBoardPosition(x, y);
+                    if(inputField[y][x].equals(Options.Color.BLACK)) {
+                        pos.setColor(Options.Color.BLACK);
+                    }else if (inputField[y][x].equals(Options.Color.WHITE)){
+                        pos.setColor(Options.Color.WHITE);
+                    }else if (inputField[y][x].equals(Options.Color.NOTHING)){
+                        pos.setColor(Options.Color.NOTHING);
+                    }
+                    setPosAt(x, y, pos);
 				}
 			}
 		}
@@ -41,18 +50,10 @@ public abstract class GameBoard {
 		}
     }
 
+    public abstract void initField();
+
     @VisibleForTesting
     abstract GameBoard getCopy();
-
-
-    //checks if this Position is allowed or an invalid Position
-    boolean isValid(Position p){
-        if (field[p.getY()][p.getX()] == I) {
-            return false;
-        }else{
-            return true;
-        }
-    }
 
     //asserts this Position is allowed. In case of an invalid Position (or null) an Exception is thrown
     void assertValidandNotNull(Position p) {
@@ -68,7 +69,7 @@ public abstract class GameBoard {
         LinkedList<Position> positions = new LinkedList<Position>();
         for (int x=0; x < LENGTH; x++) {
             for (int y = 0; y < LENGTH; y++) {
-                if(getPos(x,y).equals(color)) {
+                if(getColorAt(x,y).equals(color)) {
                     positions.add(new Position(x,y));
                 }
             }
@@ -76,20 +77,38 @@ public abstract class GameBoard {
         return positions;
 	}
 
-	GameBoardPosition getPos(int x, int y) {
-		return field[y][x];
+    GameBoardPosition getPosAt(int x, int y){
+        return field[y][x];
+    }
+
+    GameBoardPosition getPosAt(Position pos) {
+        if (pos == null){
+            Log.e("GameBoard", "Error: getGameBoardPositionAt: Position was null!");
+        }
+        return getPosAt(pos.getX(), pos.getY());
+    }
+
+    Options.Color getColorAt(int x, int y) {
+        if(field[y][x] == I){
+            return Options.Color.INVALID;
+        }
+		return field[y][x].getColor();
 	}
 
-	GameBoardPosition getPos(Position pos) {
+    Options.Color getColorAt(Position pos) {
 		if (pos == null){
-			Log.e("GameBoard", "Error: getPos: Position was null!");
+			Log.e("GameBoard", "Error: getColorAt: Position was null!");
 		}
-		return getPos(pos.getX(), pos.getY());
+		return getColorAt(pos.getX(), pos.getY());
 	}
 	
-	private void setPos(Position pos, Options.Color color) {
+	private void setColorAt(Position pos, Options.Color color) {
         field[pos.getY()][pos.getX()].setColor(color);
 	}
+
+    private void setPosAt(int x, int y, GameBoardPosition pos) {
+        field[y][x] = pos;
+    }
 	
 	private void makeMove(Position src, Position dest, Options.Color color) {
 		field[src.getY()][src.getX()].setColor(Options.Color.NOTHING);
@@ -100,17 +119,17 @@ public abstract class GameBoard {
     //necessary to make is separate as the user can only add the kill after this move was done
     void executeSetOrMovePhase(Zug move, Player player) {
         if(player.getSetCount() > 0){
-            if(!getPos(move.getDest()).equals(Options.Color.NOTHING)){
-                throw new IllegalArgumentException("Player " + player.getColor() + " is trying to set to an occupied field by: " + getPos(move.getDest()));
+            if(!getColorAt(move.getDest()).equals(Options.Color.NOTHING)){
+                throw new IllegalArgumentException("Player " + player.getColor() + " is trying to set to an occupied field by: " + getColorAt(move.getDest()));
             }
-            setPos(move.getDest(), player.getColor());
+            setColorAt(move.getDest(), player.getColor());
             player.setSetCount(player.getSetCount() - 1);
         }else{
-            if(!getPos(move.getDest()).equals(Options.Color.NOTHING)){
-                throw new IllegalArgumentException("Player " + player.getColor() + " is trying to move to an occupied field by: " + getPos(move.getDest()));
+            if(!getColorAt(move.getDest()).equals(Options.Color.NOTHING)){
+                throw new IllegalArgumentException("Player " + player.getColor() + " is trying to move to an occupied field by: " + getColorAt(move.getDest()));
             }
-            if(getPos(move.getSrc()).equals(Options.Color.NOTHING)){
-                throw new IllegalArgumentException("Player " + player.getColor() + " is trying to move from an empty field, which is: " + getPos(move.getSrc()));
+            if(getColorAt(move.getSrc()).equals(Options.Color.NOTHING)){
+                throw new IllegalArgumentException("Player " + player.getColor() + " is trying to move from an empty field, which is: " + getColorAt(move.getSrc()));
             }
             makeMove(move.getSrc(), move.getDest(), player.getColor());
         }
@@ -119,13 +138,13 @@ public abstract class GameBoard {
     //this executes a kill if the move contains one
     void executeKillPhase(Zug move, Player player){
         if(move.getKill() != null){
-            if(getPos(move.getKill()).equals(player.getColor())){
+            if(getColorAt(move.getKill()).equals(player.getColor())){
                 throw new IllegalArgumentException("Trying to kill own piece of color: " + player.getColor());
             }
-            if(getPos(move.getKill()).equals(Options.Color.NOTHING)){
+            if(getColorAt(move.getKill()).equals(Options.Color.NOTHING)){
                 throw new IllegalArgumentException("Player " + player.getColor() + " is trying to kill an empty field");
             }
-            setPos(move.getKill(), Options.Color.NOTHING);
+            setColorAt(move.getKill(), Options.Color.NOTHING);
         }
     }
 
@@ -138,13 +157,13 @@ public abstract class GameBoard {
     //undoes a complete turn of a player, including setting or moving and killing
 	public void reverseCompleteTurn(Zug move, Player player) {
 		if(move.getSrc() == null && move.getDest() != null){
-			setPos(move.getDest(), Options.Color.NOTHING);
+			setColorAt(move.getDest(), Options.Color.NOTHING);
             player.setSetCount(player.getSetCount() + 1);
 		}else{
 			makeMove(move.getDest(), move.getSrc(), player.getColor());
 		}
 		if(move.getKill() != null){
-			setPos(move.getKill(), player.getOtherPlayer().getColor());
+			setColorAt(move.getKill(), player.getOtherPlayer().getColor());
 		}	
 	}
 
@@ -167,7 +186,7 @@ public abstract class GameBoard {
 			int count = 0;
 			for(int i = 0; i<3; i++){
 				if(!millX[i].equals(p)){
-					if(getPos(millX[i]).equals(player)){
+					if(getColorAt(millX[i]).equals(player)){
 						count ++;
 					}
 				}
@@ -182,7 +201,7 @@ public abstract class GameBoard {
 			int count = 0;
 			for(int i = 0; i<3; i++){
 				if(!millY[i].equals(p)){
-					if(getPos(millY[i]).equals(player)){
+					if(getColorAt(millY[i]).equals(player)){
 						count ++;
 					}
 				}
@@ -229,10 +248,10 @@ public abstract class GameBoard {
 	
 	//is move dest possible?
 	boolean movePossible(Position src, Position dest){
-		if(!getPos(dest).equals(Options.Color.NOTHING)){
+		if(!getColorAt(dest).equals(Options.Color.NOTHING)){
 			return false;
 		}
-		if(getPositions(getPos(src).getColor()).size() == 3){
+		if(getPositions(getColorAt(src)).size() == 3){
 			return true;
 		}
 
@@ -253,17 +272,52 @@ public abstract class GameBoard {
 	
 	public String toString() {
 		String print = "";
-		print += "    0 1 2 3 4 5 6\n------------------\n";
-		for (int y = 0; y < field.length; y++) {
-			print += y + " | ";
-			for (int x = 0; x < field[y].length; x++) {
-				print += !getPos(x, y).equals(Options.Color.INVALID) ? getPos(x, y) + " " : "  ";
 
-			}
-			print += '\n';
-		}
+        for(int y = 0; y < LENGTH; y++) {
+            String line1 = "";
+            String line2 = "";
+            String line3 = "";
+            for (int x = 0; x < LENGTH; x++) {
+                char[] pos1 = {' ',' ',' ', ' ', ' '};
+                char[] pos2 = {' ',' ',' ', ' ', ' '};
+                char[] pos3 = {' ',' ',' ', ' ', ' '};
+                if(getColorAt(x,y).equals(Options.Color.INVALID)){
+                    line1 += new String(pos1);
+                    line2 += new String(pos2);
+                    line3 += new String(pos3);
+                    continue;
+                }
+                if(getColorAt(x,y).equals(Options.Color.BLACK)){
+                    pos2[2] = 'B';
+                }else if(getColorAt(x,y).equals(Options.Color.WHITE)){
+                    pos2[2] = 'W';
+                }else if(getColorAt(x,y).equals(Options.Color.NOTHING)){
+                    pos2[2] = 'N';
+                }
+                if(getPosAt(x,y).getLeft() != null){
+                    pos2[0] = '-';
+                    pos2[1] = '-';
+                }
+                if(getPosAt(x,y).getUp() != null){
+                    pos1[2] = '|';
+                }
+                if(getPosAt(x,y).getRight() != null){
+                    pos2[3] = '-';
+                    pos2[4] = '-';
+                }
+                if(getPosAt(x,y).getDown() != null){
+                    pos3[2] = '|';
+                }
+                line1 += new String(pos1);
+                line2 += new String(pos2);
+                line3 += new String(pos3);
+            }
+            line1 += '\n';
+            line2 += '\n';
+            line3 += '\n';
+            print += line1 + line2 + line3;
+        }
 		return print;
-
 	}
 	
 	//the following methods are implemented by subclasses

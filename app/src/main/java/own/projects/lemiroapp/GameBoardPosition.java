@@ -13,6 +13,22 @@ public class GameBoardPosition extends Position {
         super(x, y);
     }
 
+    public GameBoardPosition getLeft() {
+        return left;
+    }
+
+    public GameBoardPosition getRight() {
+        return right;
+    }
+
+    public GameBoardPosition getUp() {
+        return up;
+    }
+
+    public GameBoardPosition getDown() {
+        return down;
+    }
+
     GameBoardPosition(Position pos) {
         super(pos);
     }

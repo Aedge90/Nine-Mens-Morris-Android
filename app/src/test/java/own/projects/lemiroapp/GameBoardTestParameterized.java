@@ -1,16 +1,12 @@
 package own.projects.lemiroapp;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.fail;
@@ -74,7 +70,7 @@ public class GameBoardTestParameterized {
             gameBoard.executeCompleteTurn(allPossibleMoves.get(2), playerWhite);
         }
 
-        return new Object[]{gameBoard, playerBlack, playerWhite, "" + gameBoard.millMode + " after " + nMovesPerPlayer + " moves per player"};
+        return new Object[]{gameBoard, playerBlack, playerWhite, ""  + " after " + nMovesPerPlayer + " moves per player"};
     }
 
 
@@ -98,8 +94,8 @@ public class GameBoardTestParameterized {
     public void assertEqualGameboards(GameBoard expected, GameBoard actual, Zug z){
         for (int x = 0; x < expected.LENGTH; x++) {
             for (int y = 0; y < expected.LENGTH; y++) {
-                if(!expected.getPos(x,y).equals(actual.getPos(x,y))){
-                    fail("expected: " + expected.getPos(x,y) + ", actual: " + actual.getPos(x,y) + "; on position: (" + x + "," + y + ")" +
+                if(!expected.getColorAt(x,y).equals(actual.getColorAt(x,y))){
+                    fail("expected: " + expected.getColorAt(x,y) + ", actual: " + actual.getColorAt(x,y) + "; on position: (" + x + "," + y + ")" +
                             "\nmove was: " + z);
                 }
             }
