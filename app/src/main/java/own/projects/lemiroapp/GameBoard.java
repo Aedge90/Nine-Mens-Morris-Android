@@ -328,17 +328,38 @@ public abstract class GameBoard {
 	Position[] getPossibleMillY(Position p){
 		return null;
 	};
+
+
 	Zug moveUp(Position p) {
+        Position dest = getPosAt(p).getUp();
+        if(dest != null && getColorAt(dest).equals(Options.Color.NOTHING)){
+            return new Zug(new Position(dest), new Position(p), null);
+        }
 		return null;
 	}
+
 	Zug moveDown(Position p) {
-		return null;
+        Position dest = getPosAt(p).getDown();
+        if(dest != null && getColorAt(dest).equals(Options.Color.NOTHING)){
+            return new Zug(new Position(dest), new Position(p), null);
+        }
+        return null;
 	}
+
 	Zug moveLeft(Position p) {
-		return null;
+        Position dest = getPosAt(p).getLeft();
+        if(dest != null && getColorAt(dest).equals(Options.Color.NOTHING)){
+            return new Zug(new Position(dest), new Position(p), null);
+        }
+        return null;
 	}
+
 	Zug moveRight(Position p) {
-		return null;
+        Position dest = getPosAt(p).getRight();
+        if(dest != null && getColorAt(dest).equals(Options.Color.NOTHING)){
+            return new Zug(new Position(dest), new Position(p), null);
+        }
+        return null;
 	}
 	
 	Position[] getMill7(Position p, Options.Color player) {
