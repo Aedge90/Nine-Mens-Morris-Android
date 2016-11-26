@@ -193,7 +193,7 @@ public abstract class GameBoard {
         GameBoardPosition right = getPosAt(p).getRight();
         if(right != null && getColorAt(right).equals(player)){
             if(right.getRight() != null && getColorAt(right.getRight()).equals(player)){
-                return new Position[] {new Position(right.getRight()), new Position(right), new Position(p)};
+                return new Position[] {new Position(p), new Position(right), new Position(right.getRight())};
             }
         }
         if(left != null && getColorAt(left).equals(player) && right != null && getColorAt(right).equals(player)){
@@ -209,7 +209,7 @@ public abstract class GameBoard {
         GameBoardPosition down = getPosAt(p).getDown();
         if(down != null && getColorAt(down).equals(player)){
             if(down.getDown() != null && getColorAt(down.getDown()).equals(player)){
-                return new Position[] {new Position(down.getDown()), new Position(down), new Position(p)};
+                return new Position[] {new Position(p), new Position(down), new Position(down.getDown())};
             }
         }
         if(up != null && getColorAt(up).equals(player) && down != null && getColorAt(down).equals(player)){

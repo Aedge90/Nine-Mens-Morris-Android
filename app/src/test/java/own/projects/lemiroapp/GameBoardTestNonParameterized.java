@@ -3,6 +3,7 @@ package own.projects.lemiroapp;
 import org.junit.Before;
 import org.junit.Test;
 
+import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.fail;
 
 
@@ -105,6 +106,40 @@ public class GameBoardTestNonParameterized {
                 fail("expected message to end with: " + expectedMessageEnd + "\n" + "but was: " + e.getMessage());
             }
         }
+
+    }
+
+    @Test
+    public void getMill_ShouldbeNullForMill7(){
+
+        final Options.Color B = Options.Color.BLACK;
+        final Options.Color W = Options.Color.WHITE;
+        final Options.Color N = Options.Color.NOTHING;
+        final Options.Color I = Options.Color.INVALID;
+
+        Options.Color[][] mill7 =
+
+                {{N, I, I, N, I, I, N},
+                { I, N, I, W, I, B, I},
+                { I, I, I, I, I, I, I},
+                { N, W, I, W, I, W, N},
+                { I, I, I, I, I, I, I},
+                { I, B, I, W, I, B, I},
+                { B, I, I, N, I, I, N}};
+
+        GameBoard gameBoard = new Mill7(mill7);
+
+        Position[] mill1 = gameBoard.getMill(new Position(1,3), W);
+        assertNull(mill1);
+        Position[] mill2 = gameBoard.getMill(new Position(3,3), W);
+        assertNull(mill2);
+        Position[] mill3 = gameBoard.getMill(new Position(5,3), W);
+        assertNull(mill3);
+
+        Position[] mill4 = gameBoard.getMill(new Position(3,1), W);
+        assertNull(mill4);
+        Position[] mill5 = gameBoard.getMill(new Position(3,5), W);
+        assertNull(mill5);
 
     }
 }
