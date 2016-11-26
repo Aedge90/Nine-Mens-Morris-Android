@@ -301,15 +301,6 @@ public abstract class GameBoard {
         }
         return null;
 	}
-	
-	Position[] getMill7(Position p, Options.Color player) {
-		return null;
-	}
-	
-	boolean inMill7(Position p, Options.Color player) {
-		return false;
-	}
-
 
     public String toString() {
         String print = "";
