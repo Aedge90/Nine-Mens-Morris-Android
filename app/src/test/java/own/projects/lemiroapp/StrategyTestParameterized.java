@@ -78,14 +78,12 @@ public class StrategyTestParameterized {
                 {{N , I , I , P1, I , I , P2},
                 { I , I , I , I , I , I , I },
                 { I , I , P1, N , P2, I , I },
-                { P1, I , P1, I , N , I , N},
+                { P1, I , P1, I , N , I , N },
                 { I , I , P2, N , N , I , I },
                 { I , I , I , I , I , I , I },
                 { P1, I , I , P2, I , I , N}};
 
         GameBoard gameBoard = new Mill5(mill5);
-
-        System.out.println(gameBoard);
 
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
