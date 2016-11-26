@@ -57,7 +57,7 @@ public class GameBoardTestParameterized {
         playerBlack.setSetCount(5);
         playerWhite.setSetCount(5);
 
-        Strategie strategy = new Strategie(gameBoard, null);
+        Strategy strategy = new Strategy(gameBoard, null);
 
         //every player executes 10 turns
         for (int i = 0; i < nMovesPerPlayer; i++) {
@@ -77,7 +77,7 @@ public class GameBoardTestParameterized {
 
         final GameBoard gameBoardBefore = mGameBoard.getCopy();
 
-        Strategie strategy = new Strategie(mGameBoard, null);
+        Strategy strategy = new Strategy(mGameBoard, null);
 
         LinkedList<Move> allPossibleMoves = strategy.possibleMoves(mPlayerBlack);
 

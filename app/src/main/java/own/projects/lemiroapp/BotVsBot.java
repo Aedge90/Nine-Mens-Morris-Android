@@ -16,7 +16,7 @@ import android.util.Log;
 public class BotVsBot extends GameModeActivity{
     
 	private volatile Move currMove;
-	private Strategie brain;
+	private Strategy brain;
 	private volatile int remiCount;
 	private volatile int setCountBot1;
 	private volatile int setCountBot2;
@@ -43,7 +43,7 @@ public class BotVsBot extends GameModeActivity{
 			fieldLayout.setBackgroundResource(R.drawable.brett9);
 		}
 		
-		brain = new Strategie(field , progressUpdater);
+		brain = new Strategy(field , progressUpdater);
 		
 		gameThread = createGameThread();
 

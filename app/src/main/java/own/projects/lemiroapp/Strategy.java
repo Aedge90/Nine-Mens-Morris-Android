@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
-public class Strategie {
+public class Strategy {
 
 	GameBoard field;
 	Move move;
@@ -18,7 +18,7 @@ public class Strategie {
     static final int MIN = -100000;
     LinkedList<Move> movesToEvaluate;
 
-	Strategie(GameBoard field, ProgressUpdater up) {
+	Strategy(GameBoard field, ProgressUpdater up) {
 		this.field = field;
 		this.up = up;
         this.movesToEvaluate = new LinkedList<Move>();
@@ -242,7 +242,7 @@ public class Strategie {
 			}
 		}
 		
-		Log.i("Strategie", "computeMove started for Player " + player.getColor() + " startDepth: " + startDepth);
+		Log.i("Strategy", "computeMove started for Player " + player.getColor() + " startDepth: " + startDepth);
 
         prevMove = move;
 

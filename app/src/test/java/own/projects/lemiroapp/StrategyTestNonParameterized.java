@@ -55,7 +55,7 @@ public class StrategyTestNonParameterized {
 
         executeMoveSeries(gameBoard, moves, mPlayerBlack);
 
-        Strategie strategy = new Strategie(gameBoard, null);
+        Strategy strategy = new Strategy(gameBoard, null);
 
         LinkedList<Move> possibleMoves = strategy.possibleMoves(mPlayerWhite);
         assertEquals(0, possibleMoves.size());
@@ -69,7 +69,7 @@ public class StrategyTestNonParameterized {
     public void addpossibleKillstoMove () {
 
         GameBoard gameBoard = new Mill5();
-        Strategie strategy = new Strategie(gameBoard, null);
+        Strategy strategy = new Strategy(gameBoard, null);
 
         LinkedList<Move> possibleMovessoFar = new LinkedList<Move>();
 
@@ -130,7 +130,7 @@ public class StrategyTestNonParameterized {
                                   { W, I, I, N, I, I, N}};
 
         GameBoard gameBoard = new Mill5(field);
-        Strategie strategy = new Strategie(gameBoard, null);
+        Strategy strategy = new Strategy(gameBoard, null);
 
         LinkedList<Move> possibleMovessoFar = new LinkedList<Move>();
 

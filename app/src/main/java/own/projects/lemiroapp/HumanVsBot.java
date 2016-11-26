@@ -19,7 +19,7 @@ public class HumanVsBot extends GameModeActivity{
     private Condition selection = lock.newCondition();
     private volatile boolean selected;
     
-	Strategie brain;
+	Strategy brain;
     Player human;
     Player bot;
 	private volatile State state;
@@ -57,7 +57,7 @@ public class HumanVsBot extends GameModeActivity{
 			fieldLayout.setBackgroundResource(R.drawable.brett9);
 		}
 		selected = false;
-		brain = new Strategie(field, progressUpdater);
+		brain = new Strategy(field, progressUpdater);
 		
 		setSectorListeners();
 		

@@ -86,7 +86,7 @@ public class StrategyTestParameterized {
 
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
-        Strategie strategy = new Strategie(gameBoard, updater);
+        Strategy strategy = new Strategy(gameBoard, updater);
 
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
@@ -113,7 +113,7 @@ public class StrategyTestParameterized {
         GameBoard gameBoard = new Mill5(mill5);
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
-        Strategie strategy = new Strategie(gameBoard, updater);
+        Strategy strategy = new Strategy(gameBoard, updater);
 
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
@@ -148,7 +148,7 @@ public class StrategyTestParameterized {
         GameBoard gameBoard = new Mill5(mill5);
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
-        Strategie strategy = new Strategie(gameBoard, updater);
+        Strategy strategy = new Strategy(gameBoard, updater);
 
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
@@ -187,7 +187,7 @@ public class StrategyTestParameterized {
         GameBoard gameBoard = new Mill5(mill5);
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
-        Strategie strategy = new Strategie(gameBoard, updater);
+        Strategy strategy = new Strategy(gameBoard, updater);
 
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
@@ -226,7 +226,7 @@ public class StrategyTestParameterized {
         GameBoard gameBoard = new Mill5(mill5);
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
-        Strategie strategy = new Strategie(gameBoard, updater);
+        Strategy strategy = new Strategy(gameBoard, updater);
 
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
@@ -255,7 +255,7 @@ public class StrategyTestParameterized {
         GameBoard gameBoard = new Mill5(mill5);
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
-        Strategie strategy = new Strategie(gameBoard, updater);
+        Strategy strategy = new Strategy(gameBoard, updater);
 
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
@@ -291,7 +291,7 @@ public class StrategyTestParameterized {
         GameBoard gameBoard = new Mill5(mill5);
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
-        Strategie strategy = new Strategie(gameBoard, updater);
+        Strategy strategy = new Strategy(gameBoard, updater);
 
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
@@ -325,7 +325,7 @@ public class StrategyTestParameterized {
         GameBoard gameBoard = new Mill5(mill5);
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
-        Strategie strategy = new Strategie(gameBoard, updater);
+        Strategy strategy = new Strategy(gameBoard, updater);
 
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
@@ -359,7 +359,7 @@ public class StrategyTestParameterized {
         GameBoard gameBoard = new Mill5(mill5);
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
-        Strategie strategy = new Strategie(gameBoard, updater);
+        Strategy strategy = new Strategy(gameBoard, updater);
 
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
