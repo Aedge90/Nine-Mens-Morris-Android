@@ -13,6 +13,15 @@ public class GameBoardPosition extends Position {
         super(x, y);
     }
 
+    GameBoardPosition(GameBoardPosition other){
+        super(other);
+        this.left = other.left;
+        this.right = other.right;
+        this.up = other.up;
+        this.down = other.down;
+        this.color = other.color;
+    }
+
     public GameBoardPosition getLeft() {
         return left;
     }
