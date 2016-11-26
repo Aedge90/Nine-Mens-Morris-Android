@@ -44,7 +44,9 @@ public abstract class GameBoard {
         //copy the field from other
 		for(int i = 0; i < LENGTH; i++){
 			for(int j = 0; j < LENGTH; j++){
-				field[i][j] = new GameBoardPosition(other.field[i][j]);
+                if(other.field[i][j] != null) {
+                    field[i][j] = new GameBoardPosition(other.field[i][j]);
+                }
 			}
 		}
     }
