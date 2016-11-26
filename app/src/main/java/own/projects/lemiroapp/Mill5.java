@@ -77,58 +77,5 @@ public class Mill5 extends GameBoard {
         super(other);
     }
 
-	@Override
-	Position[] getPossibleMillX(Position p){
-        assertValidandNotNull(p);
-		Position[] millX = new Position[3];
-		if(p.getY() == 0 && (p.getX() == 0 || p.getX() == 3 || p.getX() == 6)){
-			millX[0] = new Position(0,0);
-			millX[1] = new Position(3,0);
-			millX[2] = new Position(6,0);
-		}else if(p.getY() == 6 && (p.getX() == 0 || p.getX() == 3 || p.getX() == 6)){
-			millX[0] = new Position(0,6);
-			millX[1] = new Position(3,6);
-			millX[2] = new Position(6,6);
-		}else if(p.getY() == 2 && (p.getX() == 2 || p.getX() == 3 || p.getX() == 4)){
-			millX[0] = new Position(2,2);
-			millX[1] = new Position(3,2);
-			millX[2] = new Position(4,2);
-		}else if(p.getY() == 4 && (p.getX() == 2 || p.getX() == 3 || p.getX() == 4)){
-			millX[0] = new Position(2,4);
-			millX[1] = new Position(3,4);
-			millX[2] = new Position(4,4);
-		}else if(p.getY() == 3){
-			//there is no mill in x direction for this position
-			return null;
-		}
-		return millX;
-	};
-	
-	@Override
-	Position[] getPossibleMillY(Position p){
-        assertValidandNotNull(p);
-		Position[] millY = new Position[3];
-		if(p.getX() == 0 && (p.getY() == 0 || p.getY() == 3 || p.getY() == 6)){
-			millY[0] = new Position(0,0);
-			millY[1] = new Position(0,3);
-			millY[2] = new Position(0,6);
-		}else if(p.getX() == 6 && (p.getY() == 0 || p.getY() == 3 || p.getY() == 6)){
-			millY[0] = new Position(6,0);
-			millY[1] = new Position(6,3);
-			millY[2] = new Position(6,6);
-		}else if(p.getX() == 2 && (p.getY() == 2 || p.getY() == 3 || p.getY() == 4)){
-			millY[0] = new Position(2,2);
-			millY[1] = new Position(2,3);
-			millY[2] = new Position(2,4);
-		}else if(p.getX() == 4 && (p.getY() == 2 || p.getY() == 3 || p.getY() == 4)){
-			millY[0] = new Position(4,2);
-			millY[1] = new Position(4,3);
-			millY[2] = new Position(4,4);
-		}else if(p.getX() == 3){
-			//there is no mill in y direction
-			return null;
-		}
-		return millY;
-	};
 	
 }

@@ -180,42 +180,41 @@ public abstract class GameBoard {
     }
 
 	Position[] getMill(Position p, Options.Color player) {
-		
-		Position[] millX = getPossibleMillX(p);
-		
-		if(millX != null){ //its null here if there is no possible mill in x direction
-			int count = 0;
-			for(int i = 0; i<3; i++){
-				if(!millX[i].equals(p)){
-					if(getColorAt(millX[i]).equals(player)){
-						count ++;
-					}
-				}
-				if(count == 2){
-					return millX;
-				}
-			}
-		}
-		
-		Position[] millY = getPossibleMillY(p);
-		if(millY != null){ //its null here if there is no possible mill in y direction
-			int count = 0;
-			for(int i = 0; i<3; i++){
-				if(!millY[i].equals(p)){
-					if(getColorAt(millY[i]).equals(player)){
-						count ++;
-					}
-				}
-				if(count == 2){
-					return millY;
-				}
-			}
-		}
-		
-		if(this.getClass() == Mill7.class){
-			return getMill7(p, player);
-		}
-		
+		if(!getColorAt(p).equals(player)){
+            throw new IllegalArgumentException("getMill: color at p: " + getColorAt(p) + " was not the same as player color: " + player);
+        }
+        //search for horizontal mill
+        GameBoardPosition left = getPosAt(p).getLeft();
+        if(left != null && getColorAt(left).equals(player)){
+            if(left.getLeft() != null && getColorAt(left.getLeft()).equals(player)){
+                return new Position[] {new Position(left.getLeft()), new Position(left), new Position(p)};
+            }
+        }
+        GameBoardPosition right = getPosAt(p).getRight();
+        if(right != null && getColorAt(right).equals(player)){
+            if(right.getRight() != null && getColorAt(right.getRight()).equals(player)){
+                return new Position[] {new Position(right.getRight()), new Position(right), new Position(p)};
+            }
+        }
+        if(left != null && getColorAt(left).equals(player) && right != null && getColorAt(right).equals(player)){
+            return new Position[] {new Position(left), new Position(p), new Position(right)};
+        }
+        //search for vertical mill
+        GameBoardPosition up = getPosAt(p).getUp();
+        if(up != null && getColorAt(up).equals(player)){
+            if(up.getUp() != null && getColorAt(up.getUp()).equals(player)){
+                return new Position[] {new Position(up.getUp()), new Position(up), new Position(p)};
+            }
+        }
+        GameBoardPosition down = getPosAt(p).getDown();
+        if(down != null && getColorAt(down).equals(player)){
+            if(down.getDown() != null && getColorAt(down.getDown()).equals(player)){
+                return new Position[] {new Position(down.getDown()), new Position(down), new Position(p)};
+            }
+        }
+        if(up != null && getColorAt(up).equals(player) && down != null && getColorAt(down).equals(player)){
+            return new Position[] {new Position(up), new Position(p), new Position(down)};
+        }
 		return null;
 	}
 
@@ -270,9 +269,50 @@ public abstract class GameBoard {
 		}
 		return false;
 	}
+
+	Zug moveUp(Position p) {
+        Position dest = getPosAt(p).getUp();
+        if(dest != null && getColorAt(dest).equals(Options.Color.NOTHING)){
+            return new Zug(new Position(dest), new Position(p), null);
+        }
+		return null;
+	}
+
+	Zug moveDown(Position p) {
+        Position dest = getPosAt(p).getDown();
+        if(dest != null && getColorAt(dest).equals(Options.Color.NOTHING)){
+            return new Zug(new Position(dest), new Position(p), null);
+        }
+        return null;
+	}
+
+	Zug moveLeft(Position p) {
+        Position dest = getPosAt(p).getLeft();
+        if(dest != null && getColorAt(dest).equals(Options.Color.NOTHING)){
+            return new Zug(new Position(dest), new Position(p), null);
+        }
+        return null;
+	}
+
+	Zug moveRight(Position p) {
+        Position dest = getPosAt(p).getRight();
+        if(dest != null && getColorAt(dest).equals(Options.Color.NOTHING)){
+            return new Zug(new Position(dest), new Position(p), null);
+        }
+        return null;
+	}
 	
-	public String toString() {
-		String print = "";
+	Position[] getMill7(Position p, Options.Color player) {
+		return null;
+	}
+	
+	boolean inMill7(Position p, Options.Color player) {
+		return false;
+	}
+
+
+    public String toString() {
+        String print = "";
 
         for(int y = 0; y < LENGTH; y++) {
             String line1 = "";
@@ -318,55 +358,6 @@ public abstract class GameBoard {
             line3 += '\n';
             print += line1 + line2 + line3;
         }
-		return print;
-	}
-	
-	//the following methods are implemented by subclasses
-	Position[] getPossibleMillX(Position p){
-		return null;
-	};
-	Position[] getPossibleMillY(Position p){
-		return null;
-	};
-
-
-	Zug moveUp(Position p) {
-        Position dest = getPosAt(p).getUp();
-        if(dest != null && getColorAt(dest).equals(Options.Color.NOTHING)){
-            return new Zug(new Position(dest), new Position(p), null);
-        }
-		return null;
-	}
-
-	Zug moveDown(Position p) {
-        Position dest = getPosAt(p).getDown();
-        if(dest != null && getColorAt(dest).equals(Options.Color.NOTHING)){
-            return new Zug(new Position(dest), new Position(p), null);
-        }
-        return null;
-	}
-
-	Zug moveLeft(Position p) {
-        Position dest = getPosAt(p).getLeft();
-        if(dest != null && getColorAt(dest).equals(Options.Color.NOTHING)){
-            return new Zug(new Position(dest), new Position(p), null);
-        }
-        return null;
-	}
-
-	Zug moveRight(Position p) {
-        Position dest = getPosAt(p).getRight();
-        if(dest != null && getColorAt(dest).equals(Options.Color.NOTHING)){
-            return new Zug(new Position(dest), new Position(p), null);
-        }
-        return null;
-	}
-	
-	Position[] getMill7(Position p, Options.Color player) {
-		return null;
-	}
-	
-	boolean inMill7(Position p, Options.Color player) {
-		return false;
-	}
+        return print;
+    }
 }
