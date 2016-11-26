@@ -144,5 +144,56 @@ public class StrategyTestNonParameterized {
 
     }
 
+    @Test
+    public void getPossibleMovesShouldHaveSize24(){
+
+        GameBoard gameBoard = new Mill9();
+
+        Player player = new Player(Options.Color.BLACK);
+        player.setSetCount(9);
+
+        Strategy strategy = new Strategy(gameBoard, null);
+
+        LinkedList<Move> moves = strategy.possibleMoves(player);
+
+        assertEquals(24, moves.size());
+
+    }
+
+    @Test
+    public void getPossibleMovesShouldHaveSize56(){
+
+        final Options.Color B = Options.Color.BLACK;
+        final Options.Color W = Options.Color.WHITE;
+        final Options.Color N = Options.Color.NOTHING;
+        final Options.Color I = Options.Color.INVALID;
+
+        Options.Color[][] mill9 =
+
+                {{N, I, I, N, I, I, N},
+                { I, N, I, B, I, N, I},
+                { I, I, N, N, N, I, I},
+                { N, N, N, I, N, N, N},
+                { I, I, W, N, N, I, I},
+                { I, W, I, B, I, N, I},
+                { W, I, I, B, I, I, N}};
+
+        GameBoard gameBoard = new Mill9(mill9);
+
+        Player playerBlack = new Player(Options.Color.BLACK);
+        Player playerWhite = new Player(Options.Color.WHITE);
+        playerBlack.setSetCount(0);
+        playerWhite.setSetCount(0);
+        playerBlack.setOtherPlayer(playerWhite);
+        playerWhite.setOtherPlayer(playerBlack);
+
+        Strategy strategy = new Strategy(gameBoard, null);
+
+        LinkedList<Move> moves = strategy.possibleMoves(playerBlack);
+
+        //minus one, as one move is replaced with 3 moves containing different kill targets
+        assertEquals(3*18 - 1 + 3, moves.size());
+
+    }
 
 }
