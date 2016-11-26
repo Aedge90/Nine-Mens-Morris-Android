@@ -296,7 +296,7 @@ public class HumanVsBot extends GameModeActivity{
 					showToast("You can not set to this Position!");
 				}else{
 					Position pos = new Position(x, y);
-					currMove = new Zug(pos, null, null);
+					currMove = new Move(pos, null, null);
 					signalSelection();
 				}
 			} else if (state == State.MOVEFROM) {
@@ -308,7 +308,7 @@ public class HumanVsBot extends GameModeActivity{
 							GridLayout.spec(y, 1), GridLayout.spec(x, 1)));
 					fieldLayout.addView(redSector);
                     //set invalid position for now so that constructor doesnt throw IllegalArgumentException
-					currMove = new Zug(new Position(-1,-1), new Position(x,y), null);
+					currMove = new Move(new Position(-1,-1), new Position(x,y), null);
 					signalSelection();
 				}
 			} else if (state == State.MOVETO) {
@@ -320,7 +320,7 @@ public class HumanVsBot extends GameModeActivity{
 					showToast("You can not move to this Position!");
 				}else{
 					fieldLayout.removeView(redSector);
-					currMove = new Zug(new Position(x,y), currMove.getSrc(), null);
+					currMove = new Move(new Position(x,y), currMove.getSrc(), null);
 				}
 				signalSelection();
 			} else if (state == State.IGNORE) {
@@ -340,14 +340,14 @@ public class HumanVsBot extends GameModeActivity{
 					}
 					if(allInMill){
 						Position killPos = new Position(x, y);
-						currMove = new Zug(currMove.getDest(), currMove.getSrc(), killPos);
+						currMove = new Move(currMove.getDest(), currMove.getSrc(), killPos);
 						signalSelection();
 					}else{
 						showToast("You can not kill a mill! Choose another target!");
 					}
 				}else{
 					Position killPos = new Position(x, y);
-                    currMove = new Zug(currMove.getDest(), currMove.getSrc(), killPos);
+                    currMove = new Move(currMove.getDest(), currMove.getSrc(), killPos);
 					signalSelection();
 				}
 			}

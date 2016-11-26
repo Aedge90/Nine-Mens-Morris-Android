@@ -1,17 +1,17 @@
 package own.projects.lemiroapp;
 
-public class Zug {
+public class Move {
 
 	private Position src;
 	private Position dest; //if only dest is set, then this is a move in the set phase
 	private Position kill;
 	
-	Zug(Position dest, Position src, Position kill){
+	Move(Position dest, Position src, Position kill){
 		this.src = src;
 		this.dest = dest;
 		this.kill = kill;
         if (!isPossible()){
-            throw new IllegalArgumentException("Zug: invalid arguments for constructor: " + toString() );
+            throw new IllegalArgumentException("Move: invalid arguments for constructor: " + toString() );
         }
 	}
 	
@@ -53,11 +53,11 @@ public class Zug {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Zug zug = (Zug) o;
+        Move move = (Move) o;
 
-        if (src != null ? !src.equals(zug.src) : zug.src != null) return false;
-        if (dest != null ? !dest.equals(zug.dest) : zug.dest != null) return false;
-        return kill != null ? kill.equals(zug.kill) : zug.kill == null;
+        if (src != null ? !src.equals(move.src) : move.src != null) return false;
+        if (dest != null ? !dest.equals(move.dest) : move.dest != null) return false;
+        return kill != null ? kill.equals(move.kill) : move.kill == null;
 
     }
 

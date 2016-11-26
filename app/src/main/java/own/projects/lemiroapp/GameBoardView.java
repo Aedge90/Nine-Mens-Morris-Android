@@ -93,7 +93,7 @@ public class GameBoardView {
 		lock.unlock();
 	}
 	
-	public void makeMove(final Zug move, final Options.Color color) throws InterruptedException{
+	public void makeMove(final Move move, final Options.Color color) throws InterruptedException{
 		
 		c.runOnUiThread(new Runnable() {
 			public void run() {

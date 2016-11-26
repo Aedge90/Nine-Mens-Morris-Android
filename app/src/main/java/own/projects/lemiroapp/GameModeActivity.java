@@ -43,7 +43,7 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
 	
 	protected final int LENGTH = 7;
 
-	volatile Zug currMove;
+	volatile Move currMove;
 	volatile int remiCount;
 	Thread gameThread;
 	Options options;

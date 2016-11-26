@@ -15,7 +15,7 @@ import android.util.Log;
 
 public class BotVsBot extends GameModeActivity{
     
-	private volatile Zug currMove;
+	private volatile Move currMove;
 	private Strategie brain;
 	private volatile int remiCount;
 	private volatile int setCountBot1;
@@ -63,7 +63,7 @@ public class BotVsBot extends GameModeActivity{
     				}else{
     					setTextinUIThread(progressText, "Bot 2 is Computing!");
     					botTurn(options.colorPlayer2,options.difficulty2, setCountBot2, setCountBot1, 2);
-    					currMove = new Zug(null, null, null, null);
+    					currMove = new Move(null, null, null, null);
     				}
     				while(true){
 
@@ -73,7 +73,7 @@ public class BotVsBot extends GameModeActivity{
     					if(whoWon()){
     						break;
     					}
-    					currMove = new Zug(null, null, null, null);
+    					currMove = new Move(null, null, null, null);
 
     					setTextinUIThread(progressText, "Bot 2 is Computing!");
     					botTurn(options.colorPlayer2, options.difficulty2, setCountBot2, setCountBot1, 2);
@@ -81,7 +81,7 @@ public class BotVsBot extends GameModeActivity{
     					if(whoWon()){
     						break;
     					}
-    					currMove = new Zug(null, null, null, null);
+    					currMove = new Move(null, null, null, null);
     				}
     			} catch ( InterruptedException e ) {
     				Log.d("BotVsBot", "Interrupted!");

@@ -57,13 +57,11 @@ public class GameBoardTestParameterized {
         playerBlack.setSetCount(5);
         playerWhite.setSetCount(5);
 
-        //TODO write a test for strategy which verifies that the number of possible Moves is correct... should be calculatable
-
         Strategie strategy = new Strategie(gameBoard, null);
 
         //every player executes 10 turns
         for (int i = 0; i < nMovesPerPlayer; i++) {
-            LinkedList<Zug> allPossibleMoves = strategy.possibleMoves(playerBlack);
+            LinkedList<Move> allPossibleMoves = strategy.possibleMoves(playerBlack);
             //just use the third possible move
             gameBoard.executeCompleteTurn(allPossibleMoves.get(2), playerBlack);
             allPossibleMoves = strategy.possibleMoves(playerWhite);
@@ -81,7 +79,7 @@ public class GameBoardTestParameterized {
 
         Strategie strategy = new Strategie(mGameBoard, null);
 
-        LinkedList<Zug> allPossibleMoves = strategy.possibleMoves(mPlayerBlack);
+        LinkedList<Move> allPossibleMoves = strategy.possibleMoves(mPlayerBlack);
 
         for (int i = 0; i < allPossibleMoves.size(); i++) {
             mGameBoard.executeCompleteTurn(allPossibleMoves.get(i), mPlayerBlack);
@@ -91,7 +89,7 @@ public class GameBoardTestParameterized {
 
     }
 
-    public void assertEqualGameboards(GameBoard expected, GameBoard actual, Zug z){
+    public void assertEqualGameboards(GameBoard expected, GameBoard actual, Move z){
         for (int x = 0; x < expected.LENGTH; x++) {
             for (int y = 0; y < expected.LENGTH; y++) {
                 if(!expected.getColorAt(x,y).equals(actual.getColorAt(x,y))){

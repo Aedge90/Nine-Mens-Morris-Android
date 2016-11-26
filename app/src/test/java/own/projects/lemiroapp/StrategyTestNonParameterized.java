@@ -1,11 +1,7 @@
 package own.projects.lemiroapp;
 
-import android.graphics.Path;
-import android.widget.ProgressBar;
-
 import org.junit.Before;
 import org.junit.Test;
-import android.test.mock.MockContext;
 
 import java.util.LinkedList;
 
@@ -38,20 +34,20 @@ public class StrategyTestNonParameterized {
     public void bewertungOfLoosingOrWinning() {
 
         //Game in which black player starts, and kills white player
-        LinkedList<Zug> moves = new LinkedList<Zug>();
-        moves.add(new Zug(new Position(0,0), null, null));
-        moves.add(new Zug(new Position(3,0), null, null));
-        moves.add(new Zug(new Position(0,6), null, null));
-        moves.add(new Zug(new Position(3,2), null, null));
-        moves.add(new Zug(new Position(0,3), null, new Position(3,0)));
-        moves.add(new Zug(new Position(3,0), null, null));
-        moves.add(new Zug(new Position(6,6), null, null));
-        moves.add(new Zug(new Position(3,4), null, null));
-        moves.add(new Zug(new Position(3,6), null, new Position(3,0)));
-        moves.add(new Zug(new Position(3,0), null, null));
-        moves.add(new Zug(new Position(6,3), new Position(6,6), null));
-        moves.add(new Zug(new Position(4,4), new Position(3,4), null));
-        moves.add(new Zug(new Position(6,6), new Position(6,3), new Position(3,0)));
+        LinkedList<Move> moves = new LinkedList<Move>();
+        moves.add(new Move(new Position(0,0), null, null));
+        moves.add(new Move(new Position(3,0), null, null));
+        moves.add(new Move(new Position(0,6), null, null));
+        moves.add(new Move(new Position(3,2), null, null));
+        moves.add(new Move(new Position(0,3), null, new Position(3,0)));
+        moves.add(new Move(new Position(3,0), null, null));
+        moves.add(new Move(new Position(6,6), null, null));
+        moves.add(new Move(new Position(3,4), null, null));
+        moves.add(new Move(new Position(3,6), null, new Position(3,0)));
+        moves.add(new Move(new Position(3,0), null, null));
+        moves.add(new Move(new Position(6,3), new Position(6,6), null));
+        moves.add(new Move(new Position(4,4), new Position(3,4), null));
+        moves.add(new Move(new Position(6,6), new Position(6,3), new Position(3,0)));
 
         //white player has lost now
 
@@ -61,7 +57,7 @@ public class StrategyTestNonParameterized {
 
         Strategie strategy = new Strategie(gameBoard, null);
 
-        LinkedList<Zug> possibleMoves = strategy.possibleMoves(mPlayerWhite);
+        LinkedList<Move> possibleMoves = strategy.possibleMoves(mPlayerWhite);
         assertEquals(0, possibleMoves.size());
 
         //minimizing players worst case is MAX. black is the maximizing player
@@ -75,22 +71,22 @@ public class StrategyTestNonParameterized {
         GameBoard gameBoard = new Mill5();
         Strategie strategy = new Strategie(gameBoard, null);
 
-        LinkedList<Zug> possibleMovessoFar = new LinkedList<Zug>();
+        LinkedList<Move> possibleMovessoFar = new LinkedList<Move>();
 
-        LinkedList<Zug> moves = new LinkedList<Zug>();
-        moves.add(new Zug(new Position(0,0), null, null));
-        moves.add(new Zug(new Position(3,0), null, null));
-        moves.add(new Zug(new Position(0,6), null, null));
-        moves.add(new Zug(new Position(3,2), null, null));
+        LinkedList<Move> moves = new LinkedList<Move>();
+        moves.add(new Move(new Position(0,0), null, null));
+        moves.add(new Move(new Position(3,0), null, null));
+        moves.add(new Move(new Position(0,6), null, null));
+        moves.add(new Move(new Position(3,2), null, null));
 
         executeMoveSeries(gameBoard, moves, mPlayerBlack);
 
         //black closes his mill, kill should be added to this move
-        Zug killMove = new Zug(new Position(0,3), null, null);
+        Move killMove = new Move(new Position(0,3), null, null);
         strategy.addpossibleKillstoMove(possibleMovessoFar, killMove, mPlayerBlack);
 
-        Zug expected0 = new Zug(new Position(0,3), null, new Position(3,0));
-        Zug expected1 = new Zug(new Position(0,3), null, new Position(3,2));
+        Move expected0 = new Move(new Position(0,3), null, new Position(3,0));
+        Move expected1 = new Move(new Position(0,3), null, new Position(3,2));
 
         assertEquals(2, possibleMovessoFar.size());
         assertEquals(expected0, possibleMovessoFar.get(0));
@@ -101,10 +97,10 @@ public class StrategyTestNonParameterized {
         //now (3,2) of white is actually killed
         gameBoard.executeCompleteTurn(killMove, mPlayerBlack);
 
-        possibleMovessoFar = new LinkedList<Zug>();
+        possibleMovessoFar = new LinkedList<Move>();
 
         //now white sets to (6,6)
-        Zug nextMove = new Zug(new Position(6,6), null, null);
+        Move nextMove = new Move(new Position(6,6), null, null);
         strategy.addpossibleKillstoMove(possibleMovessoFar, nextMove, mPlayerWhite);
 
         //assert that white can not kill
@@ -113,7 +109,7 @@ public class StrategyTestNonParameterized {
 
     }
 
-    public void executeMoveSeries (GameBoard gameBoard, LinkedList<Zug> series, Player startingPlayer) {
+    public void executeMoveSeries (GameBoard gameBoard, LinkedList<Move> series, Player startingPlayer) {
         Player currentPlayer = startingPlayer;
         int nMoves = series.size();
         for(int i = 0; i<nMoves; i++){
@@ -136,9 +132,9 @@ public class StrategyTestNonParameterized {
         GameBoard gameBoard = new Mill5(field);
         Strategie strategy = new Strategie(gameBoard, null);
 
-        LinkedList<Zug> possibleMovessoFar = new LinkedList<Zug>();
+        LinkedList<Move> possibleMovessoFar = new LinkedList<Move>();
 
-        Zug move = new Zug(new Position(6,6), null, null);
+        Move move = new Move(new Position(6,6), null, null);
 
         strategy.addpossibleKillstoMove(possibleMovessoFar, move, mPlayerBlack);
 
@@ -147,4 +143,6 @@ public class StrategyTestNonParameterized {
         assertEquals(move, possibleMovessoFar.get(0));
 
     }
+
+
 }

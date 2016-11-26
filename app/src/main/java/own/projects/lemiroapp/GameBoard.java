@@ -108,7 +108,7 @@ public abstract class GameBoard {
 
     //this executes only the setting or moving phase of a player, regardless if a kill is contained in move
     //necessary to make is separate as the user can only add the kill after this move was done
-    void executeSetOrMovePhase(Zug move, Player player) {
+    void executeSetOrMovePhase(Move move, Player player) {
         if(player.getSetCount() > 0){
             if(!getColorAt(move.getDest()).equals(Options.Color.NOTHING)){
                 throw new IllegalArgumentException("Player " + player.getColor() + " is trying to set to an occupied field by: " + getColorAt(move.getDest()));
@@ -127,7 +127,7 @@ public abstract class GameBoard {
     }
 
     //this executes a kill if the move contains one
-    void executeKillPhase(Zug move, Player player){
+    void executeKillPhase(Move move, Player player){
         if(move.getKill() != null){
             if(getColorAt(move.getKill()).equals(player.getColor())){
                 throw new IllegalArgumentException("Trying to kill own piece of color: " + player.getColor());
@@ -140,13 +140,13 @@ public abstract class GameBoard {
     }
 
     //this executes the complete turn of a player, including setting or moving and killing
-	void executeCompleteTurn(Zug move, Player player){
+	void executeCompleteTurn(Move move, Player player){
         executeSetOrMovePhase(move, player);
         executeKillPhase(move, player);
 	}
 
     //undoes a complete turn of a player, including setting or moving and killing
-	public void reverseCompleteTurn(Zug move, Player player) {
+	public void reverseCompleteTurn(Move move, Player player) {
 		if(move.getSrc() == null && move.getDest() != null){
 			setColorAt(move.getDest(), Options.Color.NOTHING);
             player.setSetCount(player.getSetCount() + 1);
@@ -260,34 +260,34 @@ public abstract class GameBoard {
 		return false;
 	}
 
-	Zug moveUp(Position p) {
+	Move moveUp(Position p) {
         Position dest = getPosAt(p).getUp();
         if(dest != null && getColorAt(dest).equals(Options.Color.NOTHING)){
-            return new Zug(new Position(dest), new Position(p), null);
+            return new Move(new Position(dest), new Position(p), null);
         }
 		return null;
 	}
 
-	Zug moveDown(Position p) {
+	Move moveDown(Position p) {
         Position dest = getPosAt(p).getDown();
         if(dest != null && getColorAt(dest).equals(Options.Color.NOTHING)){
-            return new Zug(new Position(dest), new Position(p), null);
+            return new Move(new Position(dest), new Position(p), null);
         }
         return null;
 	}
 
-	Zug moveLeft(Position p) {
+	Move moveLeft(Position p) {
         Position dest = getPosAt(p).getLeft();
         if(dest != null && getColorAt(dest).equals(Options.Color.NOTHING)){
-            return new Zug(new Position(dest), new Position(p), null);
+            return new Move(new Position(dest), new Position(p), null);
         }
         return null;
 	}
 
-	Zug moveRight(Position p) {
+	Move moveRight(Position p) {
         Position dest = getPosAt(p).getRight();
         if(dest != null && getColorAt(dest).equals(Options.Color.NOTHING)){
-            return new Zug(new Position(dest), new Position(p), null);
+            return new Move(new Position(dest), new Position(p), null);
         }
         return null;
 	}

@@ -93,7 +93,7 @@ public class HumanVsHuman extends GameModeActivity{
     					setTextinUIThread(progressText, "Turn of Player 2");
     					changeCurrPlayerTo(options.colorPlayer2);
     					humanTurn(options.colorPlayer2, setCountHuman2 , 2);
-    					currMove = new Zug(null, null, null, null);
+    					currMove = new Move(null, null, null, null);
     				}
     				while(true){
 
@@ -104,7 +104,7 @@ public class HumanVsHuman extends GameModeActivity{
     					if(whoWon()){
     						break;
     					}
-    					currMove = new Zug(null, null, null, null);
+    					currMove = new Move(null, null, null, null);
 
     					setTextinUIThread(progressText, "Turn of Player 2");
     					changeCurrPlayerTo(options.colorPlayer2);
@@ -113,7 +113,7 @@ public class HumanVsHuman extends GameModeActivity{
     					if(whoWon()){
     						break;
     					}
-    					currMove = new Zug(null, null, null, null);
+    					currMove = new Move(null, null, null, null);
     				}
     			} catch ( InterruptedException e ) {
     				Log.d("HumanVsBot", "Interrupted!");

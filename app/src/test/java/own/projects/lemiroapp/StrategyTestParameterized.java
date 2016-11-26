@@ -1,7 +1,6 @@
 package own.projects.lemiroapp;
 
 
-import android.graphics.Path;
 import android.test.mock.MockContext;
 import android.widget.ProgressBar;
 
@@ -92,7 +91,7 @@ public class StrategyTestParameterized {
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
 
-        Zug result = strategy.computeMove(mPlayer1);
+        Move result = strategy.computeMove(mPlayer1);
 
         assertEquals(new Position(0, 0), result.getDest());
         assertEquals(new Position(3, 0), result.getSrc());
@@ -119,7 +118,7 @@ public class StrategyTestParameterized {
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
 
-        Zug result1 = strategy.computeMove(mPlayer1);
+        Move result1 = strategy.computeMove(mPlayer1);
 
         assertEquals(new Position(2,3), result1.getDest());
         assertEquals(new Position(0,3), result1.getSrc());
@@ -127,7 +126,7 @@ public class StrategyTestParameterized {
         gameBoard.executeCompleteTurn(result1, mPlayer1);
 
         //just let black do the next move again, white cant do anything
-        Zug result2 = strategy.computeMove(mPlayer1);
+        Move result2 = strategy.computeMove(mPlayer1);
 
         assertEquals(new Position(0,3), result2.getDest());
         assertEquals(new Position(2,3), result2.getSrc());
@@ -154,7 +153,7 @@ public class StrategyTestParameterized {
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
 
-        Zug result = strategy.computeMove(mPlayer1);
+        Move result = strategy.computeMove(mPlayer1);
 
         assertEquals(new Position(0, 0), result.getDest());
         assertEquals(new Position(3, 0), result.getSrc());
@@ -193,19 +192,19 @@ public class StrategyTestParameterized {
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
 
-        Zug result1 = strategy.computeMove(mPlayer1);
+        Move result1 = strategy.computeMove(mPlayer1);
         gameBoard.executeCompleteTurn(result1, mPlayer1);
 
-        Zug result2 = strategy.computeMove(mPlayer2);
+        Move result2 = strategy.computeMove(mPlayer2);
         gameBoard.executeCompleteTurn(result2, mPlayer2);
 
-        Zug result3 = strategy.computeMove(mPlayer1);
+        Move result3 = strategy.computeMove(mPlayer1);
         gameBoard.executeCompleteTurn(result3, mPlayer1);
 
-        Zug result4 = strategy.computeMove(mPlayer2);
+        Move result4 = strategy.computeMove(mPlayer2);
         gameBoard.executeCompleteTurn(result4, mPlayer2);
 
-        Zug result5 = strategy.computeMove(mPlayer1);
+        Move result5 = strategy.computeMove(mPlayer1);
         gameBoard.executeCompleteTurn(result5, mPlayer1);
 
         assertEquals(3, gameBoard.getPositions(mPlayer2.getColor()).size());
@@ -232,7 +231,7 @@ public class StrategyTestParameterized {
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
 
-        Zug result = strategy.computeMove(mPlayer1);
+        Move result = strategy.computeMove(mPlayer1);
 
         assertEquals(new Position(6, 0), result.getDest());
         assertEquals(new Position(4, 2), result.getSrc());
@@ -263,12 +262,12 @@ public class StrategyTestParameterized {
 
         LinkedList<Position> positionsP1Before = gameBoard.getPositions(mPlayer1.getColor());
 
-        Zug result1 = strategy.computeMove(mPlayer1);
+        Move result1 = strategy.computeMove(mPlayer1);
         gameBoard.executeCompleteTurn(result1, mPlayer1);
 
-        gameBoard.executeCompleteTurn(new Zug(new Position(4,4), new Position(3,4), null), mPlayer2);
+        gameBoard.executeCompleteTurn(new Move(new Position(4,4), new Position(3,4), null), mPlayer2);
 
-        Zug result2 = strategy.computeMove(mPlayer1);
+        Move result2 = strategy.computeMove(mPlayer1);
         gameBoard.executeCompleteTurn(result2, mPlayer1);
 
         LinkedList<Position> positionsP1After = gameBoard.getPositions(mPlayer1.getColor());
@@ -297,14 +296,14 @@ public class StrategyTestParameterized {
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
 
-        Zug result1 = strategy.computeMove(mPlayer1);
+        Move result1 = strategy.computeMove(mPlayer1);
         gameBoard.executeCompleteTurn(result1, mPlayer1);
 
         assertEquals(new Position(0,0), result1.getDest());
 
-        gameBoard.executeCompleteTurn(new Zug(new Position(4,4), new Position(3,4), null), mPlayer2);
+        gameBoard.executeCompleteTurn(new Move(new Position(4,4), new Position(3,4), null), mPlayer2);
 
-        Zug result2 = strategy.computeMove(mPlayer1);
+        Move result2 = strategy.computeMove(mPlayer1);
         gameBoard.executeCompleteTurn(result2, mPlayer1);
 
         assertEquals(new Position(0,3), result2.getDest());
@@ -331,14 +330,14 @@ public class StrategyTestParameterized {
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
 
-        Zug result1 = strategy.computeMove(mPlayer1);
+        Move result1 = strategy.computeMove(mPlayer1);
         gameBoard.executeCompleteTurn(result1, mPlayer1);
 
         assertEquals(new Position(0,3), result1.getDest());
 
-        gameBoard.executeCompleteTurn(new Zug(new Position(4,4), new Position(3,4), null), mPlayer2);
+        gameBoard.executeCompleteTurn(new Move(new Position(4,4), new Position(3,4), null), mPlayer2);
 
-        Zug result2 = strategy.computeMove(mPlayer1);
+        Move result2 = strategy.computeMove(mPlayer1);
         gameBoard.executeCompleteTurn(result2, mPlayer1);
 
         assertEquals(new Position(0,0), result2.getDest());
@@ -365,7 +364,7 @@ public class StrategyTestParameterized {
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
 
-        Zug result = strategy.computeMove(mPlayer1);
+        Move result = strategy.computeMove(mPlayer1);
 
         assertEquals(new Position(4, 3), result.getDest());
         assertEquals(new Position(6, 3), result.getSrc());

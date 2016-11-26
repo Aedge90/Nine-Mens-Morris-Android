@@ -34,8 +34,8 @@ public class GameBoardTestNonParameterized {
         try {
             mPlayerBlack.setSetCount(5);
             mPlayerWhite.setSetCount(5);
-            mGameBoard.executeCompleteTurn(new Zug(p, null, null), mPlayerBlack);
-            mGameBoard.executeCompleteTurn(new Zug(p, null, null), mPlayerWhite);
+            mGameBoard.executeCompleteTurn(new Move(p, null, null), mPlayerBlack);
+            mGameBoard.executeCompleteTurn(new Move(p, null, null), mPlayerWhite);
             fail("Expected an IllegalArgumentException to be thrown");
         } catch (IllegalArgumentException e) {
             String expectedMessage = "is trying to set to an occupied field by";
@@ -57,10 +57,10 @@ public class GameBoardTestNonParameterized {
         try {
             mPlayerBlack.setSetCount(1);
             mPlayerWhite.setSetCount(1);
-            mGameBoard.executeCompleteTurn(new Zug(src1, null, null), mPlayerBlack);
-            mGameBoard.executeCompleteTurn(new Zug(src2, null, null), mPlayerWhite);
-            mGameBoard.executeCompleteTurn(new Zug(dest, src1, null), mPlayerBlack);
-            mGameBoard.executeCompleteTurn(new Zug(dest, src2, null), mPlayerWhite);
+            mGameBoard.executeCompleteTurn(new Move(src1, null, null), mPlayerBlack);
+            mGameBoard.executeCompleteTurn(new Move(src2, null, null), mPlayerWhite);
+            mGameBoard.executeCompleteTurn(new Move(dest, src1, null), mPlayerBlack);
+            mGameBoard.executeCompleteTurn(new Move(dest, src2, null), mPlayerWhite);
             fail("Expected an IllegalArgumentException to be thrown");
         } catch (IllegalArgumentException e) {
             String expectedMessage = "is trying to move to an occupied field by";
@@ -77,7 +77,7 @@ public class GameBoardTestNonParameterized {
         Position p = new Position(6,6);
         try {
             mPlayerBlack.setSetCount(5);
-            mGameBoard.executeCompleteTurn(new Zug(p, null, p), mPlayerBlack);
+            mGameBoard.executeCompleteTurn(new Move(p, null, p), mPlayerBlack);
             fail("Expected an IllegalArgumentException to be thrown");
         } catch (IllegalArgumentException e) {
             String expectedMessageStart = "Trying to kill own piece of color";
@@ -98,7 +98,7 @@ public class GameBoardTestNonParameterized {
         try {
             GameBoard emptyGameBoard = mGameBoard.getCopy();
             mPlayerBlack.setSetCount(5);
-            emptyGameBoard.executeCompleteTurn(new Zug(set, null, kill), mPlayerBlack);
+            emptyGameBoard.executeCompleteTurn(new Move(set, null, kill), mPlayerBlack);
             fail("Expected an IllegalArgumentException to be thrown");
         } catch (IllegalArgumentException e) {
             String expectedMessageEnd = "is trying to kill an empty field";
@@ -142,4 +142,5 @@ public class GameBoardTestNonParameterized {
         assertNull(mill5);
 
     }
+
 }
