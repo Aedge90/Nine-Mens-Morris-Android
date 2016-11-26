@@ -55,16 +55,6 @@ public abstract class GameBoard {
 
     @VisibleForTesting
     abstract GameBoard getCopy();
-
-    //asserts this Position is allowed. In case of an invalid Position (or null) an Exception is thrown
-    void assertValidandNotNull(Position p) {
-        if (p == null) {
-            throw new IllegalArgumentException("getPossibleMillX: p is null");
-        }
-        if (field[p.getY()][p.getX()] == I) {
-            throw new IllegalArgumentException("getPossibleMillX: p is not valid");
-        }
-    }
 	
 	LinkedList<Position> getPositions(Options.Color color) {
         LinkedList<Position> positions = new LinkedList<Position>();
