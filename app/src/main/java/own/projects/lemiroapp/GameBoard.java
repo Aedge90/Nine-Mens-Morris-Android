@@ -25,16 +25,14 @@ public abstract class GameBoard {
 				if(getPosAt(x,y) == I && !inputField[y][x].equals(Options.Color.INVALID)) {
 					throw new IllegalArgumentException("Constructor called with invalid input field");
 				}
-				if(getPosAt(x,y) != I && getPosAt(x,y).equals(N)){
-                    GameBoardPosition pos = new GameBoardPosition(x, y);
+				if(getPosAt(x,y) != I){
                     if(inputField[y][x].equals(Options.Color.BLACK)) {
-                        pos.setColor(Options.Color.BLACK);
+                        getPosAt(x,y).setColor(Options.Color.BLACK);
                     }else if (inputField[y][x].equals(Options.Color.WHITE)){
-                        pos.setColor(Options.Color.WHITE);
+                        getPosAt(x,y).setColor(Options.Color.WHITE);
                     }else if (inputField[y][x].equals(Options.Color.NOTHING)){
-                        pos.setColor(Options.Color.NOTHING);
+                        getPosAt(x,y).setColor(Options.Color.NOTHING);
                     }
-                    setPosAt(x, y, pos);
 				}
 			}
 		}
