@@ -127,6 +127,7 @@ public class Strategy {
             if (player.equals(maxPlayer)) {
                 //multiply with an number (which is bigger than 1) depending on depth
                 //necessary as the evaluation has to be higher if the player can win after fewer moves
+                //you may think depth is always 0 here, but it can be higher
                 return MIN * (depth + 1);
             }else{
                 return MAX * (depth + 1);

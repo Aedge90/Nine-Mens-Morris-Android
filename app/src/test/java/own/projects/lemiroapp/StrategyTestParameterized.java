@@ -13,7 +13,11 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
+import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotEquals;
 
 
@@ -212,7 +216,10 @@ public class StrategyTestParameterized {
     }
 
     @Test
-    public void computeMoveShouldCloseMillAndPreventOtherPlayersMillWhenJumping() throws InterruptedException {
+    //in this scenario P1 makes a mistake, P2 should compute the perfect move, so that P1 cant prevent loosing
+    //then P1 should at least try to prevent a mill, although he cant prevent that the P2 still can close
+    //his mill in another way. Is ok that P2 does not make the perfect move on EASY
+    public void computeMoveShouldTryToPreventLoosingEvenIfItsImpossible() throws InterruptedException {
 
         Options.Color[][] mill5 =
                 {{N , I , I , N , I , I , N },
@@ -231,12 +238,52 @@ public class StrategyTestParameterized {
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
 
+        Move result = new Move(new Position(6,0), new Position(4,2), new Position(4,3));
+
+        gameBoard.executeCompleteTurn(result, mPlayer1);
+
+        System.out.println(gameBoard);
+
+        Move result2 = strategy.computeMove(mPlayer2);
+        gameBoard.executeCompleteTurn(result2, mPlayer2);
+
+        assertEquals(new Position(4,2), result2.getDest());
+
+        System.out.println(gameBoard);
+
+        Move result3 = strategy.computeMove(mPlayer1);
+        gameBoard.executeCompleteTurn(result3, mPlayer1);
+
+        System.out.println(gameBoard);
+
+        assertThat(result3.getDest(), anyOf(is(new Position(2,2)), is(new Position(4,3))));
+    }
+
+    @Test
+    public void computeMoveShouldCloseMillAndPreventOtherPlayersMillWhenJumping() throws InterruptedException {
+
+        Options.Color[][] mill5 =
+                {{P2, I , I , N , I , I , N },
+                { I , I , I , I , I , I , I },
+                { I , I , N , N , P1, I , I },
+                { N , I , N , I , N , I , P1},
+                { I , I , P2, N , P2, I , I },
+                { I , I , I , I , I , I , I },
+                { N , I , I , P2, I , I , P1}};
+
+        GameBoard gameBoard = new Mill5(mill5);
+        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
+        Strategy strategy = new Strategy(gameBoard, updater);
+
+        mPlayer1.setSetCount(0);
+        mPlayer2.setSetCount(0);
+
         Move result = strategy.computeMove(mPlayer1);
+        gameBoard.executeCompleteTurn(result, mPlayer1);
 
-        assertEquals(new Position(6, 0), result.getDest());
-        assertEquals(new Position(4, 2), result.getSrc());
-
-        assertNotEquals(new Position(0, 6), result.getKill());
+        assertEquals(new Position(6,0), result.getDest());
+        assertThat(result.getKill(), anyOf(is(new Position(2,4)), is(new Position(4,4))));
 
     }
 
