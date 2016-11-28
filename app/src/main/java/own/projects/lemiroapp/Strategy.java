@@ -121,20 +121,32 @@ public class Strategy {
     @VisibleForTesting
 	int bewertung(Player player, LinkedList<Move> moves, int depth) {
 
+        int ret = 0;
+
         if (moves.size() == 0) {
+            if(movesToEvaluate.size() > 1) {
+                field.reverseCompleteTurn(movesToEvaluate.getLast(), player.getOtherPlayer());
+                //check if the loosing player, prevented a mill in his last move (which is the size-2th move)
+                if (field.inMill(movesToEvaluate.get(movesToEvaluate.size() - 2).getDest(), player.getOtherPlayer().getColor())) {
+                    //evaluate this better, as it looks stupid if he does not try to prevent one mill even if the other player
+                    //can close another mill despite that
+                    ret = 1;
+                }
+                field.executeCompleteTurn(movesToEvaluate.getLast(), player.getOtherPlayer());
+            }
             //worst case: player can not make any moves --> game is lost
             //or player has less than 3 pieces and has no pieces left to set --> game is lost
             if (player.equals(maxPlayer)) {
-                //multiply with an number (which is bigger than 1) depending on depth
+                //multiply with an number (which is >= 1) depending on depth
                 //necessary as the evaluation has to be higher if the player can win after fewer moves
                 //you may think depth is always 0 here, but it can be higher
-                return MIN * (depth + 1);
+                ret = MIN * (depth + 1) + ret;
             }else{
-                return MAX * (depth + 1);
+                ret = MAX * (depth + 1) - ret;
             }
+            return ret;
         }
 
-		int ret = 0;
         //evaluate how often the players can kill, and prefer kills that are in the near future
         int weight = 2048;
         for(int i = 0; i < movesToEvaluate.size(); i++){
@@ -200,7 +212,7 @@ public class Strategy {
                     break;
                 }
 				if (depth == startDepth) {
-                    System.out.println("new move was found: " + z + " wert: " + wert);
+                    //System.out.println("new move was found: " + z + " wert: " + wert);
                     move = z;
                 }
 			}

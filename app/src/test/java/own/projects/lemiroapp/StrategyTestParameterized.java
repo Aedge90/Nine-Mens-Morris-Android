@@ -221,6 +221,10 @@ public class StrategyTestParameterized {
     //his mill in another way. Is ok that P2 does not make the perfect move on EASY
     public void computeMoveShouldTryToPreventLoosingEvenIfItsImpossible() throws InterruptedException {
 
+        if(mPlayer2.getDifficulty() == Options.Difficulties.EASY){
+            return;
+        }
+
         Options.Color[][] mill5 =
                 {{N , I , I , N , I , I , N },
                 { I , I , I , I , I , I , I },
@@ -242,19 +246,13 @@ public class StrategyTestParameterized {
 
         gameBoard.executeCompleteTurn(result, mPlayer1);
 
-        System.out.println(gameBoard);
-
         Move result2 = strategy.computeMove(mPlayer2);
         gameBoard.executeCompleteTurn(result2, mPlayer2);
 
         assertEquals(new Position(4,2), result2.getDest());
 
-        System.out.println(gameBoard);
-
         Move result3 = strategy.computeMove(mPlayer1);
         gameBoard.executeCompleteTurn(result3, mPlayer1);
-
-        System.out.println(gameBoard);
 
         assertThat(result3.getDest(), anyOf(is(new Position(2,2)), is(new Position(4,3))));
     }
