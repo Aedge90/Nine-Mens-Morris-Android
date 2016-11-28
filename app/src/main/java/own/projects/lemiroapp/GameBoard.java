@@ -158,8 +158,7 @@ public abstract class GameBoard {
 		}	
 	}
 
-    //returns true if two pieces of same color are found, that form a mill together with position
-    //assumes that position is of the same color that is passed here !
+    //returns true if two pieces of color player are found, that form a mill together with position
 	boolean inMill(Position p, Options.Color player) {
         if(null != getMill(p, player)){
             //mill was found
@@ -169,10 +168,9 @@ public abstract class GameBoard {
         }
     }
 
+    //if two pieces of color player are found, that form a mill together with position
+    //an array containing the two pieces and position is returned, else null is returned
 	Position[] getMill(Position p, Options.Color player) {
-		if(!getColorAt(p).equals(player)){
-            throw new IllegalArgumentException("getMill: color at p: " + getColorAt(p) + " was not the same as player color: " + player);
-        }
         //search for horizontal mill
         GameBoardPosition left = getPosAt(p).getLeft();
         if(left != null && getColorAt(left).equals(player)){
