@@ -85,10 +85,7 @@ public class HumanVsBot extends GameModeActivity{
     		public void run(){
 
     			try {
-    				if(options.whoStarts.equals(Options.Color.WHITE) && options.colorPlayer1.equals(Options.Color.WHITE)
-    						|| options.whoStarts.equals(Options.Color.BLACK) && options.colorPlayer1.equals(Options.Color.BLACK)){
-
-    				}else{
+    				if(options.whoStarts.equals(bot.getColor())){
     					state = State.IGNORE;
     					setTextinUIThread(progressText, "Bot is Computing!");
     					botTurn();
@@ -158,9 +155,7 @@ public class HumanVsBot extends GameModeActivity{
 				//wait for Human to select destination
 				waitforSelection();
 			}
-            Log.i("HumanVsBot", "before make Move human");
-			fieldView.makeMove(currMove, options.colorPlayer1);
-            Log.i("HumanVsBot", "afetr make Move human");
+			fieldView.makeMove(currMove, human.getColor());
 			fieldView.getPos(currMove.getSrc()).setOnClickListener(new OnFieldClickListener(currMove.getSrc()));
 			fieldView.getPos(currMove.getDest()).setOnClickListener(new OnFieldClickListener(currMove.getDest()));
 			newPosition = currMove.getDest();
@@ -168,16 +163,16 @@ public class HumanVsBot extends GameModeActivity{
 			state = State.SET;
 			// wait for human to set
 			waitforSelection();
-			fieldView.setPos(currMove.getDest(), options.colorPlayer1);
+			fieldView.setPos(currMove.getDest(), human.getColor());
 			fieldView.getPos(currMove.getDest()).setOnClickListener(new OnFieldClickListener(currMove.getDest()));
 			newPosition = currMove.getDest();
 		}
 
         field.executeSetOrMovePhase(currMove, human);
 
-		if (field.inMill(newPosition, options.colorPlayer1)) {
+		if (field.inMill(newPosition, human.getColor())) {
 			state = State.KILL;
-			Position[] mill = field.getMill(newPosition, options.colorPlayer1);
+			Position[] mill = field.getMill(newPosition, human.getColor());
 			fieldView.paintMill(mill, millSectors);
 			//wait until kill is chosen
 			waitforSelection();
@@ -199,9 +194,7 @@ public class HumanVsBot extends GameModeActivity{
 
 			setTextinUIThread(progressText, "Bot is moving!");
 
-            Log.i("HumanVsBot", "before make Move bot: currMove: " + currMove);
-	    	fieldView.makeMove(currMove, options.colorPlayer2);
-            Log.i("HumanVsBot", "after make Move bot");
+	    	fieldView.makeMove(currMove, bot.getColor());
 	    	fieldView.getPos(currMove.getSrc()).setOnClickListener(
 	    			new OnFieldClickListener(currMove.getSrc()));
 	    	fieldView.getPos(currMove.getDest()).setOnClickListener(
@@ -220,7 +213,7 @@ public class HumanVsBot extends GameModeActivity{
 				Thread.sleep(1000 - computationTime);
 			}
 
-	    	fieldView.setPos(currMove.getDest(),options.colorPlayer2);
+	    	fieldView.setPos(currMove.getDest(), bot.getColor());
 	    	fieldView.getPos(currMove.getDest()).setOnClickListener(
 	    			new OnFieldClickListener(currMove.getDest()));
 	    	newPosition = currMove.getDest();
@@ -229,7 +222,7 @@ public class HumanVsBot extends GameModeActivity{
         field.executeSetOrMovePhase(currMove, bot);
 
     	if (currMove.getKill() != null) {
-    		Position[] mill = field.getMill(newPosition, options.colorPlayer2);
+    		Position[] mill = field.getMill(newPosition, bot.getColor());
 
     		fieldView.paintMill(mill, millSectors);
 
@@ -248,7 +241,7 @@ public class HumanVsBot extends GameModeActivity{
 
 		//TODO show remiCount somewhere
 
-		if(field.getPositions(options.colorPlayer1).size() == 3 && field.getPositions(options.colorPlayer2).size() == 3){
+		if(field.getPositions(human.getColor()).size() == 3 && field.getPositions(bot.getColor()).size() == 3){
 			remiCount --;
 			if(remiCount == 0){
 				showGameOverMsg("Draw!", "Nobody wins.");
@@ -256,16 +249,16 @@ public class HumanVsBot extends GameModeActivity{
 			}
 		}
 		
-		if(!field.movesPossible(options.colorPlayer1, human.getSetCount())){
+		if(!field.movesPossible(human.getColor(), human.getSetCount())){
 			showGameOverMsg("You have lost!", "You could not make any further move.");
 			return true;
-		}else if ((field.getPositions(options.colorPlayer1).size() < 3 && human.getSetCount() <= 0)) {
+		}else if ((field.getPositions(human.getColor()).size() < 3 && human.getSetCount() <= 0)) {
 			showGameOverMsg("You have lost!", "You lost all of your stones.");
 			return true;
-		}else if(!field.movesPossible(options.colorPlayer2, bot.getSetCount())){
+		}else if(!field.movesPossible(bot.getColor(), bot.getSetCount())){
 			showGameOverMsg("Bot has lost!", "He could not make any further move.");
 			return true;
-		}else if ((field.getPositions(options.colorPlayer2).size() < 3 && bot.getSetCount() <= 0)) {
+		}else if ((field.getPositions(bot.getColor()).size() < 3 && bot.getSetCount() <= 0)) {
 			showGameOverMsg("Bot has lost!", "He has lost all of his stones.");
 			return true;
 		}
@@ -291,8 +284,8 @@ public class HumanVsBot extends GameModeActivity{
 		public void onClick(View arg0) {
 
 			if (state == State.SET) {
-				if(field.getColorAt(new Position(x,y)).equals(options.colorPlayer1)
-						|| field.getColorAt(new Position(x,y)).equals((options.colorPlayer2))){
+				if(field.getColorAt(new Position(x,y)).equals(human.getColor())
+						|| field.getColorAt(new Position(x,y)).equals((bot.getColor()))){
 					showToast("You can not set to this Position!");
 				}else{
 					Position pos = new Position(x, y);
@@ -300,7 +293,7 @@ public class HumanVsBot extends GameModeActivity{
 					signalSelection();
 				}
 			} else if (state == State.MOVEFROM) {
-				if(!(field.getColorAt(new Position(x,y)).equals(options.colorPlayer1))){
+				if(!(field.getColorAt(new Position(x,y)).equals(human.getColor()))){
 					showToast("Nothing to move here!");
 				}else{
 					redSector = fieldView.createSector(Options.Color.RED);
@@ -326,14 +319,14 @@ public class HumanVsBot extends GameModeActivity{
 			} else if (state == State.IGNORE) {
 				showToast("It is not your turn!");
 			}else if (state == State.KILL) { 
-				if(!(field.getColorAt(new Position(x,y)) == options.colorPlayer2)){
+				if(!(field.getColorAt(new Position(x,y)).equals(bot.getColor()))){
 					showToast("Nothing to kill here!");
-				}else if(field.inMill(new Position(x,y), options.colorPlayer2)){
+				}else if(field.inMill(new Position(x,y), bot.getColor())){
 					//if every single stone of enemy is part of a mill we are allowed to kill
-					LinkedList<Position> enemypos = field.getPositions(options.colorPlayer2);
+					LinkedList<Position> enemypos = field.getPositions(bot.getColor());
 					boolean allInMill = true;
 					for(int i = 0; i<enemypos.size(); i++){
-						if(!field.inMill(enemypos.get(i), options.colorPlayer2)){
+						if(!field.inMill(enemypos.get(i), bot.getColor())){
 							allInMill = false;
 							break;
 						}
