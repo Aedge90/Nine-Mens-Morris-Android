@@ -1,5 +1,5 @@
 
-/*
+
 package own.projects.lemiroapp;
 
 import java.util.LinkedList;
@@ -22,7 +22,7 @@ public class HumanVsHuman extends GameModeActivity{
 	private Lock lock = new ReentrantLock();
     private Condition selection = lock.newCondition();
     private volatile boolean selected;
-    
+
 	private volatile int setCountHuman1;
 	private volatile int setCountHuman2;
 	private volatile State state;
@@ -30,9 +30,6 @@ public class HumanVsHuman extends GameModeActivity{
 	Options.Color currPlayer;
 	//his Opponent
 	Options.Color opponentPlayer;
-	private static enum State {
-		SET, MOVEFROM, MOVETO, IGNORE, KILL, GAMEOVER
-	};
     
     @Override
     protected void init(){
@@ -139,14 +136,14 @@ public class HumanVsHuman extends GameModeActivity{
             lock.unlock();
         }
 	}
-	
+
 	private void signalSelection(){
 		lock.lock();
 		selected = true;
 		selection.signal();
 		lock.unlock();
 	}
-    
+
     private void humanTurn(Options.Color humanColor, int hisSetCount, int humanNR) throws InterruptedException{
     	Position newPosition = null;
 		if(hisSetCount <= 0){
@@ -229,7 +226,7 @@ public class HumanVsHuman extends GameModeActivity{
 
 		final int x;
 		final int y;
-		
+
 		OnFieldClickListener(int x ,int y){
 			this.x = x;
 			this.y = y;
@@ -239,7 +236,7 @@ public class HumanVsHuman extends GameModeActivity{
 			this.x = pos.getX();
 			this.y = pos.getY();
 		}
-		
+
 		@Override
 		public void onClick(View arg0) {
 
@@ -275,7 +272,7 @@ public class HumanVsHuman extends GameModeActivity{
 				signalSelection();
 			} else if (state == State.IGNORE) {
 				showToast("It is not your turn!");
-			}else if (state == State.KILL) { 
+			}else if (state == State.KILL) {
 				if(!(field.getColorAt(new Position(x,y)) == opponentPlayer)){
 					showToast("Nothing to kill here!");
 				}else if(field.inMill(new Position(x,y), opponentPlayer)){
@@ -301,10 +298,9 @@ public class HumanVsHuman extends GameModeActivity{
 					signalSelection();
 				}
 			}
-			
-			//showToast("x = " + x + "  y = " + y);	 
+
+			//showToast("x = " + x + "  y = " + y);
 
 		}
 	}
 }
-*/

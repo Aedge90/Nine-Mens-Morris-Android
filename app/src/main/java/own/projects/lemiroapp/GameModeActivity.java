@@ -59,6 +59,11 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
 	ImageView[] millSectors;
 	final GameModeActivity THIS = this;
 
+    volatile State state;
+	protected enum State {
+		SET, MOVEFROM, MOVETO, IGNORE, KILL, GAMEOVER
+	}
+
 	private void setDefaultUncaughtExceptionHandler() {
 	    try {
 	        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
@@ -197,7 +202,7 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
 		}
 	}
 	
-	protected void init(){};
+	protected abstract void init();
 	
 	protected void showToast(String text){
 		Toast toast = Toast.makeText(this,text ,Toast.LENGTH_SHORT);

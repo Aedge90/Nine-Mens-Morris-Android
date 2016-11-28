@@ -22,10 +22,6 @@ public class HumanVsBot extends GameModeActivity{
 	Strategy brain;
     Player human;
     Player bot;
-	private volatile State state;
-	private static enum State {
-		SET, MOVEFROM, MOVETO, IGNORE, KILL, GAMEOVER
-	};
     
     @Override
     protected void init(){
@@ -186,7 +182,6 @@ public class HumanVsBot extends GameModeActivity{
 		state = State.IGNORE;
     }
 
-    
     protected void botTurn() throws InterruptedException{
     	Position newPosition = null;
     	if(bot.getSetCount() <= 0){
