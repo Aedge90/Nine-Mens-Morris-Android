@@ -2,18 +2,13 @@
 
 package own.projects.lemiroapp;
 
-import java.util.LinkedList;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
-import android.os.SystemClock;
 import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.GridLayout;
+
 
 public class HumanVsBot extends GameModeActivity{
+
+	Player human;
+	Player bot;
 
     @Override
     protected void init(){

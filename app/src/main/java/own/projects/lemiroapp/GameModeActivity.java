@@ -74,8 +74,6 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
         SET, MOVEFROM, MOVETO, IGNORE, KILL, GAMEOVER
     }
 
-    Player human;
-    Player bot;
     Player currPlayer;
     Strategy brain;
 
@@ -429,8 +427,8 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
         public void onClick(View arg0) {
 
             if (state == State.SET) {
-                if(field.getColorAt(new Position(x,y)).equals(human.getColor())
-                        || field.getColorAt(new Position(x,y)).equals((bot.getColor()))){
+                if(field.getColorAt(new Position(x,y)).equals(currPlayer.getColor())
+                        || field.getColorAt(new Position(x,y)).equals((currPlayer.getOtherPlayer().getColor()))){
                     showToast("You can not set to this Position!");
                 }else{
                     Position pos = new Position(x, y);
@@ -438,22 +436,22 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
                     signalSelection();
                 }
             } else if (state == State.MOVEFROM) {
-                if(!(field.getColorAt(new Position(x,y)).equals(human.getColor()))){
+                if(!(field.getColorAt(new Position(x,y)).equals(currPlayer.getColor()))){
                     showToast("Nothing to move here!");
                 }else{
                     redSector = fieldView.createSector(Options.Color.RED);
                     redSector.setLayoutParams(new GridLayout.LayoutParams(
                             GridLayout.spec(y, 1), GridLayout.spec(x, 1)));
                     fieldLayout.addView(redSector);
-//set invalid position for now so that constructor doesnt throw IllegalArgumentException
+                    //set invalid position for now so that constructor doesnt throw IllegalArgumentException
                     currMove = new Move(new Position(-1,-1), new Position(x,y), null);
                     signalSelection();
                 }
             } else if (state == State.MOVETO) {
                 if(!field.movePossible(currMove.getSrc(), new Position(x,y))){
                     state = State.MOVEFROM;
-//signal that currMove could not be set
-currMove = null;
+                    //signal that currMove could not be set
+                    currMove = null;
                     fieldLayout.removeView(redSector);
                     showToast("You can not move to this Position!");
                 }else{
@@ -464,14 +462,14 @@ currMove = null;
             } else if (state == State.IGNORE) {
                 showToast("It is not your turn!");
             }else if (state == State.KILL) {
-                if(!(field.getColorAt(new Position(x,y)).equals(bot.getColor()))){
+                if(!(field.getColorAt(new Position(x,y)).equals(currPlayer.getOtherPlayer().getColor()))){
                     showToast("Nothing to kill here!");
-                }else if(field.inMill(new Position(x,y), bot.getColor())){
+                }else if(field.inMill(new Position(x,y), currPlayer.getOtherPlayer().getColor())){
                     //if every single stone of enemy is part of a mill we are allowed to kill
-                    LinkedList<Position> enemypos = field.getPositions(bot.getColor());
+                    LinkedList<Position> enemypos = field.getPositions(currPlayer.getOtherPlayer().getColor());
                     boolean allInMill = true;
                     for(int i = 0; i<enemypos.size(); i++){
-                        if(!field.inMill(enemypos.get(i), bot.getColor())){
+                        if(!field.inMill(enemypos.get(i), currPlayer.getOtherPlayer().getColor())){
                             allInMill = false;
                             break;
                         }
@@ -485,7 +483,7 @@ currMove = null;
                     }
                 }else{
                     Position killPos = new Position(x, y);
-currMove = new Move(currMove.getDest(), currMove.getSrc(), killPos);
+                    currMove = new Move(currMove.getDest(), currMove.getSrc(), killPos);
                     signalSelection();
                 }
             }
