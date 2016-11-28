@@ -77,13 +77,6 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
     Player currPlayer;
     Strategy brain;
 
-    private void signalSelection(){
-        lock.lock();
-        selected = true;
-        selection.signal();
-        lock.unlock();
-    }
-
 	private void setDefaultUncaughtExceptionHandler() {
 	    try {
 	        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
@@ -223,6 +216,13 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
 	}
 	
 	protected abstract void init();
+
+    private void signalSelection(){
+        lock.lock();
+        selected = true;
+        selection.signal();
+        lock.unlock();
+    }
 
     private void waitforSelection() throws InterruptedException{
         lock.lock();
@@ -381,7 +381,7 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
         return false;
     }
 	
-	 protected void showGameOverMsg(final String title, final String message){
+    protected void showGameOverMsg(final String title, final String message){
 			try {
 				Thread.sleep(1500);
 			} catch (InterruptedException e) {

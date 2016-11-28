@@ -72,10 +72,10 @@ public class MainActivity extends Activity {
 					botvsbotIntent.putExtra("own.projects.lemiroapp.Options", options);
 					startActivityForResult(botvsbotIntent, RUN_GAME);*/
 				}else{
-					/*Intent humanvshumanIntent = new Intent(THIS, HumanVsHuman.class);
+					Intent humanvshumanIntent = new Intent(THIS, HumanVsHuman.class);
 					humanvshumanIntent.setExtrasClassLoader(Options.class.getClassLoader());
 					humanvshumanIntent.putExtra("own.projects.lemiroapp.Options", options);
-					startActivityForResult(humanvshumanIntent, RUN_GAME);*/
+					startActivityForResult(humanvshumanIntent, RUN_GAME);
 				}
 				
 			}else {
