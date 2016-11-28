@@ -15,14 +15,6 @@ import android.widget.GridLayout;
 
 public class HumanVsBot extends GameModeActivity{
 
-	private Lock lock = new ReentrantLock();
-    private Condition selection = lock.newCondition();
-    private volatile boolean selected;
-    
-	Strategy brain;
-    Player human;
-    Player bot;
-    
     @Override
     protected void init(){
 
@@ -60,18 +52,18 @@ public class HumanVsBot extends GameModeActivity{
 		gameThread = createGameThread();
 
 	}
-    
-    private void setSectorListeners() {
 
-		for (int y = 0; y < LENGTH; y++) {
-			for (int x = 0; x < LENGTH; x++) {
-				if (!field.getColorAt(x, y).equals(Options.Color.INVALID)) {
-					fieldView.getPos(new Position(x, y)).setOnClickListener(
-							new  OnFieldClickListener(x,y));			
-				}
-			}
-		}
-	}
+    void setSectorListeners() {
+
+        for (int y = 0; y < LENGTH; y++) {
+            for (int x = 0; x < LENGTH; x++) {
+                if (!field.getColorAt(x, y).equals(Options.Color.INVALID)) {
+                    fieldView.getPos(new Position(x, y)).setOnClickListener(
+                            new  OnFieldClickListener(x,y));
+                }
+            }
+        }
+    }
 
     Thread createGameThread(){
 
@@ -84,13 +76,17 @@ public class HumanVsBot extends GameModeActivity{
     				if(options.whoStarts.equals(bot.getColor())){
     					state = State.IGNORE;
     					setTextinUIThread(progressText, "Bot is Computing!");
-    					botTurn();
-    				}
+                        currPlayer = bot;
+    					botTurn(bot);
+    				}else{
+                        currPlayer = human;
+                    }
     				while(true){
 
     					setTextinUIThread(progressText, R.string.player_turn);
 
-    					humanTurn();
+                        currPlayer = currPlayer.getOtherPlayer();
+    					humanTurn(human);
 
     					if(whoWon()){
     						break;
@@ -98,7 +94,8 @@ public class HumanVsBot extends GameModeActivity{
 
     					setTextinUIThread(progressText, "Bot is Computing!");
 
-    					botTurn();
+                        currPlayer = currPlayer.getOtherPlayer();
+    					botTurn(bot);
 
     					if(whoWon()){
     						break;
@@ -115,120 +112,6 @@ public class HumanVsBot extends GameModeActivity{
     	};
 
     	return new Thread(game);
-
-    }
-    
-    private void waitforSelection() throws InterruptedException{
-		lock.lock();
-		try {
-            while(!selected) { //necessary to avoid lost wakeup
-               selection.await();
-            }
-        } finally { 
-        	selected = false;
-            lock.unlock();
-        }
-	}
-	
-	private void signalSelection(){
-		lock.lock();
-		selected = true;
-		selection.signal();
-		lock.unlock();
-	}
-    
-    private void humanTurn() throws InterruptedException{
-
-        currMove = null;
-    	Position newPosition = null;
-		if(human.getSetCount() <= 0){
-            //this has to be a loop as the user may select an invalid destination in MOVETO phase
-			while(currMove == null){
-				state = State.MOVEFROM;
-				//wait for Human to select source
-				waitforSelection();
-				state = State.MOVETO;
-				//wait for Human to select destination
-				waitforSelection();
-			}
-			fieldView.makeMove(currMove, human.getColor());
-			fieldView.getPos(currMove.getSrc()).setOnClickListener(new OnFieldClickListener(currMove.getSrc()));
-			fieldView.getPos(currMove.getDest()).setOnClickListener(new OnFieldClickListener(currMove.getDest()));
-			newPosition = currMove.getDest();
-		}else{
-			state = State.SET;
-			// wait for human to set
-			waitforSelection();
-			fieldView.setPos(currMove.getDest(), human.getColor());
-			fieldView.getPos(currMove.getDest()).setOnClickListener(new OnFieldClickListener(currMove.getDest()));
-			newPosition = currMove.getDest();
-		}
-
-        field.executeSetOrMovePhase(currMove, human);
-
-		if (field.inMill(newPosition, human.getColor())) {
-			state = State.KILL;
-			Position[] mill = field.getMill(newPosition, human.getColor());
-			fieldView.paintMill(mill, millSectors);
-			//wait until kill is chosen
-			waitforSelection();
-			fieldView.setPos(currMove.getKill(), Options.Color.NOTHING);
-			fieldView.getPos(currMove.getKill()).setOnClickListener(new OnFieldClickListener(currMove.getKill()));
-			fieldView.unpaintMill(millSectors);
-
-            field.executeKillPhase(currMove, human);
-		}
-
-		state = State.IGNORE;
-    }
-
-    protected void botTurn() throws InterruptedException{
-    	Position newPosition = null;
-    	if(bot.getSetCount() <= 0){
-			currMove = brain.computeMove(bot);
-
-			setTextinUIThread(progressText, "Bot is moving!");
-
-	    	fieldView.makeMove(currMove, bot.getColor());
-	    	fieldView.getPos(currMove.getSrc()).setOnClickListener(
-	    			new OnFieldClickListener(currMove.getSrc()));
-	    	fieldView.getPos(currMove.getDest()).setOnClickListener(
-	    			new OnFieldClickListener(currMove.getDest()));
-	    	newPosition = currMove.getDest();
-		}else{
-			long time = SystemClock.elapsedRealtime();
-			
-			currMove = brain.computeMove(bot);
-	    	
-			setTextinUIThread(progressText, "Bot is moving!");
-			
-			//wait a moment if computation was very fast else don´t wait
-			long computationTime = time - SystemClock.elapsedRealtime();
-			if(computationTime < 1000){
-				Thread.sleep(1000 - computationTime);
-			}
-
-	    	fieldView.setPos(currMove.getDest(), bot.getColor());
-	    	fieldView.getPos(currMove.getDest()).setOnClickListener(
-	    			new OnFieldClickListener(currMove.getDest()));
-	    	newPosition = currMove.getDest();
-		}
-
-        field.executeSetOrMovePhase(currMove, bot);
-
-    	if (currMove.getKill() != null) {
-    		Position[] mill = field.getMill(newPosition, bot.getColor());
-
-    		fieldView.paintMill(mill, millSectors);
-
-    		fieldView.setPos(currMove.getKill(), Options.Color.NOTHING);
-    		fieldView.getPos(currMove.getKill()).setOnClickListener(
-    				new OnFieldClickListener(currMove.getKill()));
-    		Thread.sleep(1500);
-    		fieldView.unpaintMill(millSectors);
-
-            field.executeKillPhase(currMove, bot);
-    	}
 
     }
     
@@ -260,88 +143,4 @@ public class HumanVsBot extends GameModeActivity{
 		return false;
 	}
 
-	private class OnFieldClickListener implements OnClickListener {
-
-		final int x;
-		final int y;
-
-		OnFieldClickListener(int x ,int y){
-			this.x = x;
-			this.y = y;
-		}
-
-		OnFieldClickListener(Position pos){
-			this.x = pos.getX();
-			this.y = pos.getY();
-		}
-
-		@Override
-		public void onClick(View arg0) {
-
-			if (state == State.SET) {
-				if(field.getColorAt(new Position(x,y)).equals(human.getColor())
-						|| field.getColorAt(new Position(x,y)).equals((bot.getColor()))){
-					showToast("You can not set to this Position!");
-				}else{
-					Position pos = new Position(x, y);
-					currMove = new Move(pos, null, null);
-					signalSelection();
-				}
-			} else if (state == State.MOVEFROM) {
-				if(!(field.getColorAt(new Position(x,y)).equals(human.getColor()))){
-					showToast("Nothing to move here!");
-				}else{
-					redSector = fieldView.createSector(Options.Color.RED);
-					redSector.setLayoutParams(new GridLayout.LayoutParams(
-							GridLayout.spec(y, 1), GridLayout.spec(x, 1)));
-					fieldLayout.addView(redSector);
-                    //set invalid position for now so that constructor doesnt throw IllegalArgumentException
-					currMove = new Move(new Position(-1,-1), new Position(x,y), null);
-					signalSelection();
-				}
-			} else if (state == State.MOVETO) {
-				if(!field.movePossible(currMove.getSrc(), new Position(x,y))){
-					state = State.MOVEFROM;
-                    //signal that currMove could not be set
-                    currMove = null;
-					fieldLayout.removeView(redSector);
-					showToast("You can not move to this Position!");
-				}else{
-					fieldLayout.removeView(redSector);
-					currMove = new Move(new Position(x,y), currMove.getSrc(), null);
-				}
-				signalSelection();
-			} else if (state == State.IGNORE) {
-				showToast("It is not your turn!");
-			}else if (state == State.KILL) { 
-				if(!(field.getColorAt(new Position(x,y)).equals(bot.getColor()))){
-					showToast("Nothing to kill here!");
-				}else if(field.inMill(new Position(x,y), bot.getColor())){
-					//if every single stone of enemy is part of a mill we are allowed to kill
-					LinkedList<Position> enemypos = field.getPositions(bot.getColor());
-					boolean allInMill = true;
-					for(int i = 0; i<enemypos.size(); i++){
-						if(!field.inMill(enemypos.get(i), bot.getColor())){
-							allInMill = false;
-							break;
-						}
-					}
-					if(allInMill){
-						Position killPos = new Position(x, y);
-						currMove = new Move(currMove.getDest(), currMove.getSrc(), killPos);
-						signalSelection();
-					}else{
-						showToast("You can not kill a mill! Choose another target!");
-					}
-				}else{
-					Position killPos = new Position(x, y);
-                    currMove = new Move(currMove.getDest(), currMove.getSrc(), killPos);
-					signalSelection();
-				}
-			}
-			
-			//showToast("x = " + x + "  y = " + y);	 
-
-		}
-	}
 }

@@ -16,6 +16,8 @@
 
 package own.projects.lemiroapp;
 
+import android.os.SystemClock;
+import android.view.View;
 import android.widget.Toast;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -34,6 +36,11 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.util.LinkedList;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 public abstract class GameModeActivity extends android.support.v4.app.FragmentActivity{
 
 	protected final static int COMPUTE_DONE = 20;
@@ -42,8 +49,11 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
 	protected final static int RESULT_RESTART = Activity.RESULT_FIRST_USER + 1;
 	
 	protected final int LENGTH = 7;
+    protected Lock lock = new ReentrantLock();
+    protected Condition selection = lock.newCondition();
+    protected volatile boolean selected;
 
-	volatile Move currMove;
+    volatile Move currMove;
 	volatile int remiCount;
 	Thread gameThread;
 	Options options;
@@ -60,9 +70,21 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
 	final GameModeActivity THIS = this;
 
     volatile State state;
-	protected enum State {
-		SET, MOVEFROM, MOVETO, IGNORE, KILL, GAMEOVER
-	}
+    protected enum State {
+        SET, MOVEFROM, MOVETO, IGNORE, KILL, GAMEOVER
+    }
+
+    Player human;
+    Player bot;
+    Player currPlayer;
+    Strategy brain;
+
+    private void signalSelection(){
+        lock.lock();
+        selected = true;
+        selection.signal();
+        lock.unlock();
+    }
 
 	private void setDefaultUncaughtExceptionHandler() {
 	    try {
@@ -145,7 +167,7 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
 	}
-	
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 
@@ -203,7 +225,114 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
 	}
 	
 	protected abstract void init();
-	
+
+    private void waitforSelection() throws InterruptedException{
+        lock.lock();
+        try {
+            while(!selected) { //necessary to avoid lost wakeup
+                selection.await();
+            }
+        } finally {
+            selected = false;
+            lock.unlock();
+        }
+    }
+
+    void humanTurn(Player human) throws InterruptedException{
+
+        currMove = null;
+        Position newPosition = null;
+        if(human.getSetCount() <= 0){
+            //this has to be a loop as the user may select an invalid destination in MOVETO phase
+            while(currMove == null){
+                state = State.MOVEFROM;
+                //wait for Human to select source
+                waitforSelection();
+                state = State.MOVETO;
+                //wait for Human to select destination
+                waitforSelection();
+            }
+            fieldView.makeMove(currMove, human.getColor());
+            fieldView.getPos(currMove.getSrc()).setOnClickListener(new OnFieldClickListener(currMove.getSrc()));
+            fieldView.getPos(currMove.getDest()).setOnClickListener(new OnFieldClickListener(currMove.getDest()));
+            newPosition = currMove.getDest();
+        }else{
+            state = State.SET;
+            // wait for human to set
+            waitforSelection();
+            fieldView.setPos(currMove.getDest(), human.getColor());
+            fieldView.getPos(currMove.getDest()).setOnClickListener(new OnFieldClickListener(currMove.getDest()));
+            newPosition = currMove.getDest();
+        }
+
+        field.executeSetOrMovePhase(currMove, human);
+
+        if (field.inMill(newPosition, human.getColor())) {
+            state = State.KILL;
+            Position[] mill = field.getMill(newPosition, human.getColor());
+            fieldView.paintMill(mill, millSectors);
+            //wait until kill is chosen
+            waitforSelection();
+            fieldView.setPos(currMove.getKill(), Options.Color.NOTHING);
+            fieldView.getPos(currMove.getKill()).setOnClickListener(new OnFieldClickListener(currMove.getKill()));
+            fieldView.unpaintMill(millSectors);
+
+            field.executeKillPhase(currMove, human);
+        }
+
+        state = State.IGNORE;
+    }
+
+    void botTurn(Player bot) throws InterruptedException{
+        Position newPosition = null;
+        if(bot.getSetCount() <= 0){
+            currMove = brain.computeMove(bot);
+
+            setTextinUIThread(progressText, "Bot is moving!");
+
+            fieldView.makeMove(currMove, bot.getColor());
+            fieldView.getPos(currMove.getSrc()).setOnClickListener(
+                    new OnFieldClickListener(currMove.getSrc()));
+            fieldView.getPos(currMove.getDest()).setOnClickListener(
+                    new OnFieldClickListener(currMove.getDest()));
+            newPosition = currMove.getDest();
+        }else{
+            long time = SystemClock.elapsedRealtime();
+
+            currMove = brain.computeMove(bot);
+
+            setTextinUIThread(progressText, "Bot is moving!");
+
+            //wait a moment if computation was very fast else don´t wait
+            long computationTime = time - SystemClock.elapsedRealtime();
+            if(computationTime < 1000){
+                Thread.sleep(1000 - computationTime);
+            }
+
+            fieldView.setPos(currMove.getDest(), bot.getColor());
+            fieldView.getPos(currMove.getDest()).setOnClickListener(
+                    new OnFieldClickListener(currMove.getDest()));
+            newPosition = currMove.getDest();
+        }
+
+        field.executeSetOrMovePhase(currMove, bot);
+
+        if (currMove.getKill() != null) {
+            Position[] mill = field.getMill(newPosition, bot.getColor());
+
+            fieldView.paintMill(mill, millSectors);
+
+            fieldView.setPos(currMove.getKill(), Options.Color.NOTHING);
+            fieldView.getPos(currMove.getKill()).setOnClickListener(
+                    new OnFieldClickListener(currMove.getKill()));
+            Thread.sleep(1500);
+            fieldView.unpaintMill(millSectors);
+
+            field.executeKillPhase(currMove, bot);
+        }
+
+    }
+
 	protected void showToast(String text){
 		Toast toast = Toast.makeText(this,text ,Toast.LENGTH_SHORT);
 		toast.setGravity(Gravity.BOTTOM,0,0);
@@ -253,4 +382,88 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
 			});
 	 }
 
+    protected class OnFieldClickListener implements View.OnClickListener {
+
+        final int x;
+        final int y;
+
+        OnFieldClickListener(int x ,int y){
+            this.x = x;
+            this.y = y;
+        }
+
+        OnFieldClickListener(Position pos){
+            this.x = pos.getX();
+            this.y = pos.getY();
+        }
+
+        @Override
+        public void onClick(View arg0) {
+
+            if (state == State.SET) {
+                if(field.getColorAt(new Position(x,y)).equals(human.getColor())
+                        || field.getColorAt(new Position(x,y)).equals((bot.getColor()))){
+                    showToast("You can not set to this Position!");
+                }else{
+                    Position pos = new Position(x, y);
+                    currMove = new Move(pos, null, null);
+                    signalSelection();
+                }
+            } else if (state == State.MOVEFROM) {
+                if(!(field.getColorAt(new Position(x,y)).equals(human.getColor()))){
+                    showToast("Nothing to move here!");
+                }else{
+                    redSector = fieldView.createSector(Options.Color.RED);
+                    redSector.setLayoutParams(new GridLayout.LayoutParams(
+                            GridLayout.spec(y, 1), GridLayout.spec(x, 1)));
+                    fieldLayout.addView(redSector);
+//set invalid position for now so that constructor doesnt throw IllegalArgumentException
+                    currMove = new Move(new Position(-1,-1), new Position(x,y), null);
+                    signalSelection();
+                }
+            } else if (state == State.MOVETO) {
+                if(!field.movePossible(currMove.getSrc(), new Position(x,y))){
+                    state = State.MOVEFROM;
+//signal that currMove could not be set
+currMove = null;
+                    fieldLayout.removeView(redSector);
+                    showToast("You can not move to this Position!");
+                }else{
+                    fieldLayout.removeView(redSector);
+                    currMove = new Move(new Position(x,y), currMove.getSrc(), null);
+                }
+                signalSelection();
+            } else if (state == State.IGNORE) {
+                showToast("It is not your turn!");
+            }else if (state == State.KILL) {
+                if(!(field.getColorAt(new Position(x,y)).equals(bot.getColor()))){
+                    showToast("Nothing to kill here!");
+                }else if(field.inMill(new Position(x,y), bot.getColor())){
+                    //if every single stone of enemy is part of a mill we are allowed to kill
+                    LinkedList<Position> enemypos = field.getPositions(bot.getColor());
+                    boolean allInMill = true;
+                    for(int i = 0; i<enemypos.size(); i++){
+                        if(!field.inMill(enemypos.get(i), bot.getColor())){
+                            allInMill = false;
+                            break;
+                        }
+                    }
+                    if(allInMill){
+                        Position killPos = new Position(x, y);
+                        currMove = new Move(currMove.getDest(), currMove.getSrc(), killPos);
+                        signalSelection();
+                    }else{
+                        showToast("You can not kill a mill! Choose another target!");
+                    }
+                }else{
+                    Position killPos = new Position(x, y);
+currMove = new Move(currMove.getDest(), currMove.getSrc(), killPos);
+                    signalSelection();
+                }
+            }
+
+            //showToast("x = " + x + "  y = " + y);
+
+        }
+    }
 }

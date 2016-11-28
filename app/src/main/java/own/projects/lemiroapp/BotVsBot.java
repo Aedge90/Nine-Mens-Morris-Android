@@ -1,6 +1,6 @@
 
 //TODO include this file again
-
+/*
 package own.projects.lemiroapp;
 
 import java.util.concurrent.locks.Condition;
@@ -168,3 +168,4 @@ public class BotVsBot extends GameModeActivity{
 
 }
 
+*/

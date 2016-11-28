@@ -1,4 +1,4 @@
-
+/*
 
 package own.projects.lemiroapp;
 
@@ -26,8 +26,7 @@ public class HumanVsHuman extends GameModeActivity{
 	private volatile int setCountHuman1;
 	private volatile int setCountHuman2;
 	private volatile State state;
-	//player who has to make the current Selection (only important in human vs human)
-	Options.Color currPlayer;
+
 	//his Opponent
 	Options.Color opponentPlayer;
     
@@ -67,7 +66,7 @@ public class HumanVsHuman extends GameModeActivity{
 		for (int y = 0; y < LENGTH; y++) {
 			for (int x = 0; x < LENGTH; x++) {
 				if (!field.getColorAt(x, y).equals(Options.Color.INVALID)) {
-					fieldView.getColorAt(new Position(x, y)).setOnClickListener(
+					fieldView.getPos(new Position(x, y)).setOnClickListener(
 							new  OnFieldClickListener(x,y));			
 				}
 			}
@@ -222,85 +221,5 @@ public class HumanVsHuman extends GameModeActivity{
 		}
 	}
 
-	private class OnFieldClickListener implements OnClickListener {
-
-		final int x;
-		final int y;
-
-		OnFieldClickListener(int x ,int y){
-			this.x = x;
-			this.y = y;
-		}
-
-		OnFieldClickListener(Position pos){
-			this.x = pos.getX();
-			this.y = pos.getY();
-		}
-
-		@Override
-		public void onClick(View arg0) {
-
-			if (state == State.SET) {
-				if(field.getColorAt(new Position(x,y)).equals(currPlayer)
-						|| field.getColorAt(new Position(x,y)).equals((opponentPlayer))){
-					showToast("You can not set to this Position!");
-				}else{
-					Position pos = new Position(x, y);
-					currMove.setSet(pos);
-					signalSelection();
-				}
-			} else if (state == State.MOVEFROM) {
-				if(!(field.getColorAt(new Position(x,y)).equals(currPlayer))){
-					showToast("Nothing to move here!");
-				}else{
-					redSector = fieldView.createSector(Options.Color.RED);
-					redSector.setLayoutParams(new GridLayout.LayoutParams(
-							GridLayout.spec(y, 1), GridLayout.spec(x, 1)));
-					fieldLayout.addView(redSector);
-					currMove.setSrc(new Position(x,y));
-					signalSelection();
-				}
-			} else if (state == State.MOVETO) {
-				if(!field.movePossible(currMove.getSrc(), new Position(x,y))){
-					state = State.MOVEFROM;
-					fieldLayout.removeView(redSector);
-					showToast("You can not move to this Position!");
-				}else{
-					fieldLayout.removeView(redSector);
-					currMove.setDest(new Position(x, y));
-				}
-				signalSelection();
-			} else if (state == State.IGNORE) {
-				showToast("It is not your turn!");
-			}else if (state == State.KILL) {
-				if(!(field.getColorAt(new Position(x,y)) == opponentPlayer)){
-					showToast("Nothing to kill here!");
-				}else if(field.inMill(new Position(x,y), opponentPlayer)){
-					//if every single stone of enemy is part of a mill we are allowed to kill
-					LinkedList<Position> enemypos = field.getPositions(opponentPlayer);
-					boolean allInMill = true;
-					for(int i = 0; i<enemypos.size(); i++){
-						if(!field.inMill(enemypos.get(i), opponentPlayer)){
-							allInMill = false;
-							break;
-						}
-					}
-					if(allInMill){
-						Position killPos = new Position(x, y);
-						currMove.setKill(killPos);
-						signalSelection();
-					}else{
-						showToast("You can not kill a mill! Choose another target!");
-					}
-				}else{
-					Position killPos = new Position(x, y);
-					currMove.setKill(killPos);
-					signalSelection();
-				}
-			}
-
-			//showToast("x = " + x + "  y = " + y);
-
-		}
-	}
 }
+*/
