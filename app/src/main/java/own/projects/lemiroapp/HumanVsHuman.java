@@ -1,5 +1,4 @@
 /*
-
 package own.projects.lemiroapp;
 
 import java.util.LinkedList;
@@ -188,6 +187,9 @@ public class HumanVsHuman extends GameModeActivity{
     }
     
 	private boolean whoWon() {
+
+        //TODO show remiCount somewhere
+
 		if(field.getPositions(options.colorPlayer1).size() == 3 && field.getPositions(options.colorPlayer2).size() == 3){
 			remiCount --;
 			if(remiCount == 0){
@@ -210,15 +212,6 @@ public class HumanVsHuman extends GameModeActivity{
 			return true;
 		}
 		return false;
-	}
-	
-	private void changeCurrPlayerTo(Options.Color player){
-		currPlayer = player;
-		if(player.equals(options.colorPlayer1)){
-			opponentPlayer = options.colorPlayer2;
-		}else{
-			opponentPlayer = options.colorPlayer1;
-		}
 	}
 
 }

@@ -114,33 +114,5 @@ public class HumanVsBot extends GameModeActivity{
     	return new Thread(game);
 
     }
-    
-	private boolean whoWon() {
-
-		//TODO show remiCount somewhere
-
-		if(field.getPositions(human.getColor()).size() == 3 && field.getPositions(bot.getColor()).size() == 3){
-			remiCount --;
-			if(remiCount == 0){
-				showGameOverMsg("Draw!", "Nobody wins.");
-				return true;
-			}
-		}
-		
-		if(!field.movesPossible(human.getColor(), human.getSetCount())){
-			showGameOverMsg("You have lost!", "You could not make any further move.");
-			return true;
-		}else if ((field.getPositions(human.getColor()).size() < 3 && human.getSetCount() <= 0)) {
-			showGameOverMsg("You have lost!", "You lost all of your stones.");
-			return true;
-		}else if(!field.movesPossible(bot.getColor(), bot.getSetCount())){
-			showGameOverMsg("Bot has lost!", "He could not make any further move.");
-			return true;
-		}else if ((field.getPositions(bot.getColor()).size() < 3 && bot.getSetCount() <= 0)) {
-			showGameOverMsg("Bot has lost!", "He has lost all of his stones.");
-			return true;
-		}
-		return false;
-	}
 
 }
