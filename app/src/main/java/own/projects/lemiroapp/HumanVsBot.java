@@ -73,14 +73,12 @@ public class HumanVsBot extends GameModeActivity{
     					setTextinUIThread(progressText, "Bot is Computing!");
                         currPlayer = bot;
     					botTurn(bot);
-    				}else{
-                        currPlayer = human;
-                    }
+    				}
     				while(true){
 
     					setTextinUIThread(progressText, R.string.player_turn);
 
-                        currPlayer = currPlayer.getOtherPlayer();
+                        currPlayer = human;
     					humanTurn(human);
 
     					if(whoWon()){
@@ -89,7 +87,7 @@ public class HumanVsBot extends GameModeActivity{
 
     					setTextinUIThread(progressText, "Bot is Computing!");
 
-                        currPlayer = currPlayer.getOtherPlayer();
+                        currPlayer = bot;
     					botTurn(bot);
 
     					if(whoWon()){
