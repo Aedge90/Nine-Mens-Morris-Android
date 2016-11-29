@@ -67,10 +67,10 @@ public class MainActivity extends Activity {
 					appvsbotIntent.putExtra("own.projects.lemiroapp.Options", options);
 					startActivityForResult(appvsbotIntent, RUN_GAME);
 				}else if(options.gameMode.equals(Options.GameMode.BOTBOT)){
-					/*Intent botvsbotIntent = new Intent(THIS, BotVsBot.class);
+					Intent botvsbotIntent = new Intent(THIS, BotVsBot.class);
 					botvsbotIntent.setExtrasClassLoader(Options.class.getClassLoader());
 					botvsbotIntent.putExtra("own.projects.lemiroapp.Options", options);
-					startActivityForResult(botvsbotIntent, RUN_GAME);*/
+					startActivityForResult(botvsbotIntent, RUN_GAME);
 				}else{
 					Intent humanvshumanIntent = new Intent(THIS, HumanVsHuman.class);
 					humanvshumanIntent.setExtrasClassLoader(Options.class.getClassLoader());
