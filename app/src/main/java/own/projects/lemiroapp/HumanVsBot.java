@@ -20,8 +20,7 @@ public class HumanVsBot extends GameModeActivity{
         human.setOtherPlayer(bot);
         bot.setOtherPlayer(human);
         bot.setDifficulty(options.difficulty1);
-    	
-		progressBar.setMax(options.difficulty1.ordinal() + 2);
+
 		// Mill Settings are Set
 		if (options.millMode == Options.MillMode.MILL5) {
 			human.setSetCount(5);

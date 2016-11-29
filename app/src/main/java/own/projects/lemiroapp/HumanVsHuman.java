@@ -19,7 +19,6 @@ public class HumanVsHuman extends GameModeActivity{
         human1.setOtherPlayer(human2);
         human2.setOtherPlayer(human1);
 
-		progressBar.setMax(options.difficulty1.ordinal() + 2);
 		// Mill Settings are Set
 		if (options.millMode == Options.MillMode.MILL5) {
             human1.setSetCount(5);
@@ -54,6 +53,7 @@ public class HumanVsHuman extends GameModeActivity{
 
     			try {
                     if(options.whoStarts.equals(human2.getColor())){
+						setTextinUIThread(progressText, "Turn of Player " + human2.getColor().toString().toLowerCase());
                         currPlayer = human2;
                         humanTurn(human2);
                     }
