@@ -377,17 +377,14 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
             }
         }
 
-        if(!field.movesPossible(currPlayer.getColor(), currPlayer.getSetCount())){
-            showGameOverMsg("Player " + currPlayer.getColor().toString().toLowerCase() + " has lost!", "He could not make any further move.");
-            return true;
-        }else if ((field.getPositions(currPlayer.getColor()).size() < 3 && currPlayer.getSetCount() <= 0)) {
-            showGameOverMsg("Player " + currPlayer.getColor().toString().toLowerCase() + " has lost!", "He lost all of your stones.");
-            return true;
-        }else if(!field.movesPossible(currPlayer.getOtherPlayer().getColor(), currPlayer.getOtherPlayer().getSetCount())){
-            showGameOverMsg("Player " + currPlayer.getColor().toString().toLowerCase() + " has lost!", "He could not make any further move.");
+        String loosingColor = currPlayer.getOtherPlayer().getColor().toString();
+        loosingColor = loosingColor.toUpperCase().charAt(0)+loosingColor.substring(1).toLowerCase();
+        //only the other player can have lost as its impossible for currPlayer to commit suicide
+        if(!field.movesPossible(currPlayer.getOtherPlayer().getColor(), currPlayer.getOtherPlayer().getSetCount())){
+            showGameOverMsg(loosingColor + " has lost!", "He could not make any further move.");
             return true;
         }else if ((field.getPositions(currPlayer.getOtherPlayer().getColor()).size() < 3 && currPlayer.getOtherPlayer().getSetCount() <= 0)) {
-            showGameOverMsg("Player " + currPlayer.getColor().toString().toLowerCase() + " has lost!", "He has lost all of his stones.");
+            showGameOverMsg(loosingColor + " has lost!", "He has lost all of his pieces.");
             return true;
         }
         return false;
