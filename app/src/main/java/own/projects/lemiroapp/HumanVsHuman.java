@@ -44,18 +44,6 @@ public class HumanVsHuman extends GameModeActivity{
         gameThread = createGameThread();
 
 	}
-    
-    private void setSectorListeners() {
-
-		for (int y = 0; y < LENGTH; y++) {
-			for (int x = 0; x < LENGTH; x++) {
-				if (!field.getColorAt(x, y).equals(Options.Color.INVALID)) {
-					fieldView.getPos(new Position(x, y)).setOnClickListener(
-							new  OnFieldClickListener(x,y));			
-				}
-			}
-		}
-	}
 
     public Thread createGameThread(){
 

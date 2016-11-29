@@ -236,6 +236,18 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
         }
     }
 
+    void setSectorListeners() {
+
+        for (int y = 0; y < LENGTH; y++) {
+            for (int x = 0; x < LENGTH; x++) {
+                if (!field.getColorAt(x, y).equals(Options.Color.INVALID)) {
+                    fieldView.getPos(new Position(x, y)).setOnClickListener(
+                            new  OnFieldClickListener(x,y));
+                }
+            }
+        }
+    }
+
     void humanTurn(Player human) throws InterruptedException{
 
         currMove = null;

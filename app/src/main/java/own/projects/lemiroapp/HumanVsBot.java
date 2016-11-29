@@ -48,18 +48,6 @@ public class HumanVsBot extends GameModeActivity{
 
 	}
 
-    void setSectorListeners() {
-
-        for (int y = 0; y < LENGTH; y++) {
-            for (int x = 0; x < LENGTH; x++) {
-                if (!field.getColorAt(x, y).equals(Options.Color.INVALID)) {
-                    fieldView.getPos(new Position(x, y)).setOnClickListener(
-                            new  OnFieldClickListener(x,y));
-                }
-            }
-        }
-    }
-
     Thread createGameThread(){
 
     	Runnable game = new Runnable(){
