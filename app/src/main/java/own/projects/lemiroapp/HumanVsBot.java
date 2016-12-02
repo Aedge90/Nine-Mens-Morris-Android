@@ -9,6 +9,7 @@ public class HumanVsBot extends GameModeActivity{
 
 	Player human;
 	Player bot;
+	Strategy botBrain;
 
     @Override
     protected void init(){
@@ -39,7 +40,7 @@ public class HumanVsBot extends GameModeActivity{
 			fieldLayout.setBackgroundResource(R.drawable.brett9);
 		}
 		selected = false;
-		brain = new Strategy(field, progressUpdater);
+		botBrain = new Strategy(field, bot, progressUpdater);
 		
 		setSectorListeners();
 		
@@ -59,7 +60,7 @@ public class HumanVsBot extends GameModeActivity{
     					state = State.IGNORE;
     					setTextinUIThread(progressText, "Bot is Computing!");
                         currPlayer = bot;
-    					botTurn(bot);
+    					botTurn(bot, botBrain);
     				}
     				while(true){
 
@@ -75,7 +76,7 @@ public class HumanVsBot extends GameModeActivity{
     					setTextinUIThread(progressText, "Bot is Computing!");
 
                         currPlayer = bot;
-    					botTurn(bot);
+    					botTurn(bot, botBrain);
 
     					if(whoWon()){
     						break;

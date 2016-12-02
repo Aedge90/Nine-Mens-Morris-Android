@@ -18,10 +18,11 @@ public class Strategy {
     static final int MIN = -100000;
     LinkedList<Move> movesToEvaluate;
 
-	Strategy(GameBoard field, ProgressUpdater up) {
+	Strategy(GameBoard field, Player player, ProgressUpdater up) {
 		this.field = field;
 		this.up = up;
         this.movesToEvaluate = new LinkedList<Move>();
+		this.maxPlayer = player;
 	}
 	
 	private void addnonJumpMoves(LinkedList<Move> moves, Player player){
@@ -244,26 +245,24 @@ public class Strategy {
 
 	}
 
-	public Move computeMove(Player player) throws InterruptedException {
+	public Move computeMove() throws InterruptedException {
 				
-		startDepth = player.getDifficulty().ordinal() + 2;
+		startDepth = maxPlayer.getDifficulty().ordinal() + 2;
 		//decrease startDepth if there are too much possible moves to save time
 		int actualDepth = startDepth;
 		if(startDepth > 4){
-			if (field.getPositions(player.getColor()).size() <= 3 || field.getPositions(player.getOtherPlayer().getColor()).size() <= 3){
+			if (field.getPositions(maxPlayer.getColor()).size() <= 3 || field.getPositions(maxPlayer.getOtherPlayer().getColor()).size() <= 3){
 				startDepth = 4;
 			}
 		}
 		
-		Log.i("Strategy", "computeMove started for Player " + player.getColor() + " startDepth: " + startDepth);
+		Log.i("Strategy", "computeMove started for Player " + maxPlayer.getColor() + " startDepth: " + startDepth);
 
         prevMove = move;
 
         move = null;
 
-        maxPlayer = player;
-
-		max(startDepth, Integer.MIN_VALUE, Integer.MAX_VALUE, player);
+		max(startDepth, Integer.MIN_VALUE, Integer.MAX_VALUE, maxPlayer);
 		
 		up.reset();
 		

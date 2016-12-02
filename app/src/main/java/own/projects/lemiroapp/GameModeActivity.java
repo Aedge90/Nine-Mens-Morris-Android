@@ -75,7 +75,6 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
     }
 
     Player currPlayer;
-    Strategy brain;
 
 	private void setDefaultUncaughtExceptionHandler() {
 	    try {
@@ -293,10 +292,10 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
         state = State.IGNORE;
     }
 
-    void botTurn(Player bot) throws InterruptedException{
+    void botTurn(Player bot, Strategy brain) throws InterruptedException{
         Position newPosition = null;
         if(bot.getSetCount() <= 0){
-            currMove = brain.computeMove(bot);
+            currMove = brain.computeMove();
 
             setTextinUIThread(progressText, "Bot is moving!");
 
@@ -309,7 +308,7 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
         }else{
             long time = SystemClock.elapsedRealtime();
 
-            currMove = brain.computeMove(bot);
+            currMove = brain.computeMove();
 
             setTextinUIThread(progressText, "Bot is moving!");
 

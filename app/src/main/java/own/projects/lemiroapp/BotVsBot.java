@@ -13,6 +13,8 @@ public class BotVsBot extends GameModeActivity{
 
     Player bot1;
     Player bot2;
+	Strategy bot1Brain;
+	Strategy bot2Brain;
 
     // TODO use two brains. Important as prevMove in Strategy
     // will be overwritten by the other bot at the moment
@@ -44,8 +46,9 @@ public class BotVsBot extends GameModeActivity{
 			field = new Mill9();
 			fieldLayout.setBackgroundResource(R.drawable.brett9);
 		}
-		
-		brain = new Strategy(field , progressUpdater);
+
+        bot1Brain = new Strategy(field, bot1, progressUpdater);
+        bot2Brain = new Strategy(field, bot2, progressUpdater);
 		
 		gameThread = createGameThread();
 
@@ -62,14 +65,14 @@ public class BotVsBot extends GameModeActivity{
                     if(options.whoStarts.equals(bot2.getColor())){
                         setTextinUIThread(progressText, "Bot " + bot2.getColor().toString().toLowerCase() + " is computing!");
                         currPlayer = bot2;
-                        botTurn(bot2);
+                        botTurn(bot2, bot2Brain);
                     }
     				while(true){
 
                         setTextinUIThread(progressText, "Bot " + bot1.getColor().toString().toLowerCase() + " is computing!");
 
                         currPlayer = bot1;
-                        botTurn(bot1);
+                        botTurn(bot1, bot1Brain);
 
     					if(whoWon()){
     						break;
@@ -78,7 +81,7 @@ public class BotVsBot extends GameModeActivity{
                         setTextinUIThread(progressText, "Bot " + bot2.getColor().toString().toLowerCase() + " is computing!");
 
                         currPlayer = bot2;
-                        botTurn(bot2);
+                        botTurn(bot2, bot2Brain);
 
     					if(whoWon()){
     						break;
