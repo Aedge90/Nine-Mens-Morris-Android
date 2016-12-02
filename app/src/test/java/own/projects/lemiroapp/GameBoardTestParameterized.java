@@ -57,14 +57,15 @@ public class GameBoardTestParameterized {
         playerBlack.setSetCount(5);
         playerWhite.setSetCount(5);
 
-        Strategy strategy = new Strategy(gameBoard, null);
+        Strategy strategyBlack = new Strategy(gameBoard, playerBlack ,null);
+        Strategy strategyWhite = new Strategy(gameBoard, playerWhite ,null);
 
         //every player executes 10 turns
         for (int i = 0; i < nMovesPerPlayer; i++) {
-            LinkedList<Move> allPossibleMoves = strategy.possibleMoves(playerBlack);
+            LinkedList<Move> allPossibleMoves = strategyBlack.possibleMoves(playerBlack);
             //just use the third possible move
             gameBoard.executeCompleteTurn(allPossibleMoves.get(2), playerBlack);
-            allPossibleMoves = strategy.possibleMoves(playerWhite);
+            allPossibleMoves = strategyWhite.possibleMoves(playerWhite);
             gameBoard.executeCompleteTurn(allPossibleMoves.get(2), playerWhite);
         }
 
@@ -77,7 +78,7 @@ public class GameBoardTestParameterized {
 
         final GameBoard gameBoardBefore = mGameBoard.getCopy();
 
-        Strategy strategy = new Strategy(mGameBoard, null);
+        Strategy strategy = new Strategy(mGameBoard, mPlayerBlack, null);
 
         LinkedList<Move> allPossibleMoves = strategy.possibleMoves(mPlayerBlack);
 

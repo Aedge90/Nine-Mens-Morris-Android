@@ -55,7 +55,8 @@ public class StrategyTestNonParameterized {
 
         executeMoveSeries(gameBoard, moves, mPlayerBlack);
 
-        Strategy strategy = new Strategy(gameBoard, null);
+        //black is the maximizing player
+        Strategy strategy = new Strategy(gameBoard, mPlayerBlack, null);
 
         LinkedList<Move> possibleMoves = strategy.possibleMoves(mPlayerWhite);
         assertEquals(0, possibleMoves.size());
@@ -69,7 +70,8 @@ public class StrategyTestNonParameterized {
     public void addpossibleKillstoMove () {
 
         GameBoard gameBoard = new Mill5();
-        Strategy strategy = new Strategy(gameBoard, null);
+        Strategy strategyBlack = new Strategy(gameBoard, mPlayerBlack, null);
+        Strategy strategyWhite = new Strategy(gameBoard, mPlayerWhite, null);
 
         LinkedList<Move> possibleMovessoFar = new LinkedList<Move>();
 
@@ -83,7 +85,7 @@ public class StrategyTestNonParameterized {
 
         //black closes his mill, kill should be added to this move
         Move killMove = new Move(new Position(0,3), null, null);
-        strategy.addpossibleKillstoMove(possibleMovessoFar, killMove, mPlayerBlack);
+        strategyBlack.addpossibleKillstoMove(possibleMovessoFar, killMove, mPlayerBlack);
 
         Move expected0 = new Move(new Position(0,3), null, new Position(3,0));
         Move expected1 = new Move(new Position(0,3), null, new Position(3,2));
@@ -101,7 +103,7 @@ public class StrategyTestNonParameterized {
 
         //now white sets to (6,6)
         Move nextMove = new Move(new Position(6,6), null, null);
-        strategy.addpossibleKillstoMove(possibleMovessoFar, nextMove, mPlayerWhite);
+        strategyWhite.addpossibleKillstoMove(possibleMovessoFar, nextMove, mPlayerWhite);
 
         //assert that white can not kill
         assertEquals(1, possibleMovessoFar.size());
@@ -130,7 +132,7 @@ public class StrategyTestNonParameterized {
                                   { W, I, I, N, I, I, N}};
 
         GameBoard gameBoard = new Mill5(field);
-        Strategy strategy = new Strategy(gameBoard, null);
+        Strategy strategy = new Strategy(gameBoard, mPlayerBlack, null);
 
         LinkedList<Move> possibleMovessoFar = new LinkedList<Move>();
 
@@ -149,12 +151,11 @@ public class StrategyTestNonParameterized {
 
         GameBoard gameBoard = new Mill9();
 
-        Player player = new Player(Options.Color.BLACK);
-        player.setSetCount(9);
+        mPlayerBlack.setSetCount(9);
 
-        Strategy strategy = new Strategy(gameBoard, null);
+        Strategy strategy = new Strategy(gameBoard, mPlayerBlack, null);
 
-        LinkedList<Move> moves = strategy.possibleMoves(player);
+        LinkedList<Move> moves = strategy.possibleMoves(mPlayerBlack);
 
         assertEquals(24, moves.size());
 
@@ -180,16 +181,12 @@ public class StrategyTestNonParameterized {
 
         GameBoard gameBoard = new Mill9(mill9);
 
-        Player playerBlack = new Player(Options.Color.BLACK);
-        Player playerWhite = new Player(Options.Color.WHITE);
-        playerBlack.setSetCount(0);
-        playerWhite.setSetCount(0);
-        playerBlack.setOtherPlayer(playerWhite);
-        playerWhite.setOtherPlayer(playerBlack);
+        mPlayerBlack.setSetCount(0);
+        mPlayerWhite.setSetCount(0);
 
-        Strategy strategy = new Strategy(gameBoard, null);
+        Strategy strategy = new Strategy(gameBoard, mPlayerBlack, null);
 
-        LinkedList<Move> moves = strategy.possibleMoves(playerBlack);
+        LinkedList<Move> moves = strategy.possibleMoves(mPlayerBlack);
 
         //minus one, as one move is replaced with 3 moves containing different kill targets
         assertEquals(3*18 - 1 + 3, moves.size());
