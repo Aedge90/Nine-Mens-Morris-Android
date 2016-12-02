@@ -302,19 +302,22 @@ public class StrategyTestParameterized {
         GameBoard gameBoard = new Mill5(mill5);
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
-        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater);
+        Strategy strategyPlayer1 = new Strategy(gameBoard, mPlayer1, updater);
+        Strategy strategyPlayer2 = new Strategy(gameBoard, mPlayer2, updater);
 
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
 
         LinkedList<Position> positionsP1Before = gameBoard.getPositions(mPlayer1.getColor());
 
-        Move result1 = strategy.computeMove();
+        Move result1 = strategyPlayer1.computeMove();
         gameBoard.executeCompleteTurn(result1, mPlayer1);
 
+        strategyPlayer2.computeMove();
+        //do not use this move, but compute it to check that it doesnt influence Player1s decision
         gameBoard.executeCompleteTurn(new Move(new Position(4,4), new Position(3,4), null), mPlayer2);
 
-        Move result2 = strategy.computeMove();
+        Move result2 = strategyPlayer1.computeMove();
         gameBoard.executeCompleteTurn(result2, mPlayer1);
 
         LinkedList<Position> positionsP1After = gameBoard.getPositions(mPlayer1.getColor());
