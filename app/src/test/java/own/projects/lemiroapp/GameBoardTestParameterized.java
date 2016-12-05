@@ -62,9 +62,11 @@ public class GameBoardTestParameterized {
 
         //every player executes 10 turns
         for (int i = 0; i < nMovesPerPlayer; i++) {
+            strategyBlack.updateState();
             LinkedList<Move> allPossibleMoves = strategyBlack.possibleMoves(playerBlack);
             //just use the third possible move
             gameBoard.executeCompleteTurn(allPossibleMoves.get(2), playerBlack);
+            strategyWhite.updateState();
             allPossibleMoves = strategyWhite.possibleMoves(playerWhite);
             gameBoard.executeCompleteTurn(allPossibleMoves.get(2), playerWhite);
         }
@@ -79,6 +81,7 @@ public class GameBoardTestParameterized {
         final GameBoard gameBoardBefore = mGameBoard.getCopy();
 
         StrategyRunnable strategy = new StrategyRunnable(mGameBoard, mPlayerBlack, null, 0, 1);
+        strategy.updateState();
 
         LinkedList<Move> allPossibleMoves = strategy.possibleMoves(mPlayerBlack);
 

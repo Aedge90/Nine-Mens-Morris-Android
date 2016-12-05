@@ -57,6 +57,7 @@ public class StrategyRunnableTest {
 
         //black is the maximizing player
         StrategyRunnable strategy = new StrategyRunnable(gameBoard, mPlayerBlack, null, 0, 1);
+        strategy.updateState();
 
         LinkedList<Move> possibleMoves = strategy.possibleMoves(mPlayerWhite);
         assertEquals(0, possibleMoves.size());
@@ -83,6 +84,8 @@ public class StrategyRunnableTest {
 
         executeMoveSeries(gameBoard, moves, mPlayerBlack);
 
+        strategyBlack.updateState();
+
         //black closes his mill, kill should be added to this move
         Move killMove = new Move(new Position(0,3), null, null);
         strategyBlack.addpossibleKillstoMove(possibleMovessoFar, killMove, mPlayerBlack);
@@ -100,6 +103,8 @@ public class StrategyRunnableTest {
         gameBoard.executeCompleteTurn(killMove, mPlayerBlack);
 
         possibleMovessoFar = new LinkedList<Move>();
+
+        strategyWhite.updateState();
 
         //now white sets to (6,6)
         Move nextMove = new Move(new Position(6,6), null, null);
@@ -133,6 +138,7 @@ public class StrategyRunnableTest {
 
         GameBoard gameBoard = new Mill5(field);
         StrategyRunnable strategy = new StrategyRunnable(gameBoard, mPlayerBlack, null, 0, 1);
+        strategy.updateState();
 
         LinkedList<Move> possibleMovessoFar = new LinkedList<Move>();
 
@@ -154,6 +160,7 @@ public class StrategyRunnableTest {
         mPlayerBlack.setSetCount(9);
 
         StrategyRunnable strategy = new StrategyRunnable(gameBoard, mPlayerBlack, null, 0, 1);
+        strategy.updateState();
 
         LinkedList<Move> moves = strategy.possibleMoves(mPlayerBlack);
 
@@ -185,6 +192,7 @@ public class StrategyRunnableTest {
         mPlayerWhite.setSetCount(0);
 
         StrategyRunnable strategy = new StrategyRunnable(gameBoard, mPlayerBlack, null, 0, 1);
+        strategy.updateState();
 
         LinkedList<Move> moves = strategy.possibleMoves(mPlayerBlack);
 
