@@ -1,5 +1,6 @@
 package own.projects.lemiroapp;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 
 import android.support.annotation.VisibleForTesting;
@@ -8,9 +9,10 @@ import android.util.Log;
 public abstract class GameBoard {
 
 	final static int LENGTH = 7;
-	GameBoardPosition[][] field;
-	final GameBoardPosition N = new GameBoardPosition(0,0);
-	final GameBoardPosition I = null;
+	final static GameBoardPosition N = new GameBoardPosition(0,0);
+	final static GameBoardPosition I = null;
+
+    GameBoardPosition[][] field;
 
     GameBoard(){}
 
@@ -150,7 +152,7 @@ public abstract class GameBoard {
 		if(move.getSrc() == null && move.getDest() != null){
 			setColorAt(move.getDest(), Options.Color.NOTHING);
             player.setSetCount(player.getSetCount() + 1);
-		}else{
+        }else{
 			makeMove(move.getDest(), move.getSrc(), player.getColor());
 		}
 		if(move.getKill() != null){
@@ -290,6 +292,7 @@ public abstract class GameBoard {
         return null;
 	}
 
+
     public String toString() {
         String print = "";
 
@@ -339,4 +342,5 @@ public abstract class GameBoard {
         }
         return print;
     }
+
 }

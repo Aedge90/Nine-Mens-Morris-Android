@@ -38,8 +38,11 @@ public class StrategyRunnable implements Runnable{
 	public void updateState(){
 		//copy these so every thread has its own one to avoid concurrency problems
         this.localGameBoard = globalGameBoard.getCopy();
+        //copy BOTH!!! the maxPlayer and the other player
 		this.localMaxPlayer = new Player(globalMaxPlayer);
-        this.localMaxPlayer.setOtherPlayer(new Player(globalMaxPlayer.getOtherPlayer()));
+        Player other = new Player(globalMaxPlayer.getOtherPlayer());
+        other.setOtherPlayer(localMaxPlayer);
+        this.localMaxPlayer.setOtherPlayer(other);
 	}
 
     @Override
