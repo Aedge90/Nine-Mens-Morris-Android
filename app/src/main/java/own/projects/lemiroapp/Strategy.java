@@ -18,11 +18,32 @@ public class Strategy {
     static final int MIN = -100000;
     LinkedList<Move> movesToEvaluate;
 
+    int nThreads;
+    Thread[] threads;
+
 	Strategy(GameBoard field, Player player, ProgressUpdater up) {
 		this.field = field;
 		this.up = up;
         this.movesToEvaluate = new LinkedList<Move>();
 		this.maxPlayer = player;
+        this.nThreads = 4; //TODO decide number
+        this.threads = new Thread[nThreads];
+        for (int i = 0; i < nThreads; i++){
+            final int ifinal = i;
+            threads[i] = new Thread(new Runnable() {
+                int nr = ifinal;
+                @Override
+                public void run() {
+                    try {
+                        maxKickoff(startDepth, Integer.MIN_VALUE, Integer.MAX_VALUE, maxPlayer, nr);
+                    }catch ( InterruptedException e ) {
+                        Log.d("computeMove Thread " + nr, "Interrupted!");
+                        e.printStackTrace();
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            });
+        }
 	}
 	
 	private void addnonJumpMoves(LinkedList<Move> moves, Player player){
@@ -186,12 +207,9 @@ public class Strategy {
 
 	private int max(int depth, int alpha, int beta, Player player) throws InterruptedException {
 		if(Thread.interrupted()){
-			throw new InterruptedException("Computation of Bot Move was interrupted!");
+            throw new InterruptedException("Computation of Bot " + player + " was interrupted!");
 		}
 		LinkedList<Move> moves = possibleMoves(player);
-		if(depth == startDepth){
-			up.initialize(moves.size());
-		}
 		//end reached or no more moves available, maybe because he is trapped or because he lost
 		if (depth == 0 || moves.size() == 0){
             int bewertung = bewertung(player, moves, depth);
@@ -199,9 +217,6 @@ public class Strategy {
 		}
 		int maxWert = alpha;
 		for (Move z : moves) {
-			if(depth == startDepth){
-				up.update();
-			}
 			field.executeCompleteTurn(z, player);
             movesToEvaluate.addLast(z);
 			int wert = min(depth-1, maxWert, beta, player.getOtherPlayer());
@@ -212,16 +227,43 @@ public class Strategy {
 				if (maxWert >= beta) {
                     break;
                 }
-				if (depth == startDepth) {
-                    //System.out.println("new move was found: " + z + " wert: " + wert);
-                    move = z;
-                }
 			}
 		}
 		return maxWert;
 	}
 
+    //same as max, but slightly modified to distribute work among threads
+    private void maxKickoff(int depth, int alpha, int beta, Player player, int threadNr) throws InterruptedException{
+        LinkedList<Move> moves = possibleMoves(player);
+        up.initialize(moves.size());
+        int maxWert = alpha;
+        for (int i = 0; i < moves.size(); i++) {
+            if(i % nThreads == threadNr) {
+                Move z = moves.get(i);
+                // update and dont care that its concurrent. loosing an increment would not be noticable
+                // and wont break the computation as its just a visualization of the progress
+                up.update();
+                field.executeCompleteTurn(z, player);
+                movesToEvaluate.addLast(z);
+                int wert = min(depth - 1, maxWert, beta, player.getOtherPlayer());
+                movesToEvaluate.removeLast();
+                field.reverseCompleteTurn(z, player);
+                if (wert > maxWert) {
+                    maxWert = wert;
+                    if (maxWert >= beta) {
+                        break;
+                    }
+                    //System.out.println("new move was found: " + z + " wert: " + wert);
+                    move = z;
+                }
+            }
+        }
+    }
+
 	private int min(int depth, int alpha, int beta, Player player) throws InterruptedException {
+        if(Thread.interrupted()){
+            throw new InterruptedException("Computation of Bot " + player + " was interrupted!");
+        }
 		LinkedList<Move> moves = possibleMoves(player);
 		if (depth == 0 || moves.size() == 0){
             int bewertung = bewertung(player, moves, depth);
@@ -262,7 +304,12 @@ public class Strategy {
 
         move = null;
 
-		max(startDepth, Integer.MIN_VALUE, Integer.MAX_VALUE, maxPlayer);
+        for (int i = 0; i < nThreads; i++){
+            threads[i].start();
+        }
+        for (int i = 0; i < nThreads; i++){
+            threads[i].join();
+        }
 		
 		up.reset();
 		
