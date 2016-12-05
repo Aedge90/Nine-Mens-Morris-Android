@@ -29,7 +29,6 @@ public class Strategy {
         int maxEvaluation = Integer.MIN_VALUE;
         for (int i = 0; i < nThreads; i++){
             threads[i].join();
-            Log.i("Strategy", "thread " + i + " joined " + runnables[i].getResultEvaluation() );
             if(runnables[i].getResultEvaluation() > maxEvaluation){
                 maxEvaluation = runnables[i].getResultEvaluation();
                 resultingMoves = new LinkedList<Move>();

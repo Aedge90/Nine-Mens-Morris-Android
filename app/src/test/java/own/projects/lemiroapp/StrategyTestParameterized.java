@@ -437,7 +437,7 @@ public class StrategyTestParameterized {
         Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater);
         Strategy strategyP2 = new Strategy(gameBoard, mPlayer2, updater);
 
-        for(int i = 0; i<20; i++){
+        for(int i = 0; i<18; i++){
 
             GameBoard gameBoardBefore1 = gameBoard.getCopy();
 
@@ -464,8 +464,6 @@ public class StrategyTestParameterized {
             assertEquals("round " + i, mPlayer2Before, mPlayer2);
 
         }
-
-        System.out.println(gameBoard);
 
     }
 

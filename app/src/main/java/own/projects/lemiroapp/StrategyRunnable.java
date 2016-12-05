@@ -318,7 +318,8 @@ public class StrategyRunnable implements Runnable{
 		Log.i("StrategyRunnable " + threadNr, "computeMove started for Player " + localMaxPlayer.getColor() + " startDepth: " + startDepth);
 
         resultMove = null;
-        resultEvaluation = MIN;
+        //not MIN as MIN might be multiplied in evaluation and thus is not the minimal possible number
+        resultEvaluation = Integer.MIN_VALUE;
 
         maxKickoff(startDepth, Integer.MIN_VALUE, Integer.MAX_VALUE, localMaxPlayer);
 
