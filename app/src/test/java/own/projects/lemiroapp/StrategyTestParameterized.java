@@ -421,4 +421,52 @@ public class StrategyTestParameterized {
 
     }
 
+    @Test
+    public void computeMoveDoesNotAlterPassedObjects() throws InterruptedException {
+
+        GameBoard gameBoard = new Mill9();
+
+        mPlayer1.setSetCount(9);
+        mPlayer2.setSetCount(9);
+
+        Player mPlayer1Before = new Player(mPlayer1);
+        Player mPlayer2Before = new Player(mPlayer2);
+
+        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
+        Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater);
+        Strategy strategyP2 = new Strategy(gameBoard, mPlayer2, updater);
+
+        for(int i = 0; i<20; i++){
+
+            GameBoard gameBoardBefore1 = gameBoard.getCopy();
+
+            //test if computeMove makes unallowed changed to gameBoard or players now
+            Move result1 = strategyP1.computeMove();
+            gameBoard.executeCompleteTurn(result1, mPlayer1);
+            //computeMove should not alter anything but the last move of course
+
+            //do the same but this time manually without computeMove to check if its the same
+            gameBoardBefore1.executeCompleteTurn(result1, mPlayer1Before);
+            assertEquals("round " + i, gameBoardBefore1.toString(), gameBoard.toString());
+
+            //computeMove should not have altered anything but the setCount of P1 (was done in executeCompleteTurn)
+            assertEquals("round " + i, mPlayer1Before, mPlayer1);
+            assertEquals("round " + i, mPlayer2Before, mPlayer2);
+
+            GameBoard gameBoardBefore2 = gameBoard.getCopy();
+            Move result2 = strategyP2.computeMove();
+            gameBoard.executeCompleteTurn(result2, mPlayer2);
+            gameBoardBefore2.executeCompleteTurn(result2, mPlayer2Before);
+            assertEquals("round " + i, gameBoardBefore2.toString(), gameBoard.toString());
+
+            assertEquals("round " + i, mPlayer1Before, mPlayer1);
+            assertEquals("round " + i, mPlayer2Before, mPlayer2);
+
+        }
+
+        System.out.println(gameBoard);
+
+    }
+
 }
