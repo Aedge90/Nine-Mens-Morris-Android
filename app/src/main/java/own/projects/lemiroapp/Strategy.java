@@ -1,5 +1,6 @@
 package own.projects.lemiroapp;
 
+import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
 import java.util.LinkedList;
@@ -14,9 +15,14 @@ public class Strategy {
     private final Player maxPlayer;
 
     Strategy(final GameBoard field, final Player player, final ProgressUpdater up) {
+        this(field, player, up, 8); //TODO decide number
+    }
+
+    @VisibleForTesting
+    Strategy(final GameBoard field, final Player player, final ProgressUpdater up, final int nThreads) {
         this.gameBoard = field;
         this.maxPlayer = player;
-        this.nThreads = 8; //TODO decide number
+        this.nThreads = nThreads;
         this.threads = new Thread[nThreads];
         this.runnables = new StrategyRunnable[nThreads];
         for (int i = 0; i < nThreads; i++){

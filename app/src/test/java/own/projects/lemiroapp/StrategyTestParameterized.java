@@ -437,7 +437,7 @@ public class StrategyTestParameterized {
         Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater);
         Strategy strategyP2 = new Strategy(gameBoard, mPlayer2, updater);
 
-        for(int i = 0; i<18; i++){
+        for(int i = 0; i<14; i++){
 
             GameBoard gameBoardBefore1 = gameBoard.getCopy();
 
@@ -454,6 +454,8 @@ public class StrategyTestParameterized {
             assertEquals("round " + i, mPlayer1Before, mPlayer1);
             assertEquals("round " + i, mPlayer2Before, mPlayer2);
 
+            System.out.println(gameBoard);
+
             GameBoard gameBoardBefore2 = gameBoard.getCopy();
             Move result2 = strategyP2.computeMove();
             gameBoard.executeCompleteTurn(result2, mPlayer2);
@@ -462,6 +464,47 @@ public class StrategyTestParameterized {
 
             assertEquals("round " + i, mPlayer1Before, mPlayer1);
             assertEquals("round " + i, mPlayer2Before, mPlayer2);
+
+            System.out.println(gameBoard);
+
+        }
+
+    }
+
+    @Test
+    public void computeMoveShouldBeSameForAnyNumberOfThreads () throws InterruptedException {
+
+        GameBoard gameBoard = new Mill9();
+
+        mPlayer1.setSetCount(9);
+        mPlayer2.setSetCount(9);
+
+        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
+
+        int maxThreads = 16;
+        Move[] results = new Move[maxThreads];
+
+        //make 14 rounds and check if the results on all possible thread counts are the same
+        for(int i = 0; i<14; i++){
+
+            for(int j = 0; j < maxThreads; j++) {
+                Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, j+1);
+                results[j] = strategyP1.computeMove();
+            }
+            for(int j = 0; j < maxThreads; j++) {
+                assertEquals("round " + i + " nTreads: " + j, results[0], results[i]);
+            }
+            gameBoard.executeCompleteTurn(results[0], mPlayer1);
+
+            for(int j = 0; j < maxThreads; j++) {
+                Strategy strategyP2 =  new Strategy(gameBoard, mPlayer2, updater, j+1);
+                results[j] = strategyP2.computeMove();
+            }
+            for(int j = 1; j < maxThreads; j++) {
+                assertEquals("round " + i + " nTreads: " + j, results[0], results[i]);
+            }
+            gameBoard.executeCompleteTurn(results[0], mPlayer2);
 
         }
 
