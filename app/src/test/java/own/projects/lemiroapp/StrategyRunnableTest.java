@@ -56,7 +56,7 @@ public class StrategyRunnableTest {
         executeMoveSeries(gameBoard, moves, mPlayerBlack);
 
         //black is the maximizing player
-        Strategy strategy = new Strategy(gameBoard, mPlayerBlack, null);
+        StrategyRunnable strategy = new StrategyRunnable(gameBoard, mPlayerBlack, null, 0, 1);
 
         LinkedList<Move> possibleMoves = strategy.possibleMoves(mPlayerWhite);
         assertEquals(0, possibleMoves.size());
@@ -70,8 +70,8 @@ public class StrategyRunnableTest {
     public void addpossibleKillstoMove () {
 
         GameBoard gameBoard = new Mill5();
-        Strategy strategyBlack = new Strategy(gameBoard, mPlayerBlack, null);
-        Strategy strategyWhite = new Strategy(gameBoard, mPlayerWhite, null);
+        StrategyRunnable strategyBlack = new StrategyRunnable(gameBoard, mPlayerBlack, null, 0, 1);
+        StrategyRunnable strategyWhite = new StrategyRunnable(gameBoard, mPlayerWhite, null, 0, 1);
 
         LinkedList<Move> possibleMovessoFar = new LinkedList<Move>();
 
@@ -132,7 +132,7 @@ public class StrategyRunnableTest {
                                   { W, I, I, N, I, I, N}};
 
         GameBoard gameBoard = new Mill5(field);
-        Strategy strategy = new Strategy(gameBoard, mPlayerBlack, null);
+        StrategyRunnable strategy = new StrategyRunnable(gameBoard, mPlayerBlack, null, 0, 1);
 
         LinkedList<Move> possibleMovessoFar = new LinkedList<Move>();
 
@@ -153,7 +153,7 @@ public class StrategyRunnableTest {
 
         mPlayerBlack.setSetCount(9);
 
-        Strategy strategy = new Strategy(gameBoard, mPlayerBlack, null);
+        StrategyRunnable strategy = new StrategyRunnable(gameBoard, mPlayerBlack, null, 0, 1);
 
         LinkedList<Move> moves = strategy.possibleMoves(mPlayerBlack);
 
@@ -184,7 +184,7 @@ public class StrategyRunnableTest {
         mPlayerBlack.setSetCount(0);
         mPlayerWhite.setSetCount(0);
 
-        Strategy strategy = new Strategy(gameBoard, mPlayerBlack, null);
+        StrategyRunnable strategy = new StrategyRunnable(gameBoard, mPlayerBlack, null, 0, 1);
 
         LinkedList<Move> moves = strategy.possibleMoves(mPlayerBlack);
 
