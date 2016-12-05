@@ -22,13 +22,17 @@ public class StrategyRunnable implements Runnable{
     final int threadNr;
     int nThreads;
 
-	StrategyRunnable(GameBoard field, Player player, ProgressUpdater up, int threadNr, int nThreads) {
-		this.field = field.getCopy(); //copy this so every thread has its own one to avoid concurrency problems
+	StrategyRunnable(ProgressUpdater up, int threadNr, int nThreads) {
 		this.up = up;
         this.movesToEvaluate = new LinkedList<Move>();
-		this.maxPlayer = new Player(player); //copy this so every thread has its own one to avoid concurrency problems
         this.threadNr = threadNr;
         this.nThreads = nThreads;
+	}
+
+	public void updateState(GameBoard field, Player player){
+		//copy these so every thread has its own one to avoid concurrency problems
+		this.field = field.getCopy();
+		this.maxPlayer = new Player(player);
 	}
 
     @Override

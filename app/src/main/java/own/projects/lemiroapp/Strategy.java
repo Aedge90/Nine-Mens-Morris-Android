@@ -4,22 +4,22 @@ import java.util.LinkedList;
 
 public class Strategy {
 
-    int nThreads;
-    Thread[] threads;
-    StrategyRunnable[] runnables;
+    private int nThreads;
+    private Thread[] threads;
+    private StrategyRunnable[] runnables;
+
+    GameBoard field;
+    private Player maxPlayer;
 
     Strategy(GameBoard field, Player player, ProgressUpdater up) {
+        this.field = field;
+        this.maxPlayer = player;
         this.nThreads = 4; //TODO decide number
         this.threads = new Thread[nThreads];
+        this.runnables = new StrategyRunnable[nThreads];
         for (int i = 0; i < nThreads; i++){
-            runnables[i] = new StrategyRunnable(field, player, up, i, nThreads);
+            runnables[i] = new StrategyRunnable(up, i, nThreads);
             threads[i] = new Thread(runnables[i]);
-        }
-    }
-
-    private void startThreads(){
-        for (int i = 0; i < nThreads; i++){
-            threads[i].start();
         }
     }
 
@@ -42,7 +42,10 @@ public class Strategy {
     }
 
     public Move computeMove() throws InterruptedException {
-        startThreads();
+        for (int i = 0; i < nThreads; i++){
+            runnables[i].updateState(field, maxPlayer);
+            threads[i].start();
+        }
         LinkedList<Move> resultingMoves = waitForandGetResult();
         //TODO choose a random move
         return resultingMoves.get(0);

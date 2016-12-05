@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import static junit.framework.Assert.assertEquals;
 
 
-public class StrategyTestNonParameterized {
+public class StrategyRunnableTest {
 
     private Player mPlayerBlack;
     private Player mPlayerWhite;
