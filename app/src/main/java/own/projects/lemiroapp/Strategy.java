@@ -1,5 +1,7 @@
 package own.projects.lemiroapp;
 
+import android.util.Log;
+
 import java.util.LinkedList;
 
 public class Strategy {
@@ -8,13 +10,13 @@ public class Strategy {
     private Thread[] threads;
     private StrategyRunnable[] runnables;
 
-    GameBoard gameBoard;
-    private Player maxPlayer;
+    private final GameBoard gameBoard;
+    private final Player maxPlayer;
 
-    Strategy(GameBoard field, Player player, ProgressUpdater up) {
+    Strategy(final GameBoard field, final Player player, final ProgressUpdater up) {
         this.gameBoard = field;
         this.maxPlayer = player;
-        this.nThreads = 4; //TODO decide number
+        this.nThreads = 8; //TODO decide number
         this.threads = new Thread[nThreads];
         this.runnables = new StrategyRunnable[nThreads];
         for (int i = 0; i < nThreads; i++){
@@ -27,6 +29,7 @@ public class Strategy {
         int maxEvaluation = Integer.MIN_VALUE;
         for (int i = 0; i < nThreads; i++){
             threads[i].join();
+            Log.i("Strategy", "thread " + i + " joined " + runnables[i].getResultEvaluation() );
             if(runnables[i].getResultEvaluation() > maxEvaluation){
                 maxEvaluation = runnables[i].getResultEvaluation();
                 resultingMoves = new LinkedList<Move>();
@@ -43,6 +46,7 @@ public class Strategy {
     public Move computeMove() throws InterruptedException {
         for (int i = 0; i < nThreads; i++){
             threads[i] = new Thread(runnables[i]);
+            Log.i("Strategy", "thread " + i + "started");
             threads[i].start();
         }
         LinkedList<Move> resultingMoves = waitForandGetResult();
