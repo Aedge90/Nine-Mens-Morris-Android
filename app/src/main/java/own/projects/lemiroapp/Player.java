@@ -13,7 +13,7 @@ public class Player {
     private int setCount;
 
     //the color of this player (black or white)
-    private Options.Color color;
+    private final Options.Color color;
 
     //the difficulty of this player, may be null if it a human
     private Options.Difficulties difficulty = null;
@@ -56,6 +56,29 @@ public class Player {
 
     public int getSetCount () {
         return this.setCount;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Player player = (Player) o;
+
+        if (setCount != player.setCount) return false;
+        if (color != player.color) return false;
+        if (difficulty != player.difficulty) return false;
+        return otherPlayer != null ? otherPlayer.equals(player.otherPlayer) : player.otherPlayer == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = setCount;
+        result = 31 * result + color.hashCode();
+        result = 31 * result + (difficulty != null ? difficulty.hashCode() : 0);
+        result = 31 * result + (otherPlayer != null ? otherPlayer.hashCode() : 0);
+        return result;
     }
 
     public Player getOtherPlayer () {
