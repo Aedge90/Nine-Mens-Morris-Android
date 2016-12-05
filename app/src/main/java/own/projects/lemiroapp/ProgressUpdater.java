@@ -4,21 +4,29 @@ import android.widget.ProgressBar;
 
 public class ProgressUpdater {
 
-	private ProgressBar progress;
-	private int max;
+	private ProgressBar progressBar;
+	private int progress;
 	GameModeActivity c;
 	
-	public ProgressUpdater(ProgressBar progress, GameModeActivity c) {
-		this.progress = progress;
+	public ProgressUpdater(ProgressBar progressBar, GameModeActivity c) {
+		this.progressBar = progressBar;
+        this.progress = 0;
 		this.c = c;
 	}
 
-	public void initialize(final int max) {
+    public void setProgress (int progress){
+        this.progress = progress;
+    }
+
+    public int getProgress() {
+        return progress;
+    }
+
+    public void setMax(final int max) {
 		c.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				progress.setMax(max);
-				progress.setProgress(0);
+				progressBar.setMax(max);
 			}
 		});
 	}
@@ -27,7 +35,7 @@ public class ProgressUpdater {
 		c.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				progress.incrementProgressBy(1);
+				progressBar.setProgress(progress);
 			}
 		});
 	}
@@ -36,7 +44,7 @@ public class ProgressUpdater {
 		c.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				progress.setProgress(0);
+				progressBar.setProgress(0);
 			}
 		});
 	}

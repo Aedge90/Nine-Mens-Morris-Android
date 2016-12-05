@@ -243,15 +243,13 @@ public class StrategyRunnable implements Runnable{
     private void maxKickoff(int depth, int alpha, int beta, Player player) throws InterruptedException{
         LinkedList<Move> moves = possibleMoves(player);
         if(threadNr == 0) {
-            up.initialize(moves.size());
+            //may happen after other threads set progress already, but you can just ignore it
+            up.setMax(moves.size());
         }
         int maxWert = alpha;
         for (int i = 0; i < moves.size(); i++) {
             if(i % nThreads == threadNr) {
                 Move z = moves.get(i);
-                // update and dont care that its concurrent. loosing an increment would not be noticable
-                // and wont break the computation as its just a visualization of the progress
-                up.update();
                 localGameBoard.executeCompleteTurn(z, player);
                 movesToEvaluate.addLast(z);
                 int wert = min(depth - 1, maxWert, beta, player.getOtherPlayer());
@@ -266,6 +264,10 @@ public class StrategyRunnable implements Runnable{
                     resultMove = z;
                     resultEvaluation = wert;
                 }
+                // update and dont care that its concurrent. loosing an increment would not be noticable
+                // and wont break the computation as its just a visualization of the progress
+                up.setProgress(up.getProgress()+1);
+                up.update();
             }
         }
     }
