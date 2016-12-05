@@ -8,18 +8,17 @@ public class Strategy {
     private Thread[] threads;
     private StrategyRunnable[] runnables;
 
-    GameBoard field;
+    GameBoard gameBoard;
     private Player maxPlayer;
 
     Strategy(GameBoard field, Player player, ProgressUpdater up) {
-        this.field = field;
+        this.gameBoard = field;
         this.maxPlayer = player;
         this.nThreads = 4; //TODO decide number
         this.threads = new Thread[nThreads];
         this.runnables = new StrategyRunnable[nThreads];
         for (int i = 0; i < nThreads; i++){
-            runnables[i] = new StrategyRunnable(up, i, nThreads);
-            threads[i] = new Thread(runnables[i]);
+            runnables[i] = new StrategyRunnable(gameBoard, maxPlayer, up, i, nThreads);
         }
     }
 
@@ -43,11 +42,17 @@ public class Strategy {
 
     public Move computeMove() throws InterruptedException {
         for (int i = 0; i < nThreads; i++){
-            runnables[i].updateState(field, maxPlayer);
+            threads[i] = new Thread(runnables[i]);
             threads[i].start();
         }
         LinkedList<Move> resultingMoves = waitForandGetResult();
-        //TODO choose a random move
-        return resultingMoves.get(0);
+        // TODO choose a random move,
+        // TODO for that StrategyRunnable also needs adjustment, so that it stores a list rather than one result move
+        Move result = resultingMoves.get(0);
+        for (int i = 0; i < nThreads; i++) {
+            //runnables need to know which move was chosen
+            runnables[i].setPreviousMove(result);
+        }
+        return result;
     }
 }
