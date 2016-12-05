@@ -24,7 +24,7 @@ public class Strategy {
 
     private LinkedList<Move> waitForandGetResult () throws InterruptedException{
         LinkedList<Move> resultingMoves = new LinkedList<Move>();
-        int maxEvaluation = StrategyRunnable.MIN;
+        int maxEvaluation = Integer.MIN_VALUE;
         for (int i = 0; i < nThreads; i++){
             threads[i].join();
             if(runnables[i].getResultEvaluation() > maxEvaluation){
