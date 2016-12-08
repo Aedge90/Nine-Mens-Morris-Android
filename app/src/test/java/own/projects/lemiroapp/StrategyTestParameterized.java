@@ -489,20 +489,24 @@ public class StrategyTestParameterized {
         for(int i = 0; i<14; i++){
 
             for(int j = 0; j < maxThreads; j++) {
-                Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, j+1);
+                int nThreads = j+1;
+                Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
                 results[j] = strategyP1.computeMove();
             }
             for(int j = 0; j < maxThreads; j++) {
-                assertEquals("round " + i + " nTreads: " + j, results[0], results[i]);
+                int nThreads = j+1;
+                assertEquals("round " + i + " nTreads: " + nThreads, results[0], results[j]);
             }
             gameBoard.executeCompleteTurn(results[0], mPlayer1);
 
             for(int j = 0; j < maxThreads; j++) {
-                Strategy strategyP2 =  new Strategy(gameBoard, mPlayer2, updater, j+1);
+                int nThreads = j+1;
+                Strategy strategyP2 =  new Strategy(gameBoard, mPlayer2, updater, nThreads);
                 results[j] = strategyP2.computeMove();
             }
-            for(int j = 1; j < maxThreads; j++) {
-                assertEquals("round " + i + " nTreads: " + j, results[0], results[i]);
+            for(int j = 0; j < maxThreads; j++) {
+                int nThreads = j+1;
+                assertEquals("round " + i + " nTreads: " + nThreads, results[0], results[j]);
             }
             gameBoard.executeCompleteTurn(results[0], mPlayer2);
 
