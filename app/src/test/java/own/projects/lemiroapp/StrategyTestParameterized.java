@@ -19,6 +19,7 @@ import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertSame;
 
 
 @RunWith(value = Parameterized.class)
@@ -472,9 +473,73 @@ public class StrategyTestParameterized {
     }
 
     @Test
-    public void computeMoveShouldBeSameForAnyNumberOfThreads () throws InterruptedException {
+    public void computeEqualMovesShouldBeSameForAnyNumberOfThreads () throws InterruptedException {
 
         GameBoard gameBoard = new Mill9();
+
+        mPlayer1.setSetCount(9);
+        mPlayer2.setSetCount(9);
+
+        //make 14 rounds and check if the results on all possible thread counts are the same
+        for(int i = 0; i<14; i++){
+            computeEqualMovesShouldBeSameForAnyNumberOfThreads_Turn(i, gameBoard, mPlayer1);
+            computeEqualMovesShouldBeSameForAnyNumberOfThreads_Turn(i, gameBoard, mPlayer2);
+        }
+
+    }
+
+    public void computeEqualMovesShouldBeSameForAnyNumberOfThreads_Turn (int round, GameBoard gameBoard, Player player) throws InterruptedException{
+
+        int maxThreads = 16;
+
+        LinkedList<Move> prevResult = new LinkedList<Move>();
+        LinkedList<Move> result = new LinkedList<Move>();
+
+        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
+
+        for(int j = 0; j < maxThreads; j++) {
+            int nThreads = j+1;
+            Strategy strategy = new Strategy(gameBoard, player, updater, nThreads);
+            System.out.println("starting computeEqualMoves, nThreads: " + nThreads + " round: " + round);
+            result = strategy.computeEqualMoves();
+            // dont use computeMove directly as the result may be different as the list from
+            // computeEqualMoves may be in a different order for different nThreads, which is ok
+            if(j > 0) {
+                System.out.println(" prev: " + prevResult.size() + " res: " + result.size());
+                if(prevResult.size() != result.size()){
+                    System.out.println(gameBoard + " " + player);
+                    System.out.println(prevResult + " " + "\nresult: " + result);
+                }
+                assertListsContainingSameMoves("round " + round + " nTreads: " + nThreads +
+                        "; result was different from previous one", prevResult, result);
+            }
+            prevResult = result;
+        }
+
+        gameBoard.executeCompleteTurn(result.getFirst(), player);
+    }
+
+    public void assertListsContainingSameMoves (String message, LinkedList<Move> prevResult, LinkedList<Move> result) {
+        assertEquals(message, prevResult.size(), result.size());
+        for(Move prev : prevResult){
+            assertTrue(message, result.contains(prev));
+        }
+    }
+
+    @Test
+    public void computeEqualMovesShouldBeOfSize1ForAnyNumberOfThreads () throws InterruptedException {
+
+        Options.Color[][] mill5 =
+                {{N , I , I , P1, I , I , P2},
+                { I , I , I , I , I , I , I },
+                { I , I , P1, N , P2, I , I },
+                { P1, I , P1, I , N , I , N },
+                { I , I , P2, N , N , I , I },
+                { I , I , I , I , I , I , I },
+                { P1, I , I , P2, I , I , N}};
+
+        GameBoard gameBoard = new Mill5(mill5);
 
         mPlayer1.setSetCount(9);
         mPlayer2.setSetCount(9);
@@ -483,35 +548,11 @@ public class StrategyTestParameterized {
         ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
 
         int maxThreads = 16;
-        Move[] results = new Move[maxThreads];
-
-        //make 14 rounds and check if the results on all possible thread counts are the same
-        for(int i = 0; i<14; i++){
-
-            for(int j = 0; j < maxThreads; j++) {
-                int nThreads = j+1;
-                Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
-                results[j] = strategyP1.computeMove();
-            }
-            for(int j = 0; j < maxThreads; j++) {
-                int nThreads = j+1;
-                assertEquals("round " + i + " nTreads: " + nThreads, results[0], results[j]);
-            }
-            gameBoard.executeCompleteTurn(results[0], mPlayer1);
-
-            for(int j = 0; j < maxThreads; j++) {
-                int nThreads = j+1;
-                Strategy strategyP2 =  new Strategy(gameBoard, mPlayer2, updater, nThreads);
-                results[j] = strategyP2.computeMove();
-            }
-            for(int j = 0; j < maxThreads; j++) {
-                int nThreads = j+1;
-                assertEquals("round " + i + " nTreads: " + nThreads, results[0], results[j]);
-            }
-            gameBoard.executeCompleteTurn(results[0], mPlayer2);
-
+        for(int j = 0; j < maxThreads; j++) {
+            Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, 1);
+            LinkedList<Move> result1 = strategyP1.computeEqualMoves();
+            assertEquals(1, result1.size());
         }
 
     }
-
 }
