@@ -38,25 +38,30 @@ public class Strategy {
             if(runnables[i].getResultEvaluation() > maxEvaluation){
                 maxEvaluation = runnables[i].getResultEvaluation();
                 resultingMoves = new LinkedList<Move>();
-                resultingMoves.add(runnables[i].getResultMove());
+                resultingMoves.addAll(runnables[i].getResultMoves());
             }else if (runnables[i].getResultEvaluation() == maxEvaluation){
                 maxEvaluation = runnables[i].getResultEvaluation();
                 //store moves with equal evaluation
-                resultingMoves.add(runnables[i].getResultMove());
+                resultingMoves.addAll(runnables[i].getResultMoves());
             }
         }
         return resultingMoves;
     }
 
-    public Move computeMove() throws InterruptedException {
-        for (int i = 0; i < nThreads; i++){
+    @VisibleForTesting
+    LinkedList<Move> computeEqualMoves() throws InterruptedException {
+        for (int i = 0; i < nThreads; i++) {
             threads[i] = new Thread(runnables[i]);
             Log.i("Strategy", "thread " + i + "started");
             threads[i].start();
         }
-        LinkedList<Move> resultingMoves = waitForandGetResult();
+        return waitForandGetResult();
+    }
+
+    public Move computeMove() throws InterruptedException {
+        LinkedList<Move> resultingMoves = computeEqualMoves();
+
         // TODO choose a random move,
-        // TODO for that StrategyRunnable also needs adjustment, so that it stores a list rather than one result move
         Move result = resultingMoves.get(0);
         for (int i = 0; i < nThreads; i++) {
             //runnables need to know which move was chosen

@@ -13,7 +13,7 @@ public class StrategyRunnable implements Runnable{
     private final Player globalMaxPlayer;
     private Player localMaxPlayer;
 
-	private Move resultMove;
+	private LinkedList<Move> resultMoves;
     private int resultEvaluation;
     private Move prevMove;
 	private int startDepth;
@@ -102,7 +102,7 @@ public class StrategyRunnable implements Runnable{
             localGameBoard.executeSetOrMovePhase(move, player);
 			inMill = localGameBoard.inMill(move.getDest(), player.getColor());
             localGameBoard.reverseCompleteTurn(move, player);
-            //player has a mill after doing this resultMove --> he can kill a piece of the opponent
+            //player has a mill after doing this move --> he can kill a piece of the opponent
 			if(inMill){
 				int added = 0;
 				for (Position kill : localGameBoard.getPositions(player.getOtherPlayer().getColor())) {
@@ -191,7 +191,7 @@ public class StrategyRunnable implements Runnable{
                 }
             }
             // next weight will be half the weight
-            // this has to be done so players wont do the same resultMove over and over again
+            // this has to be done so players wont do the same move over and over again
             // as they would not choose a path in which they kill but the other player kills in a
             // distant future (which is seen in higher difficulties, when he can make jump moves)
             // thus lowers the evaluation drastically and the game is stalled
@@ -200,7 +200,7 @@ public class StrategyRunnable implements Runnable{
             weight /= 2;
         }
 
-        //evaluate undoing a resultMove, as its probably of no use. If it is, the other evaluation should overwrite this
+        //evaluate undoing a move, as its probably of no use. If it is, the other evaluation should overwrite this
         //this should break endless undoing and redoing of moves if all have the same evaluation so far
         if(prevMove != null){
             // closing and opening a mill should not be downgraded. Ignore setting phase
@@ -259,14 +259,14 @@ public class StrategyRunnable implements Runnable{
                 int wert = min(depth - 1, maxWert, beta, player.getOtherPlayer());
                 movesToEvaluate.removeLast();
                 localGameBoard.reverseCompleteTurn(z, player);
-                if (wert > maxWert) {
-                    maxWert = wert;
-                    if (maxWert >= beta) {
-                        break;
+                if (wert >= maxWert) {
+                    // empty list when a better move is found
+                    if(wert > maxWert){
+                        resultMoves = new LinkedList<Move>();
                     }
-                    //System.out.println("new resultMove was found: " + z + " wert: " + wert);
-                    resultMove = z;
+                    resultMoves.add(z);
                     resultEvaluation = wert;
+                    maxWert = wert;
                 }
                 // update and dont care that its concurrent. loosing an increment would not be noticable
                 // and wont break the computation as its just a visualization of the progress
@@ -315,9 +315,7 @@ public class StrategyRunnable implements Runnable{
 			}
 		}
 
-		Log.i("StrategyRunnable " + threadNr, "computeMove started for Player " + localMaxPlayer.getColor() + " startDepth: " + startDepth);
-
-        resultMove = null;
+        resultMoves = new LinkedList<Move>();
         //not MIN as MIN might be multiplied in evaluation and thus is not the minimal possible number
         resultEvaluation = Integer.MIN_VALUE;
 
@@ -336,8 +334,8 @@ public class StrategyRunnable implements Runnable{
         this.prevMove = prevMove;
     }
 
-    public Move getResultMove(){
-        return resultMove;
+    public LinkedList<Move> getResultMoves(){
+        return resultMoves;
     }
 
     public int getResultEvaluation(){
