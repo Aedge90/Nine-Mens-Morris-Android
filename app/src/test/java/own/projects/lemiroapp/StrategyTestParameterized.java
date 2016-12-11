@@ -14,12 +14,10 @@ import java.util.LinkedList;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertSame;
 
 
 @RunWith(value = Parameterized.class)
@@ -32,14 +30,16 @@ public class StrategyTestParameterized {
 
     private Player mPlayer1;
     private Player mPlayer2;
+    private int nThreads;
+    private final static int maxThreads = 1; //TODO increase
 
     // name attribute is optional, provide an unique name for test
     // multiple parameters, uses Collection<Object[]>
-    @Parameterized.Parameters(name = "P1 is {0}")
+    @Parameterized.Parameters(name = "P1 is {0}, nThreads: {1}")
     public static Collection<Object[] > data() {
 
-        Object[][] player1List = new Player[Options.Difficulties.values().length*2][1];
-        for(int i = 0; i < Options.Difficulties.values().length; i++) {
+        LinkedList<Object[]> player1andnThreadsList = new LinkedList<>();
+        for (int i = 0; i < Options.Difficulties.values().length; i++) {
 
             Player playerBlack = new Player(Options.Color.BLACK);
             Player playerWhite = new Player(Options.Color.WHITE);
@@ -48,17 +48,18 @@ public class StrategyTestParameterized {
             playerBlack.setSetCount(5);
             playerWhite.setSetCount(5);
 
-            player1List[i*2][0] = playerBlack;
-            player1List[i*2+1][0] = playerWhite;
+            for (int nThreads = 1; nThreads <= maxThreads; nThreads++) {
+                player1andnThreadsList.add(new Object[]{playerBlack, nThreads});
+                player1andnThreadsList.add(new Object[]{playerWhite, nThreads});
+            }
+
         }
 
-        Collection<Object[]> parameters = Arrays.asList(player1List);
-
-        return parameters;
+        return player1andnThreadsList;
     }
 
     // Inject paremeters via constructor, constructor is called before each test
-    public StrategyTestParameterized(Player player1){
+    public StrategyTestParameterized(Player player1, int nThreads){
 
         mPlayer1 = player1;
         if(mPlayer1.getColor().equals(Options.Color.BLACK)){
@@ -73,6 +74,8 @@ public class StrategyTestParameterized {
 
         P1 = mPlayer1.getColor();
         P2 = mPlayer2.getColor();
+
+        this.nThreads = nThreads;
     }
 
     @Test
@@ -91,7 +94,7 @@ public class StrategyTestParameterized {
 
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
-        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater);
+        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
 
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
@@ -118,7 +121,7 @@ public class StrategyTestParameterized {
         GameBoard gameBoard = new Mill5(mill5);
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
-        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater);
+        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
 
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
@@ -153,7 +156,7 @@ public class StrategyTestParameterized {
         GameBoard gameBoard = new Mill5(mill5);
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
-        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater);
+        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
 
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
@@ -192,8 +195,8 @@ public class StrategyTestParameterized {
         GameBoard gameBoard = new Mill5(mill5);
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
-        Strategy strategyPlayer1 = new Strategy(gameBoard, mPlayer1, updater);
-        Strategy strategyPlayer2 = new Strategy(gameBoard, mPlayer2, updater);
+        Strategy strategyPlayer1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+        Strategy strategyPlayer2 = new Strategy(gameBoard, mPlayer2, updater, nThreads);
 
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
@@ -239,8 +242,8 @@ public class StrategyTestParameterized {
         GameBoard gameBoard = new Mill5(mill5);
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
-        Strategy strategyPlayer1 = new Strategy(gameBoard, mPlayer1, updater);
-        Strategy strategyPlayer2 = new Strategy(gameBoard, mPlayer2, updater);
+        Strategy strategyPlayer1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+        Strategy strategyPlayer2 = new Strategy(gameBoard, mPlayer2, updater, nThreads);
 
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
@@ -275,7 +278,7 @@ public class StrategyTestParameterized {
         GameBoard gameBoard = new Mill5(mill5);
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
-        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater);
+        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
 
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
@@ -303,8 +306,8 @@ public class StrategyTestParameterized {
         GameBoard gameBoard = new Mill5(mill5);
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
-        Strategy strategyPlayer1 = new Strategy(gameBoard, mPlayer1, updater);
-        Strategy strategyPlayer2 = new Strategy(gameBoard, mPlayer2, updater);
+        Strategy strategyPlayer1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+        Strategy strategyPlayer2 = new Strategy(gameBoard, mPlayer2, updater, nThreads);
 
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
@@ -342,7 +345,7 @@ public class StrategyTestParameterized {
         GameBoard gameBoard = new Mill5(mill5);
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
-        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater);
+        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
 
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
@@ -376,7 +379,7 @@ public class StrategyTestParameterized {
         GameBoard gameBoard = new Mill5(mill5);
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
-        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater);
+        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
 
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
@@ -410,7 +413,7 @@ public class StrategyTestParameterized {
         GameBoard gameBoard = new Mill5(mill5);
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
-        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater);
+        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
 
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
@@ -435,8 +438,8 @@ public class StrategyTestParameterized {
 
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
-        Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater);
-        Strategy strategyP2 = new Strategy(gameBoard, mPlayer2, updater);
+        Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+        Strategy strategyP2 = new Strategy(gameBoard, mPlayer2, updater, nThreads);
 
         for(int i = 0; i<14; i++){
 
@@ -455,8 +458,6 @@ public class StrategyTestParameterized {
             assertEquals("round " + i, mPlayer1Before, mPlayer1);
             assertEquals("round " + i, mPlayer2Before, mPlayer2);
 
-            System.out.println(gameBoard);
-
             GameBoard gameBoardBefore2 = gameBoard.getCopy();
             Move result2 = strategyP2.computeMove();
             gameBoard.executeCompleteTurn(result2, mPlayer2);
@@ -466,14 +467,17 @@ public class StrategyTestParameterized {
             assertEquals("round " + i, mPlayer1Before, mPlayer1);
             assertEquals("round " + i, mPlayer2Before, mPlayer2);
 
-            System.out.println(gameBoard);
-
         }
 
     }
 
     @Test
     public void computeEqualMovesShouldBeSameForAnyNumberOfThreads () throws InterruptedException {
+
+        if(nThreads > 1){
+            //do this test only once, as this test runs for all nThreads already
+            return;
+        }
 
         GameBoard gameBoard = new Mill9();
 
@@ -501,16 +505,10 @@ public class StrategyTestParameterized {
         for(int j = 0; j < maxThreads; j++) {
             int nThreads = j+1;
             Strategy strategy = new Strategy(gameBoard, player, updater, nThreads);
-            System.out.println("starting computeEqualMoves, nThreads: " + nThreads + " round: " + round);
             result = strategy.computeEqualMoves();
             // dont use computeMove directly as the result may be different as the list from
             // computeEqualMoves may be in a different order for different nThreads, which is ok
             if(j > 0) {
-                System.out.println(" prev: " + prevResult.size() + " res: " + result.size());
-                if(prevResult.size() != result.size()){
-                    System.out.println(gameBoard + " " + player);
-                    System.out.println(prevResult + " " + "\nresult: " + result);
-                }
                 assertListsContainingSameMoves("round " + round + " nTreads: " + nThreads +
                         "; result was different from previous one", prevResult, result);
             }
@@ -547,12 +545,9 @@ public class StrategyTestParameterized {
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
 
-        int maxThreads = 16;
-        for(int j = 0; j < maxThreads; j++) {
-            Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, 1);
-            LinkedList<Move> result1 = strategyP1.computeEqualMoves();
-            assertEquals(1, result1.size());
-        }
+        Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+        LinkedList<Move> result1 = strategyP1.computeEqualMoves();
+        assertEquals(1, result1.size());
 
     }
 }
