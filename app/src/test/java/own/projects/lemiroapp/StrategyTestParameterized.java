@@ -31,7 +31,7 @@ public class StrategyTestParameterized {
     private Player mPlayer1;
     private Player mPlayer2;
     private int nThreads;
-    private final static int maxThreads = 1; //TODO increase
+    private final static int maxThreads = 16;
 
     // name attribute is optional, provide an unique name for test
     // multiple parameters, uses Collection<Object[]>
@@ -76,6 +76,33 @@ public class StrategyTestParameterized {
         P2 = mPlayer2.getColor();
 
         this.nThreads = nThreads;
+    }
+
+    @Test
+    public void computeMoveShouldPreventMillWhileSetting () throws InterruptedException {
+
+        Options.Color[][] mill5 =
+                {{N , I , I , P1, I , I , P2},
+                { I , I , I , I , I , I , I },
+                { I , I , P1, N , N , I , I },
+                { N , I , N , I , N , I , N },
+                { I , I , P2, P2, N , I , I },
+                { I , I , I , I , I , I , I },
+                { P1, I , I , N , I , I , N}};
+
+        GameBoard gameBoard = new Mill5(mill5);
+        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
+        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+
+        mPlayer1.setSetCount(2);
+        mPlayer2.setSetCount(2);
+
+        Move result = strategy.computeMove();
+
+        assertEquals(new Position(4, 4), result.getDest());
+        assertEquals(null, result.getSrc());
+
     }
 
     @Test
@@ -508,9 +535,11 @@ public class StrategyTestParameterized {
             result = strategy.computeEqualMoves();
             // dont use computeMove directly as the result may be different as the list from
             // computeEqualMoves may be in a different order for different nThreads, which is ok
+            System.out.println(gameBoard + " " + player);
             if(j > 0) {
                 assertListsContainingSameMoves("round " + round + " nTreads: " + nThreads +
-                        "; result was different from previous one", prevResult, result);
+                        "; result was different from previous one\n previous result: " +
+                        prevResult + "\n result: " + result, prevResult, result);
             }
             prevResult = result;
         }
@@ -526,28 +555,30 @@ public class StrategyTestParameterized {
     }
 
     @Test
-    public void computeEqualMovesShouldBeOfSize4 () throws InterruptedException {
+    public void computeEqualMovesShouldBeOfSize1 () throws InterruptedException {
 
         Options.Color[][] mill5 =
                 {{N , I , I , P1, I , I , P2},
                 { I , I , I , I , I , I , I },
-                { I , I , P1, N , P2, I , I },
-                { P1, I , P1, I , N , I , N },
-                { I , I , P2, N , N , I , I },
+                { I , I , P1, N , N , I , I },
+                { N , I , N , I , N , I , N },
+                { I , I , P2, P2, N , I , I },
                 { I , I , I , I , I , I , I },
-                { P1, I , I , P2, I , I , N}};
+                { P1, I , I , N , I , I , N}};
 
         GameBoard gameBoard = new Mill5(mill5);
 
-        mPlayer1.setSetCount(0);
-        mPlayer2.setSetCount(0);
+        mPlayer1.setSetCount(2);
+        mPlayer2.setSetCount(2);
 
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
 
         Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
-        LinkedList<Move> result1 = strategyP1.computeEqualMoves();
-        assertEquals("actual: " + result1, 4, result1.size());
+        LinkedList<Move> result = strategyP1.computeEqualMoves();
+
+        assertEquals("actual: " + result, 1, result.size());
 
     }
+
 }
