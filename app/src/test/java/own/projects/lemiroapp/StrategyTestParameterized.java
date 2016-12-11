@@ -581,4 +581,23 @@ public class StrategyTestParameterized {
 
     }
 
+
+    @Test
+    public void computeEqualMovesShouldBeOfSize24 () throws InterruptedException {
+
+        GameBoard gameBoard = new Mill9();
+
+        mPlayer1.setSetCount(9);
+        mPlayer2.setSetCount(9);
+
+        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
+
+        Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+        LinkedList<Move> result = strategyP1.computeEqualMoves();
+
+        assertEquals("actual: " + result, 24, result.size());
+
+    }
+
 }
