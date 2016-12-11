@@ -108,7 +108,9 @@ public class StrategyRunnable implements Runnable{
 				for (Position kill : localGameBoard.getPositions(player.getOtherPlayer().getColor())) {
 					if(!localGameBoard.inMill(kill, player.getOtherPlayer().getColor())){
 						Move killMove = new Move(move.getDest(), move.getSrc(), kill);
-						possibleMovessoFar.add(killMove);
+                        // using add first is important, so the kill moves will be at the beginning of the list
+                        // by that its more likely that the alpha beta algorithms does more cutoffs
+						possibleMovessoFar.addFirst(killMove);
 						added++;
 					}
 				}
@@ -117,7 +119,7 @@ public class StrategyRunnable implements Runnable{
 				if(added == 0){
 					for (Position kill2 : localGameBoard.getPositions(player.getOtherPlayer().getColor())) {
 						Move killMove = new Move(move.getDest(), move.getSrc(), kill2);
-						possibleMovessoFar.add(killMove);
+						possibleMovessoFar.addFirst(killMove);
 					}
 				}
 			}else{
