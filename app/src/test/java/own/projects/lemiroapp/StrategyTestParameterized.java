@@ -535,7 +535,6 @@ public class StrategyTestParameterized {
             result = strategy.computeEqualMoves();
             // dont use computeMove directly as the result may be different as the list from
             // computeEqualMoves may be in a different order for different nThreads, which is ok
-            System.out.println(gameBoard + " " + player);
             if(j > 0) {
                 assertListsContainingSameMoves("round " + round + " nTreads: " + nThreads +
                         "; result was different from previous one\n previous result: " +
@@ -583,9 +582,18 @@ public class StrategyTestParameterized {
 
 
     @Test
-    public void computeEqualMovesShouldBeOfSize24 () throws InterruptedException {
+    public void computeEqualMovesShouldBeOfSize23 () throws InterruptedException {
 
-        GameBoard gameBoard = new Mill9();
+        Options.Color[][] mill9 =
+                {{N , I , I , N , I , I , N },
+                { I , N , I , N , I , N , I },
+                { I , I , N , N , N , I , I },
+                { N , N , P1, I , N , N , N },
+                { I , I , N , N , N , I , I },
+                { I , N , I , N , I , N , I },
+                { N , I , I , N , I , I , N }};
+
+        GameBoard gameBoard = new Mill9(mill9);
 
         mPlayer1.setSetCount(9);
         mPlayer2.setSetCount(9);
@@ -596,7 +604,7 @@ public class StrategyTestParameterized {
         Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
         LinkedList<Move> result = strategyP1.computeEqualMoves();
 
-        assertEquals("actual: " + result, 24, result.size());
+        assertEquals("actual: " + result, 23, result.size());
 
     }
 
