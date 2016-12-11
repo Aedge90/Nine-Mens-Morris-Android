@@ -526,7 +526,7 @@ public class StrategyTestParameterized {
     }
 
     @Test
-    public void computeEqualMovesShouldBeOfSize1ForAnyNumberOfThreads () throws InterruptedException {
+    public void computeEqualMovesShouldBeOfSize4 () throws InterruptedException {
 
         Options.Color[][] mill5 =
                 {{N , I , I , P1, I , I , P2},
@@ -539,15 +539,15 @@ public class StrategyTestParameterized {
 
         GameBoard gameBoard = new Mill5(mill5);
 
-        mPlayer1.setSetCount(9);
-        mPlayer2.setSetCount(9);
+        mPlayer1.setSetCount(0);
+        mPlayer2.setSetCount(0);
 
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
 
         Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
         LinkedList<Move> result1 = strategyP1.computeEqualMoves();
-        assertEquals(1, result1.size());
+        assertEquals("actual: " + result1, 4, result1.size());
 
     }
 }
