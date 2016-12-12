@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -577,62 +576,116 @@ public class StrategyTestParameterized {
         gameBoard.executeCompleteTurn(resultMove, player);
     }
 
-/*
     @Test
-    public void computeEqualMovesShouldBeOfSize1 () throws InterruptedException {
+    public void computeMoveShouldReturn16DifferentMovesOverTime () throws InterruptedException {
 
         Options.Color[][] mill5 =
-                {{N , I , I , P1, I , I , P2},
+                {{N , I , I , N , I , I , N },
                 { I , I , I , I , I , I , I },
-                { I , I , P1, N , N , I , I },
+                { I , I , N , N , N , I , I },
                 { N , I , N , I , N , I , N },
-                { I , I , P2, P2, N , I , I },
+                { I , I , N , P1, N , I , I },
                 { I , I , I , I , I , I , I },
-                { P1, I , I , N , I , I , N}};
+                { N , I , I , N , I , I , N}};
 
         GameBoard gameBoard = new Mill5(mill5);
-
-        mPlayer1.setSetCount(2);
-        mPlayer2.setSetCount(2);
-
-        ProgressBar progBar = new ProgressBar(new MockContext());
-        ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
-
-        Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
-        LinkedList<Move> result = strategyP1.computeEqualMoves();
-
-        assertEquals("actual: " + result, 1, result.size());
-
-    }
-
-
-    @Test
-    public void computeEqualMovesShouldBeOfSize23 () throws InterruptedException {
-
-        Options.Color[][] mill9 =
-                {{N , I , I , N , I , I , N },
-                { I , N , I , N , I , N , I },
-                { I , I , N , N , N , I , I },
-                { N , N , P1, I , N , N , N },
-                { I , I , N , N , N , I , I },
-                { I , N , I , N , I , N , I },
-                { N , I , I , N , I , I , N }};
-
-        GameBoard gameBoard = new Mill9(mill9);
 
         mPlayer1.setSetCount(9);
         mPlayer2.setSetCount(9);
 
+        LinkedList<Move> list = new LinkedList<Move>();
+
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
 
         Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
-        LinkedList<Move> result = strategyP1.computeEqualMoves();
 
-        assertEquals("actual: " + result, 23, result.size());
+        for(int i = 0; i < 1000; i++) {
+            Move result = strategyP1.computeMove();
+            if(!list.contains(result)) {
+                list.add(result);
+            }
+            //check after 100 iterations if list contains enough (or too much) elements and break
+            if(i % 100 == 0 && list.size() >= 23){
+                break;
+            }
+        }
+
+        assertEquals(23, list.size());
 
     }
 
-    */
+    @Test
+    public void computeMoveShouldReturn5DifferentKillMovesOverTime () throws InterruptedException {
+
+        Options.Color[][] mill9 =
+                {{N , I , I , N , I , I , P2},
+                { I , N , I , N , I , N , I },
+                { I , I , N , P1, P1, I , I },
+                { P2, N , P1, I , P2, N , N },
+                { I , I , N , N , N , I , I },
+                { I , N , I , N , I , P2, I },
+                { N , I , I , P2, I , I , N }};
+
+        GameBoard gameBoard = new Mill9(mill9);
+
+        mPlayer1.setSetCount(0);
+        mPlayer2.setSetCount(0);
+
+        LinkedList<Move> list = new LinkedList<Move>();
+
+        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
+
+        Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+
+        for(int i = 0; i < 1000; i++) {
+            Move result = strategyP1.computeMove();
+            if(!list.contains(result)) {
+                list.add(result);
+            }
+            //check after 100 iterations if list contains enough (or too much) elements and break
+            if(i % 100 == 0 && list.size() >= 5){
+                break;
+            }
+        }
+
+        assertEquals(5, list.size());
+    }
+
+    @Test
+    public void shuffleListShouldHaveKillsAtBeginning(){
+
+        Options.Color[][] mill9 =
+                {{N , I , I , N , I , I , P2},
+                { I , N , I , N , I , N , I },
+                { I , I , N , P1, P1, I , I },
+                { P2, N , P1, I , P2, N , N },
+                { I , I , N , P1, N , I , I },
+                { I , N , I , N , I , P2, I },
+                { N , I , I , P2, I , I , N }};
+
+        GameBoard gameBoard = new Mill9(mill9);
+
+        mPlayer1.setSetCount(0);
+        mPlayer2.setSetCount(0);
+
+        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
+
+        Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+
+        LinkedList<Move> result = strategyP1.shuffleListOfPossMoves();
+
+        System.out.println(result);
+        assertEquals(5 + 7, result.size());
+
+        assertTrue(result.get(0).getKill() != null);
+        assertTrue(result.get(1).getKill() != null);
+        assertTrue(result.get(2).getKill() != null);
+        assertTrue(result.get(3).getKill() != null);
+        assertTrue(result.get(4).getKill() != null);
+
+    }
 
 }

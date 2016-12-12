@@ -231,7 +231,6 @@ public class StrategyRunnableTest {
 
         assertEquals(4 + 4, moves.size());
 
-        //minus one, as one move is replaced with 3 moves containing different kill targets
         assertTrue(moves.get(0).getKill() != null);
         assertTrue(moves.get(1).getKill() != null);
         assertTrue(moves.get(2).getKill() != null);
