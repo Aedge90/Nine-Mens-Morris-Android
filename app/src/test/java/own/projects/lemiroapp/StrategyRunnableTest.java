@@ -7,6 +7,9 @@ import java.util.LinkedList;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
+import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 
 public class StrategyRunnableTest {
@@ -95,8 +98,8 @@ public class StrategyRunnableTest {
         Move expected1 = new Move(new Position(0,3), null, new Position(3,2));
 
         assertEquals(2, possibleMovessoFar.size());
-        assertEquals(expected0, possibleMovessoFar.get(0));
-        assertEquals(expected1, possibleMovessoFar.get(1));
+        assertThat( possibleMovessoFar.get(0), anyOf(is(expected0), is(expected1)));
+        assertThat( possibleMovessoFar.get(1), anyOf(is(expected0), is(expected1)));
 
         killMove = possibleMovessoFar.get(1);
 
