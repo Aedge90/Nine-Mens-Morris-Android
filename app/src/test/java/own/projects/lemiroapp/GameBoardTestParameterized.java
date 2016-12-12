@@ -64,11 +64,13 @@ public class GameBoardTestParameterized {
         for (int i = 0; i < nMovesPerPlayer; i++) {
             strategyBlack.updateState();
             LinkedList<Move> allPossibleMoves = strategyBlack.possibleMoves(playerBlack);
-            //just use the third possible move
-            gameBoard.executeCompleteTurn(allPossibleMoves.get(2), playerBlack);
+            //just use the last possible move, first moves contain kills
+            System.out.println(gameBoard);
+            gameBoard.executeCompleteTurn(allPossibleMoves.getLast(), playerBlack);
             strategyWhite.updateState();
             allPossibleMoves = strategyWhite.possibleMoves(playerWhite);
-            gameBoard.executeCompleteTurn(allPossibleMoves.get(2), playerWhite);
+            System.out.println(gameBoard + " " + allPossibleMoves);
+            gameBoard.executeCompleteTurn(allPossibleMoves.getLast(), playerWhite);
         }
 
         return new Object[]{gameBoard, playerBlack, playerWhite, ""  + " after " + nMovesPerPlayer + " moves per player"};

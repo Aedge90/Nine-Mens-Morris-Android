@@ -480,13 +480,17 @@ public class StrategyTestParameterized {
         Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
         Strategy strategyP2 = new Strategy(gameBoard, mPlayer2, updater, nThreads);
 
-        for(int i = 0; i<14; i++){
+        for(int i = 0; i<30; i++){
 
             GameBoard gameBoardBefore1 = gameBoard.getCopy();
 
             //test if computeMove makes unallowed changed to gameBoard or players now
             Move result1 = strategyP1.computeMove();
             gameBoard.executeCompleteTurn(result1, mPlayer1);
+            if(!strategyP1.getState().equals(Strategy.GameState.RUNNING)){
+                break;
+            }
+
             //computeMove should not alter anything but the last move of course
 
             //do the same but this time manually without computeMove to check if its the same
@@ -500,7 +504,12 @@ public class StrategyTestParameterized {
             GameBoard gameBoardBefore2 = gameBoard.getCopy();
             Move result2 = strategyP2.computeMove();
             gameBoard.executeCompleteTurn(result2, mPlayer2);
+            if(!strategyP2.getState().equals(Strategy.GameState.RUNNING)){
+                break;
+            }
+
             gameBoardBefore2.executeCompleteTurn(result2, mPlayer2Before);
+
             assertEquals("round " + i, gameBoardBefore2.toString(), gameBoard.toString());
 
             assertEquals("round " + i, mPlayer1Before, mPlayer1);
