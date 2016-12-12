@@ -13,18 +13,20 @@ public class StrategyRunnable implements Runnable{
     private final Player globalMaxPlayer;
     private Player localMaxPlayer;
 
-	private LinkedList<Move> resultMoves;
-    private int resultEvaluation;
-    private Move prevMove;
 	private int startDepth;
 	private final ProgressUpdater up;
 	//not Int.Max as the evaluation function would create overflows
 	static final int MAX = 100000;
     static final int MIN = -100000;
     private LinkedList<Move> movesToEvaluate;
+    private Move prevMove;
 
     private final int threadNr;
     private final int nThreads;
+    static int maxWertKickoff;
+    static Move resultMove;
+    static int resultEvaluation;
+    static LinkedList<Move> possibleMovesKickoff;
 
 	StrategyRunnable(final GameBoard gameBoard, final Player maxPlayer, final ProgressUpdater up, final int threadNr, final int nThreads) {
         this.globalGameBoard = gameBoard;
@@ -246,29 +248,27 @@ public class StrategyRunnable implements Runnable{
 	}
 
     //same as max, but slightly modified to distribute work among threads
-    private void maxKickoff(int depth, int alpha, int beta, Player player) throws InterruptedException{
-        LinkedList<Move> moves = possibleMoves(player);
+    private void maxKickoff(int depth, Player player) throws InterruptedException{
         if(threadNr == 0) {
             //may happen after other threads set progress already, but you can just ignore it
-            up.setMax(moves.size());
+            up.setMax(possibleMovesKickoff.size());
         }
-        int maxWert = alpha;
-        for (int i = 0; i < moves.size(); i++) {
+        for (int i = 0; i < possibleMovesKickoff.size(); i++) {
+
             if(i % nThreads == threadNr) {
-                Move z = moves.get(i);
+                Move z = possibleMovesKickoff.get(i);
                 localGameBoard.executeCompleteTurn(z, player);
                 movesToEvaluate.addLast(z);
-                int wert = min(depth - 1, maxWert, beta, player.getOtherPlayer());
+                int wert = min(depth - 1, maxWertKickoff, Integer.MAX_VALUE, player.getOtherPlayer());
                 movesToEvaluate.removeLast();
                 localGameBoard.reverseCompleteTurn(z, player);
-                if (wert >= maxWert) {
-                    // empty list when a better move is found
-                    if(wert > maxWert){
-                        resultMoves = new LinkedList<Move>();
+
+                synchronized (StrategyRunnable.class) {
+                    if (wert > maxWertKickoff) {
+                        maxWertKickoff = wert;
+                        resultMove = z;
+                        resultEvaluation = wert;
                     }
-                    resultMoves.add(z);
-                    resultEvaluation = wert;
-                    maxWert = wert;
                 }
                 // update and dont care that its concurrent. loosing an increment would not be noticable
                 // and wont break the computation as its just a visualization of the progress
@@ -317,11 +317,7 @@ public class StrategyRunnable implements Runnable{
 			}
 		}
 
-        resultMoves = new LinkedList<Move>();
-        //not MIN as MIN might be multiplied in evaluation and thus is not the minimal possible number
-        resultEvaluation = Integer.MIN_VALUE;
-
-        maxKickoff(startDepth, Integer.MIN_VALUE, Integer.MAX_VALUE, localMaxPlayer);
+        maxKickoff(startDepth, localMaxPlayer);
 
         if(threadNr == 0) {
             up.reset();
@@ -333,15 +329,7 @@ public class StrategyRunnable implements Runnable{
 	}
 
     public void setPreviousMove(Move prevMove) {
-        this.prevMove = prevMove;
-    }
-
-    public LinkedList<Move> getResultMoves(){
-        return resultMoves;
-    }
-
-    public int getResultEvaluation(){
-        return resultEvaluation;
+       this.prevMove = prevMove;
     }
 
 }
