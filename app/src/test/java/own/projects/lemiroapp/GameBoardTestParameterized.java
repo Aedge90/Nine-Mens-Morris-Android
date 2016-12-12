@@ -65,11 +65,9 @@ public class GameBoardTestParameterized {
             strategyBlack.updateState();
             LinkedList<Move> allPossibleMoves = strategyBlack.possibleMoves(playerBlack);
             //just use the last possible move, first moves contain kills
-            System.out.println(gameBoard);
             gameBoard.executeCompleteTurn(allPossibleMoves.getLast(), playerBlack);
             strategyWhite.updateState();
             allPossibleMoves = strategyWhite.possibleMoves(playerWhite);
-            System.out.println(gameBoard + " " + allPossibleMoves);
             gameBoard.executeCompleteTurn(allPossibleMoves.getLast(), playerWhite);
         }
 

@@ -678,7 +678,6 @@ public class StrategyTestParameterized {
 
         LinkedList<Move> result = strategyP1.shuffleListOfPossMoves();
 
-        System.out.println(result);
         assertEquals(5 + 7, result.size());
 
         assertTrue(result.get(0).getKill() != null);
