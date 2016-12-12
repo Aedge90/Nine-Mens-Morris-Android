@@ -3,6 +3,7 @@ package own.projects.lemiroapp;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
+import java.util.Collections;
 import java.util.LinkedList;
 
 public class Strategy {
@@ -35,9 +36,10 @@ public class Strategy {
     }
 
     public Move computeMove() throws InterruptedException {
-        // TODO shuffle this, but keep kill moves at the beginning of the list
-        runnables[0].updateState();
-        StrategyRunnable.possibleMovesKickoff = runnables[0].possibleMoves(maxPlayer);
+
+        // shuffle list, so we dont end up with the same moves every game
+        StrategyRunnable.possibleMovesKickoff = shuffleListOfPossMoves();
+
         StrategyRunnable.maxWertKickoff = Integer.MIN_VALUE;
         StrategyRunnable.resultMove = null;
         //not StrategyRunnable.MIN as StrategyRunnable.MIN might be multiplied in evaluation and thus is not the minimal possible number
@@ -57,6 +59,25 @@ public class Strategy {
         }
 
         return StrategyRunnable.resultMove;
+    }
+
+    @VisibleForTesting
+    public LinkedList<Move> shuffleListOfPossMoves(){
+
+        runnables[0].updateState();
+        LinkedList<Move> shuffle = runnables[0].possibleMoves(maxPlayer);
+
+        Collections.shuffle(shuffle);
+        LinkedList<Move> result = new LinkedList<Move>();
+        // but make sure the kill moves are at the beginning again, to improve performance
+        for(Move m : shuffle) {
+            if (m.getKill() != null) {
+                result.addFirst(m);
+            } else {
+                result.addLast(m);
+            }
+        }
+        return result;
     }
 
     @VisibleForTesting
