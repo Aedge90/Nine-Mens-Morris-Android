@@ -6,6 +6,7 @@ import org.junit.Test;
 import java.util.LinkedList;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 
 
 public class StrategyRunnableTest {
@@ -198,6 +199,43 @@ public class StrategyRunnableTest {
 
         //minus one, as one move is replaced with 3 moves containing different kill targets
         assertEquals(3*18 - 1 + 3, moves.size());
+
+    }
+
+    @Test
+    public void getPossibleMovesShouldHaveKillsAtBeginning(){
+
+        final Options.Color B = Options.Color.BLACK;
+        final Options.Color W = Options.Color.WHITE;
+        final Options.Color N = Options.Color.NOTHING;
+        final Options.Color I = Options.Color.INVALID;
+
+        Options.Color[][] mill5 =
+                {{N , I , I , B , I , I , W },
+                { I , I , I , I , I , I , I },
+                { I , I , B , N , W , I , I },
+                { B , I , B , I , N , I , N },
+                { I , I , N , N , W , I , I },
+                { I , I , I , I , I , I , I },
+                { B , I , I , W , I , I , N}};
+        
+        GameBoard gameBoard = new Mill5(mill5);
+
+        mPlayerBlack.setSetCount(0);
+        mPlayerWhite.setSetCount(0);
+
+        StrategyRunnable strategy = new StrategyRunnable(gameBoard, mPlayerBlack, null, 0, 1);
+        strategy.updateState();
+
+        LinkedList<Move> moves = strategy.possibleMoves(mPlayerBlack);
+
+        assertEquals(4 + 4, moves.size());
+
+        //minus one, as one move is replaced with 3 moves containing different kill targets
+        assertTrue(moves.get(0).getKill() != null);
+        assertTrue(moves.get(1).getKill() != null);
+        assertTrue(moves.get(2).getKill() != null);
+        assertTrue(moves.get(3).getKill() != null);
 
     }
 
