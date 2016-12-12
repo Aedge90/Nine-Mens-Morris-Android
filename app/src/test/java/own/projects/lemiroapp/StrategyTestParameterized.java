@@ -576,8 +576,9 @@ public class StrategyTestParameterized {
         gameBoard.executeCompleteTurn(resultMove, player);
     }
 
+    //if this test fails may (but probably not) be because of a tiny chance that not all possible moves were chosen
     @Test
-    public void computeMoveShouldReturn16DifferentMovesOverTime () throws InterruptedException {
+    public void computeMoveShouldReturn15DifferentMovesOverTime () throws InterruptedException {
 
         Options.Color[][] mill5 =
                 {{N , I , I , N , I , I , N },
@@ -606,12 +607,12 @@ public class StrategyTestParameterized {
                 list.add(result);
             }
             //check after 100 iterations if list contains enough (or too much) elements and break
-            if(i % 100 == 0 && list.size() >= 23){
+            if(i % 100 == 0 && list.size() >= 15){
                 break;
             }
         }
 
-        assertEquals(23, list.size());
+        assertEquals(15, list.size());
 
     }
 
