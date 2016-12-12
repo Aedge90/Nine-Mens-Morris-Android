@@ -519,10 +519,9 @@ public class StrategyTestParameterized {
 
     }
 
-    //TODO test for same evaluation instead, as resulting move may be different for different nThreads
-    /*
+    //test for same evaluation, as resulting move may be different for different nThreads
     @Test
-    public void computeEqualMovesShouldBeSameForAnyNumberOfThreads () throws InterruptedException {
+    public void computeMoveShouldHaveSameEvaluationForAnyNumberOfThreads () throws InterruptedException {
 
         if(nThreads > 1){
             //do this test only once, as this test runs for all nThreads already
@@ -534,21 +533,30 @@ public class StrategyTestParameterized {
         mPlayer1.setSetCount(9);
         mPlayer2.setSetCount(9);
 
-        //make 14 rounds and check if the results on all possible thread counts are the same
-        for(int i = 0; i<14; i++){
-            computeEqualMovesShouldBeSameForAnyNumberOfThreads_Turn(i, gameBoard, mPlayer1);
-            computeEqualMovesShouldBeSameForAnyNumberOfThreads_Turn(i, gameBoard, mPlayer2);
+        //make 30 rounds and check if the results on all possible thread counts are the same
+        for(int i = 0; i<30; i++){
+            computeMoveShouldHaveSameEvaluationForAnyNumberOfThreads_Turn(i, gameBoard, mPlayer1);
+            Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, null, 1);
+            if(!strategyP1.getState().equals(Strategy.GameState.RUNNING)){
+                break;
+            }
+            computeMoveShouldHaveSameEvaluationForAnyNumberOfThreads_Turn(i, gameBoard, mPlayer2);
+            Strategy strategyP2 = new Strategy(gameBoard, mPlayer2, null, 1);
+            if(!strategyP2.getState().equals(Strategy.GameState.RUNNING)){
+                break;
+            }
         }
 
     }
 
 
-    public void computeEqualMovesShouldBeSameForAnyNumberOfThreads_Turn (int round, GameBoard gameBoard, Player player) throws InterruptedException{
+    public void computeMoveShouldHaveSameEvaluationForAnyNumberOfThreads_Turn (int round, GameBoard gameBoard, Player player) throws InterruptedException{
 
         int maxThreads = 16;
 
-        LinkedList<Move> prevResult = new LinkedList<Move>();
-        LinkedList<Move> result = new LinkedList<Move>();
+        int prevResultEval = 0;
+        int resultEval = 0;
+        Move resultMove = null;
 
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
@@ -556,27 +564,20 @@ public class StrategyTestParameterized {
         for(int j = 0; j < maxThreads; j++) {
             int nThreads = j+1;
             Strategy strategy = new Strategy(gameBoard, player, updater, nThreads);
-            result = strategy.computeEqualMoves();
-            // dont use computeMove directly as the result may be different as the list from
-            // computeEqualMoves may be in a different order for different nThreads, which is ok
+            resultMove = strategy.computeMove();
+            resultEval = strategy.getResultEvaluation();
             if(j > 0) {
-                assertListsContainingSameMoves("round " + round + " nTreads: " + nThreads +
-                        "; result was different from previous one\n previous result: " +
-                        prevResult + "\n result: " + result, prevResult, result);
+                assertEquals("round " + round + " nTreads: " + nThreads +
+                        "; resultEval was different from previous one\n previous result: " +
+                        prevResultEval + "\n result: " + resultEval, prevResultEval, resultEval);
             }
-            prevResult = result;
+            prevResultEval = resultEval;
         }
 
-        gameBoard.executeCompleteTurn(result.getFirst(), player);
+        gameBoard.executeCompleteTurn(resultMove, player);
     }
 
-    public void assertListsContainingSameMoves (String message, LinkedList<Move> prevResult, LinkedList<Move> result) {
-        assertEquals(message, prevResult.size(), result.size());
-        for(Move prev : prevResult){
-            assertTrue(message, result.contains(prev));
-        }
-    }
-
+/*
     @Test
     public void computeEqualMovesShouldBeOfSize1 () throws InterruptedException {
 

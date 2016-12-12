@@ -59,6 +59,11 @@ public class Strategy {
         return StrategyRunnable.resultMove;
     }
 
+    @VisibleForTesting
+    public int getResultEvaluation() {
+        return StrategyRunnable.resultEvaluation;
+    }
+
     GameState getState() {
 
         //TODO initialize remi count correctly and use whoWon in Activity
