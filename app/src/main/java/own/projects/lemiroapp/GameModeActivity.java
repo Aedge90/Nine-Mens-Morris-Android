@@ -306,17 +306,12 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
                     new OnFieldClickListener(currMove.getDest()));
             newPosition = currMove.getDest();
         }else{
-            long time = SystemClock.elapsedRealtime();
+
+            //TODO animate setting moves
 
             currMove = brain.computeMove();
 
             setTextinUIThread(progressText, "Bot is moving!");
-
-            //wait a moment if computation was very fast else don´t wait
-            long computationTime = time - SystemClock.elapsedRealtime();
-            if(computationTime < 1000){
-                Thread.sleep(1000 - computationTime);
-            }
 
             fieldView.setPos(currMove.getDest(), bot.getColor());
             fieldView.getPos(currMove.getDest()).setOnClickListener(
