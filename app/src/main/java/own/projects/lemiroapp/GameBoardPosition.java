@@ -38,6 +38,10 @@ public class GameBoardPosition extends Position {
         return down;
     }
 
+    public GameBoardPosition[] getNeighbors () {
+        return new GameBoardPosition[]{left,right,up,down};
+    }
+
     GameBoardPosition(Position pos) {
         super(pos);
     }

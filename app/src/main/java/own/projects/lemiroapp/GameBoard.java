@@ -57,7 +57,8 @@ public abstract class GameBoard {
 
     @VisibleForTesting
     abstract GameBoard getCopy();
-	
+
+    //TODO this is called often so better store Positions
 	LinkedList<Position> getPositions(Options.Color color) {
         LinkedList<Position> positions = new LinkedList<Position>();
         for (int x=0; x < LENGTH; x++) {
@@ -159,6 +160,28 @@ public abstract class GameBoard {
 			setColorAt(move.getKill(), player.getOtherPlayer().getColor());
 		}	
 	}
+
+    //TODO write test for this
+    //returns true if move opens a mill and the mill can not be denied by the opponent in the next move
+    boolean opensMillSafely (Move move, Player player){
+        if(!inMill(move.getSrc(), player.getColor())){
+            return false;
+        }
+        //check if enemy could move a piece into the mill in the next move
+        if(player.getOtherPlayer().getSetCount() > 0 ){
+            return false;
+        }
+        if(getPositions(player.getOtherPlayer().getColor()).size() == 3){
+            return false;
+        }
+        GameBoardPosition[] neighbors = getPosAt(move.getSrc()).getNeighbors();
+        for(int i = 0; i < neighbors.length; i++) {
+            if (neighbors[i] != null && getColorAt(neighbors[i]).equals(player.getOtherPlayer().getColor())) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     //returns true if two pieces of color player are found, that form a mill together with position
 	boolean inMill(Position p, Options.Color player) {
