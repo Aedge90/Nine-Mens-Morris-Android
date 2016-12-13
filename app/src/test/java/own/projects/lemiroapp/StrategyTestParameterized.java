@@ -30,7 +30,7 @@ public class StrategyTestParameterized {
     private Player mPlayer1;
     private Player mPlayer2;
     private int nThreads;
-    private final static int maxThreads = 16;
+    private final static int maxThreads = 9;
 
     // name attribute is optional, provide an unique name for test
     // multiple parameters, uses Collection<Object[]>
@@ -360,7 +360,7 @@ public class StrategyTestParameterized {
     public void computeMoveShouldUndoHisMoveIfItClosesMill1() throws InterruptedException {
 
         //EASY is too dumb to see that he can open and close his mill again
-        //TODO evaluate opening a mill
+        //TODO evaluate opening a mill and preventing one
         if(mPlayer2.getDifficulty() == Options.Difficulties.EASY){
             return;
         }
