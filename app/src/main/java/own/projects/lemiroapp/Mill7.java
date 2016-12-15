@@ -6,7 +6,8 @@ public class Mill7 extends GameBoard {
 
     @Override
     public void initField() {
-        field = new GameBoardPosition[][] // ERSTES Y ZWEITES X
+
+        field = new GameBoardPosition[][] // first is y: [y][x]
 
                 {{N, I, I, N, I, I, N},
                 { I, N, I, N, I, N, I},
@@ -16,50 +17,43 @@ public class Mill7 extends GameBoard {
                 { I, N, I, N, I, N, I},
                 { N, I, I, N, I, I, N}};
 
-        for (int i = 0; i < LENGTH; i++) {
-            for (int j = 0; j < LENGTH; j++) {
-                if (!(field[i][j] == I)) {
-                    field[i][j] = new GameBoardPosition(j, i);
-                    field[i][j].setColor(Options.Color.NOTHING);
-                }
-            }
-        }
+        initGameBoardPositions();
 
         //horizontal connections
-        getPosAt(0, 0).connectRight(getPosAt(3, 0));
-        getPosAt(3, 0).connectRight(getPosAt(6, 0));
+        getGameBoardPosAt(0, 0).connectRight(getGameBoardPosAt(3, 0));
+        getGameBoardPosAt(3, 0).connectRight(getGameBoardPosAt(6, 0));
 
-        getPosAt(1, 1).connectRight(getPosAt(3, 1));
-        getPosAt(3, 1).connectRight(getPosAt(5, 1));
+        getGameBoardPosAt(1, 1).connectRight(getGameBoardPosAt(3, 1));
+        getGameBoardPosAt(3, 1).connectRight(getGameBoardPosAt(5, 1));
 
-        getPosAt(0, 3).connectRight(getPosAt(1, 3));
-        getPosAt(1, 3).connectRight(getPosAt(3, 3));
-        getPosAt(3, 3).connectRight(getPosAt(5, 3));
-        getPosAt(5, 3).connectRight(getPosAt(6, 3));
+        getGameBoardPosAt(0, 3).connectRight(getGameBoardPosAt(1, 3));
+        getGameBoardPosAt(1, 3).connectRight(getGameBoardPosAt(3, 3));
+        getGameBoardPosAt(3, 3).connectRight(getGameBoardPosAt(5, 3));
+        getGameBoardPosAt(5, 3).connectRight(getGameBoardPosAt(6, 3));
 
-        getPosAt(1, 5).connectRight(getPosAt(3, 5));
-        getPosAt(3, 5).connectRight(getPosAt(5, 5));
+        getGameBoardPosAt(1, 5).connectRight(getGameBoardPosAt(3, 5));
+        getGameBoardPosAt(3, 5).connectRight(getGameBoardPosAt(5, 5));
 
-        getPosAt(0, 6).connectRight(getPosAt(3, 6));
-        getPosAt(3, 6).connectRight(getPosAt(6, 6));
+        getGameBoardPosAt(0, 6).connectRight(getGameBoardPosAt(3, 6));
+        getGameBoardPosAt(3, 6).connectRight(getGameBoardPosAt(6, 6));
 
         //vertical connections
-        getPosAt(0, 0).connectDown(getPosAt(0, 3));
-        getPosAt(0, 3).connectDown(getPosAt(0, 6));
+        getGameBoardPosAt(0, 0).connectDown(getGameBoardPosAt(0, 3));
+        getGameBoardPosAt(0, 3).connectDown(getGameBoardPosAt(0, 6));
 
-        getPosAt(1, 1).connectDown(getPosAt(1, 3));
-        getPosAt(1, 3).connectDown(getPosAt(1, 5));
+        getGameBoardPosAt(1, 1).connectDown(getGameBoardPosAt(1, 3));
+        getGameBoardPosAt(1, 3).connectDown(getGameBoardPosAt(1, 5));
 
-        getPosAt(3, 0).connectDown(getPosAt(3, 1));
-        getPosAt(3, 1).connectDown(getPosAt(3, 3));
-        getPosAt(3, 3).connectDown(getPosAt(3, 5));
-        getPosAt(3, 5).connectDown(getPosAt(3, 6));
+        getGameBoardPosAt(3, 0).connectDown(getGameBoardPosAt(3, 1));
+        getGameBoardPosAt(3, 1).connectDown(getGameBoardPosAt(3, 3));
+        getGameBoardPosAt(3, 3).connectDown(getGameBoardPosAt(3, 5));
+        getGameBoardPosAt(3, 5).connectDown(getGameBoardPosAt(3, 6));
 
-        getPosAt(5, 1).connectDown(getPosAt(5, 3));
-        getPosAt(5, 3).connectDown(getPosAt(5, 5));
+        getGameBoardPosAt(5, 1).connectDown(getGameBoardPosAt(5, 3));
+        getGameBoardPosAt(5, 3).connectDown(getGameBoardPosAt(5, 5));
 
-        getPosAt(6, 0).connectDown(getPosAt(6, 3));
-        getPosAt(6, 3).connectDown(getPosAt(6, 6));
+        getGameBoardPosAt(6, 0).connectDown(getGameBoardPosAt(6, 3));
+        getGameBoardPosAt(6, 3).connectDown(getGameBoardPosAt(6, 6));
     }
 
     Mill7() {

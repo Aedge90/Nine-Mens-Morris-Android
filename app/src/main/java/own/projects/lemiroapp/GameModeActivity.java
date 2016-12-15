@@ -16,7 +16,6 @@
 
 package own.projects.lemiroapp;
 
-import android.os.SystemClock;
 import android.view.View;
 import android.widget.Toast;
 import android.app.Activity;

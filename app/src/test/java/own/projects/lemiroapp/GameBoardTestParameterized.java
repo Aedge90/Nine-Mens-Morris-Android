@@ -102,6 +102,9 @@ public class GameBoardTestParameterized {
                 }
             }
         }
+        assertEquals(expected.getPositions(Options.Color.BLACK), actual.getPositions(Options.Color.BLACK));
+        assertEquals(expected.getPositions(Options.Color.WHITE), actual.getPositions(Options.Color.WHITE));
+
     }
 
 

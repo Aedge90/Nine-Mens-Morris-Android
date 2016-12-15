@@ -1,6 +1,5 @@
 package own.projects.lemiroapp;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 
 import android.support.annotation.VisibleForTesting;
@@ -14,6 +13,8 @@ public abstract class GameBoard {
 
     GameBoardPosition[][] field;
 
+    LinkedList<Position> allValidPositions = new LinkedList<Position>();
+
     GameBoard(){}
 
     @VisibleForTesting
@@ -24,16 +25,16 @@ public abstract class GameBoard {
 		}
 		for(int y = 0; y < LENGTH; y++){
 			for(int x = 0; x < LENGTH; x++){
-				if(getPosAt(x,y) == I && !inputField[y][x].equals(Options.Color.INVALID)) {
+				if(getGameBoardPosAt(x,y) == I && !inputField[y][x].equals(Options.Color.INVALID)) {
 					throw new IllegalArgumentException("Constructor called with invalid input field");
 				}
-				if(getPosAt(x,y) != I){
+				if(getGameBoardPosAt(x,y) != I){
                     if(inputField[y][x].equals(Options.Color.BLACK)) {
-                        getPosAt(x,y).setColor(Options.Color.BLACK);
+                        getGameBoardPosAt(x,y).setColor(Options.Color.BLACK);
                     }else if (inputField[y][x].equals(Options.Color.WHITE)){
-                        getPosAt(x,y).setColor(Options.Color.WHITE);
+                        getGameBoardPosAt(x,y).setColor(Options.Color.WHITE);
                     }else if (inputField[y][x].equals(Options.Color.NOTHING)){
-                        getPosAt(x,y).setColor(Options.Color.NOTHING);
+                        getGameBoardPosAt(x,y).setColor(Options.Color.NOTHING);
                     }
 				}
 			}
@@ -42,15 +43,28 @@ public abstract class GameBoard {
 
     //copy constructor
     GameBoard(GameBoard other){
-        initField();
+        field = new GameBoardPosition[LENGTH][LENGTH];
         //copy the field from other
 		for(int i = 0; i < LENGTH; i++){
 			for(int j = 0; j < LENGTH; j++){
                 if(other.field[i][j] != null) {
                     field[i][j] = new GameBoardPosition(other.field[i][j]);
+                    allValidPositions.add((Position)field[i][j]);
                 }
 			}
 		}
+    }
+
+    void initGameBoardPositions(){
+        for(int i = 0; i < LENGTH; i++){
+            for(int j = 0; j < LENGTH; j++){
+                if(!(field[i][j] == I)) {
+                    field[i][j] = new GameBoardPosition(j,i);
+                    field[i][j].setColor(Options.Color.NOTHING);
+                    allValidPositions.add((Position)field[i][j]);
+                }
+            }
+        }
     }
 
     public abstract void initField();
@@ -58,28 +72,25 @@ public abstract class GameBoard {
     @VisibleForTesting
     abstract GameBoard getCopy();
 
-    //TODO this is called often so better store Positions
-	LinkedList<Position> getPositions(Options.Color color) {
-        LinkedList<Position> positions = new LinkedList<Position>();
-        for (int x=0; x < LENGTH; x++) {
-            for (int y = 0; y < LENGTH; y++) {
-                if(getColorAt(x,y).equals(color)) {
-                    positions.add(new Position(x,y));
-                }
+    public LinkedList<Position> getPositions(Options.Color player) {
+        LinkedList<Position> result = new LinkedList<Position>();
+        for(Position p : allValidPositions){
+            if(getGameBoardPosAt(p).getColor().equals(player)) {
+                result.add((Position)p);
             }
         }
-        return positions;
-	}
+        return result;
+    }
 
-    GameBoardPosition getPosAt(int x, int y){
+    GameBoardPosition getGameBoardPosAt(int x, int y){
         return field[y][x];
     }
 
-    GameBoardPosition getPosAt(Position pos) {
+    GameBoardPosition getGameBoardPosAt(Position pos) {
         if (pos == null){
             Log.e("GameBoard", "Error: getGameBoardPositionAt: Position was null!");
         }
-        return getPosAt(pos.getX(), pos.getY());
+        return getGameBoardPosAt(pos.getX(), pos.getY());
     }
 
     Options.Color getColorAt(int x, int y) {
@@ -96,12 +107,12 @@ public abstract class GameBoard {
 		return getColorAt(pos.getX(), pos.getY());
 	}
 	
-	private void setColorAt(Position pos, Options.Color color) {
-        field[pos.getY()][pos.getX()].setColor(color);
+	private void makeSetMove(Position dest, Options.Color color) {
+        field[dest.getY()][dest.getX()].setColor(color);
 	}
 
-    private void setPosAt(int x, int y, GameBoardPosition pos) {
-        field[y][x] = pos;
+    private void makeKillMove(Position dest) {
+        field[dest.getY()][dest.getX()].setColor(Options.Color.NOTHING);
     }
 	
 	private void makeMove(Position src, Position dest, Options.Color color) {
@@ -116,7 +127,7 @@ public abstract class GameBoard {
             if(!getColorAt(move.getDest()).equals(Options.Color.NOTHING)){
                 throw new IllegalArgumentException("Player " + player.getColor() + " is trying to set to an occupied field by: " + getColorAt(move.getDest()));
             }
-            setColorAt(move.getDest(), player.getColor());
+            makeSetMove(move.getDest(), player.getColor());
             player.setSetCount(player.getSetCount() - 1);
         }else{
             if(!getColorAt(move.getDest()).equals(Options.Color.NOTHING)){
@@ -138,7 +149,7 @@ public abstract class GameBoard {
             if(getColorAt(move.getKill()).equals(Options.Color.NOTHING)){
                 throw new IllegalArgumentException("Player " + player.getColor() + " is trying to kill an empty field");
             }
-            setColorAt(move.getKill(), Options.Color.NOTHING);
+            makeKillMove(move.getKill());
         }
     }
 
@@ -151,13 +162,13 @@ public abstract class GameBoard {
     //undoes a complete turn of a player, including setting or moving and killing
 	public void reverseCompleteTurn(Move move, Player player) {
 		if(move.getSrc() == null && move.getDest() != null){
-			setColorAt(move.getDest(), Options.Color.NOTHING);
+			makeKillMove(move.getDest());
             player.setSetCount(player.getSetCount() + 1);
         }else{
 			makeMove(move.getDest(), move.getSrc(), player.getColor());
 		}
 		if(move.getKill() != null){
-			setColorAt(move.getKill(), player.getOtherPlayer().getColor());
+			makeSetMove(move.getKill(), player.getOtherPlayer().getColor());
 		}	
 	}
 
@@ -174,7 +185,7 @@ public abstract class GameBoard {
         if(getPositions(player.getOtherPlayer().getColor()).size() == 3){
             return false;
         }
-        GameBoardPosition[] neighbors = getPosAt(move.getSrc()).getNeighbors();
+        GameBoardPosition[] neighbors = getGameBoardPosAt(move.getSrc()).getNeighbors();
         for(int i = 0; i < neighbors.length; i++) {
             if (neighbors[i] != null && getColorAt(neighbors[i]).equals(player.getOtherPlayer().getColor())) {
                 return false;
@@ -193,17 +204,18 @@ public abstract class GameBoard {
         }
     }
 
+    //TODO simplify this as above
     //if two pieces of color player are found, that form a mill together with position
     //an array containing the two pieces and position is returned, else null is returned
 	Position[] getMill(Position p, Options.Color player) {
         //search for horizontal mill
-        GameBoardPosition left = getPosAt(p).getLeft();
+        GameBoardPosition left = getGameBoardPosAt(p).getLeft();
         if(left != null && getColorAt(left).equals(player)){
             if(left.getLeft() != null && getColorAt(left.getLeft()).equals(player)){
                 return new Position[] {new Position(left.getLeft()), new Position(left), new Position(p)};
             }
         }
-        GameBoardPosition right = getPosAt(p).getRight();
+        GameBoardPosition right = getGameBoardPosAt(p).getRight();
         if(right != null && getColorAt(right).equals(player)){
             if(right.getRight() != null && getColorAt(right.getRight()).equals(player)){
                 return new Position[] {new Position(p), new Position(right), new Position(right.getRight())};
@@ -213,13 +225,13 @@ public abstract class GameBoard {
             return new Position[] {new Position(left), new Position(p), new Position(right)};
         }
         //search for vertical mill
-        GameBoardPosition up = getPosAt(p).getUp();
+        GameBoardPosition up = getGameBoardPosAt(p).getUp();
         if(up != null && getColorAt(up).equals(player)){
             if(up.getUp() != null && getColorAt(up.getUp()).equals(player)){
                 return new Position[] {new Position(up.getUp()), new Position(up), new Position(p)};
             }
         }
-        GameBoardPosition down = getPosAt(p).getDown();
+        GameBoardPosition down = getGameBoardPosAt(p).getDown();
         if(down != null && getColorAt(down).equals(player)){
             if(down.getDown() != null && getColorAt(down.getDown()).equals(player)){
                 return new Position[] {new Position(p), new Position(down), new Position(down.getDown())};
@@ -233,16 +245,17 @@ public abstract class GameBoard {
 
 	//is any move possible?
 	boolean movesPossible(Options.Color player, int setCount) {
+        LinkedList<Position> positionsOfPlayer = getPositions(player);
 		if(setCount > 0){
 			return true;
 		}
 		boolean jump = false;
-		if (getPositions(player).size() == 3){
+		if (positionsOfPlayer.size() == 3){
 			jump = true;
 		}
 
 		if (!jump){
-			for (Position p : getPositions(player)) {
+			for (Position p : positionsOfPlayer) {
 				if (moveUp(p) != null)
 					return true;
 				if (moveDown(p) != null)
@@ -284,7 +297,7 @@ public abstract class GameBoard {
 	}
 
 	Move moveUp(Position p) {
-        Position dest = getPosAt(p).getUp();
+        Position dest = getGameBoardPosAt(p).getUp();
         if(dest != null && getColorAt(dest).equals(Options.Color.NOTHING)){
             return new Move(new Position(dest), new Position(p), null);
         }
@@ -292,7 +305,7 @@ public abstract class GameBoard {
 	}
 
 	Move moveDown(Position p) {
-        Position dest = getPosAt(p).getDown();
+        Position dest = getGameBoardPosAt(p).getDown();
         if(dest != null && getColorAt(dest).equals(Options.Color.NOTHING)){
             return new Move(new Position(dest), new Position(p), null);
         }
@@ -300,7 +313,7 @@ public abstract class GameBoard {
 	}
 
 	Move moveLeft(Position p) {
-        Position dest = getPosAt(p).getLeft();
+        Position dest = getGameBoardPosAt(p).getLeft();
         if(dest != null && getColorAt(dest).equals(Options.Color.NOTHING)){
             return new Move(new Position(dest), new Position(p), null);
         }
@@ -308,7 +321,7 @@ public abstract class GameBoard {
 	}
 
 	Move moveRight(Position p) {
-        Position dest = getPosAt(p).getRight();
+        Position dest = getGameBoardPosAt(p).getRight();
         if(dest != null && getColorAt(dest).equals(Options.Color.NOTHING)){
             return new Move(new Position(dest), new Position(p), null);
         }
@@ -340,18 +353,18 @@ public abstract class GameBoard {
                 }else if(getColorAt(x,y).equals(Options.Color.NOTHING)){
                     pos2[2] = 'N';
                 }
-                if(getPosAt(x,y).getLeft() != null){
+                if(getGameBoardPosAt(x,y).getLeft() != null){
                     pos2[0] = '-';
                     pos2[1] = '-';
                 }
-                if(getPosAt(x,y).getUp() != null){
+                if(getGameBoardPosAt(x,y).getUp() != null){
                     pos1[2] = '|';
                 }
-                if(getPosAt(x,y).getRight() != null){
+                if(getGameBoardPosAt(x,y).getRight() != null){
                     pos2[3] = '-';
                     pos2[4] = '-';
                 }
-                if(getPosAt(x,y).getDown() != null){
+                if(getGameBoardPosAt(x,y).getDown() != null){
                     pos3[2] = '|';
                 }
                 line1 += new String(pos1);

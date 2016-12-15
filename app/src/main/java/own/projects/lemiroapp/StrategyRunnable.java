@@ -58,9 +58,7 @@ public class StrategyRunnable implements Runnable{
     }
 	
 	private void addnonJumpMoves(LinkedList<Move> moves, Player player){
-		for (int i = 0; i<localGameBoard.getPositions(player.getColor()).size(); i++) {
-			//no iterator here to avoid concurrent modification exception
-			Position p = localGameBoard.getPositions(player.getColor()).get(i);
+		for (Position p : localGameBoard.getPositions(player.getColor())) {
 			if (localGameBoard.moveUp(p) != null)
 				addpossibleKillstoMove(moves, localGameBoard.moveUp(p), player);
 			if (localGameBoard.moveDown(p) != null)
@@ -76,9 +74,7 @@ public class StrategyRunnable implements Runnable{
 		for (int x = 0; x < localGameBoard.LENGTH; x++) {
 			for (int y = 0; y < localGameBoard.LENGTH; y++) {
 				if (localGameBoard.getColorAt(x, y).equals(Options.Color.NOTHING)) {
-					for (int i = 0; i<localGameBoard.getPositions(player.getColor()).size(); i++) {
-						//no iterator here to avoid concurrent modification exception
-						Position p = localGameBoard.getPositions(player.getColor()).get(i);
+					for (Position p: localGameBoard.getPositions(player.getColor())) {
 						addpossibleKillstoMove(moves, new Move(new Position(x, y), p, null), player);
 					}
 				}
@@ -130,16 +126,17 @@ public class StrategyRunnable implements Runnable{
 	//returns a list of moves that the player is able to do
 	LinkedList<Move> possibleMoves(Player player) {
 		LinkedList<Move> poss = new LinkedList<Move>();
+		int nPositions = localGameBoard.getPositions(player.getColor()).size();
         //do not compute possible moves if the player has lost, otherwise it breaks the evaluation
         //as a state AFTER loosing would be evaluated instead of the final state after the final kill
-        if(localGameBoard.getPositions(player.getColor()).size() < 3 && player.getSetCount() <= 0){
+        if(nPositions < 3 && player.getSetCount() <= 0){
             return poss;
         }
 		if(player.getSetCount() > 0){
 			addSetMoves(poss, player);
 		}else{
 			boolean jump = false;
-			if (localGameBoard.getPositions(player.getColor()).size() <= 3){
+			if (nPositions <= 3){
 				jump = true;
 			}
 			if (!jump) {

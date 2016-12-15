@@ -3,6 +3,7 @@ package own.projects.lemiroapp;
 import org.junit.Before;
 import org.junit.Test;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.fail;
 
@@ -140,6 +141,45 @@ public class GameBoardTestNonParameterized {
         assertNull(mill4);
         Position[] mill5 = gameBoard.getMill(new Position(3,5), W);
         assertNull(mill5);
+
+    }
+
+    @Test
+    public void getPositionsShouldbeOfCorrectSize () {
+
+        final Options.Color B = Options.Color.BLACK;
+        final Options.Color W = Options.Color.WHITE;
+        final Options.Color N = Options.Color.NOTHING;
+        final Options.Color I = Options.Color.INVALID;
+
+        Options.Color[][] mill7 =
+
+                {{N, I, I, N, I, I, N},
+                { I, N, I, W, I, B, I},
+                { I, I, I, I, I, I, I},
+                { N, W, I, N, I, W, N},
+                { I, I, I, I, I, I, I},
+                { I, B, I, W, I, B, I},
+                { B, I, I, N, I, I, N}};
+
+        GameBoard gameBoard = new Mill7(mill7);
+
+        mPlayerBlack.setSetCount(1);
+        mPlayerWhite.setSetCount(1);
+
+        gameBoard.executeCompleteTurn(new Move(new Position(6,3), null, null), mPlayerWhite);
+        assertEquals(5, gameBoard.getPositions(mPlayerWhite.getColor()).size());
+
+        gameBoard.executeCompleteTurn(new Move(new Position(0,0), null, null), mPlayerBlack);
+        assertEquals(5, gameBoard.getPositions(mPlayerBlack.getColor()).size());
+
+        gameBoard.executeCompleteTurn(new Move(new Position(3,3), new Position(3,1), new Position(0,6)), mPlayerWhite);
+        assertEquals(5, gameBoard.getPositions(mPlayerWhite.getColor()).size());
+        assertEquals(4, gameBoard.getPositions(mPlayerBlack.getColor()).size());
+
+        gameBoard.reverseCompleteTurn(new Move(new Position(3,3), new Position(3,1), new Position(0,6)), mPlayerWhite);
+        assertEquals(5, gameBoard.getPositions(mPlayerWhite.getColor()).size());
+        assertEquals(5, gameBoard.getPositions(mPlayerBlack.getColor()).size());
 
     }
 
