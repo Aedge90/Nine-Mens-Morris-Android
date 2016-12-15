@@ -21,7 +21,7 @@ public class Strategy {
     };
 
     Strategy(final GameBoard field, final Player player, final ProgressUpdater up) {
-        this(field, player, up, 4); //TODO decide number, max should be nkills
+        this(field, player, up, 8);
     }
 
     @VisibleForTesting
@@ -33,7 +33,7 @@ public class Strategy {
         this.runnables = new StrategyRunnable[nThreads];
         this.up = up;
         for (int i = 0; i < nThreads; i++){
-            runnables[i] = new StrategyRunnable(gameBoard, maxPlayer, up, i, nThreads);
+            runnables[i] = new StrategyRunnable(gameBoard, maxPlayer, up, i);
         }
     }
 
