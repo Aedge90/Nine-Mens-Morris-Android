@@ -60,7 +60,7 @@ public class StrategyRunnableTest {
         executeMoveSeries(gameBoard, moves, mPlayerBlack);
 
         //black is the maximizing player
-        StrategyRunnable strategy = new StrategyRunnable(gameBoard, mPlayerBlack, null, 0, 1);
+        StrategyRunnable strategy = new StrategyRunnable(gameBoard, mPlayerBlack, null, 0);
         strategy.updateState();
 
         LinkedList<Move> possibleMoves = strategy.possibleMoves(mPlayerWhite);
@@ -75,8 +75,8 @@ public class StrategyRunnableTest {
     public void addpossibleKillstoMove () {
 
         GameBoard gameBoard = new Mill5();
-        StrategyRunnable strategyBlack = new StrategyRunnable(gameBoard, mPlayerBlack, null, 0, 1);
-        StrategyRunnable strategyWhite = new StrategyRunnable(gameBoard, mPlayerWhite, null, 0, 1);
+        StrategyRunnable strategyBlack = new StrategyRunnable(gameBoard, mPlayerBlack, null, 0);
+        StrategyRunnable strategyWhite = new StrategyRunnable(gameBoard, mPlayerWhite, null, 0);
 
         LinkedList<Move> possibleMovessoFar = new LinkedList<Move>();
 
@@ -141,7 +141,7 @@ public class StrategyRunnableTest {
                                   { W, I, I, N, I, I, N}};
 
         GameBoard gameBoard = new Mill5(field);
-        StrategyRunnable strategy = new StrategyRunnable(gameBoard, mPlayerBlack, null, 0, 1);
+        StrategyRunnable strategy = new StrategyRunnable(gameBoard, mPlayerBlack, null, 0);
         strategy.updateState();
 
         LinkedList<Move> possibleMovessoFar = new LinkedList<Move>();
@@ -163,7 +163,7 @@ public class StrategyRunnableTest {
 
         mPlayerBlack.setSetCount(9);
 
-        StrategyRunnable strategy = new StrategyRunnable(gameBoard, mPlayerBlack, null, 0, 1);
+        StrategyRunnable strategy = new StrategyRunnable(gameBoard, mPlayerBlack, null, 0);
         strategy.updateState();
 
         LinkedList<Move> moves = strategy.possibleMoves(mPlayerBlack);
@@ -195,7 +195,7 @@ public class StrategyRunnableTest {
         mPlayerBlack.setSetCount(0);
         mPlayerWhite.setSetCount(0);
 
-        StrategyRunnable strategy = new StrategyRunnable(gameBoard, mPlayerBlack, null, 0, 1);
+        StrategyRunnable strategy = new StrategyRunnable(gameBoard, mPlayerBlack, null, 0);
         strategy.updateState();
 
         LinkedList<Move> moves = strategy.possibleMoves(mPlayerBlack);
@@ -227,7 +227,7 @@ public class StrategyRunnableTest {
         mPlayerBlack.setSetCount(0);
         mPlayerWhite.setSetCount(0);
 
-        StrategyRunnable strategy = new StrategyRunnable(gameBoard, mPlayerBlack, null, 0, 1);
+        StrategyRunnable strategy = new StrategyRunnable(gameBoard, mPlayerBlack, null, 0);
         strategy.updateState();
 
         LinkedList<Move> moves = strategy.possibleMoves(mPlayerBlack);

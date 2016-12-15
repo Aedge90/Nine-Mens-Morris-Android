@@ -22,19 +22,17 @@ public class StrategyRunnable implements Runnable{
     private Move prevMove;
 
     private final int threadNr;
-    private final int nThreads;
     static int maxWertKickoff;
     static Move resultMove;
     static int resultEvaluation;
     static LinkedList<Move> possibleMovesKickoff;
 
-	StrategyRunnable(final GameBoard gameBoard, final Player maxPlayer, final ProgressUpdater up, final int threadNr, final int nThreads) {
+	StrategyRunnable(final GameBoard gameBoard, final Player maxPlayer, final ProgressUpdater up, final int threadNr) {
         this.globalGameBoard = gameBoard;
         this.globalMaxPlayer = maxPlayer;
 		this.up = up;
         this.movesToEvaluate = new LinkedList<Move>();
         this.threadNr = threadNr;
-        this.nThreads = nThreads;
 	}
 
 	public void updateState(){
@@ -250,26 +248,32 @@ public class StrategyRunnable implements Runnable{
     //same as max, but slightly modified to distribute work among threads
     private void maxKickoff(int depth, Player player) throws InterruptedException{
 
-        for (int i = 0; i < possibleMovesKickoff.size(); i++) {
+        while(true) {
 
-            if(i % nThreads == threadNr) {
-                Move z = possibleMovesKickoff.get(i);
-                localGameBoard.executeCompleteTurn(z, player);
-                movesToEvaluate.addLast(z);
-                int wert = min(depth - 1, maxWertKickoff, Integer.MAX_VALUE, player.getOtherPlayer());
-                movesToEvaluate.removeLast();
-                localGameBoard.reverseCompleteTurn(z, player);
-
-                synchronized (StrategyRunnable.class) {
-                    if (wert > maxWertKickoff) {
-                        maxWertKickoff = wert;
-                        resultMove = z;
-                        resultEvaluation = wert;
-                    }
+            Move z;
+            synchronized (StrategyRunnable.class) {
+                if(possibleMovesKickoff.size() > 0) {
+                    z = possibleMovesKickoff.removeFirst();
+                }else{
+                    break;
                 }
-
-                up.increment();
             }
+
+            localGameBoard.executeCompleteTurn(z, player);
+            movesToEvaluate.addLast(z);
+            int wert = min(depth - 1, maxWertKickoff, Integer.MAX_VALUE, player.getOtherPlayer());
+            movesToEvaluate.removeLast();
+            localGameBoard.reverseCompleteTurn(z, player);
+
+            synchronized (StrategyRunnable.class) {
+                if (wert > maxWertKickoff) {
+                    maxWertKickoff = wert;
+                    resultMove = z;
+                    resultEvaluation = wert;
+                }
+            }
+
+            up.increment();
         }
     }
 

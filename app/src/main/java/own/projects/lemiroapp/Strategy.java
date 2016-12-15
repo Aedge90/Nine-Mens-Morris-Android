@@ -5,6 +5,7 @@ import android.util.Log;
 
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 public class Strategy {
 
@@ -21,7 +22,7 @@ public class Strategy {
     };
 
     Strategy(final GameBoard field, final Player player, final ProgressUpdater up) {
-        this(field, player, up, 4); //TODO decide number, max should be nkills
+        this(field, player, up, 8);
     }
 
     @VisibleForTesting
@@ -33,24 +34,39 @@ public class Strategy {
         this.runnables = new StrategyRunnable[nThreads];
         this.up = up;
         for (int i = 0; i < nThreads; i++){
-            runnables[i] = new StrategyRunnable(gameBoard, maxPlayer, up, i, nThreads);
+            runnables[i] = new StrategyRunnable(gameBoard, maxPlayer, up, i);
         }
     }
 
     public Move computeMove() throws InterruptedException {
 
         // shuffle list, so we dont end up with the same moves every game
-        StrategyRunnable.possibleMovesKickoff = shuffleListOfPossMoves();
+        LinkedList<Move> shuffle = shuffleListOfPossMoves();
 
-        up.setMax(StrategyRunnable.possibleMovesKickoff.size());
+        LinkedList<Move> kills = splitListByKillMoves(shuffle);
+        LinkedList<Move> others = shuffle;
+
+        up.setMax(shuffle.size());
 
         StrategyRunnable.maxWertKickoff = Integer.MIN_VALUE;
         StrategyRunnable.resultMove = null;
         //not StrategyRunnable.MIN as StrategyRunnable.MIN might be multiplied in evaluation and thus is not the minimal possible number
         StrategyRunnable.resultEvaluation = Integer.MIN_VALUE;
+
+        StrategyRunnable.possibleMovesKickoff = kills;
         for (int i = 0; i < nThreads; i++) {
             threads[i] = new Thread(runnables[i]);
-            Log.i("Strategy", "thread " + i + "started");
+            threads[i].start();
+        }
+        for (int i = 0; i < nThreads; i++){
+            threads[i].join();
+        }
+
+        // wait until completion, so other moves will know about maxWertKickoff and hopefully
+        // run fast, as they should do a lot of cutoffs
+        StrategyRunnable.possibleMovesKickoff = others;
+        for (int i = 0; i < nThreads; i++) {
+            threads[i] = new Thread(runnables[i]);
             threads[i].start();
         }
         for (int i = 0; i < nThreads; i++){
@@ -68,23 +84,31 @@ public class Strategy {
     }
 
     @VisibleForTesting
-    public LinkedList<Move> shuffleListOfPossMoves(){
+    public LinkedList<Move> shuffleListOfPossMoves() {
 
         runnables[0].updateState();
         LinkedList<Move> shuffle = runnables[0].possibleMoves(maxPlayer);
 
-        //TODO sort opening a mill and preventing one moves to the beginning but after kill moves
         Collections.shuffle(shuffle);
-        LinkedList<Move> result = new LinkedList<Move>();
+
+        return shuffle;
+
+    }
+
+    @VisibleForTesting
+    public LinkedList<Move> splitListByKillMoves (LinkedList<Move> moves) {
+
+        //TODO sort opening a mill and preventing one moves to the beginning but after kill moves
+
+        LinkedList<Move> kills = new LinkedList<Move>();
         // but make sure the kill moves are at the beginning again, to improve performance
-        for(Move m : shuffle) {
+        for(Move m : moves) {
             if (m.getKill() != null) {
-                result.addFirst(m);
-            } else {
-                result.addLast(m);
+                kills.add(m);
             }
         }
-        return result;
+        moves.removeAll(kills);
+        return kills;
     }
 
     @VisibleForTesting

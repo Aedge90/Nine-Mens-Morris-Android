@@ -655,7 +655,7 @@ public class StrategyTestParameterized {
     }
 
     @Test
-    public void shuffleListShouldHaveKillsAtBeginning(){
+    public void splitListByKillMovesShouldSplitCorrectly(){
 
         Options.Color[][] mill9 =
                 {{N , I , I , N , I , I , P2},
@@ -676,15 +676,23 @@ public class StrategyTestParameterized {
 
         Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
 
-        LinkedList<Move> result = strategyP1.shuffleListOfPossMoves();
+        LinkedList<Move> shuffle = strategyP1.shuffleListOfPossMoves();
 
-        assertEquals(5 + 7, result.size());
+        assertEquals(5 + 7, shuffle.size());
 
-        assertTrue(result.get(0).getKill() != null);
-        assertTrue(result.get(1).getKill() != null);
-        assertTrue(result.get(2).getKill() != null);
-        assertTrue(result.get(3).getKill() != null);
-        assertTrue(result.get(4).getKill() != null);
+        LinkedList<Move> kills = strategyP1.splitListByKillMoves(shuffle);
+        LinkedList<Move> others = shuffle;
+
+        assertEquals(5, kills.size());
+        assertEquals(7, others.size());
+
+        for(Move k : kills){
+            assertTrue(k.getKill() != null);
+        }
+
+        for(Move o : others){
+            assertTrue(o.getKill() == null);
+        }
 
     }
 
