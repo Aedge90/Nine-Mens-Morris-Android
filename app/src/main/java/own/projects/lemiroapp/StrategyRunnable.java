@@ -249,10 +249,7 @@ public class StrategyRunnable implements Runnable{
 
     //same as max, but slightly modified to distribute work among threads
     private void maxKickoff(int depth, Player player) throws InterruptedException{
-        if(threadNr == 0) {
-            //may happen after other threads set progress already, but you can just ignore it
-            up.setMax(possibleMovesKickoff.size());
-        }
+
         for (int i = 0; i < possibleMovesKickoff.size(); i++) {
 
             if(i % nThreads == threadNr) {
@@ -270,10 +267,8 @@ public class StrategyRunnable implements Runnable{
                         resultEvaluation = wert;
                     }
                 }
-                // update and dont care that its concurrent. loosing an increment would not be noticable
-                // and wont break the computation as its just a visualization of the progress
-                up.setProgress(up.getProgress()+1);
-                up.update();
+
+                up.increment();
             }
         }
     }
@@ -318,10 +313,6 @@ public class StrategyRunnable implements Runnable{
 		}
 
         maxKickoff(startDepth, localMaxPlayer);
-
-        if(threadNr == 0) {
-            up.reset();
-        }
 
 		//restore old startDepth
 		startDepth = actualDepth;

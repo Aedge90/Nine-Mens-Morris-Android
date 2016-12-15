@@ -11,6 +11,7 @@ public class Strategy {
     private int nThreads;
     private Thread[] threads;
     private StrategyRunnable[] runnables;
+    final ProgressUpdater up;
 
     private final GameBoard gameBoard;
     private final Player maxPlayer;
@@ -30,6 +31,7 @@ public class Strategy {
         this.nThreads = nThreads;
         this.threads = new Thread[nThreads];
         this.runnables = new StrategyRunnable[nThreads];
+        this.up = up;
         for (int i = 0; i < nThreads; i++){
             runnables[i] = new StrategyRunnable(gameBoard, maxPlayer, up, i, nThreads);
         }
@@ -39,6 +41,8 @@ public class Strategy {
 
         // shuffle list, so we dont end up with the same moves every game
         StrategyRunnable.possibleMovesKickoff = shuffleListOfPossMoves();
+
+        up.setMax(StrategyRunnable.possibleMovesKickoff.size());
 
         StrategyRunnable.maxWertKickoff = Integer.MIN_VALUE;
         StrategyRunnable.resultMove = null;
@@ -57,6 +61,8 @@ public class Strategy {
            //runnables need to know which move was chosen
            runnables[i].setPreviousMove(StrategyRunnable.resultMove);
         }
+
+        up.reset();
 
         return StrategyRunnable.resultMove;
     }
