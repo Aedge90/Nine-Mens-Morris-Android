@@ -86,12 +86,8 @@ public class Mill7 extends GameBoard {
             return null;
         }
 
-        //find incorrectly detected mill, that contain the middle position in the middle of the mill
-        if(superMill[0].getX() == 1 && superMill[0].getY() == 3){
-            //return null if its the case, else the result from super is correct
-            return null;
-        }
-        if(superMill[0].getX() == 3 && superMill[0].getY() == 1){
+        //find incorrectly detected mill, that contains the middle position in the middle of the mill
+        if(superMill[1].equals(new Position(3,3))){
             return null;
         }
 

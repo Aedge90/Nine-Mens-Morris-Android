@@ -204,41 +204,22 @@ public abstract class GameBoard {
         }
     }
 
-    //TODO simplify this as above
     //if two pieces of color player are found, that form a mill together with position
     //an array containing the two pieces and position is returned, else null is returned
 	Position[] getMill(Position p, Options.Color player) {
-        //search for horizontal mill
-        GameBoardPosition left = getGameBoardPosAt(p).getLeft();
-        if(left != null && getColorAt(left).equals(player)){
-            if(left.getLeft() != null && getColorAt(left.getLeft()).equals(player)){
-                return new Position[] {new Position(left.getLeft()), new Position(left), new Position(p)};
+        GameBoardPosition[] neighbors = getGameBoardPosAt(p).getNeighbors();
+        for(int i = 0; i < neighbors.length; i++) {
+            if (neighbors[i] != null && getColorAt(neighbors[i]).equals(player)) {
+                GameBoardPosition neighborOfNeighbor = neighbors[i].getNeighbors()[i];
+                if (neighborOfNeighbor != null && getColorAt(neighborOfNeighbor).equals(player)) {
+                    return new Position[]{new Position(neighborOfNeighbor), new Position(neighbors[i]), new Position(p)};
+                }
+                GameBoardPosition oppositeNeighbor = getGameBoardPosAt(p).getOpposite(neighbors[i]);
+                if (neighbors[i] != null && getColorAt(neighbors[i]).equals(player) &&
+                        oppositeNeighbor != null && getColorAt(oppositeNeighbor).equals(player)) {
+                    return new Position[]{new Position(neighbors[i]), new Position(p), new Position(oppositeNeighbor)};
+                }
             }
-        }
-        GameBoardPosition right = getGameBoardPosAt(p).getRight();
-        if(right != null && getColorAt(right).equals(player)){
-            if(right.getRight() != null && getColorAt(right.getRight()).equals(player)){
-                return new Position[] {new Position(p), new Position(right), new Position(right.getRight())};
-            }
-        }
-        if(left != null && getColorAt(left).equals(player) && right != null && getColorAt(right).equals(player)){
-            return new Position[] {new Position(left), new Position(p), new Position(right)};
-        }
-        //search for vertical mill
-        GameBoardPosition up = getGameBoardPosAt(p).getUp();
-        if(up != null && getColorAt(up).equals(player)){
-            if(up.getUp() != null && getColorAt(up.getUp()).equals(player)){
-                return new Position[] {new Position(up.getUp()), new Position(up), new Position(p)};
-            }
-        }
-        GameBoardPosition down = getGameBoardPosAt(p).getDown();
-        if(down != null && getColorAt(down).equals(player)){
-            if(down.getDown() != null && getColorAt(down.getDown()).equals(player)){
-                return new Position[] {new Position(p), new Position(down), new Position(down.getDown())};
-            }
-        }
-        if(up != null && getColorAt(up).equals(player) && down != null && getColorAt(down).equals(player)){
-            return new Position[] {new Position(up), new Position(p), new Position(down)};
         }
 		return null;
 	}

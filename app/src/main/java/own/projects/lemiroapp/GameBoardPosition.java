@@ -42,6 +42,19 @@ public class GameBoardPosition extends Position {
         return new GameBoardPosition[]{left,right,up,down};
     }
 
+    public GameBoardPosition getOpposite(GameBoardPosition pos){
+        if(pos.equals(left)){
+            return right;
+        }else if(pos.equals(right)){
+            return left;
+        }else if(pos.equals(up)){
+            return down;
+        }else if(pos.equals(down)){
+            return up;
+        }
+        return null;
+    }
+
     GameBoardPosition(Position pos) {
         super(pos);
     }
