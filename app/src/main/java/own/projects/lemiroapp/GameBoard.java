@@ -49,7 +49,7 @@ public abstract class GameBoard {
 			for(int j = 0; j < LENGTH; j++){
                 if(other.field[i][j] != null) {
                     field[i][j] = new GameBoardPosition(other.field[i][j]);
-                    allValidPositions.add((Position)field[i][j]);
+                    allValidPositions.add(new Position(field[i][j]));
                 }
 			}
 		}
@@ -61,7 +61,7 @@ public abstract class GameBoard {
                 if(!(field[i][j] == I)) {
                     field[i][j] = new GameBoardPosition(j,i);
                     field[i][j].setColor(Options.Color.NOTHING);
-                    allValidPositions.add((Position)field[i][j]);
+                    allValidPositions.add(new Position(field[i][j]));
                 }
             }
         }
@@ -76,7 +76,7 @@ public abstract class GameBoard {
         LinkedList<Position> result = new LinkedList<Position>();
         for(Position p : allValidPositions){
             if(getGameBoardPosAt(p).getColor().equals(player)) {
-                result.add((Position)p);
+                result.add(p);
             }
         }
         return result;
