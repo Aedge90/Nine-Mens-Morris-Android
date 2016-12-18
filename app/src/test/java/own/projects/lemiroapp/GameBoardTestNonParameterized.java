@@ -4,7 +4,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 
 
@@ -13,6 +15,11 @@ public class GameBoardTestNonParameterized {
     private GameBoard mGameBoard;
     private Player mPlayerWhite;
     private Player mPlayerBlack;
+
+    private final Options.Color B = Options.Color.BLACK;
+    private final Options.Color W = Options.Color.WHITE;
+    private final Options.Color N = Options.Color.NOTHING;
+    private final Options.Color I = Options.Color.INVALID;
 
     @Before
     public void setUp(){
@@ -113,11 +120,6 @@ public class GameBoardTestNonParameterized {
     @Test
     public void getMill_ShouldbeNullForMill7(){
 
-        final Options.Color B = Options.Color.BLACK;
-        final Options.Color W = Options.Color.WHITE;
-        final Options.Color N = Options.Color.NOTHING;
-        final Options.Color I = Options.Color.INVALID;
-
         Options.Color[][] mill7 =
 
                 {{N, I, I, N, I, I, N},
@@ -146,11 +148,6 @@ public class GameBoardTestNonParameterized {
 
     @Test
     public void getPositionsShouldbeOfCorrectSize () {
-
-        final Options.Color B = Options.Color.BLACK;
-        final Options.Color W = Options.Color.WHITE;
-        final Options.Color N = Options.Color.NOTHING;
-        final Options.Color I = Options.Color.INVALID;
 
         Options.Color[][] mill7 =
 
@@ -183,4 +180,91 @@ public class GameBoardTestNonParameterized {
 
     }
 
+    @Test
+    public void opensMillSafelyShouldReturnTrue () {
+
+        Options.Color[][] mill7 =
+
+                {{W, I, I, N, I, I, N},
+                { I, N, I, W, I, B, I},
+                { I, I, I, I, I, I, I},
+                { N, W, I, N, I, B, N},
+                { I, I, I, I, I, I, I},
+                { I, B, I, W, I, B, I},
+                { B, I, I, N, I, I, N}};
+
+        GameBoard gameBoard = new Mill7(mill7);
+
+        mPlayerBlack.setSetCount(0);
+        mPlayerWhite.setSetCount(0);
+
+        assertTrue(gameBoard.opensMillSafely(new Move(new Position(6,3), new Position(5,3), null), mPlayerBlack));
+
+    }
+
+    @Test
+    public void opensMillSafelyShouldReturnFalse1 () {
+
+        Options.Color[][] mill7 =
+
+                {{N, I, I, N, I, I, N},
+                { I, N, I, W, I, B, I},
+                { I, I, I, I, I, I, I},
+                { N, W, I, N, I, B, N},
+                { I, I, I, I, I, I, I},
+                { I, B, I, W, I, B, I},
+                { B, I, I, N, I, I, N}};
+
+        GameBoard gameBoard = new Mill7(mill7);
+
+        mPlayerBlack.setSetCount(0);
+        mPlayerWhite.setSetCount(0);
+
+        assertFalse(gameBoard.opensMillSafely(new Move(new Position(6,3), new Position(5,3), null), mPlayerBlack));
+
+    }
+
+    @Test
+    public void opensMillSafelyShouldReturnFalse2 () {
+
+        Options.Color[][] mill7 =
+
+                {{N, I, I, N, I, I, N},
+                { I, N, I, W, I, N, I},
+                { I, I, I, I, I, I, I},
+                { N, W, I, N, I, B, N},
+                { I, I, I, I, I, I, I},
+                { I, B, I, W, I, B, I},
+                { B, I, I, N, I, I, N}};
+
+        GameBoard gameBoard = new Mill7(mill7);
+
+        mPlayerBlack.setSetCount(0);
+        mPlayerWhite.setSetCount(0);
+
+        assertFalse(gameBoard.opensMillSafely(new Move(new Position(6,3), new Position(5,3), null), mPlayerBlack));
+
+    }
+
+    @Test
+    public void opensMillSafelyShouldReturnFalse3 () {
+
+        Options.Color[][] mill7 =
+
+                {{N, I, I, N, I, I, N},
+                { I, N, I, W, I, B, I},
+                { I, I, I, I, I, I, I},
+                { N, W, I, W, I, B, N},
+                { I, I, I, I, I, I, I},
+                { I, B, I, W, I, B, I},
+                { B, I, I, N, I, I, N}};
+
+        GameBoard gameBoard = new Mill7(mill7);
+
+        mPlayerBlack.setSetCount(0);
+        mPlayerWhite.setSetCount(0);
+
+        assertFalse(gameBoard.opensMillSafely(new Move(new Position(6,3), new Position(5,3), null), mPlayerBlack));
+
+    }
 }
