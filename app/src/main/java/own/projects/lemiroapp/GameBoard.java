@@ -198,6 +198,14 @@ public abstract class GameBoard {
         return true;
     }
 
+    boolean preventsMill (Position p, Player player){
+        if(inMill(p, player.getOtherPlayer().getColor())){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     //returns true if two pieces of color player are found, that form a mill together with position
 	boolean inMill(Position p, Options.Color player) {
         if(null != getMill(p, player)){
