@@ -486,7 +486,7 @@ public class StrategyTestParameterized {
             //test if computeMove makes unallowed changed to gameBoard or players now
             Move result1 = strategyP1.computeMove();
             gameBoard.executeCompleteTurn(result1, mPlayer1);
-            if(!strategyP1.getState().equals(Strategy.GameState.RUNNING)){
+            if(!gameBoard.getState(mPlayer1).equals(GameBoard.GameState.RUNNING)){
                 break;
             }
 
@@ -503,7 +503,7 @@ public class StrategyTestParameterized {
             GameBoard gameBoardBefore2 = gameBoard.getCopy();
             Move result2 = strategyP2.computeMove();
             gameBoard.executeCompleteTurn(result2, mPlayer2);
-            if(!strategyP2.getState().equals(Strategy.GameState.RUNNING)){
+            if(!gameBoard.getState(mPlayer2).equals(GameBoard.GameState.RUNNING)){
                 break;
             }
 
@@ -535,13 +535,11 @@ public class StrategyTestParameterized {
         //make 30 rounds and check if the results on all possible thread counts are the same
         for(int i = 0; i<30; i++){
             computeMoveShouldHaveSameEvaluationForAnyNumberOfThreads_Turn(i, gameBoard, mPlayer1);
-            Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, null, 1);
-            if(!strategyP1.getState().equals(Strategy.GameState.RUNNING)){
+            if(!gameBoard.getState(mPlayer1).equals(GameBoard.GameState.RUNNING)){
                 break;
             }
             computeMoveShouldHaveSameEvaluationForAnyNumberOfThreads_Turn(i, gameBoard, mPlayer2);
-            Strategy strategyP2 = new Strategy(gameBoard, mPlayer2, null, 1);
-            if(!strategyP2.getState().equals(Strategy.GameState.RUNNING)){
+            if(!gameBoard.getState(mPlayer2).equals(GameBoard.GameState.RUNNING)){
                 break;
             }
         }

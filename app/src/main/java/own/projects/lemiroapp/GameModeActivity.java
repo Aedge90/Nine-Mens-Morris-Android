@@ -362,22 +362,26 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
 
         //TODO show remiCount somewhere
 
-        if(field.getPositions(currPlayer.getColor()).size() == 3 && field.getPositions(currPlayer.getOtherPlayer().getColor()).size() == 3){
-            remiCount --;
-            if(remiCount == 0){
-                showGameOverMsg("Draw!", "Nobody wins.");
-                return true;
-            }
+        if(field.getState(currPlayer).equals(GameBoard.GameState.DRAW)){
+            showGameOverMsg("Draw!", "Nobody wins.");
+            return true;
         }
 
-        String loosingColor = currPlayer.getOtherPlayer().getColor().toString();
-        loosingColor = loosingColor.toUpperCase().charAt(0)+loosingColor.substring(1).toLowerCase();
+        String message;
+        if(currPlayer.getDifficulty() == null) {
+            message = "You have won!";
+        }else{
+            String winningColor = currPlayer.getColor().toString();
+            message = winningColor.toUpperCase().charAt(0) + winningColor.substring(1).toLowerCase();
+            message += " has won!";
+        }
+
         //only the other player can have lost as its impossible for currPlayer to commit suicide
-        if(!field.movesPossible(currPlayer.getOtherPlayer().getColor(), currPlayer.getOtherPlayer().getSetCount())){
-            showGameOverMsg(loosingColor + " has lost!", "He could not make any further move.");
+        if(field.getState(currPlayer).equals(GameBoard.GameState.WON_NO_MOVES)){
+            showGameOverMsg(message, "The opponent could not make any further move.");
             return true;
-        }else if ((field.getPositions(currPlayer.getOtherPlayer().getColor()).size() < 3 && currPlayer.getOtherPlayer().getSetCount() <= 0)) {
-            showGameOverMsg(loosingColor + " has lost!", "He has lost all of his pieces.");
+        }else if (field.getState(currPlayer).equals(GameBoard.GameState.WON_KILLED_ALL)) {
+            showGameOverMsg(message, "The opponent has lost all of his pieces.");
             return true;
         }
         return false;

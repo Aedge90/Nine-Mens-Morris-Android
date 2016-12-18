@@ -15,6 +15,10 @@ public abstract class GameBoard {
 
     LinkedList<Position> allValidPositions = new LinkedList<Position>();
 
+    static enum GameState {
+        RUNNING, DRAW, WON_NO_MOVES, WON_KILLED_ALL
+    };
+
     GameBoard(){}
 
     @VisibleForTesting
@@ -311,6 +315,28 @@ public abstract class GameBoard {
 
     public LinkedList<Position> getAllValidPositions() {
         return allValidPositions;
+    }
+
+    GameState getState(Player player) {
+
+        //TODO initialize remi count correctly
+        int remiCount = 20;
+
+        if(getPositions(Options.Color.BLACK).size() == 3 && getPositions(Options.Color.WHITE).size() == 3){
+            remiCount --;
+            if(remiCount == 0){
+                return GameState.DRAW;
+            }
+        }
+
+        //only the other player can have lost as its impossible for maxPlayer to commit suicide
+        if(!movesPossible(player.getOtherPlayer().getColor(), player.getOtherPlayer().getSetCount())){
+            return GameState.WON_NO_MOVES;
+        }else if ((getPositions(player.getOtherPlayer().getColor()).size() < 3 && player.getOtherPlayer().getSetCount() <= 0)) {
+            return GameState.WON_KILLED_ALL;
+        }
+
+        return GameState.RUNNING;
     }
 
     public String toString() {

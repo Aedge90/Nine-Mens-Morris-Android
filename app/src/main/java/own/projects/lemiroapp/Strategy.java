@@ -16,10 +16,6 @@ public class Strategy {
     private final GameBoard gameBoard;
     private final Player maxPlayer;
 
-    static enum GameState {
-        RUNNING, DRAW, WON_NO_MOVES, WON_KILLED_ALL
-    };
-
     Strategy(final GameBoard field, final Player player, final ProgressUpdater up) {
         this(field, player, up, 8);
     }
@@ -92,25 +88,4 @@ public class Strategy {
         return StrategyRunnable.resultEvaluation;
     }
 
-    GameState getState() {
-
-        //TODO initialize remi count correctly and use whoWon in Activity
-        int remiCount = 20;
-
-        if(gameBoard.getPositions(maxPlayer.getColor()).size() == 3 && gameBoard.getPositions(maxPlayer.getOtherPlayer().getColor()).size() == 3){
-            remiCount --;
-            if(remiCount == 0){
-                return GameState.DRAW;
-            }
-        }
-
-        //only the other player can have lost as its impossible for maxPlayer to commit suicide
-        if(!gameBoard.movesPossible(maxPlayer.getOtherPlayer().getColor(), maxPlayer.getOtherPlayer().getSetCount())){
-            return GameState.WON_NO_MOVES;
-        }else if ((gameBoard.getPositions(maxPlayer.getOtherPlayer().getColor()).size() < 3 && maxPlayer.getOtherPlayer().getSetCount() <= 0)) {
-            return GameState.WON_KILLED_ALL;
-        }
-
-        return GameState.RUNNING;
-    }
 }
