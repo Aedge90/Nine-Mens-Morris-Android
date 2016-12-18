@@ -463,6 +463,59 @@ public class StrategyTestParameterized {
 
     }
 
+    //Test if especially bots on easy open their mill, as they cant see the gameboard after 3 moves
+    @Test
+    public void computeMoveShouldOpenMill() throws InterruptedException {
+
+        Options.Color[][] mill9 =
+                {{P1, I , I , N , I , I , N},
+                { I , N , I , P2, I , P1, I },
+                { I , I , N , N , P2, I , I },
+                { N , N , N , I , N , P1, N },
+                { I , I , N , N , N , I , I },
+                { I , N , I , P2, I , P1, I },
+                { P2, I , I , N , I , I , N}};
+
+        GameBoard gameBoard = new Mill9(mill9);
+        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
+        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+
+        mPlayer1.setSetCount(0);
+        mPlayer2.setSetCount(0);
+
+        Move result = strategy.computeMove();
+
+        assertThat(result.getDest(), anyOf(is(new Position(6,3)), is(new Position(4,3))));
+
+    }
+
+    @Test
+    public void computeMoveShouldNotOpenMill() throws InterruptedException {
+
+        Options.Color[][] mill9 =
+                {{P1, I , I , N , I , I , N},
+                { I , N , I , P2, I , P1, I },
+                { I , I , N , N , N , I , I },
+                { N , N , N , I , P2, P1, N },
+                { I , I , N , N , N , I , I },
+                { I , N , I , P2, I , P1, I },
+                { P2, I , I , N , I , I , N}};
+
+        GameBoard gameBoard = new Mill9(mill9);
+        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
+        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+
+        mPlayer1.setSetCount(0);
+        mPlayer2.setSetCount(0);
+
+        Move result = strategy.computeMove();
+
+        assertEquals(result.getSrc(), new Position(0,0));
+
+    }
+
     @Test
     public void computeMoveDoesNotAlterPassedObjects() throws InterruptedException {
 
