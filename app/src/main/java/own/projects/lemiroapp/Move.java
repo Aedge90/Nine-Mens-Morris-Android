@@ -2,9 +2,9 @@ package own.projects.lemiroapp;
 
 public class Move {
 
-	private Position src;
-	private Position dest; //if only dest is set, then this is a move in the set phase
-	private Position kill;
+	private final Position src;
+	private final Position dest; //if only dest is set, then this is a move in the set phase
+	private final Position kill;
 	
 	Move(Position dest, Position src, Position kill){
 		this.src = src;

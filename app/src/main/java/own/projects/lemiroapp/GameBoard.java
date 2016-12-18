@@ -309,6 +309,9 @@ public abstract class GameBoard {
         return null;
 	}
 
+    public LinkedList<Position> getAllValidPositions() {
+        return allValidPositions;
+    }
 
     public String toString() {
         String print = "";

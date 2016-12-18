@@ -71,24 +71,20 @@ public class StrategyRunnable implements Runnable{
 	}
 
 	private void addJumpMoves(LinkedList<Move> moves, Player player){
-		for (int x = 0; x < localGameBoard.LENGTH; x++) {
-			for (int y = 0; y < localGameBoard.LENGTH; y++) {
-				if (localGameBoard.getColorAt(x, y).equals(Options.Color.NOTHING)) {
-					for (Position p: localGameBoard.getPositions(player.getColor())) {
-						addpossibleKillstoMove(moves, new Move(new Position(x, y), p, null), player);
-					}
-				}
-			}
+		for (Position all : localGameBoard.getAllValidPositions()) {
+            if (localGameBoard.getColorAt(all).equals(Options.Color.NOTHING)) {
+                for (Position own: localGameBoard.getPositions(player.getColor())) {
+                    addpossibleKillstoMove(moves, new Move(all, own, null), player);
+                }
+            }
 		}
 	}
 	
 	private void addSetMoves(LinkedList<Move> moves, Player player){
-		for (int x = 0; x < localGameBoard.LENGTH; x++) {
-			for (int y = 0; y < localGameBoard.LENGTH; y++) {
-				if (localGameBoard.getColorAt(x, y).equals(Options.Color.NOTHING)) {
-					addpossibleKillstoMove(moves, new Move(new Position(x, y), null, null), player);
-				}
-			}
+        for (Position all : localGameBoard.getAllValidPositions()) {
+            if (localGameBoard.getColorAt(all).equals(Options.Color.NOTHING)) {
+                addpossibleKillstoMove(moves, new Move(all, null, null), player);
+            }
 		}
 	}
 
