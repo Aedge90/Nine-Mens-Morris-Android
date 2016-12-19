@@ -59,14 +59,18 @@ public class StrategyRunnable implements Runnable{
 	
 	private void addnonJumpMoves(LinkedList<Move> moves, Player player){
 		for (Position p : localGameBoard.getPositions(player.getColor())) {
-			if (localGameBoard.moveUp(p) != null)
-				addpossibleKillstoMove(moves, localGameBoard.moveUp(p), player);
-			if (localGameBoard.moveDown(p) != null)
-				addpossibleKillstoMove(moves, localGameBoard.moveDown(p), player);
-			if (localGameBoard.moveRight(p) != null)
-				addpossibleKillstoMove(moves, localGameBoard.moveRight(p), player);
-			if (localGameBoard.moveLeft(p) != null)
-				addpossibleKillstoMove(moves, localGameBoard.moveLeft(p), player);
+			if (localGameBoard.moveUp(p) != null) {
+                addpossibleKillstoMove(moves, localGameBoard.moveUp(p), player);
+            }
+			if (localGameBoard.moveDown(p) != null) {
+                addpossibleKillstoMove(moves, localGameBoard.moveDown(p), player);
+            }
+			if (localGameBoard.moveRight(p) != null) {
+                addpossibleKillstoMove(moves, localGameBoard.moveRight(p), player);
+            }
+			if (localGameBoard.moveLeft(p) != null) {
+                addpossibleKillstoMove(moves, localGameBoard.moveLeft(p), player);
+            }
 		}
 	}
 
@@ -177,22 +181,22 @@ public class StrategyRunnable implements Runnable{
 
         //evaluate how often the players can kill, and prefer kills that are in the near future
         int weight = 2048;
-        for(int i = 0; i < movesToEvaluate.size(); i++){
-            if (movesToEvaluate.get(i).getKill() != null) {
-                if(i % 2 == 0) {    //even numbers are moves of the maximizing player
-                    ret += weight;
-                }else{
-                    ret -= weight;
-                }
+        int i = 0;
+        for(Move move : movesToEvaluate){
+            if(i % 2 == 0) {    //even numbers are moves of the maximizing player
+                ret += evaluateMove(move, weight);
+            }else{
+                ret -= evaluateMove(move, weight);
             }
             // next weight will be half the weight
             // this has to be done so players wont do the same move over and over again
             // as they would not choose a path in which they kill but the other player kills in a
             // distant future (which is seen in higher difficulties, when he can make jump moves)
             // thus lowers the evaluation drastically and the game is stalled
-            // also this prefers kill in the near future, so they are done now and not later
-            // as could be the case if alle were weighted equally
+            // also this prefers kills in the near future, so they are done now and not later
+            // as could be the case if all were weighted equally
             weight /= 2;
+            i++;
         }
 
         //evaluate undoing a move, as its probably of no use. If it is, the other evaluation should overwrite this
@@ -210,6 +214,14 @@ public class StrategyRunnable implements Runnable{
         return ret;
 
 	}
+
+    private int evaluateMove(Move move, int weight){
+        if (move.getKill() != null) {
+            return weight;
+        }else{
+            return 0;
+        }
+    }
 
 	private int max(int depth, int alpha, int beta, Player player) throws InterruptedException {
 		if(Thread.interrupted()){
