@@ -14,6 +14,12 @@ public class Move {
             throw new IllegalArgumentException("Move: invalid arguments for constructor: " + toString() );
         }
 	}
+
+    Move(Move other){
+        this.src = other.src;
+        this.dest = other.dest;
+        this.kill = other.kill;
+    }
 	
 	public Position getSrc(){
 		return src;
