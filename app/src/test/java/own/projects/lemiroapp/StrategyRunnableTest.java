@@ -67,7 +67,7 @@ public class StrategyRunnableTest {
         assertEquals(0, possibleMoves.size());
 
         //minimizing players worst case is MAX. black is the maximizing player
-        int result = strategy.bewertung(mPlayerWhite, possibleMoves,0);
+        int result = strategy.evaluation(mPlayerWhite, possibleMoves,0);
         assertEquals(strategy.MAX, result);
     }
 

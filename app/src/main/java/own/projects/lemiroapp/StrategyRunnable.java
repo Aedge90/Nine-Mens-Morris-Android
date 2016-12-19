@@ -147,7 +147,7 @@ public class StrategyRunnable implements Runnable{
 	// maximizing player has got to return higher values for better situations
     // minimizing player has got to return lower values the better his situation
     @VisibleForTesting
-	int bewertung(Player player, LinkedList<Move> moves, int depth) {
+	int evaluation(Player player, LinkedList<Move> moves, int depth) {
 
         int ret = 0;
 
@@ -218,7 +218,7 @@ public class StrategyRunnable implements Runnable{
 		LinkedList<Move> moves = possibleMoves(player);
 		//end reached or no more moves available, maybe because he is trapped or because he lost
 		if (depth == 0 || moves.size() == 0){
-            int bewertung = bewertung(player, moves, depth);
+            int bewertung = evaluation(player, moves, depth);
             return bewertung;
 		}
 		int maxWert = alpha;
@@ -276,7 +276,7 @@ public class StrategyRunnable implements Runnable{
         }
 		LinkedList<Move> moves = possibleMoves(player);
 		if (depth == 0 || moves.size() == 0){
-            int bewertung = bewertung(player, moves, depth);
+            int bewertung = evaluation(player, moves, depth);
             return bewertung;
 		}
 		int minWert = beta;
