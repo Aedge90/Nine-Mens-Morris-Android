@@ -176,17 +176,13 @@ public abstract class GameBoard {
 		}	
 	}
 
-    //TODO write test for this
     //returns true if move opens a mill and the mill can not be denied by the opponent in the next move
     boolean opensMillSafely (Move move, Player player){
         if(!inMill(move.getSrc(), player.getColor())){
             return false;
         }
         //check if enemy could move a piece into the mill in the next move
-        if(player.getOtherPlayer().getSetCount() > 0 ){
-            return false;
-        }
-        if(getPositions(player.getOtherPlayer().getColor()).size() == 3){
+        if(player.getOtherPlayer().getSetCount() > 0 || getPositions(player.getOtherPlayer().getColor()).size() == 3){
             return false;
         }
         GameBoardPosition[] neighbors = getGameBoardPosAt(move.getSrc()).getNeighbors();
@@ -199,11 +195,24 @@ public abstract class GameBoard {
     }
 
     boolean preventsMill (Position p, Player player){
-        if(inMill(p, player.getOtherPlayer().getColor())){
-            return true;
-        }else{
+        Position[] preventedMill = getMill(p, player.getOtherPlayer().getColor());
+        if(preventedMill == null){
             return false;
         }
+        //check if enemy could actually move a piece into the mill in the next move --> prevented mill
+        if(player.getOtherPlayer().getSetCount() > 0 || getPositions(player.getOtherPlayer().getColor()).size() == 3){
+            return true;
+        }
+        GameBoardPosition[] neighbors = getGameBoardPosAt(p).getNeighbors();
+        for(int i = 0; i < neighbors.length; i++) {
+            //check if enemy could actually move a piece that is not part of the mill to form his mill
+            if(!preventedMill[0].equals(neighbors[i]) && !preventedMill[1].equals(neighbors[i]) && !preventedMill[2].equals(neighbors[i])) {
+                if (neighbors[i] != null && getColorAt(neighbors[i]).equals(player.getOtherPlayer().getColor())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     //returns true if two pieces of color player are found, that form a mill together with position

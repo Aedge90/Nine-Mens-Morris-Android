@@ -181,6 +181,94 @@ public class GameBoardTestNonParameterized {
     }
 
     @Test
+    public void preventsMillShouldReturnTrue1() {
+
+        Options.Color[][] mill7 =
+
+                {{N, I, I, N, I, I, N},
+                { I, N, I, W, I, B, I},
+                { I, I, I, I, I, I, I},
+                { N, W, I, W, I, N, B},
+                { I, I, I, I, I, I, I},
+                { I, B, I, W, I, B, I},
+                { B, I, I, N, I, I, N}};
+
+        GameBoard gameBoard = new Mill7(mill7);
+
+        mPlayerBlack.setSetCount(0);
+        mPlayerWhite.setSetCount(0);
+
+        assertTrue(gameBoard.preventsMill(new Position(5,3), mPlayerWhite));
+
+    }
+
+    @Test
+    public void preventsMillShouldReturnFalse1() {
+
+        Options.Color[][] mill7 =
+
+                {{N, I, I, N, I, I, N},
+                { I, N, I, W, I, N, I},
+                { I, I, I, I, I, I, I},
+                { N, W, I, W, I, N, B},
+                { I, I, I, I, I, I, I},
+                { I, B, I, W, I, B, I},
+                { B, I, I, N, I, I, N}};
+
+        GameBoard gameBoard = new Mill7(mill7);
+
+        mPlayerBlack.setSetCount(0);
+        mPlayerWhite.setSetCount(0);
+
+        assertFalse(gameBoard.preventsMill(new Position(5,3), mPlayerWhite));
+
+    }
+
+    @Test
+    public void preventsMillShouldReturnTrue2() {
+
+        Options.Color[][] mill7 =
+
+                {{N, I, I, N, I, I, N},
+                { I, N, I, W, I, B, I},
+                { I, I, I, I, I, I, I},
+                { N, W, I, W, I, N, N},
+                { I, I, I, I, I, I, I},
+                { I, N, I, W, I, B, I},
+                { B, I, I, N, I, I, N}};
+
+        GameBoard gameBoard = new Mill7(mill7);
+
+        mPlayerBlack.setSetCount(0);
+        mPlayerWhite.setSetCount(0);
+
+        assertTrue(gameBoard.preventsMill(new Position(5,3), mPlayerWhite));
+
+    }
+
+    @Test
+    public void preventsMillShouldReturnFalse2() {
+
+        Options.Color[][] mill7 =
+
+                {{N, I, I, N, I, I, N},
+                { I, N, I, W, I, B, I},
+                { I, I, I, I, I, I, I},
+                { N, W, I, W, I, N, N},
+                { I, I, I, I, I, I, I},
+                { I, B, I, W, I, B, I},
+                { B, I, I, N, I, I, N}};
+
+        GameBoard gameBoard = new Mill7(mill7);
+
+        mPlayerBlack.setSetCount(0);
+        mPlayerWhite.setSetCount(0);
+
+        assertFalse(gameBoard.preventsMill(new Position(5,3), mPlayerWhite));
+
+    }
+
+    @Test
     public void opensMillSafelyShouldReturnTrue () {
 
         Options.Color[][] mill7 =
