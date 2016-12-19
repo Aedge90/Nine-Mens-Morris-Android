@@ -176,7 +176,8 @@ public abstract class GameBoard {
 		}	
 	}
 
-    //returns true if move opens a mill and the mill can not be denied by the opponent in the next move
+    // returns true if move opens a mill and the mill can not be denied by the opponent in the next move
+    // by moving into the open mill (its not checked if he can still kill the open mill if he closes his own mill)
     boolean opensMillSafely (Move move, Player player){
         if(move.getSrc() == null){
             return false;
@@ -197,6 +198,7 @@ public abstract class GameBoard {
         return true;
     }
 
+    // returns true if player moved into an open mill in order to prevent it
     boolean preventsMill (Position p, Player player){
         Position[] preventedMill = getMill(p, player.getOtherPlayer().getColor());
         if(preventedMill == null){

@@ -179,6 +179,23 @@ public class StrategyRunnable implements Runnable{
             return ret;
         }
 
+        //globalGameBoard is correct as we want to look at the unmodified current gameboard
+        //better evaluation if in the first move, we can do something useful
+        if(globalGameBoard.preventsMill(movesToEvaluate.getFirst().getDest(), localMaxPlayer)){
+            ret += 1;
+        }else if(movesToEvaluate.getFirst().getSrc() != null &&
+                globalGameBoard.inMill(movesToEvaluate.getFirst().getSrc(), localMaxPlayer.getColor())){
+            //mill was opened
+            if(globalGameBoard.opensMillSafely(movesToEvaluate.getFirst(), localMaxPlayer)) {
+                ret += 1;
+            }else{
+                // opening a mill is not a good idea if it can be blocked by the enemy
+                // this prevents bots on all difficulties to evaluate doing a random move
+                // the same as opening a mill which can be blocked in the next move
+                ret -= 1;
+            }
+        }
+
         //evaluate how often the players can kill, and prefer kills that are in the near future
         int weight = 2048;
         int i = 0;
