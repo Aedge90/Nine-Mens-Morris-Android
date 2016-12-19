@@ -178,6 +178,9 @@ public abstract class GameBoard {
 
     //returns true if move opens a mill and the mill can not be denied by the opponent in the next move
     boolean opensMillSafely (Move move, Player player){
+        if(move.getSrc() == null){
+            return false;
+        }
         if(!inMill(move.getSrc(), player.getColor())){
             return false;
         }
