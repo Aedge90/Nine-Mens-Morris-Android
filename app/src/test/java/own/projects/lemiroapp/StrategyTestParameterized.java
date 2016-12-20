@@ -359,12 +359,6 @@ public class StrategyTestParameterized {
     @Test
     public void computeMoveShouldUndoHisMoveIfItClosesMill1() throws InterruptedException {
 
-        //EASY is too dumb to see that he can open and close his mill again
-        //TODO evaluate opening a mill and preventing one
-        if(mPlayer2.getDifficulty() == Options.Difficulties.EASY){
-            return;
-        }
-
         Options.Color[][] mill5 =
                 {{N , I , I , P1, I , I , P1 },
                 { I , I , I , I , I , I , I },
@@ -400,10 +394,6 @@ public class StrategyTestParameterized {
 
     @Test
     public void computeMoveShouldUndoHisMoveIfItClosesMill2() throws InterruptedException {
-
-        if(mPlayer2.getDifficulty() == Options.Difficulties.EASY){
-            return;
-        }
 
         Options.Color[][] mill5 =
                 {{P1, I , I , P1, I , I , P1 },
