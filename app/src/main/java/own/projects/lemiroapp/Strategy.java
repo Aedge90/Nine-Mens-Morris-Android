@@ -17,7 +17,7 @@ public class Strategy {
     private final Player maxPlayer;
 
     Strategy(final GameBoard field, final Player player, final ProgressUpdater up) {
-        this(field, player, up, 8);
+        this(field, player, up, 8); //TODO decide if 4 is better
     }
 
     @VisibleForTesting
@@ -69,7 +69,6 @@ public class Strategy {
         runnables[0].updateState();
         LinkedList<Move> shuffle = runnables[0].possibleMoves(maxPlayer);
 
-        //TODO sort opening a mill and preventing one moves to the beginning but after kill moves
         Collections.shuffle(shuffle);
         LinkedList<Move> result = new LinkedList<Move>();
         // but make sure the kill moves are at the beginning again, to improve performance

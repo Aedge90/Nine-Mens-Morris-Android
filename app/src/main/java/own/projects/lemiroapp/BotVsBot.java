@@ -15,9 +15,6 @@ public class BotVsBot extends GameModeActivity{
     Player bot2;
 	Strategy bot1Brain;
 	Strategy bot2Brain;
-
-    // TODO use two brains. Important as prevMove in Strategy
-    // will be overwritten by the other bot at the moment
     
     @Override
     protected void init(){
