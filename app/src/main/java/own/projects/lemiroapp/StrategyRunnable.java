@@ -357,6 +357,9 @@ public class StrategyRunnable implements Runnable{
     }
 
     private int lowerDepthOnGameEnd (int startDepth) {
+        if(localMaxPlayer.getSetCount() > 0){
+            return startDepth;
+        }
         int nPlayerPos = localGameBoard.getPositions(localMaxPlayer.getColor()).size() +
                 localGameBoard.getPositions(localMaxPlayer.getOtherPlayer().getColor()).size();
         if(nPlayerPos == 7 || nPlayerPos == 8){
