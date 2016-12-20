@@ -13,7 +13,6 @@ public class StrategyRunnable implements Runnable{
     private final Player globalMaxPlayer;
     private Player localMaxPlayer;
 
-	private int startDepth;
 	private final ProgressUpdater up;
 	//not Int.Max as the evaluation function would create overflows
 	static final int MAX = 100000;
@@ -328,22 +327,47 @@ public class StrategyRunnable implements Runnable{
 
 	private void computeMove() throws InterruptedException {
 				
-		startDepth = localMaxPlayer.getDifficulty().ordinal() + 2;
-		//decrease startDepth if there are too much possible moves to save time
-		int actualDepth = startDepth;
-		if(startDepth > 4){
-			if (localGameBoard.getPositions(localMaxPlayer.getColor()).size() <= 3
-                    || localGameBoard.getPositions(localMaxPlayer.getOtherPlayer().getColor()).size() <= 3){
-				startDepth = 4;
-			}
-		}
+		int startDepth = localMaxPlayer.getDifficulty().ordinal() + 2;
+
+        startDepth = lowerDepthOnGameStart(startDepth);
+
+        startDepth = lowerDepthOnGameEnd(startDepth);
 
         maxKickoff(startDepth, localMaxPlayer);
 
-		//restore old startDepth
-		startDepth = actualDepth;
-
 	}
+
+    private int lowerDepthOnGameStart (int startDepth) {
+        if(localMaxPlayer.getSetCount() == 0){
+            return startDepth;
+        }
+        int nPositions = localGameBoard.getPositions(localMaxPlayer.getColor()).size();
+        if(nPositions > 3){
+            return startDepth;
+        }else if(nPositions == 0){
+            return 1;
+        }else if (nPositions == 1){
+            return 3;
+        }else if (nPositions == 2){
+            return Math.min(startDepth, 4);
+        }else if (nPositions == 3){
+            return Math.min(startDepth, 5);
+        }
+        return startDepth;
+    }
+
+    private int lowerDepthOnGameEnd (int startDepth) {
+        int nPlayerPos = localGameBoard.getPositions(localMaxPlayer.getColor()).size() +
+                localGameBoard.getPositions(localMaxPlayer.getOtherPlayer().getColor()).size();
+        if(nPlayerPos == 7 || nPlayerPos == 8){
+            return Math.min(startDepth, 5);
+        }
+        if(nPlayerPos == 6){
+            return Math.min(startDepth, 4);
+        }
+        return startDepth;
+    }
+
 
     public void setPreviousMove(Move prevMove) {
        this.prevMove = prevMove;

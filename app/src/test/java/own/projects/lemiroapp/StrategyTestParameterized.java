@@ -671,13 +671,13 @@ public class StrategyTestParameterized {
     public void computeMoveShouldReturn5DifferentKillMovesOverTime () throws InterruptedException {
 
         Options.Color[][] mill9 =
-                {{N , I , I , N , I , I , P2},
-                { I , N , I , N , I , N , I },
-                { I , I , N , P1, P1, I , I },
-                { P2, N , P1, I , P2, N , N },
+                {{P2, I , I , N , I , I , N },
+                { I , P1, I , N , I , P2, I },
                 { I , I , N , N , N , I , I },
-                { I , N , I , N , I , P2, I },
-                { N , I , I , P2, I , I , N }};
+                { P1, N , N , I , N , N , P2},
+                { I , I , P2, N , N , I , I },
+                { I , P1, I , N , I , N , I },
+                { P2, I , I , N , I , I , N }};
 
         GameBoard gameBoard = new Mill9(mill9);
 
@@ -696,8 +696,8 @@ public class StrategyTestParameterized {
             if(!list.contains(result)) {
                 list.add(result);
             }
-            //check after 100 iterations if list contains enough (or too much) elements and break
-            if(i % 100 == 0 && list.size() >= 5){
+            //check after 50 iterations if list contains enough (or too much) elements and break
+            if(i % 50 == 0 && list.size() >= 5){
                 break;
             }
         }
