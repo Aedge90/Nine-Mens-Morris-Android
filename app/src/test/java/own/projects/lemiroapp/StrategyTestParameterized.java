@@ -396,7 +396,7 @@ public class StrategyTestParameterized {
     public void computeMoveShouldUndoHisMoveIfItClosesMill2() throws InterruptedException {
 
         Options.Color[][] mill5 =
-                {{P1, I , I , P1, I , I , P1 },
+                {{P1, I , I , P1, I , I , P1},
                 { I , I , I , I , I , I , I },
                 { I , I , P1, P2, N , I , I },
                 { N , I , N , I , N , I , P2},
@@ -430,7 +430,7 @@ public class StrategyTestParameterized {
     public void computeMoveShouldWinAsNoMovesLeft() throws InterruptedException {
 
         Options.Color[][] mill5 =
-                {{P1, I , I , N , I , I , N},
+                {{P1, I , I , N , I , I , N },
                 { I , I , I , I , I , I , I },
                 { I , I , P2, P1, P2, I , I },
                 { N , I , P1, I , N , I , P1},
@@ -458,7 +458,7 @@ public class StrategyTestParameterized {
     public void computeMoveShouldOpenMill() throws InterruptedException {
 
         Options.Color[][] mill9 =
-                {{P1, I , I , N , I , I , N},
+                {{P1, I , I , N , I , I , N },
                 { I , N , I , P2, I , P1, I },
                 { I , I , N , N , P2, I , I },
                 { N , N , N , I , N , P1, N },
@@ -484,7 +484,7 @@ public class StrategyTestParameterized {
     public void computeMoveShouldNotOpenMill() throws InterruptedException {
 
         Options.Color[][] mill9 =
-                {{P1, I , I , N , I , I , N},
+                {{P1, I , I , N , I , I , N },
                 { I , N , I , P2, I , P1, I },
                 { I , I , N , N , N , I , I },
                 { N , N , N , I , P2, P1, N },
@@ -503,6 +503,47 @@ public class StrategyTestParameterized {
         Move result = strategy.computeMove();
 
         assertEquals(result.getSrc(), new Position(0,0));
+
+    }
+
+    @Test
+    public void computeMoveShouldPreventCornerMillOnGameStartOnHigherDifficulties() throws InterruptedException {
+
+        //workaround to skip easier difficulties
+        if(mPlayer1.getDifficulty().equals(Options.Difficulties.EASY)
+                || mPlayer1.getDifficulty().equals(Options.Difficulties.NORMAL)){
+            return;
+        }
+
+        Options.Color[][] mill9 =
+                {{N , I , I , N , I , I , N },
+                { I , N , I , P2, I , N , I },
+                { I , I , N , N , N , I , I },
+                { N , N , N , I , N , P2, N },
+                { I , I , N , N , N , I , I },
+                { I , N , I , N , I , N , I },
+                { N , I , I , P1, I , I , N}};
+
+        GameBoard gameBoard = new Mill9(mill9);
+        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressUpdater updater = new ProgressUpdater(progBar, new HumanVsBot());
+        Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+        Strategy strategyP2 = new Strategy(gameBoard, mPlayer2, updater, nThreads);
+
+        mPlayer1.setSetCount(4);
+        mPlayer2.setSetCount(3);
+
+        for(int i = 0; i<3; i++){
+
+            Move result1 = strategyP1.computeMove();
+            gameBoard.executeCompleteTurn(result1, mPlayer1);
+
+            Move result2 = strategyP2.computeMove();
+            gameBoard.executeCompleteTurn(result2, mPlayer2);
+
+        }
+
+        assertEquals(4, gameBoard.getPositions(mPlayer1.getColor()).size());
 
     }
 
