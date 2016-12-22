@@ -355,4 +355,56 @@ public class GameBoardTestNonParameterized {
         assertFalse(gameBoard.opensMillSafely(new Move(new Position(6,3), new Position(5,3), null), mPlayerBlack));
 
     }
+
+
+    @Test
+    public void getStateShouldBeDraw () {
+
+        Options.Color[][] mill7 =
+
+                {{B, I, I, N, I, I, N},
+                { I, N, I, W, I, B, I},
+                { I, I, I, I, I, I, I},
+                { W, W, I, N, I, B, N},
+                { I, I, I, I, I, I, I},
+                { I, W, I, W, I, B, I},
+                { B, I, I, N, I, I, N}};
+
+        GameBoard gameBoard = new Mill7(mill7);
+
+        mPlayerBlack.setSetCount(0);
+        mPlayerWhite.setSetCount(0);
+
+        gameBoard.executeCompleteTurn(new Move(new Position(3,3), new Position(3,1), null), mPlayerWhite);
+        gameBoard.executeCompleteTurn(new Move(new Position(3,6), new Position(0,6), null), mPlayerBlack);
+        gameBoard.executeCompleteTurn(new Move(new Position(3,1), new Position(3,3), null), mPlayerWhite);
+        gameBoard.executeCompleteTurn(new Move(new Position(0,6), new Position(3,6), null), mPlayerBlack);
+        gameBoard.executeCompleteTurn(new Move(new Position(1,1), new Position(3,1), new Position(0,6)), mPlayerWhite);
+        //now remisCount should be reset
+
+        int i = 0;
+        while(i <= GameBoard.REMISMAX){
+            gameBoard.executeCompleteTurn(new Move(new Position(3,0), new Position(0,0), null), mPlayerBlack);
+            i++;
+            getStateShouldBeDraw_AssertDRAWOrRUNNING(i, gameBoard, mPlayerBlack);
+            gameBoard.executeCompleteTurn(new Move(new Position(0,6), new Position(0,3), null), mPlayerWhite);
+            i++;
+            getStateShouldBeDraw_AssertDRAWOrRUNNING(i, gameBoard, mPlayerWhite);
+            gameBoard.executeCompleteTurn(new Move(new Position(0,0), new Position(3,0), null), mPlayerBlack);
+            i++;
+            getStateShouldBeDraw_AssertDRAWOrRUNNING(i, gameBoard, mPlayerBlack);
+            gameBoard.executeCompleteTurn(new Move(new Position(0,3), new Position(0,6), null), mPlayerWhite);
+            i++;
+            getStateShouldBeDraw_AssertDRAWOrRUNNING(i, gameBoard, mPlayerWhite);
+        }
+
+    }
+
+    public void getStateShouldBeDraw_AssertDRAWOrRUNNING (int turnSinceLastKill, GameBoard gameBoard, Player executingPlayer) {
+        if(turnSinceLastKill >= GameBoard.REMISMAX){
+            assertEquals(GameBoard.GameState.DRAW, gameBoard.getState(executingPlayer));
+        }else{
+            assertEquals(GameBoard.GameState.RUNNING, gameBoard.getState(executingPlayer));
+        }
+    }
 }

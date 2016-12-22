@@ -15,6 +15,10 @@ public abstract class GameBoard {
 
     LinkedList<Position> allValidPositions = new LinkedList<Position>();
 
+    public static final int REMISMAX = 40;
+    private int remisCount = REMISMAX;
+    private int remisCountBeforeKill = REMISMAX;
+
     static enum GameState {
         RUNNING, DRAW, WON_NO_MOVES, WON_KILLED_ALL
     };
@@ -127,6 +131,7 @@ public abstract class GameBoard {
     //this executes only the setting or moving phase of a player, regardless if a kill is contained in move
     //necessary to make is separate as the user can only add the kill after this move was done
     void executeSetOrMovePhase(Move move, Player player) {
+        remisCount--;
         if(player.getSetCount() > 0){
             if(!getColorAt(move.getDest()).equals(Options.Color.NOTHING)){
                 throw new IllegalArgumentException("Player " + player.getColor() + " is trying to set to an occupied field by: " + getColorAt(move.getDest()));
@@ -147,6 +152,8 @@ public abstract class GameBoard {
     //this executes a kill if the move contains one
     void executeKillPhase(Move move, Player player){
         if(move.getKill() != null){
+            remisCountBeforeKill = remisCount;
+            remisCount = REMISMAX;
             if(getColorAt(move.getKill()).equals(player.getColor())){
                 throw new IllegalArgumentException("Trying to kill own piece of color: " + player.getColor());
             }
@@ -165,6 +172,7 @@ public abstract class GameBoard {
 
     //undoes a complete turn of a player, including setting or moving and killing
 	public void reverseCompleteTurn(Move move, Player player) {
+        remisCount++;
 		if(move.getSrc() == null && move.getDest() != null){
 			makeKillMove(move.getDest());
             player.setSetCount(player.getSetCount() + 1);
@@ -172,6 +180,7 @@ public abstract class GameBoard {
 			makeMove(move.getDest(), move.getSrc(), player.getColor());
 		}
 		if(move.getKill() != null){
+            remisCount = remisCountBeforeKill;
 			makeSetMove(move.getKill(), player.getOtherPlayer().getColor());
 		}	
 	}
@@ -341,14 +350,8 @@ public abstract class GameBoard {
 
     GameState getState(Player player) {
 
-        //TODO initialize remi count correctly
-        int remiCount = 20;
-
-        if(getPositions(Options.Color.BLACK).size() == 3 && getPositions(Options.Color.WHITE).size() == 3){
-            remiCount --;
-            if(remiCount == 0){
-                return GameState.DRAW;
-            }
+        if(remisCount <= 0){
+            return GameState.DRAW;
         }
 
         //only the other player can have lost as its impossible for maxPlayer to commit suicide

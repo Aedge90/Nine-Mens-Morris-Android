@@ -7,7 +7,7 @@ public class Options implements Parcelable {
 
 	protected GameMode gameMode;
 	protected static enum GameMode {
-		HUMANBOT, BOTBOT, HUMANHUMAN //and vllt HUMANVIABTOOTH
+		HUMANBOT, BOTBOT, HUMANHUMAN
 	}
 	protected MillMode millMode;
 	protected static enum MillMode {
