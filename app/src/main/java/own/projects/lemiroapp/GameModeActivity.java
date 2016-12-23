@@ -251,15 +251,9 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
         currMove = null;
         Position newPosition = null;
         if(human.getSetCount() <= 0){
-            //this has to be a loop as the user may select an invalid destination in MOVETO phase
-            while(currMove == null){
-                state = State.MOVEFROM;
-                //wait for Human to select source
-                waitforSelection();
-                state = State.MOVETO;
-                //wait for Human to select destination
-                waitforSelection();
-            }
+            state = State.MOVEFROM;
+            // wait until a source piece and its destination position is chosen
+            waitforSelection();
             fieldView.makeMove(currMove, human.getColor());
             fieldView.getPos(currMove.getSrc()).setOnClickListener(new OnFieldClickListener(currMove.getSrc()));
             fieldView.getPos(currMove.getDest()).setOnClickListener(new OnFieldClickListener(currMove.getDest()));
@@ -439,6 +433,7 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
                 }else{
                     Position pos = new Position(x, y);
                     currMove = new Move(pos, null, null);
+                    state = State.IGNORE;
                     signalSelection();
                 }
             } else if (state == State.MOVEFROM) {
@@ -451,7 +446,7 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
                     fieldLayout.addView(redSector);
                     //set invalid position for now so that constructor doesnt throw IllegalArgumentException
                     currMove = new Move(new Position(-1,-1), new Position(x,y), null);
-                    signalSelection();
+                    state = State.MOVETO;
                 }
             } else if (state == State.MOVETO) {
                 if(!field.movePossible(currMove.getSrc(), new Position(x,y))){
@@ -463,8 +458,9 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
                 }else{
                     fieldLayout.removeView(redSector);
                     currMove = new Move(new Position(x,y), currMove.getSrc(), null);
+                    state = State.IGNORE;
+                    signalSelection();
                 }
-                signalSelection();
             } else if (state == State.IGNORE) {
                 showToast("It is not your turn!");
             }else if (state == State.KILL) {
@@ -483,6 +479,7 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
                     if(allInMill){
                         Position killPos = new Position(x, y);
                         currMove = new Move(currMove.getDest(), currMove.getSrc(), killPos);
+                        state = State.IGNORE;
                         signalSelection();
                     }else{
                         showToast("You can not kill a mill! Choose another target!");
@@ -490,6 +487,7 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
                 }else{
                     Position killPos = new Position(x, y);
                     currMove = new Move(currMove.getDest(), currMove.getSrc(), killPos);
+                    state = State.IGNORE;
                     signalSelection();
                 }
             }
