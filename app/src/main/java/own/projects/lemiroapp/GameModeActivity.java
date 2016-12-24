@@ -185,12 +185,12 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
 				}
 			})
 			.setNegativeButton("Cancel", null)
-			.setNeutralButton("Restart", new DialogInterface.OnClickListener() {
+			.setNeutralButton("New Game", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog,
 						int id) {
 					new AlertDialog.Builder(THIS)
-					.setTitle("Restart?")
-					.setMessage("Do you want to restart?")
+					.setTitle("New Game?")
+					.setMessage("Do you want to start a new Game?")
 					.setPositiveButton("Yes",
 							new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog,
@@ -401,7 +401,7 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
 					.setIcon(android.R.drawable.ic_dialog_info)
 					.setTitle(title)
 					.setMessage(message)
-					.setNegativeButton("Quit", new DialogInterface.OnClickListener() {
+					.setPositiveButton("Quit", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int id) {
                             new AlertDialog.Builder(THIS)
@@ -418,14 +418,14 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
                                     .show();
                         }
 					})
-                   .setPositiveButton("New Game", new DialogInterface.OnClickListener(){
+                   .setNeutralButton("New Game", new DialogInterface.OnClickListener(){
                        @Override
                        public void onClick(DialogInterface dialogInterface, int id) {
                            setResult(RESULT_OK);
                            finish();
                        }
                    })
-                    .setNeutralButton("Show Gameboard", null)
+                    .setNegativeButton("Show Gameboard", null)
                     .show();
 				}
 			});
