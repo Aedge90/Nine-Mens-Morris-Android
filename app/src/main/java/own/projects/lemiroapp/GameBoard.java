@@ -186,7 +186,9 @@ public abstract class GameBoard {
 	}
 
     // returns true if move opens a mill and the mill can not be denied by the opponent in the next move
-    // by moving into the open mill (its not checked if he can still kill the open mill if he closes his own mill)
+    // by moving (or setting) into the open mill (its not checked if he can still kill the open mill if he closes his own mill)
+    // the jumping phase in the end is ignored. Opening a mill then is still considered save, as the other
+    // player can not close an own mill when he jumps into this open mill
     boolean opensMillSafely (Move move, Player player){
         if(move.getSrc() == null){
             return false;
@@ -195,7 +197,7 @@ public abstract class GameBoard {
             return false;
         }
         //check if enemy could move a piece into the mill in the next move
-        if(player.getOtherPlayer().getSetCount() > 0 || getPositions(player.getOtherPlayer().getColor()).size() == 3){
+        if(player.getOtherPlayer().getSetCount() > 0){
             return false;
         }
         GameBoardPosition[] neighbors = getGameBoardPosAt(move.getSrc()).getNeighbors();

@@ -291,28 +291,6 @@ public class GameBoardTestNonParameterized {
     }
 
     @Test
-    public void opensMillSafelyShouldReturnFalse1 () {
-
-        Options.Color[][] mill7 =
-
-                {{N, I, I, N, I, I, N},
-                { I, N, I, W, I, B, I},
-                { I, I, I, I, I, I, I},
-                { N, W, I, N, I, B, N},
-                { I, I, I, I, I, I, I},
-                { I, B, I, W, I, B, I},
-                { B, I, I, N, I, I, N}};
-
-        GameBoard gameBoard = new Mill7(mill7);
-
-        mPlayerBlack.setSetCount(0);
-        mPlayerWhite.setSetCount(0);
-
-        assertFalse(gameBoard.opensMillSafely(new Move(new Position(6,3), new Position(5,3), null), mPlayerBlack));
-
-    }
-
-    @Test
     public void opensMillSafelyShouldReturnFalse2 () {
 
         Options.Color[][] mill7 =
