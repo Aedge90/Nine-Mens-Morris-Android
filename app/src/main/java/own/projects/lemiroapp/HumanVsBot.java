@@ -69,7 +69,7 @@ public class HumanVsBot extends GameModeActivity{
                         currPlayer = human;
     					humanTurn(human);
 
-    					if(whoWon()){
+    					if(ShowGameOverMessageIfWon()){
     						break;
     					}
 
@@ -78,7 +78,7 @@ public class HumanVsBot extends GameModeActivity{
                         currPlayer = bot;
     					botTurn(bot, botBrain);
 
-    					if(whoWon()){
+    					if(ShowGameOverMessageIfWon()){
     						break;
     					}
 

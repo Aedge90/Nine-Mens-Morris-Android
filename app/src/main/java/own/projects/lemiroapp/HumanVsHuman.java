@@ -64,7 +64,7 @@ public class HumanVsHuman extends GameModeActivity{
                         currPlayer = human1;
                         humanTurn(human1);
 
-    					if(whoWon()){
+    					if(ShowGameOverMessageIfWon()){
     						break;
     					}
 
@@ -73,7 +73,7 @@ public class HumanVsHuman extends GameModeActivity{
                         currPlayer = human2;
                         humanTurn(human2);
 
-                        if(whoWon()){
+                        if(ShowGameOverMessageIfWon()){
     						break;
     					}
 

@@ -160,9 +160,6 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 
-		//TODO dont cover the gameboard after the game is lost with the game over message
-		//TODO as the player probably wants to see why he lost
-
 		if(keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
 			new AlertDialog.Builder(THIS)
 			.setIcon(android.R.drawable.ic_dialog_info)
@@ -282,7 +279,9 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
             field.executeKillPhase(currMove, human);
         }
 
-        state = State.IGNORE;
+        if(!field.equals(GameBoard.GameState.RUNNING)) {
+            state = State.GAMEOVER;
+        }
     }
 
     void botTurn(Player bot, Strategy brain) throws InterruptedException{
@@ -330,6 +329,8 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
 
     }
 
+    //TODO hide previous toast when showing a new one so they wont stack
+
 	protected void showToast(String text){
 		Toast toast = Toast.makeText(this,text ,Toast.LENGTH_SHORT);
 		toast.setGravity(Gravity.BOTTOM,0,0);
@@ -352,36 +353,40 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
 		});
 	}
 
-    boolean whoWon() {
+    boolean ShowGameOverMessageIfWon() {
 
         //TODO show remiCount somewhere
 
         if(field.getState(currPlayer).equals(GameBoard.GameState.DRAW)){
             showGameOverMsg("Draw!", "Nobody wins.");
+            setTextinUIThread(progressText, "Draw! Nobody wins");
             return true;
         }
 
+        String winningColor = currPlayer.getColor().toString();
+        winningColor = winningColor.toUpperCase().charAt(0) + winningColor.substring(1).toLowerCase();
         String message;
         if(currPlayer.getDifficulty() == null) {
+            //the player is a human
             message = "You have won!";
         }else{
-            String winningColor = currPlayer.getColor().toString();
-            message = winningColor.toUpperCase().charAt(0) + winningColor.substring(1).toLowerCase();
-            message += " has won!";
+
+            message = winningColor + " has won!";
         }
 
-        //only the other player can have lost as its impossible for currPlayer to commit suicide
         if(field.getState(currPlayer).equals(GameBoard.GameState.WON_NO_MOVES)){
             showGameOverMsg(message, "The opponent could not make any further move.");
+            setTextinUIThread(progressText, "Game Over! " + winningColor + " has won");
             return true;
         }else if (field.getState(currPlayer).equals(GameBoard.GameState.WON_KILLED_ALL)) {
             showGameOverMsg(message, "The opponent has lost all of his pieces.");
+            setTextinUIThread(progressText, "Game Over! " + winningColor + " has won");
             return true;
         }
         return false;
     }
 	
-    protected void showGameOverMsg(final String title, final String message){
+    private void showGameOverMsg(final String title, final String message){
 			try {
 				Thread.sleep(1500);
 			} catch (InterruptedException e) {
@@ -396,14 +401,32 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
 					.setIcon(android.R.drawable.ic_dialog_info)
 					.setTitle(title)
 					.setMessage(message)
-					.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int id) {
-							setResult(RESULT_OK);
-							finish();
-						}
+					.setNegativeButton("Quit", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
+                            new AlertDialog.Builder(THIS)
+                                    .setCancelable(false)
+                                    .setTitle("Quit?")
+                                    .setMessage("Do you really want to Quit?")
+                                    .setPositiveButton("Yes",
+                                            new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int id) {
+                                                    setResult(RESULT_CANCELED);
+                                                    finish();
+                                                }})
+                                    .setNegativeButton("No", null)
+                                    .show();
+                        }
 					})
-					.show();
+                   .setPositiveButton("New Game", new DialogInterface.OnClickListener(){
+                       @Override
+                       public void onClick(DialogInterface dialogInterface, int id) {
+                           setResult(RESULT_OK);
+                           finish();
+                       }
+                   })
+                    .setNeutralButton("Show Gameboard", null)
+                    .show();
 				}
 			});
 	 }
@@ -491,8 +514,6 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
                     signalSelection();
                 }
             }
-
-            //showToast("x = " + x + "  y = " + y);
 
         }
     }

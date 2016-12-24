@@ -14,7 +14,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 
 public class MainActivity extends Activity {
-	
+
 	private final static int RUN_GAME = 67;
 	private final static int SET_OPTIONS = 100;
 	
@@ -82,26 +82,7 @@ public class MainActivity extends Activity {
 				finish();
 			}
 		}else if(requestCode == RUN_GAME) {
-			if (resultCode == RESULT_OK) {
-				new AlertDialog.Builder(this)
-				.setCancelable(false)
-				.setTitle("new Game?")
-				.setMessage("start new Game?")
-				.setPositiveButton("Yes",
-						new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog,
-							int whichButton) {
-						Intent setOptionsIntent = new Intent(THIS, OptionsActivity.class);
-						startActivityForResult(setOptionsIntent, SET_OPTIONS);
-					}})
-				.setNegativeButton("No",
-							new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-							finish();
-						}
-				}).show();
-			}else if(resultCode == RESULT_CANCELED){
+			if(resultCode == RESULT_CANCELED){
 				finish();
 			}else{
 				Intent setOptionsIntent = new Intent(THIS, OptionsActivity.class);

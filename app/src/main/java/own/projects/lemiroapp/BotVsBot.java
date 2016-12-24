@@ -1,11 +1,6 @@
 
 package own.projects.lemiroapp;
 
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
-import android.os.SystemClock;
 import android.util.Log;
 
 
@@ -71,7 +66,7 @@ public class BotVsBot extends GameModeActivity{
                         currPlayer = bot1;
                         botTurn(bot1, bot1Brain);
 
-    					if(whoWon()){
+    					if(ShowGameOverMessageIfWon()){
     						break;
     					}
 
@@ -80,7 +75,7 @@ public class BotVsBot extends GameModeActivity{
                         currPlayer = bot2;
                         botTurn(bot2, bot2Brain);
 
-    					if(whoWon()){
+    					if(ShowGameOverMessageIfWon()){
     						break;
     					}
 
