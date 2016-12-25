@@ -6,3 +6,6 @@ local.properties
 .idea
 *.iml
 build
+
+# my gimp project folder
+image_projects
