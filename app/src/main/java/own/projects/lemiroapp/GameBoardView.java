@@ -174,7 +174,7 @@ public class GameBoardView {
 					R.drawable.piece_white);
 		} else if (color.equals(Options.Color.RED)) {
 			bmp = BitmapFactory.decodeResource(c.getResources(),
-					R.drawable.steinr);
+					R.drawable.piece_red);
 		}else if (color.equals(Options.Color.GREEN)) {
 			bmp = BitmapFactory.decodeResource(c.getResources(),
 					R.drawable.piece_green);
