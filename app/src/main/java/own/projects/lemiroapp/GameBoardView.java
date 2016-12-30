@@ -177,7 +177,7 @@ public class GameBoardView {
 					R.drawable.steinr);
 		}else if (color.equals(Options.Color.GREEN)) {
 			bmp = BitmapFactory.decodeResource(c.getResources(),
-					R.drawable.steing);
+					R.drawable.piece_green);
 		}else if (color.equals(Options.Color.NOTHING)){
 			bmp = BitmapFactory.decodeResource(c.getResources(),
 					R.drawable.nothing);

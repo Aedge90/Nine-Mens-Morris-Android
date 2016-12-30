@@ -463,7 +463,7 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
                 if(!(field.getColorAt(new Position(x,y)).equals(currPlayer.getColor()))){
                     showToast("Nothing to move here!");
                 }else{
-                    redSector = fieldView.createSector(Options.Color.RED);
+                    redSector = fieldView.createSector(Options.Color.GREEN);
                     redSector.setLayoutParams(new GridLayout.LayoutParams(
                             GridLayout.spec(y, 1), GridLayout.spec(x, 1)));
                     fieldLayout.addView(redSector);
