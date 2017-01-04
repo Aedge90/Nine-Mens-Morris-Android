@@ -9,33 +9,18 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical" >
-
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15sp"
-            android:layout_marginLeft="15sp"
-            android:text="@string/select_gameMode"
-            android:textSize="27sp" />
-
-    <Spinner
-        android:id="@+id/gameModeSpinner"
-        android:prompt="@string/select_gameMode"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="15sp" />
     
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="15sp"
             android:layout_marginLeft="15sp"
-            android:text="@string/select_millMode"
+            android:text="@string/select_millVariant"
             android:textSize="27sp" />
 
     <Spinner
         android:id="@+id/millModeSpinner"
-        android:prompt="@string/select_millMode"
+        android:prompt="@string/select_millVariant"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15sp" />
@@ -45,11 +30,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15sp"
             android:layout_marginLeft="15sp"
-            android:text="@string/select_difficulty1"
+            android:text="@string/select_player_white_difficulty"
             android:textSize="27sp" />
 
     <Spinner
-        android:id="@+id/difficulty1Spinner"
+        android:id="@+id/playerWhiteSpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15sp" />
@@ -59,11 +44,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15sp"
             android:layout_marginLeft="15sp"
-            android:text="@string/select_difficulty2"
+            android:text="@string/select_player_black_difficulty"
             android:textSize="27sp" />
 
     <Spinner
-        android:id="@+id/difficulty2Spinner"
+        android:id="@+id/playerBlackSpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15sp" />
@@ -78,20 +63,6 @@
 
     <Spinner
         android:id="@+id/whoStartsSpinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="15sp" />
-    
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15sp"
-            android:layout_marginLeft="15sp"
-            android:text="@string/select_color"
-            android:textSize="27sp" />
-
-    <Spinner
-        android:id="@+id/colorSpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15sp" />

@@ -40,11 +40,8 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public abstract class GameModeActivity extends android.support.v4.app.FragmentActivity{
+public class GameModeActivity extends android.support.v4.app.FragmentActivity{
 
-	protected final static int COMPUTE_DONE = 20;
-	protected final static int READ_READY_DONE_HUMAN_SET = 74;
-	protected final static int READ_READY_DONE_HUMAN_MOVE = 75;
 	protected final static int RESULT_RESTART = Activity.RESULT_FIRST_USER + 1;
 	
 	protected final int LENGTH = 7;
@@ -74,6 +71,8 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
     }
 
     Player currPlayer;
+    Player playerBlack;
+    Player playerWhite;
 
 	private void setDefaultUncaughtExceptionHandler() {
 	    try {
@@ -149,6 +148,102 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
 		gameThread.start();
 		
 	}
+
+    protected void init(){
+
+        state = State.IGNORE;
+
+        playerBlack = options.playerBlack;
+        playerWhite = options.playerWhite;
+        playerBlack.setOtherPlayer(playerWhite);
+        playerWhite.setOtherPlayer(playerBlack);
+
+        // Mill Settings are Set
+        if (options.millMode == Options.MillMode.MILL5) {
+            playerBlack.setSetCount(5);
+            playerWhite.setSetCount(5);
+            field = new Mill5();
+            fieldLayout.setBackgroundResource(R.drawable.brett5);
+        } else if (options.millMode == Options.MillMode.MILL7) {
+            playerBlack.setSetCount(7);
+            playerWhite.setSetCount(7);
+            field = new Mill7();
+            fieldLayout.setBackgroundResource(R.drawable.brett7);
+        } else if (options.millMode == Options.MillMode.MILL9) {
+            playerBlack.setSetCount(9);
+            playerWhite.setSetCount(9);
+            field = new Mill9();
+            fieldLayout.setBackgroundResource(R.drawable.brett9);
+        }
+        selected = false;
+
+        //need to listen for touch events as human players exist
+        if(playerWhite.getDifficulty() == null || playerBlack.getDifficulty() == null) {
+            setSectorListeners();
+        }
+
+        gameThread = createGameThread();
+
+    }
+
+    Thread createGameThread(){
+
+        Runnable game = new Runnable(){
+
+            @Override
+            public void run(){
+
+                Strategy playerBlackBrain = null;
+                Strategy playerWhiteBrain = null;
+                if(playerWhite.getDifficulty() != null) {
+                    playerWhiteBrain = new Strategy(field, playerWhite, progressUpdater);
+                }
+                if(playerBlack.getDifficulty() != null) {
+                    playerBlackBrain = new Strategy(field, playerBlack, progressUpdater);
+                }
+
+                if(options.whoStarts.equals(playerWhite.getColor())){
+                    currPlayer = playerWhite;
+                }else{
+                    currPlayer = playerBlack;
+                }
+
+                try {
+                    while(true){
+
+                        //TODO check if the UI texts make sense for every game mode
+
+                        setTextinUIThread(progressText, R.string.player_turn);
+
+                        if(currPlayer.getDifficulty() == null) {
+                            humanTurn(currPlayer);
+                        }else{
+                            if(currPlayer.getColor().equals(Options.Color.WHITE)) {
+                                botTurn(currPlayer, playerWhiteBrain);
+                            }else{
+                                botTurn(currPlayer, playerBlackBrain);
+                            }
+                        }
+
+                        if(ShowGameOverMessageIfWon()){
+                            break;
+                        }
+
+                        currPlayer = currPlayer.getOtherPlayer();
+
+                    }
+                } catch ( InterruptedException e ) {
+                    Log.d("GameModeActivity", "Interrupted!");
+                    e.printStackTrace();
+                    gameThread.interrupt();
+                }
+            }
+
+        };
+
+        return new Thread(game);
+
+    }
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -209,8 +304,6 @@ public abstract class GameModeActivity extends android.support.v4.app.FragmentAc
 			return super.onKeyDown(keyCode, event);
 		}
 	}
-	
-	protected abstract void init();
 
     private void signalSelection(){
         lock.lock();

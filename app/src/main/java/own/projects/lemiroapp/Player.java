@@ -2,11 +2,13 @@ package own.projects.lemiroapp;
 
 import android.graphics.Path;
 
+import java.io.Serializable;
+
 /**
  * Representation of a Player
  */
 
-public class Player {
+public class Player implements Serializable {
 
     //the number of times this player can freely place a piece anywhere on the field
     //at the beginning of a game
@@ -15,7 +17,7 @@ public class Player {
     //the color of this player (black or white)
     private final Options.Color color;
 
-    //the difficulty of this player, may be null if it a human
+    //the difficulty of this player, may be null if it a playerBlack
     private Options.Difficulties difficulty = null;
 
     //reference to the other player

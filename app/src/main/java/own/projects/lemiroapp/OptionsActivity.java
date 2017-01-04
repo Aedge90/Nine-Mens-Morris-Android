@@ -47,12 +47,10 @@ import android.widget.TextView;
 public class OptionsActivity extends android.support.v4.app.FragmentActivity{
 
 	private Options options;
-	private Spinner gameModeSpinner;
 	private Spinner millModeSpinner;
-	private Spinner difficulty1Spinner;
-	private Spinner difficulty2Spinner;
+	private Spinner playerWhiteSpinner;
+	private Spinner playerBlackSpinner;
 	private Spinner whoStartsSpinner;
-	private Spinner colorSpinner;
 	private Button buttonOK;
 	
 	private final OptionsActivity THIS = this;
@@ -63,12 +61,10 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
         
         setContentView(R.layout.options_layout);
         this.options = new Options();
-        
-        setGameMode();
+
         setMillMode();
-        setDifficulty1();
-        setDifficulty2();
-        setColor();
+        setPlayerDifficultyFor(options.playerWhite);
+		setPlayerDifficultyFor(options.playerBlack);
         setWhoStarts();
                 
         buttonOK = (Button) findViewById(R.id.buttonOK);
@@ -105,50 +101,6 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
 			.show();
 		}
 		return super.onKeyDown(keyCode, event);
-	}
-    
-    private void setGameMode() {
-    	
-    	gameModeSpinner = (Spinner) findViewById(R.id.gameModeSpinner);
-    	
-    	final ArrayAdapter<String> items = new ArrayAdapter<String>(
-				this, layout.simple_list_item_1);
-		items.add("Human vs. Bot");
-		items.add("Bot vs. Bot");
-		items.add("Human vs. Human");
-    	
-    	gameModeSpinner.setAdapter(items);
-    	gameModeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
-
-    		@Override
-    		public void onItemSelected(AdapterView<?> parent, View view, 
-    				int pos, long id) {
-    			if(pos == 0){
-    				setDifficulty1();
-    				options.gameMode = Options.GameMode.HUMANBOT;
-    				disableDifficulty2();
-    			}else if(pos == 1){
-    				setDifficulty1();
-    				setDifficulty2();
-    				options.gameMode = Options.GameMode.BOTBOT;
-    			}else if(pos == 2){
-    				options.gameMode = Options.GameMode.HUMANHUMAN;
-    				disableDifficulty1();
-    				disableDifficulty2();
-    			}else{
-    				Log.e("Options", "setGameMode Failed");
-    				setResult(Activity.RESULT_CANCELED);
-    				finish();
-    			}
-    		}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> parent) {
-				
-			}
-    		
-		});
-		
 	}
 
 	private void setMillMode() {
@@ -196,121 +148,38 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
 
 	}
 
-	private void setDifficulty1() {
+	private void setPlayerDifficultyFor(final Player player) {
 		
 		final ArrayAdapter<String> items = new ArrayAdapter<String>(
 				this, layout.simple_list_item_1);
-		items.add("Easy");
-		items.add("Normal");
-		items.add("Hard");
-		items.add("Harder");
-		items.add("Hardest");
-		
-		difficulty1Spinner = (Spinner) findViewById(R.id.difficulty1Spinner);
-    	
-		difficulty1Spinner.setAdapter(items);
-		difficulty1Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+		items.add("Human Player");
 
-			@Override
-			public void onItemSelected(AdapterView<?> parent, View view, 
-		            int pos, long id) {
-				if(pos == 0){
-					options.difficulty1 = Options.Difficulties.EASY;
-				}else if(pos == 1){
-					options.difficulty1  = Options.Difficulties.NORMAL;
-				}else if(pos == 2){
-					options.difficulty1  = Options.Difficulties.HARD;
-				}else if(pos == 3){
-					options.difficulty1  = Options.Difficulties.HARDER;
-				}else if(pos == 4){
-					options.difficulty1 = Options.Difficulties.HARDEST;
-				}else{
-					Log.e("Options", "setDifficulty1 Failed");
-					setResult(Activity.RESULT_CANCELED);
-					finish();
-				}
-			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> parent) {
-				
-			}
-    		
-		});
-		
-		difficulty1Spinner.setClickable(true);
-		difficulty1Spinner.setEnabled(true);
-		
-	}
-	
-	private void disableDifficulty1() {
-		
-		final ArrayAdapter<String> items = new ArrayAdapter<String>(
-				this, layout.simple_list_item_1);
-		items.add("No Bots in this Mode");
-		
-		difficulty1Spinner = (Spinner) findViewById(R.id.difficulty1Spinner);
-    	
-		difficulty1Spinner.setAdapter(items);
-
-		difficulty1Spinner.setClickable(false);
-		difficulty1Spinner.setEnabled(false);
-		
-	}
-	
-	private void disableDifficulty2() {
-		
-		final ArrayAdapter<String> items = new ArrayAdapter<String>(
-				this, layout.simple_list_item_1);
-		if(options.gameMode.equals(Options.GameMode.HUMANHUMAN)){
-			items.add("No Bots in this Mode");
-		}else{ 	//HUMANVSBOT
-			items.add("Only one Bot in this Mode");
+		for(Options.Difficulties diff : Options.Difficulties.values()){
+			items.add(diff + " Bot");
 		}
-		
-		difficulty2Spinner = (Spinner) findViewById(R.id.difficulty2Spinner);
-    	
-		difficulty2Spinner.setAdapter(items);
 
-		difficulty2Spinner.setClickable(false);
-		difficulty2Spinner.setEnabled(false);
-		
-	}
+		Spinner spinner = null;
+		if(player.getColor().equals(Options.Color.WHITE)) {
+			playerWhiteSpinner = (Spinner) findViewById(R.id.playerWhiteSpinner);
+			spinner = playerWhiteSpinner;
+		}else {
+			playerBlackSpinner = (Spinner) findViewById(R.id.playerBlackSpinner);
+			spinner = playerBlackSpinner;
+		}
 
-	private void setDifficulty2() {
-		
-		final ArrayAdapter<String> items = new ArrayAdapter<String>(
-				this, layout.simple_list_item_1);
-		items.add("Easy");
-		items.add("Normal");
-		items.add("Hard");
-		items.add("Harder");
-		items.add("Hardest");
-		
-		difficulty2Spinner = (Spinner) findViewById(R.id.difficulty2Spinner);
-    	
-		difficulty2Spinner.setAdapter(items);
-		difficulty2Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+		spinner.setAdapter(items);
+		spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
 
 			@Override
-			public void onItemSelected(AdapterView<?> parent, View view, 
-		            int pos, long id) {
-				if(pos == 0){
-					options.difficulty2 = Options.Difficulties.EASY;
-				}else if(pos == 1){
-					options.difficulty2  = Options.Difficulties.NORMAL;
-				}else if(pos == 2){
-					options.difficulty2  = Options.Difficulties.HARD;
-				}else if(pos == 3){
-					options.difficulty2  = Options.Difficulties.HARDER;
-				}else if(pos == 4){
-					options.difficulty2 = Options.Difficulties.HARDEST;
-				}else{
-					Log.e("Options", "setDifficulty2 Failed");
-					setResult(Activity.RESULT_CANCELED);
-					finish();
-				}
-				//enableOKButtonIfReady(3);
+			public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+
+                if(pos == 0){
+                    // no difficulty for human player
+                    return;
+                }else {
+                    // -1 offset because first entry is the human player
+                    player.setDifficulty(Options.Difficulties.values()[pos - 1]);
+                }
 			}
 
 			@Override
@@ -320,48 +189,9 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
     		
 		});
 
-		difficulty2Spinner.setClickable(true);
-		difficulty2Spinner.setEnabled(true);
+        spinner.setClickable(true);
+        spinner.setEnabled(true);
 		
-	}
-
-	private void setColor() {
-		
-		final ArrayAdapter<String> items = new ArrayAdapter<String>(
-				this, layout.simple_list_item_1);
-		items.add("White");
-		items.add("Black");
-		
-		colorSpinner = (Spinner) findViewById(R.id.colorSpinner);
-    	
-		colorSpinner.setAdapter(items);
-		colorSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
-
-			@Override
-			public void onItemSelected(AdapterView<?> parent, View view, 
-		            int pos, long id) {
-				if(pos == 0){
-					options.colorPlayer1 = Options.Color.WHITE;
-					options.colorPlayer2 = Options.Color.BLACK;
-				}else if(pos == 1){
-					options.colorPlayer1 = Options.Color.BLACK;
-					options.colorPlayer2 = Options.Color.WHITE;
-				}else{
-					Log.e("Options", "setColor Failed");
-					setResult(Activity.RESULT_CANCELED);
-					finish();
-				}
-				//enableOKButtonIfReady(4);
-				
-			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> parent) {
-				
-			}
-    		
-		});
-
 	}
 
 	private void setWhoStarts() {

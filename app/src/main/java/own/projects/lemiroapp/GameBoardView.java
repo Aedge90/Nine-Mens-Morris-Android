@@ -185,8 +185,7 @@ public class GameBoardView {
 			Log.d("MainActivity", "Error: createSector: Color not found!");
 			c.finish();
 		}	
-		bmp = Bitmap.createScaledBitmap(bmp, c.screenWidth / 7, c.screenWidth / 7,
-				true);
+		bmp = Bitmap.createScaledBitmap(bmp, c.screenWidth / 7, c.screenWidth / 7, true);
 		sector.setImageBitmap(bmp);
 		return sector;
 	}

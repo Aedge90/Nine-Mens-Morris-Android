@@ -61,22 +61,10 @@ public class MainActivity extends Activity {
 				
 				Log.i("MainActivity", "Starting new Game with Options:\n" + options);
 
-				if(options.gameMode.equals(Options.GameMode.HUMANBOT)){
-					Intent appvsbotIntent = new Intent(THIS, HumanVsBot.class);
-					appvsbotIntent.setExtrasClassLoader(Options.class.getClassLoader());
-					appvsbotIntent.putExtra("own.projects.lemiroapp.Options", options);
-					startActivityForResult(appvsbotIntent, RUN_GAME);
-				}else if(options.gameMode.equals(Options.GameMode.BOTBOT)){
-					Intent botvsbotIntent = new Intent(THIS, BotVsBot.class);
-					botvsbotIntent.setExtrasClassLoader(Options.class.getClassLoader());
-					botvsbotIntent.putExtra("own.projects.lemiroapp.Options", options);
-					startActivityForResult(botvsbotIntent, RUN_GAME);
-				}else{
-					Intent humanvshumanIntent = new Intent(THIS, HumanVsHuman.class);
-					humanvshumanIntent.setExtrasClassLoader(Options.class.getClassLoader());
-					humanvshumanIntent.putExtra("own.projects.lemiroapp.Options", options);
-					startActivityForResult(humanvshumanIntent, RUN_GAME);
-				}
+				Intent appvsbotIntent = new Intent(THIS, GameModeActivity.class);
+				appvsbotIntent.setExtrasClassLoader(Options.class.getClassLoader());
+				appvsbotIntent.putExtra("own.projects.lemiroapp.Options", options);
+				startActivityForResult(appvsbotIntent, RUN_GAME);
 				
 			}else {
 				finish();
