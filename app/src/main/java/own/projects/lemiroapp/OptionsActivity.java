@@ -113,6 +113,7 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
 		Drawable img0 = ContextCompat.getDrawable(this, R.drawable.brett9);
 		Drawable img1 = ContextCompat.getDrawable(this, R.drawable.brett7);
 		Drawable img2 = ContextCompat.getDrawable(this, R.drawable.brett5);
+		//TODO this should probably be relative
 		img0.setBounds(0, 0, 60, 60);
 		img1.setBounds(0, 0, 60, 60);
 		img2.setBounds(0, 0, 60, 60);

@@ -542,6 +542,8 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
         @Override
         public void onClick(View arg0) {
 
+            //TODO dont show it is not your turn when clicking a piece in bot vs bot
+
             if (state == State.SET) {
                 if(field.getColorAt(new Position(x,y)).equals(currPlayer.getColor())
                         || field.getColorAt(new Position(x,y)).equals((currPlayer.getOtherPlayer().getColor()))){
