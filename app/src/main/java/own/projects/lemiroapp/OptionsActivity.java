@@ -62,7 +62,7 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
         setContentView(R.layout.options_layout);
         this.options = new Options();
 
-        setMillMode();
+        setMillVariant();
         setPlayerDifficultyFor(options.playerWhite);
 		setPlayerDifficultyFor(options.playerBlack);
         setWhoStarts();
@@ -103,7 +103,7 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
 		return super.onKeyDown(keyCode, event);
 	}
 
-	private void setMillMode() {
+	private void setMillVariant() {
 		
 		final ItemsAdapter items = new ItemsAdapter(this,
 				layout.simple_list_item_1);
@@ -126,13 +126,13 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
 			public void onItemSelected(AdapterView<?> parent, View view, 
 		            int pos, long id) {
 				if(pos == 0){
-					options.millMode = Options.MillMode.MILL9;
+					options.millVariant = Options.MillVariant.MILL9;
 				}else if(pos == 1){
-					options.millMode = Options.MillMode.MILL7;
+					options.millVariant = Options.MillVariant.MILL7;
 				}else if(pos == 2){
-					options.millMode = Options.MillMode.MILL5;
+					options.millVariant = Options.MillVariant.MILL5;
 				}else{
-					Log.e("Options", "setMillMode Failed");
+					Log.e("Options", "setMillVariant Failed");
 					setResult(Activity.RESULT_CANCELED);
 					finish();
 				}

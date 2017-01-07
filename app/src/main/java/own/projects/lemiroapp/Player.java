@@ -17,7 +17,7 @@ public class Player implements Serializable {
     //the color of this player (black or white)
     private final Options.Color color;
 
-    //the difficulty of this player, may be null if it a playerBlack
+    //the difficulty of this player, may be null if its a human
     private Options.Difficulties difficulty = null;
 
     //reference to the other player

@@ -5,8 +5,8 @@ import android.os.Parcelable;
 
 public class Options implements Parcelable {
 
-	protected MillMode millMode;
-	protected static enum MillMode {
+	protected MillVariant millVariant;
+	protected static enum MillVariant {
 		MILL5, MILL7, MILL9
 	};
 
@@ -22,7 +22,7 @@ public class Options implements Parcelable {
 	};
 	
 	public Options() {
-		this.millMode = null;
+		this.millVariant = null;
 		this.whoStarts = null;
 		this.playerWhite = new Player(Options.Color.WHITE);
 		this.playerBlack = new Player(Options.Color.BLACK);;
@@ -30,7 +30,7 @@ public class Options implements Parcelable {
 	
 	public Options(Parcel in) {
 		Options o = in.readParcelable(getClass().getClassLoader());
-		this.millMode = o.millMode;
+		this.millVariant = o.millVariant;
         this.whoStarts = o.whoStarts;
         this.playerWhite = o.playerWhite;
 		this.playerBlack = o.playerBlack;
@@ -39,7 +39,7 @@ public class Options implements Parcelable {
     @Override
     public String toString() {
         return "Options{" +
-                "millMode=" + millMode +
+                "millVariant=" + millVariant +
                 ", playerWhite=" + playerWhite +
                 ", playerBlack=" + playerBlack +
                 ", whoStarts=" + whoStarts +
@@ -50,8 +50,6 @@ public class Options implements Parcelable {
 
     //TODO make sure old values are restored on restart of activity
 
-    //TODO check if the strategies are really running with all the correct values set in options
-
     // 99.9% of the time you can just ignore this
     public int describeContents() {
         return 0;
@@ -60,7 +58,7 @@ public class Options implements Parcelable {
     // write your object's data to the passed-in Parcel
     @Override
 	public void writeToParcel(Parcel dest, int flags) {
-    	dest.writeValue(millMode);
+    	dest.writeValue(millVariant);
     	dest.writeValue(whoStarts);
     	dest.writeValue(playerWhite);
     	dest.writeValue(playerBlack);
@@ -70,7 +68,7 @@ public class Options implements Parcelable {
     public static final Parcelable.Creator<Options> CREATOR = new Parcelable.Creator<Options>() {
         public Options createFromParcel(Parcel source) {
         	final Options o = new Options();
-            o.millMode = (MillMode) source.readValue(Options.class.getClassLoader());
+            o.millVariant = (MillVariant) source.readValue(Options.class.getClassLoader());
             o.whoStarts = (Color) source.readValue(Options.class.getClassLoader());
             o.playerWhite = (Player) source.readValue(Options.class.getClassLoader());
             o.playerBlack = (Player) source.readValue(Options.class.getClassLoader());

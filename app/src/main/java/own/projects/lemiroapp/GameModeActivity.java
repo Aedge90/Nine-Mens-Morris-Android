@@ -159,17 +159,17 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
         playerWhite.setOtherPlayer(playerBlack);
 
         // Mill Settings are Set
-        if (options.millMode == Options.MillMode.MILL5) {
+        if (options.millVariant == Options.MillVariant.MILL5) {
             playerBlack.setSetCount(5);
             playerWhite.setSetCount(5);
             field = new Mill5();
             fieldLayout.setBackgroundResource(R.drawable.brett5);
-        } else if (options.millMode == Options.MillMode.MILL7) {
+        } else if (options.millVariant == Options.MillVariant.MILL7) {
             playerBlack.setSetCount(7);
             playerWhite.setSetCount(7);
             field = new Mill7();
             fieldLayout.setBackgroundResource(R.drawable.brett7);
-        } else if (options.millMode == Options.MillMode.MILL9) {
+        } else if (options.millVariant == Options.MillVariant.MILL9) {
             playerBlack.setSetCount(9);
             playerWhite.setSetCount(9);
             field = new Mill9();
