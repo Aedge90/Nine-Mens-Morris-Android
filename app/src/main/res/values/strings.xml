@@ -14,5 +14,6 @@
     <string name="select_player_white_difficulty">Difficulty of Player White:</string>
     <string name="select_whoStarts">Who Starts?</string>
     <string name="button_not_ready">Select all Options first!</string>
+    <string name="clicking_in_botvsbot">Both Players are Bots!</string>
 
 </resources>
