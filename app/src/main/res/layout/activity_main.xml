@@ -33,7 +33,7 @@
 
     <GridLayout
         android:id="@+id/field"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/brett9"
         android:columnCount="7"

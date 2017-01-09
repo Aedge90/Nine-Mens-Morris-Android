@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.GridLayout;
+import android.widget.GridView;
 import android.widget.ImageView;
 
 
@@ -56,9 +57,7 @@ public class GameBoardView {
 	    
 		c.runOnUiThread(new Runnable() {
 			public void run() {
-				ImageView sector = createSector(color);
-				sector.setLayoutParams(new GridLayout.LayoutParams(
-						GridLayout.spec(pos.getY(), 1), GridLayout.spec(pos.getX(), 1)));
+				ImageView sector = createSector(color, pos.getX(), pos.getY());
 				fieldLayout.removeView(fieldView[pos.getY()][pos.getX()]);
 				fieldLayout.addView(sector);
 				fieldView[pos.getY()][pos.getX()] = sector;
@@ -98,15 +97,9 @@ public class GameBoardView {
 				final ImageView srcSector = fieldView[move.getSrc().getY()][move.getSrc().getX()];
 				final ImageView destSector = fieldView[move.getDest().getY()][move.getDest().getX()];
 				
-				final ImageView newSrcSector = createSector(Options.Color.NOTHING);
-				newSrcSector.setLayoutParams(new GridLayout.LayoutParams(
-						GridLayout.spec(move.getSrc().getY(), 1), GridLayout.spec(move.getSrc().getX(), 1)));
-				final ImageView newDestSector = createSector(color);
-				newDestSector.setLayoutParams(new GridLayout.LayoutParams(
-						GridLayout.spec(move.getDest().getY(), 1), GridLayout.spec(move.getDest().getX(), 1)));
-				final ImageView animSector = createSector(color);
-				animSector.setLayoutParams(new GridLayout.LayoutParams(
-						GridLayout.spec(move.getSrc().getY(), 1), GridLayout.spec(move.getSrc().getX(), 1)));
+				final ImageView newSrcSector = createSector(Options.Color.NOTHING, move.getSrc().getX(), move.getSrc().getY());
+				final ImageView newDestSector = createSector(color, move.getDest().getX(), move.getDest().getY());
+				final ImageView animSector = createSector(color, move.getSrc().getX(), move.getSrc().getY());;
 		
 				fieldLayout.addView(animSector);
 				
@@ -158,35 +151,28 @@ public class GameBoardView {
 	}
 	
 	protected ImageView createSector(Options.Color color, int x, int y) {
-		LayoutInflater vi = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View v = vi.inflate(R.layout.sector, null);
-		ImageView sector = (ImageView) v.findViewById(R.id.sector);
-		
-		sector.setLayoutParams(new GridLayout.LayoutParams(
-			GridLayout.spec(y, 1), GridLayout.spec(x, 1)));
 
-		Bitmap bmp = null;
+		ImageView sector = new ImageView(c);
+		GridLayout.LayoutParams params = new GridLayout.LayoutParams(GridLayout.spec(y), GridLayout.spec(x));
+		params.width = c.screenWidth / GameBoard.LENGTH;
+		params.height = c.screenWidth / GameBoard.LENGTH;
+		sector.setLayoutParams(params);
+
 		if (color.equals(Options.Color.BLACK)) {
-			bmp = BitmapFactory.decodeResource(c.getResources(),
-					R.drawable.piece_black);
+			sector.setImageResource(R.drawable.piece_black);
 		} else if (color.equals(Options.Color.WHITE)) {
-			bmp = BitmapFactory.decodeResource(c.getResources(),
-					R.drawable.piece_white);
+			sector.setImageResource(R.drawable.piece_white);
 		} else if (color.equals(Options.Color.RED)) {
-			bmp = BitmapFactory.decodeResource(c.getResources(),
-					R.drawable.piece_red);
+			sector.setImageResource(R.drawable.piece_red);
 		}else if (color.equals(Options.Color.GREEN)) {
-			bmp = BitmapFactory.decodeResource(c.getResources(),
-					R.drawable.piece_green);
+			sector.setImageResource(R.drawable.piece_green);
 		}else if (color.equals(Options.Color.NOTHING)){
-			bmp = BitmapFactory.decodeResource(c.getResources(),
-					R.drawable.nothing);
+			sector.setImageResource(R.drawable.nothing);
 		}else{
 			Log.d("MainActivity", "Error: createSector: Color not found!");
 			c.finish();
-		}	
-		bmp = Bitmap.createScaledBitmap(bmp, c.screenWidth / GameBoard.LENGTH, c.screenWidth / GameBoard.LENGTH, true);
-		sector.setImageBitmap(bmp);
+		}
+		sector.setScaleType(ImageView.ScaleType.FIT_CENTER);
 		return sector;
 	}
 	
