@@ -21,9 +21,8 @@ public class GameBoardView {
 
 	private volatile boolean uiupdated = false;
 	private Lock lock;
-    private Condition uiupdate;
+	private Condition uiupdate;
 	private ImageView[][] fieldView;
-	private final int LENGTH = 7;
 	private GameModeActivity c; 
 	private GridLayout fieldLayout;
 	protected final static int ANIMATION_DONE_BOT = 10;
@@ -34,14 +33,14 @@ public class GameBoardView {
 		this.c = c;
 		this.fieldLayout = fieldLayout;
 
-		fieldView = new ImageView[LENGTH][LENGTH];
+		fieldView = new ImageView[GameBoard.LENGTH][GameBoard.LENGTH];
 		
 		uiupdated = false;
 		lock = new ReentrantLock();
-	    uiupdate = lock.newCondition();
+		uiupdate = lock.newCondition();
 		
-		for (int y = 0; y < LENGTH; y++) {
-			for (int x = 0; x < LENGTH; x++) {
+		for (int y = 0; y < GameBoard.LENGTH; y++) {
+			for (int x = 0; x < GameBoard.LENGTH; x++) {
 				ImageView sector = createSector(Options.Color.NOTHING);
 				sector.setLayoutParams(new GridLayout.LayoutParams(
 						GridLayout.spec(y, 1), GridLayout.spec(x, 1)));
@@ -185,7 +184,7 @@ public class GameBoardView {
 			Log.d("MainActivity", "Error: createSector: Color not found!");
 			c.finish();
 		}	
-		bmp = Bitmap.createScaledBitmap(bmp, c.screenWidth / 7, c.screenWidth / 7, true);
+		bmp = Bitmap.createScaledBitmap(bmp, c.screenWidth / GameBoard.LENGTH, c.screenWidth / GameBoard.LENGTH, true);
 		sector.setImageBitmap(bmp);
 		return sector;
 	}
