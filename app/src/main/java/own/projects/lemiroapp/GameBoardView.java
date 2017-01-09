@@ -41,9 +41,7 @@ public class GameBoardView {
 		
 		for (int y = 0; y < GameBoard.LENGTH; y++) {
 			for (int x = 0; x < GameBoard.LENGTH; x++) {
-				ImageView sector = createSector(Options.Color.NOTHING);
-				sector.setLayoutParams(new GridLayout.LayoutParams(
-						GridLayout.spec(y, 1), GridLayout.spec(x, 1)));
+				ImageView sector = createSector(Options.Color.NOTHING, x, y);
 				fieldLayout.addView(sector);
 				fieldView[y][x] = sector;
 			}
@@ -159,10 +157,13 @@ public class GameBoardView {
 
 	}
 	
-	protected ImageView createSector(Options.Color color) {
+	protected ImageView createSector(Options.Color color, int x, int y) {
 		LayoutInflater vi = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View v = vi.inflate(R.layout.sector, null);
 		ImageView sector = (ImageView) v.findViewById(R.id.sector);
+		
+		sector.setLayoutParams(new GridLayout.LayoutParams(
+			GridLayout.spec(y, 1), GridLayout.spec(x, 1)));
 
 		Bitmap bmp = null;
 		if (color.equals(Options.Color.BLACK)) {
@@ -194,10 +195,7 @@ public class GameBoardView {
 		c.runOnUiThread(new Runnable() {
 			public void run() {
 				for (int i = 0; i < 3; i++) {
-					millSectors[i] = createSector(Options.Color.RED);
-					millSectors[i].setLayoutParams(new GridLayout.LayoutParams(
-									GridLayout.spec(mill[i].getY(), 1),
-									GridLayout.spec(mill[i].getX(), 1)));
+					millSectors[i] = createSector(Options.Color.RED, mill[i].getX(), mill[i].getY());
 					fieldLayout.addView(millSectors[i]);
 				}
 				signalUIupdate();
