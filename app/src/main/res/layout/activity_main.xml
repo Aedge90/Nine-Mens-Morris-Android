@@ -20,7 +20,7 @@
             android:layout_marginLeft="15sp"
             android:text="@string/player_turn"
             android:textSize="27sp" />
-        
+
         <ProgressBar
             android:id="@+id/progressBar"
             style="?android:attr/progressBarStyleHorizontal"
@@ -33,9 +33,8 @@
 
     <GridLayout
         android:id="@+id/field"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/brett9"
         android:columnCount="7"
         android:rowCount="7"
         android:rowOrderPreserved="true" 

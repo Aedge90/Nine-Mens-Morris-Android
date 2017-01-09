@@ -558,9 +558,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
                 if(!(field.getColorAt(new Position(x,y)).equals(currPlayer.getColor()))){
                     showToast("Nothing to move here!");
                 }else{
-                    redSector = fieldView.createSector(Options.Color.GREEN);
-                    redSector.setLayoutParams(new GridLayout.LayoutParams(
-                            GridLayout.spec(y, 1), GridLayout.spec(x, 1)));
+                    redSector = fieldView.createSector(Options.Color.GREEN, x, y);
                     fieldLayout.addView(redSector);
                     //set invalid position for now so that constructor doesnt throw IllegalArgumentException
                     currMove = new Move(new Position(-1,-1), new Position(x,y), null);
