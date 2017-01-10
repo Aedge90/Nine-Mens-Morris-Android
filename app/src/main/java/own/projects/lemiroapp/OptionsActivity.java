@@ -16,7 +16,6 @@
 
 package own.projects.lemiroapp;
 
-import android.support.v4.content.ContextCompat;
 import java.util.ArrayList;
 import android.R.layout;
 import android.app.Activity;
@@ -27,7 +26,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
@@ -52,6 +50,7 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
 	private Spinner playerBlackSpinner;
 	private Spinner whoStartsSpinner;
 	private Button buttonOK;
+
 	
 	private final OptionsActivity THIS = this;
 
@@ -110,13 +109,6 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
 		items.add("Nine Mens Morris", R.drawable.brett9);
 		items.add("Seven Mens Morris", R.drawable.brett7);
 		items.add("Five Mens Morris", R.drawable.brett5);
-		Drawable img0 = ContextCompat.getDrawable(this, R.drawable.brett9);
-		Drawable img1 = ContextCompat.getDrawable(this, R.drawable.brett7);
-		Drawable img2 = ContextCompat.getDrawable(this, R.drawable.brett5);
-		//TODO this should probably be relative
-		img0.setBounds(0, 0, 60, 60);
-		img1.setBounds(0, 0, 60, 60);
-		img2.setBounds(0, 0, 60, 60);
 		
 		millModeSpinner = (Spinner) findViewById(R.id.millModeSpinner);
     	

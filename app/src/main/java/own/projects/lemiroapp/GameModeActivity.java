@@ -23,7 +23,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Point;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
@@ -31,7 +30,6 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.widget.GridLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -59,7 +57,6 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
 	ProgressBar progressBar;
 	ProgressUpdater progressUpdater;
 	GameBoard field;
-	Handler handler;
 	int screenWidth;
 	ImageView redSector;
 	ImageView[] millSectors;
