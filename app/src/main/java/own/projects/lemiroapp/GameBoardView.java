@@ -7,14 +7,10 @@ import java.util.concurrent.locks.ReentrantLock;
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.ObjectAnimator;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.GridLayout;
-import android.widget.GridView;
 import android.widget.ImageView;
 
 
@@ -26,9 +22,6 @@ public class GameBoardView {
 	private ImageView[][] fieldView;
 	private GameModeActivity c; 
 	private GridLayout fieldLayout;
-	protected final static int ANIMATION_DONE_BOT = 10;
-	protected final static int ANIMATION_DONE_HUMAN_APP = 11;
-	protected final static int ANIMATION_DONE_HUMAN_PHYSICAL = 12;
 	
 	GameBoardView(GameModeActivity c , GridLayout fieldLayout) {
 		this.c = c;
@@ -157,21 +150,27 @@ public class GameBoardView {
 		params.width = c.screenWidth / GameBoard.LENGTH;
 		params.height = c.screenWidth / GameBoard.LENGTH;
 		sector.setLayoutParams(params);
+		sector.setAdjustViewBounds(false);
 
+		Bitmap bmp = null;
 		if (color.equals(Options.Color.BLACK)) {
-			sector.setImageResource(R.drawable.piece_black);
+			bmp = BitmapFactory.decodeResource(c.getResources(), R.drawable.piece_black);
 		} else if (color.equals(Options.Color.WHITE)) {
-			sector.setImageResource(R.drawable.piece_white);
+			bmp = BitmapFactory.decodeResource(c.getResources(), R.drawable.piece_white);
 		} else if (color.equals(Options.Color.RED)) {
-			sector.setImageResource(R.drawable.piece_red);
+			bmp = BitmapFactory.decodeResource(c.getResources(), R.drawable.piece_red);
 		}else if (color.equals(Options.Color.GREEN)) {
-			sector.setImageResource(R.drawable.piece_green);
+			bmp = BitmapFactory.decodeResource(c.getResources(), R.drawable.piece_green);
 		}else if (color.equals(Options.Color.NOTHING)){
-			sector.setImageResource(R.drawable.nothing);
+			bmp = BitmapFactory.decodeResource(c.getResources(), R.drawable.nothing);
 		}else{
 			Log.d("MainActivity", "Error: createSector: Color not found!");
 			c.finish();
 		}
+		float scaleFactor = 1.16f;	//used to fine tune the size of the pieces
+		bmp = Bitmap.createScaledBitmap(bmp, (int)(params.width * scaleFactor), (int)(params.width * scaleFactor), true);
+		sector.setImageBitmap(bmp);
+		sector.setScaleType(ImageView.ScaleType.CENTER);
 		return sector;
 	}
 	
