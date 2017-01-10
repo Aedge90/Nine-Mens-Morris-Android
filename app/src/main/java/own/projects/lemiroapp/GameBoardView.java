@@ -10,8 +10,11 @@ import android.animation.ObjectAnimator;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 
 public class GameBoardView {
@@ -32,7 +35,8 @@ public class GameBoardView {
 		uiupdated = false;
 		lock = new ReentrantLock();
 		uiupdate = lock.newCondition();
-		
+
+		int remainingPixels = c.screenWidth % GameBoard.LENGTH;
 		for (int y = 0; y < GameBoard.LENGTH; y++) {
 			for (int x = 0; x < GameBoard.LENGTH; x++) {
 				ImageView sector = createSector(Options.Color.NOTHING, x, y);
@@ -40,6 +44,11 @@ public class GameBoardView {
 				fieldView[y][x] = sector;
 			}
 		}
+
+		// set witdh not to screenwidth so the gridlayout size matches its content size
+		// this way the background image of the gridview will always be aligned independent of screen resolution
+		((LinearLayout) fieldLayout.getParent()).updateViewLayout(fieldLayout,
+				new LinearLayout.LayoutParams(c.screenWidth - remainingPixels, c.screenWidth - remainingPixels));
 	}
 	
 	public ImageView getPos(Position pos){

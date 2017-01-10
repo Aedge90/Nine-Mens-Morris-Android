@@ -134,9 +134,6 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
 		progressText = (TextView) findViewById(R.id.progressText);
 		progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
-		((LinearLayout) fieldLayout.getParent()).updateViewLayout(fieldLayout,
-				new LinearLayout.LayoutParams(screenWidth, screenWidth));
-
 		progressUpdater = new ProgressUpdater(progressBar, this);
 		
 		currMove = null;
