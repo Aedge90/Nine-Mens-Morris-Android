@@ -58,16 +58,16 @@ public class Options implements Parcelable {
     // write your object's data to the passed-in Parcel
     @Override
 	public void writeToParcel(Parcel dest, int flags) {
-    	dest.writeValue(millVariant);
-    	dest.writeValue(whoStarts);
-    	dest.writeValue(playerWhite);
-    	dest.writeValue(playerBlack);
+        dest.writeValue(millVariant);
+        dest.writeValue(whoStarts);
+        dest.writeValue(playerWhite);
+        dest.writeValue(playerBlack);
 	}
 
     // this is used to regenerate your object. All Parcelables must have a CREATOR that implements these two methods
     public static final Parcelable.Creator<Options> CREATOR = new Parcelable.Creator<Options>() {
         public Options createFromParcel(Parcel source) {
-        	final Options o = new Options();
+           final Options o = new Options();
             o.millVariant = (MillVariant) source.readValue(Options.class.getClassLoader());
             o.whoStarts = (Color) source.readValue(Options.class.getClassLoader());
             o.playerWhite = (Player) source.readValue(Options.class.getClassLoader());
@@ -76,7 +76,7 @@ public class Options implements Parcelable {
         }
 
         public Options[] newArray(int size) {
-        	throw new UnsupportedOperationException();
+           throw new UnsupportedOperationException();
         }
     };
     

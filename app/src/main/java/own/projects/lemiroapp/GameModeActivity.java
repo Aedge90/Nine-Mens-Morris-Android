@@ -24,28 +24,28 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class GameModeActivity extends android.support.v4.app.FragmentActivity{
 
-	protected final static int RESULT_RESTART = Activity.RESULT_FIRST_USER + 1;
-	
-	protected final int LENGTH = 7;
+    protected final static int RESULT_RESTART = Activity.RESULT_FIRST_USER + 1;
+    
+    protected final int LENGTH = 7;
     protected Lock lock = new ReentrantLock();
     protected Condition selection = lock.newCondition();
     protected volatile boolean selected;
 
     volatile Move currMove;
-	volatile int remiCount;
-	Thread gameThread;
-	Options options;
-	GridLayout fieldLayout;
-	GameBoardView fieldView;
-	TextView progressText;
-	ProgressBar progressBar;
-	ProgressUpdater progressUpdater;
-	GameBoard field;
-	int screenWidth;
-	ImageView redSector;
-	ImageView[] millSectors;
+    volatile int remiCount;
+    Thread gameThread;
+    Options options;
+    GridLayout fieldLayout;
+    GameBoardView fieldView;
+    TextView progressText;
+    ProgressBar progressBar;
+    ProgressUpdater progressUpdater;
+    GameBoard field;
+    int screenWidth;
+    ImageView redSector;
+    ImageView[] millSectors;
     Toast lastToast;
-	final GameModeActivity THIS = this;
+    final GameModeActivity THIS = this;
 
     volatile State state;
     protected enum State {
@@ -56,18 +56,18 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
     Player playerBlack;
     Player playerWhite;
 
-	private void setDefaultUncaughtExceptionHandler() {
-	    try {
-	        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+    private void setDefaultUncaughtExceptionHandler() {
+        try {
+            Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 
-	            @Override
-	            public void uncaughtException(Thread t, Throwable e) {
-	            	StackTraceElement[] trace = e.getStackTrace();
-	            	String tracem = "";
-	            	for(int i=0; i<trace.length; i++){
-	            		tracem += trace[i] + "\n";
-	            	}
-	                Log.e("GameModeActivity", "Uncaught Exception detected in thread {}" + t + e + "\n" + tracem);
+                @Override
+                public void uncaughtException(Thread t, Throwable e) {
+                    StackTraceElement[] trace = e.getStackTrace();
+                    String tracem = "";
+                    for(int i=0; i<trace.length; i++){
+                        tracem += trace[i] + "\n";
+                    }
+                    Log.e("GameModeActivity", "Uncaught Exception detected in thread {}" + t + e + "\n" + tracem);
 
                     final String message = e.getMessage();
 
@@ -89,44 +89,44 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
                         }
                     });
 
-	            }
-	        });
-	    } catch (SecurityException e) {
-	        Log.e("GameModeActivity", "Could not set the Default Uncaught Exception Handler" + e);
-	    }
-	}
-	
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		
-		setDefaultUncaughtExceptionHandler();
+                }
+            });
+        } catch (SecurityException e) {
+            Log.e("GameModeActivity", "Could not set the Default Uncaught Exception Handler" + e);
+        }
+    }
+    
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        
+        setDefaultUncaughtExceptionHandler();
 
         options = getIntent().getParcelableExtra("own.projects.lemiroapp.Options");
 
         millSectors = new ImageView[3];
 
-		Display display = getWindowManager().getDefaultDisplay();
-		Point size = new Point();
-		display.getSize(size);
-		screenWidth = size.x;
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        screenWidth = size.x;
 
-		setContentView(R.layout.activity_main);
-		fieldLayout = (GridLayout) findViewById(R.id.field);
-		progressText = (TextView) findViewById(R.id.progressText);
-		progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        setContentView(R.layout.activity_main);
+        fieldLayout = (GridLayout) findViewById(R.id.field);
+        progressText = (TextView) findViewById(R.id.progressText);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
-		progressUpdater = new ProgressUpdater(progressBar, this);
-		
-		currMove = null;
-		remiCount = 20;
-		fieldView = new GameBoardView(THIS, fieldLayout);
-		
-		init();
+        progressUpdater = new ProgressUpdater(progressBar, this);
+        
+        currMove = null;
+        remiCount = 20;
+        fieldView = new GameBoardView(THIS, fieldLayout);
+        
+        init();
 
-		gameThread.start();
-		
-	}
+        gameThread.start();
+        
+    }
 
     protected void init(){
 
@@ -220,66 +220,66 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
         return new Thread(game);
 
     }
-	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.activity_main, menu);
-		return true;
-	}
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.activity_main, menu);
+        return true;
+    }
 
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
 
-		if(keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-			new AlertDialog.Builder(THIS)
-			.setIcon(android.R.drawable.ic_dialog_info)
-			.setTitle("Options")
-			.setMessage("What do you want to do?")
-			.setPositiveButton("Quit", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog,
-						int id) {
-					new AlertDialog.Builder(THIS)
-					.setCancelable(false)
-					.setTitle("Quit?")
-					.setMessage("Do you really want to Quit?")
-					.setPositiveButton("Yes",
-							new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-							setResult(RESULT_CANCELED);
-							gameThread.interrupt();
-							finish();
-						}})
-					.setNegativeButton("No", null)
-					.show();
-				}
-			})
-			.setNegativeButton("Cancel", null)
-			.setNeutralButton("New Game", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog,
-						int id) {
-					new AlertDialog.Builder(THIS)
-					.setTitle("New Game?")
-					.setMessage("Do you want to start a new Game?")
-					.setPositiveButton("Yes",
-							new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-							setResult(RESULT_RESTART);
-							gameThread.interrupt();
-							finish();
-						}})
-					.setNegativeButton("No", null)
-					.show();
-				}
-			})
-			.show();
-			return true;
-		}else{
-			return super.onKeyDown(keyCode, event);
-		}
-	}
+        if(keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+            new AlertDialog.Builder(THIS)
+            .setIcon(android.R.drawable.ic_dialog_info)
+            .setTitle("Options")
+            .setMessage("What do you want to do?")
+            .setPositiveButton("Quit", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog,
+                        int id) {
+                    new AlertDialog.Builder(THIS)
+                    .setCancelable(false)
+                    .setTitle("Quit?")
+                    .setMessage("Do you really want to Quit?")
+                    .setPositiveButton("Yes",
+                            new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog,
+                                int whichButton) {
+                            setResult(RESULT_CANCELED);
+                            gameThread.interrupt();
+                            finish();
+                        }})
+                    .setNegativeButton("No", null)
+                    .show();
+                }
+            })
+            .setNegativeButton("Cancel", null)
+            .setNeutralButton("New Game", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog,
+                        int id) {
+                    new AlertDialog.Builder(THIS)
+                    .setTitle("New Game?")
+                    .setMessage("Do you want to start a new Game?")
+                    .setPositiveButton("Yes",
+                            new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog,
+                                int whichButton) {
+                            setResult(RESULT_RESTART);
+                            gameThread.interrupt();
+                            finish();
+                        }})
+                    .setNegativeButton("No", null)
+                    .show();
+                }
+            })
+            .show();
+            return true;
+        }else{
+            return super.onKeyDown(keyCode, event);
+        }
+    }
 
     private void signalSelection(){
         lock.lock();
@@ -399,31 +399,31 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
     }
 
     //shows a Toast and cancels others if they are showing
-	protected void showToast(String text){
+    protected void showToast(String text){
         if(lastToast != null) {
             lastToast.cancel();
         }
-		Toast toast = Toast.makeText(this,text ,Toast.LENGTH_SHORT);
-		toast.setGravity(Gravity.BOTTOM,0,0);
-		toast.show();
+        Toast toast = Toast.makeText(this,text ,Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.BOTTOM,0,0);
+        toast.show();
         lastToast = toast;
-	}
-	
-	void setTextinUIThread(final TextView view, final String text){
-		runOnUiThread(new Runnable() {
-			public void run() {
-				view.setText(text);
-			}
-		});
-	}
-	
-	void setTextinUIThread(final TextView view, final int stringID){
-		runOnUiThread(new Runnable() {
-			public void run() {
-				view.setText(getString(stringID));
-			}
-		});
-	}
+    }
+    
+    void setTextinUIThread(final TextView view, final String text){
+        runOnUiThread(new Runnable() {
+            public void run() {
+                view.setText(text);
+            }
+        });
+    }
+    
+    void setTextinUIThread(final TextView view, final int stringID){
+        runOnUiThread(new Runnable() {
+            public void run() {
+                view.setText(getString(stringID));
+            }
+        });
+    }
 
     boolean ShowGameOverMessageIfWon() {
 
@@ -457,23 +457,23 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
         }
         return false;
     }
-	
+    
     private void showGameOverMsg(final String title, final String message){
-			try {
-				Thread.sleep(1500);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			runOnUiThread(new Runnable(){
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            runOnUiThread(new Runnable(){
 
-				@Override
-				public void run() {
+                @Override
+                public void run() {
 
-					new AlertDialog.Builder(THIS)
-					.setIcon(android.R.drawable.ic_dialog_info)
-					.setTitle(title)
-					.setMessage(message)
-					.setPositiveButton("Quit", new DialogInterface.OnClickListener() {
+                    new AlertDialog.Builder(THIS)
+                    .setIcon(android.R.drawable.ic_dialog_info)
+                    .setTitle(title)
+                    .setMessage(message)
+                    .setPositiveButton("Quit", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int id) {
                             new AlertDialog.Builder(THIS)
@@ -489,7 +489,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
                                     .setNegativeButton("No", null)
                                     .show();
                         }
-					})
+                    })
                    .setNeutralButton("New Game", new DialogInterface.OnClickListener(){
                        @Override
                        public void onClick(DialogInterface dialogInterface, int id) {
@@ -499,9 +499,9 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
                    })
                     .setNegativeButton("Show Gameboard", null)
                     .show();
-				}
-			});
-	 }
+                }
+            });
+     }
 
     protected class OnFieldClickListener implements View.OnClickListener {
 

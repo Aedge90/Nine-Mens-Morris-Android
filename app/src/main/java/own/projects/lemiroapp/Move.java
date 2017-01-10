@@ -2,46 +2,46 @@ package own.projects.lemiroapp;
 
 public class Move {
 
-	private final Position src;
-	private final Position dest; //if only dest is set, then this is a move in the set phase
-	private final Position kill;
-	
-	Move(Position dest, Position src, Position kill){
-		this.src = src;
-		this.dest = dest;
-		this.kill = kill;
+    private final Position src;
+    private final Position dest; //if only dest is set, then this is a move in the set phase
+    private final Position kill;
+    
+    Move(Position dest, Position src, Position kill){
+        this.src = src;
+        this.dest = dest;
+        this.kill = kill;
         if (!isPossible()){
             throw new IllegalArgumentException("Move: invalid arguments for constructor: " + toString() );
         }
-	}
+    }
 
     Move(Move other){
         this.src = other.src;
         this.dest = other.dest;
         this.kill = other.kill;
     }
-	
-	public Position getSrc(){
-		return src;
-	}
-	
-	public Position getDest(){
-		return dest;
-	}
-	
-	public Position getKill() {
-		return kill;
-	}
-	
-	@Override
-	public String toString(){
-		return "src: " + src + " dest: " + dest + " kill: " + kill;
-	}
-	
-	private boolean isPossible(){
-		if(src == null && dest == null && kill == null){
-			return false;
-		}
+    
+    public Position getSrc(){
+        return src;
+    }
+    
+    public Position getDest(){
+        return dest;
+    }
+    
+    public Position getKill() {
+        return kill;
+    }
+    
+    @Override
+    public String toString(){
+        return "src: " + src + " dest: " + dest + " kill: " + kill;
+    }
+    
+    private boolean isPossible(){
+        if(src == null && dest == null && kill == null){
+            return false;
+        }
         if(src == null && dest == null && kill != null){
             return false;
         }
@@ -52,7 +52,7 @@ public class Move {
             return false;
         }
         return true;
-	}
+    }
 
     @Override
     public boolean equals(Object o) {

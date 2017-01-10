@@ -8,14 +8,14 @@ import android.util.Log;
 public class StrategyRunnable implements Runnable{
 
     //runnable will only work with local copies of the global gameboard and player objects
-	private final GameBoard globalGameBoard;
+    private final GameBoard globalGameBoard;
     private GameBoard localGameBoard;
     private final Player globalMaxPlayer;
     private Player localMaxPlayer;
 
-	private final ProgressUpdater up;
-	//not Int.Max as the evaluation function would create overflows
-	static final int MAX = 100000;
+    private final ProgressUpdater up;
+    //not Int.Max as the evaluation function would create overflows
+    static final int MAX = 100000;
     static final int MIN = -100000;
     private LinkedList<Move> movesToEvaluate;
     private Move prevMove;
@@ -26,23 +26,23 @@ public class StrategyRunnable implements Runnable{
     static int resultEvaluation;
     static LinkedList<Move> possibleMovesKickoff;
 
-	StrategyRunnable(final GameBoard gameBoard, final Player maxPlayer, final ProgressUpdater up, final int threadNr) {
+    StrategyRunnable(final GameBoard gameBoard, final Player maxPlayer, final ProgressUpdater up, final int threadNr) {
         this.globalGameBoard = gameBoard;
         this.globalMaxPlayer = maxPlayer;
-		this.up = up;
+        this.up = up;
         this.movesToEvaluate = new LinkedList<Move>();
         this.threadNr = threadNr;
-	}
+    }
 
-	public void updateState(){
-		//copy these so every thread has its own one to avoid concurrency problems
+    public void updateState(){
+        //copy these so every thread has its own one to avoid concurrency problems
         this.localGameBoard = globalGameBoard.getCopy();
         //copy BOTH!!! the maxPlayer and the other player
-		this.localMaxPlayer = new Player(globalMaxPlayer);
+        this.localMaxPlayer = new Player(globalMaxPlayer);
         Player other = new Player(globalMaxPlayer.getOtherPlayer());
         other.setOtherPlayer(localMaxPlayer);
         this.localMaxPlayer.setOtherPlayer(other);
-	}
+    }
 
     @Override
     public void run() {
@@ -55,102 +55,102 @@ public class StrategyRunnable implements Runnable{
             Thread.currentThread().interrupt();
         }
     }
-	
-	private void addnonJumpMoves(LinkedList<Move> moves, Player player){
-		for (Position p : localGameBoard.getPositions(player.getColor())) {
-			if (localGameBoard.moveUp(p) != null) {
+    
+    private void addnonJumpMoves(LinkedList<Move> moves, Player player){
+        for (Position p : localGameBoard.getPositions(player.getColor())) {
+            if (localGameBoard.moveUp(p) != null) {
                 addpossibleKillstoMove(moves, localGameBoard.moveUp(p), player);
             }
-			if (localGameBoard.moveDown(p) != null) {
+            if (localGameBoard.moveDown(p) != null) {
                 addpossibleKillstoMove(moves, localGameBoard.moveDown(p), player);
             }
-			if (localGameBoard.moveRight(p) != null) {
+            if (localGameBoard.moveRight(p) != null) {
                 addpossibleKillstoMove(moves, localGameBoard.moveRight(p), player);
             }
-			if (localGameBoard.moveLeft(p) != null) {
+            if (localGameBoard.moveLeft(p) != null) {
                 addpossibleKillstoMove(moves, localGameBoard.moveLeft(p), player);
             }
-		}
-	}
+        }
+    }
 
-	private void addJumpMoves(LinkedList<Move> moves, Player player){
-		for (Position all : localGameBoard.getAllValidPositions()) {
+    private void addJumpMoves(LinkedList<Move> moves, Player player){
+        for (Position all : localGameBoard.getAllValidPositions()) {
             if (localGameBoard.getColorAt(all).equals(Options.Color.NOTHING)) {
                 for (Position own: localGameBoard.getPositions(player.getColor())) {
                     addpossibleKillstoMove(moves, new Move(all, own, null), player);
                 }
             }
-		}
-	}
-	
-	private void addSetMoves(LinkedList<Move> moves, Player player){
+        }
+    }
+    
+    private void addSetMoves(LinkedList<Move> moves, Player player){
         for (Position all : localGameBoard.getAllValidPositions()) {
             if (localGameBoard.getColorAt(all).equals(Options.Color.NOTHING)) {
                 addpossibleKillstoMove(moves, new Move(all, null, null), player);
             }
-		}
-	}
+        }
+    }
 
     @VisibleForTesting
-	void addpossibleKillstoMove(LinkedList<Move> possibleMovessoFar, Move move, Player player){
-			boolean inMill = false;
+    void addpossibleKillstoMove(LinkedList<Move> possibleMovessoFar, Move move, Player player){
+            boolean inMill = false;
             localGameBoard.executeSetOrMovePhase(move, player);
-			inMill = localGameBoard.inMill(move.getDest(), player.getColor());
+            inMill = localGameBoard.inMill(move.getDest(), player.getColor());
             localGameBoard.reverseCompleteTurn(move, player);
             //player has a mill after doing this move --> he can kill a piece of the opponent
-			if(inMill){
-				int added = 0;
-				for (Position kill : localGameBoard.getPositions(player.getOtherPlayer().getColor())) {
-					if(!localGameBoard.inMill(kill, player.getOtherPlayer().getColor())){
-						Move killMove = new Move(move.getDest(), move.getSrc(), kill);
+            if(inMill){
+                int added = 0;
+                for (Position kill : localGameBoard.getPositions(player.getOtherPlayer().getColor())) {
+                    if(!localGameBoard.inMill(kill, player.getOtherPlayer().getColor())){
+                        Move killMove = new Move(move.getDest(), move.getSrc(), kill);
                         // using add first is important, so the kill moves will be at the beginning of the list
                         // by that its more likely that the alpha beta algorithms does more cutoffs
-						possibleMovessoFar.addFirst(killMove);
-						added++;
-					}
-				}
+                        possibleMovessoFar.addFirst(killMove);
+                        added++;
+                    }
+                }
                 //no pieces to kill because all are in a mill --> do it again but now add all pieces
                 //as you are allowed to kill if all pieces are part of a mill
-				if(added == 0){
-					for (Position kill2 : localGameBoard.getPositions(player.getOtherPlayer().getColor())) {
-						Move killMove = new Move(move.getDest(), move.getSrc(), kill2);
-						possibleMovessoFar.addFirst(killMove);
-					}
-				}
-			}else{
-				possibleMovessoFar.add(move);
-			}
-	}
+                if(added == 0){
+                    for (Position kill2 : localGameBoard.getPositions(player.getOtherPlayer().getColor())) {
+                        Move killMove = new Move(move.getDest(), move.getSrc(), kill2);
+                        possibleMovessoFar.addFirst(killMove);
+                    }
+                }
+            }else{
+                possibleMovessoFar.add(move);
+            }
+    }
 
-	//returns a list of moves that the player is able to do
-	LinkedList<Move> possibleMoves(Player player) {
-		LinkedList<Move> poss = new LinkedList<Move>();
-		int nPositions = localGameBoard.getPositions(player.getColor()).size();
+    //returns a list of moves that the player is able to do
+    LinkedList<Move> possibleMoves(Player player) {
+        LinkedList<Move> poss = new LinkedList<Move>();
+        int nPositions = localGameBoard.getPositions(player.getColor()).size();
         //do not compute possible moves if the player has lost, otherwise it breaks the evaluation
         //as a state AFTER loosing would be evaluated instead of the final state after the final kill
         if(nPositions < 3 && player.getSetCount() <= 0){
             return poss;
         }
-		if(player.getSetCount() > 0){
-			addSetMoves(poss, player);
-		}else{
-			boolean jump = false;
-			if (nPositions <= 3){
-				jump = true;
-			}
-			if (!jump) {
-				addnonJumpMoves(poss, player);
-			} else {
-				addJumpMoves(poss, player);
-			}
-		}
-		return poss;
-	}
+        if(player.getSetCount() > 0){
+            addSetMoves(poss, player);
+        }else{
+            boolean jump = false;
+            if (nPositions <= 3){
+                jump = true;
+            }
+            if (!jump) {
+                addnonJumpMoves(poss, player);
+            } else {
+                addJumpMoves(poss, player);
+            }
+        }
+        return poss;
+    }
 
-	// maximizing player has got to return higher values for better situations
+    // maximizing player has got to return higher values for better situations
     // minimizing player has got to return lower values the better his situation
     @VisibleForTesting
-	int evaluation(Player player, LinkedList<Move> moves, int depth) {
+    int evaluation(Player player, LinkedList<Move> moves, int depth) {
 
         int ret = 0;
 
@@ -229,7 +229,7 @@ public class StrategyRunnable implements Runnable{
 
         return ret;
 
-	}
+    }
 
     private int evaluateMove(Move move, int weight){
         if (move.getKill() != null) {
@@ -239,32 +239,32 @@ public class StrategyRunnable implements Runnable{
         }
     }
 
-	private int max(int depth, int alpha, int beta, Player player) throws InterruptedException {
-		if(Thread.interrupted()){
+    private int max(int depth, int alpha, int beta, Player player) throws InterruptedException {
+        if(Thread.interrupted()){
             throw new InterruptedException("Computation of Bot " + player + " was interrupted!");
-		}
-		LinkedList<Move> moves = possibleMoves(player);
-		//end reached or no more moves available, maybe because he is trapped or because he lost
-		if (depth == 0 || moves.size() == 0){
+        }
+        LinkedList<Move> moves = possibleMoves(player);
+        //end reached or no more moves available, maybe because he is trapped or because he lost
+        if (depth == 0 || moves.size() == 0){
             int bewertung = evaluation(player, moves, depth);
             return bewertung;
-		}
-		int maxWert = alpha;
-		for (Move z : moves) {
-			localGameBoard.executeCompleteTurn(z, player);
+        }
+        int maxWert = alpha;
+        for (Move z : moves) {
+            localGameBoard.executeCompleteTurn(z, player);
             movesToEvaluate.addLast(z);
-			int wert = min(depth-1, maxWert, beta, player.getOtherPlayer());
+            int wert = min(depth-1, maxWert, beta, player.getOtherPlayer());
             movesToEvaluate.removeLast();
-			localGameBoard.reverseCompleteTurn(z, player);
+            localGameBoard.reverseCompleteTurn(z, player);
             if (wert > maxWert) {
-				maxWert = wert;
-				if (maxWert >= beta) {
+                maxWert = wert;
+                if (maxWert >= beta) {
                     break;
                 }
-			}
-		}
-		return maxWert;
-	}
+            }
+        }
+        return maxWert;
+    }
 
     //same as max, but slightly modified to distribute work among threads
     private void maxKickoff(int depth, Player player) throws InterruptedException{
@@ -298,36 +298,36 @@ public class StrategyRunnable implements Runnable{
         }
     }
 
-	private int min(int depth, int alpha, int beta, Player player) throws InterruptedException {
+    private int min(int depth, int alpha, int beta, Player player) throws InterruptedException {
         if(Thread.interrupted()){
             throw new InterruptedException("Computation of Bot " + player + " was interrupted!");
         }
-		LinkedList<Move> moves = possibleMoves(player);
-		if (depth == 0 || moves.size() == 0){
+        LinkedList<Move> moves = possibleMoves(player);
+        if (depth == 0 || moves.size() == 0){
             int bewertung = evaluation(player, moves, depth);
             return bewertung;
-		}
-		int minWert = beta;
-		for (Move z : moves) {
-			localGameBoard.executeCompleteTurn(z, player);
+        }
+        int minWert = beta;
+        for (Move z : moves) {
+            localGameBoard.executeCompleteTurn(z, player);
             movesToEvaluate.addLast(z);
-			int wert = max(depth-1, alpha, minWert, player.getOtherPlayer());
+            int wert = max(depth-1, alpha, minWert, player.getOtherPlayer());
             movesToEvaluate.removeLast();
-			localGameBoard.reverseCompleteTurn(z, player);
-			if (wert < minWert) {
-				minWert = wert;
-				if (minWert <= alpha){ 
-					break;
-				}
-			}
-		}
-		return minWert;
+            localGameBoard.reverseCompleteTurn(z, player);
+            if (wert < minWert) {
+                minWert = wert;
+                if (minWert <= alpha){ 
+                    break;
+                }
+            }
+        }
+        return minWert;
 
-	}
+    }
 
-	private void computeMove() throws InterruptedException {
-				
-		int startDepth = localMaxPlayer.getDifficulty().ordinal() + 2;
+    private void computeMove() throws InterruptedException {
+                
+        int startDepth = localMaxPlayer.getDifficulty().ordinal() + 2;
 
         startDepth = lowerDepthOnGameStart(startDepth);
 
@@ -335,7 +335,7 @@ public class StrategyRunnable implements Runnable{
 
         maxKickoff(startDepth, localMaxPlayer);
 
-	}
+    }
 
     private int lowerDepthOnGameStart (int startDepth) {
         if(localMaxPlayer.getSetCount() == 0){
