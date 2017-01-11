@@ -13,8 +13,8 @@
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15sp"
-            android:layout_marginLeft="15sp"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="15dp"
             android:text="@string/select_millVariant"
             android:textSize="27sp" />
 
@@ -23,13 +23,13 @@
         android:prompt="@string/select_millVariant"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15sp" />
+        android:layout_marginLeft="15dp" />
     
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15sp"
-            android:layout_marginLeft="15sp"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="15dp"
             android:text="@string/select_player_white_difficulty"
             android:textSize="27sp" />
 
@@ -37,13 +37,13 @@
         android:id="@+id/playerWhiteSpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15sp" />
+        android:layout_marginLeft="15dp" />
     
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15sp"
-            android:layout_marginLeft="15sp"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="15dp"
             android:text="@string/select_player_black_difficulty"
             android:textSize="27sp" />
 
@@ -51,13 +51,13 @@
         android:id="@+id/playerBlackSpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15sp" />
+        android:layout_marginLeft="15dp" />
     
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15sp"
-            android:layout_marginLeft="15sp"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="15dp"
             android:text="@string/select_whoStarts"
             android:textSize="27sp" />
 
@@ -65,7 +65,7 @@
         android:id="@+id/whoStartsSpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15sp" />
+        android:layout_marginLeft="15dp" />
 
     <Button
         android:id="@+id/buttonOK"

@@ -16,8 +16,8 @@
             android:id="@+id/progressText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15sp"
-            android:layout_marginLeft="15sp"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="15dp"
             android:text="@string/player_turn"
             android:textSize="27sp" />
 
@@ -25,9 +25,9 @@
             android:id="@+id/progressBar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="fill_parent"
-            android:layout_height="30dip"
-            android:layout_marginLeft="15sp"
-            android:layout_marginRight="15sp" />
+            android:layout_height="30dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp" />
 
     </LinearLayout>
 
