@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:layout_marginLeft="15dp"
-            android:text="@string/select_player_white_difficulty"
+            android:text="@string/select_player_white"
             android:textSize="27sp" />
 
     <Spinner
@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:layout_marginLeft="15dp"
-            android:text="@string/select_player_black_difficulty"
+            android:text="@string/select_player_black"
             android:textSize="27sp" />
 
     <Spinner

@@ -10,10 +10,9 @@
     <string name="player_turn">It is your turn!</string>
     <string name="bot_turn">It is the bots turn!</string>
     <string name="select_millVariant">Mill Variant:</string>
-    <string name="select_player_black_difficulty">Difficulty of Player Black:</string>
-    <string name="select_player_white_difficulty">Difficulty of Player White:</string>
+    <string name="select_player_black">Select Player Black:</string>
+    <string name="select_player_white">Select Player White:</string>
     <string name="select_whoStarts">Who Starts?</string>
-    <string name="button_not_ready">Select all Options first!</string>
     <string name="clicking_in_botvsbot">Both Players are Bots!</string>
 
 </resources>

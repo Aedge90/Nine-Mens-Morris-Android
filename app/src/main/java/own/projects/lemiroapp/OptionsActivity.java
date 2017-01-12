@@ -148,7 +148,9 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
         items.add("Human Player");
 
         for(Options.Difficulties diff : Options.Difficulties.values()){
-            items.add(diff + " Bot");
+            String difficulty = "" + diff;
+            difficulty = difficulty.toUpperCase().charAt(0) + difficulty.substring(1).toLowerCase();
+            items.add(difficulty + " Bot");
         }
 
         Spinner spinner = null;
