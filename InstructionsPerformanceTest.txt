@@ -1,0 +1,8 @@
+1. set Mill Variant to Five Mens Morris
+2. set Player White to Human
+3. set Player Black to any Bot (difficulty is overwritten anyways)
+4. start Game
+5. Set a piece on 0,0 -> Bot will set to 0,6
+6. Set a piece on 0,3 -> wait until bot is done computing 
+
+--> time of the computation is printed in logcat

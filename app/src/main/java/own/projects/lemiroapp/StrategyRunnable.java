@@ -2,6 +2,7 @@ package own.projects.lemiroapp;
 
 import java.util.LinkedList;
 
+import android.os.SystemClock;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
@@ -329,11 +330,21 @@ public class StrategyRunnable implements Runnable{
                 
         int startDepth = localMaxPlayer.getDifficulty().ordinal() + 2;
 
-        startDepth = lowerDepthOnGameStart(startDepth);
+        //startDepth = lowerDepthOnGameStart(startDepth);
 
-        startDepth = lowerDepthOnGameEnd(startDepth);
+        //startDepth = lowerDepthOnGameEnd(startDepth);
+
+        if(globalGameBoard.getPositions(globalMaxPlayer.getColor()).size() == 0){
+            resultMove = new Move(new Position(0,6), null, null);
+            return;
+        }
+
+        long start = SystemClock.elapsedRealtime();
+        startDepth = 11;
 
         maxKickoff(startDepth, localMaxPlayer);
+
+        System.out.println("duration (in s): " + (SystemClock.elapsedRealtime() - start)/1000);
 
     }
 
