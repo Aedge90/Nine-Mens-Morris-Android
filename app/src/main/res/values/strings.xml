@@ -7,12 +7,16 @@
     <string name="ok">OK</string>
     <string name="app_unusable">Application can not be used</string>
     <string name="choose_connection">Choose Connection</string>
-    <string name="player_turn">It is your turn!</string>
-    <string name="bot_turn">It is the bots turn!</string>
+    <string name="your_turn">It\'s your turn!</string>
+    <string name="bots_turn">It\'s the Bot\'s turn!</string>
+    <string name="white_turn">It\'s White\'s turn!</string>
+    <string name="black_turn">It\'s Black\'s turn!</string>
     <string name="select_millVariant">Mill Variant:</string>
     <string name="select_player_black">Select Player Black:</string>
     <string name="select_player_white">Select Player White:</string>
     <string name="select_whoStarts">Who Starts?</string>
     <string name="clicking_in_botvsbot">Both Players are Bots!</string>
+    <string name="black">Black</string>
+    <string name="white">White</string>
 
 </resources>

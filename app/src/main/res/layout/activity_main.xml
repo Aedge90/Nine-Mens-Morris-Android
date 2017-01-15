@@ -18,7 +18,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:layout_marginLeft="15dp"
-            android:text="@string/player_turn"
             android:textSize="27sp" />
 
         <ProgressBar

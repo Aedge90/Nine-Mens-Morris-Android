@@ -187,10 +187,6 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
                 try {
                     while(true){
 
-                        //TODO check if the UI texts make sense for every game mode
-
-                        setTextinUIThread(progressText, R.string.player_turn);
-
                         if(currPlayer.getDifficulty() == null) {
                             humanTurn(currPlayer);
                         }else{
@@ -314,6 +310,16 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
 
     void humanTurn(Player human) throws InterruptedException{
 
+        if(human.getOtherPlayer().getDifficulty() != null) {
+            setTextinUIThread(progressText, R.string.your_turn);
+        }else{
+            if(human.getColor().equals(Options.Color.BLACK)) {
+                setTextinUIThread(progressText, R.string.black_turn);
+            }else{
+                setTextinUIThread(progressText, R.string.white_turn);
+            }
+        }
+
         currMove = null;
         Position newPosition = null;
         if(human.getSetCount() <= 0){
@@ -354,11 +360,26 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
     }
 
     void botTurn(Player bot, Strategy brain) throws InterruptedException{
+
+        if(bot.getOtherPlayer().getDifficulty() == null) {
+            setTextinUIThread(progressText, R.string.bots_turn);
+        }else{
+            if(bot.getColor().equals(Options.Color.BLACK)) {
+                String s = getString(R.string.black_turn);
+                s = s.replace(getString(R.string.black)+"'s", getString(R.string.black)+ "'s (" + bot.getDifficulty() + ")" );
+                setTextinUIThread(progressText, s);
+            }else{
+                String s = getString(R.string.white_turn);
+                s = s.replace(getString(R.string.white)+"'s", getString(R.string.white) + "'s (" + bot.getDifficulty() + ")" );
+                setTextinUIThread(progressText, s);
+            }
+        }
+
         Position newPosition = null;
         if(bot.getSetCount() <= 0){
             currMove = brain.computeMove();
 
-            setTextinUIThread(progressText, "Bot is moving!");
+            //setTextinUIThread(progressText, "Bot is moving!");
 
             fieldView.makeMove(currMove, bot.getColor());
             fieldView.getPos(currMove.getSrc()).setOnClickListener(
@@ -372,7 +393,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
 
             currMove = brain.computeMove();
 
-            setTextinUIThread(progressText, "Bot is moving!");
+            //setTextinUIThread(progressText, "Bot is moving!");
 
             fieldView.setPos(currMove.getDest(), bot.getColor());
             fieldView.getPos(currMove.getDest()).setOnClickListener(
