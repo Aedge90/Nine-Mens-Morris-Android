@@ -1,5 +1,6 @@
 package own.projects.lemiroapp;
 
+import android.os.SystemClock;
 import android.view.View;
 import android.widget.Toast;
 import android.app.Activity;
@@ -184,6 +185,8 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
                     currPlayer = playerBlack;
                 }
 
+                long start = SystemClock.elapsedRealtime();
+
                 try {
                     while(true){
 
@@ -209,6 +212,8 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
                     e.printStackTrace();
                     gameThread.interrupt();
                 }
+
+                System.out.println("duration (in s): " + (SystemClock.elapsedRealtime() - start)/1000);
             }
 
         };

@@ -17,7 +17,7 @@ public class Strategy {
     private final Player maxPlayer;
 
     Strategy(final GameBoard field, final Player player, final ProgressUpdater up) {
-        this(field, player, up, 8); //TODO decide if 4 is better
+        this(field, player, up, 1); //TODO decide if 4 is better
     }
 
     @VisibleForTesting
@@ -34,6 +34,9 @@ public class Strategy {
     }
 
     public Move computeMove() throws InterruptedException {
+
+        runnables[0].updateState();
+        Move testResult = runnables[0].possibleMoves(maxPlayer).getFirst();
 
         // shuffle list, so we dont end up with the same moves every game
         StrategyRunnable.possibleMovesKickoff = shuffleListOfPossMoves();
@@ -55,12 +58,14 @@ public class Strategy {
 
         for (int i = 0; i < nThreads; i++) {
            //runnables need to know which move was chosen
-           runnables[i].setPreviousMove(StrategyRunnable.resultMove);
+           runnables[i].setPreviousMove(testResult);
         }
 
         up.reset();
 
-        return StrategyRunnable.resultMove;
+        System.out.println("number of threads: " + nThreads);
+
+        return testResult;
     }
 
     @VisibleForTesting

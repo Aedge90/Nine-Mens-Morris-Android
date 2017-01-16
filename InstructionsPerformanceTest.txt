@@ -1,0 +1,4 @@
+1. Set Both Players to Hardest Bots
+2. Start Game 
+
+--> time until completion of the game is printed in logcat
