@@ -17,7 +17,7 @@ public class Strategy {
     private final Player maxPlayer;
 
     Strategy(final GameBoard field, final Player player, final ProgressUpdater up) {
-        this(field, player, up, 8); //TODO decide if 4 is better
+        this(field, player, up, 8);
     }
 
     @VisibleForTesting
