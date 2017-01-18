@@ -380,7 +380,7 @@ public class GameBoardTestNonParameterized {
 
     public void getStateShouldBeDraw_AssertDRAWOrRUNNING (int turnSinceLastKill, GameBoard gameBoard, Player executingPlayer) {
         if(turnSinceLastKill >= GameBoard.REMISMAX){
-            assertEquals(GameBoard.GameState.DRAW, gameBoard.getState(executingPlayer));
+            assertEquals(GameBoard.GameState.REMIS, gameBoard.getState(executingPlayer));
         }else{
             assertEquals(GameBoard.GameState.RUNNING, gameBoard.getState(executingPlayer));
         }

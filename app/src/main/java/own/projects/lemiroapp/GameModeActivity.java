@@ -32,7 +32,6 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
     protected volatile boolean selected;
 
     volatile Move currMove;
-    volatile int remiCount;
     Thread gameThread;
     Options options;
     GridLayout fieldLayout;
@@ -119,7 +118,6 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
         progressUpdater = new ProgressUpdater(progressBar, this);
         
         currMove = null;
-        remiCount = 20;
         fieldView = new GameBoardView(THIS, fieldLayout);
         
         init();
@@ -199,6 +197,11 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
 
                         if(ShowGameOverMessageIfWon()){
                             break;
+                        }
+                        if(field.getState(currPlayer).equals(GameBoard.GameState.REMIS)
+                                && field.getRemisCount() % 10 == 0){    //only ask every 10 moves if there was a remis
+                            showRemisMsg();
+                            waitforSelection();
                         }
 
                         currPlayer = currPlayer.getOtherPlayer();
@@ -448,14 +451,6 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
 
     boolean ShowGameOverMessageIfWon() {
 
-        //TODO show remiCount somewhere
-
-        if(field.getState(currPlayer).equals(GameBoard.GameState.DRAW)){
-            showGameOverMsg("Draw!", "Nobody wins.");
-            setTextinUIThread(progressText, "Draw! Nobody wins");
-            return true;
-        }
-
         String winningColor = currPlayer.getColor().toString();
         winningColor = winningColor.toUpperCase().charAt(0) + winningColor.substring(1).toLowerCase();
         String message;
@@ -481,7 +476,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
     
     private void showGameOverMsg(final String title, final String message){
             try {
-                Thread.sleep(1500);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -523,6 +518,42 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
                 }
             });
      }
+
+    private void showRemisMsg(){
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        final String message = String.format(getString(R.string.remis_message), field.getRemisCount());
+        runOnUiThread(new Runnable(){
+
+            @Override
+            public void run() {
+
+                new AlertDialog.Builder(THIS)
+                        .setIcon(android.R.drawable.ic_dialog_info)
+                        .setTitle(getString(R.string.remis_title))
+                        .setMessage(message)
+                        .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int id) {
+                                signalSelection();
+                            }
+                        })
+                        .setNegativeButton("New Game", new DialogInterface.OnClickListener(){
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int id) {
+                                setResult(RESULT_RESTART);
+                                gameThread.interrupt();
+                                finish();
+                            }
+                        })
+                        .setCancelable(false)
+                        .show();
+            }
+        });
+    }
 
     protected class OnFieldClickListener implements View.OnClickListener {
 

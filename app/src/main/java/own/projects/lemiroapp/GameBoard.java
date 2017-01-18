@@ -15,12 +15,13 @@ public abstract class GameBoard {
 
     LinkedList<Position> allValidPositions = new LinkedList<Position>();
 
-    public static final int REMISMAX = 40;
-    private int remisCount = REMISMAX;
-    private int remisCountBeforeKill = REMISMAX;
+    public static final int REMISMAX = 30;
+
+    private int remisCount = 0;
+    private int remisCountBeforeKill = 0;
 
     static enum GameState {
-        RUNNING, DRAW, WON_NO_MOVES, WON_KILLED_ALL
+        RUNNING, REMIS, WON_NO_MOVES, WON_KILLED_ALL
     };
 
     GameBoard(){}
@@ -131,7 +132,7 @@ public abstract class GameBoard {
     //this executes only the setting or moving phase of a player, regardless if a kill is contained in move
     //necessary to make is separate as the user can only add the kill after this move was done
     void executeSetOrMovePhase(Move move, Player player) {
-        remisCount--;
+        remisCount++;
         if(player.getSetCount() > 0){
             if(!getColorAt(move.getDest()).equals(Options.Color.NOTHING)){
                 throw new IllegalArgumentException("Player " + player.getColor() + " is trying to set to an occupied field by: " + getColorAt(move.getDest()));
@@ -153,7 +154,7 @@ public abstract class GameBoard {
     void executeKillPhase(Move move, Player player){
         if(move.getKill() != null){
             remisCountBeforeKill = remisCount;
-            remisCount = REMISMAX;
+            remisCount = 0;
             if(getColorAt(move.getKill()).equals(player.getColor())){
                 throw new IllegalArgumentException("Trying to kill own piece of color: " + player.getColor());
             }
@@ -172,7 +173,7 @@ public abstract class GameBoard {
 
     //undoes a complete turn of a player, including setting or moving and killing
     public void reverseCompleteTurn(Move move, Player player) {
-        remisCount++;
+        remisCount--;
         if(move.getSrc() == null && move.getDest() != null){
             makeKillMove(move.getDest());
             player.setSetCount(player.getSetCount() + 1);
@@ -352,8 +353,8 @@ public abstract class GameBoard {
 
     GameState getState(Player player) {
 
-        if(remisCount <= 0){
-            return GameState.DRAW;
+        if(remisCount >= REMISMAX){
+            return GameState.REMIS;
         }
 
         //only the other player can have lost as its impossible for maxPlayer to commit suicide
@@ -364,6 +365,10 @@ public abstract class GameBoard {
         }
 
         return GameState.RUNNING;
+    }
+
+    public int getRemisCount() {
+        return remisCount;
     }
 
     public String toString() {
