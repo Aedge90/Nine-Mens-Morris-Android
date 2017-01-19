@@ -236,41 +236,14 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
             .setTitle("Options")
             .setMessage("What do you want to do?")
             .setPositiveButton("Quit", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog,
-                        int id) {
-                    new AlertDialog.Builder(THIS)
-                    .setCancelable(false)
-                    .setTitle("Quit?")
-                    .setMessage("Do you really want to Quit?")
-                    .setPositiveButton("Yes",
-                            new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog,
-                                int whichButton) {
-                            setResult(RESULT_CANCELED);
-                            gameThread.interrupt();
-                            finish();
-                        }})
-                    .setNegativeButton("No", null)
-                    .show();
+                public void onClick(DialogInterface dialog, int id) {
+                    showQuitAlertDialog();
                 }
             })
             .setNegativeButton("Cancel", null)
             .setNeutralButton("New Game", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog,
-                        int id) {
-                    new AlertDialog.Builder(THIS)
-                    .setTitle("New Game?")
-                    .setMessage("Do you want to start a new Game?")
-                    .setPositiveButton("Yes",
-                            new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog,
-                                int whichButton) {
-                            setResult(RESULT_RESTART);
-                            gameThread.interrupt();
-                            finish();
-                        }})
-                    .setNegativeButton("No", null)
-                    .show();
+                public void onClick(DialogInterface dialog, int id) {
+                    showNewGameAlertDialog(false);
                 }
             })
             .show();
@@ -278,6 +251,49 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
         }else{
             return super.onKeyDown(keyCode, event);
         }
+    }
+
+    private void showNewGameAlertDialog(final boolean signalSelection){
+        new AlertDialog.Builder(THIS)
+        .setTitle(getString(R.string.start_new_game))
+        .setMessage(getString(R.string.want_to_start_new_game))
+        .setPositiveButton(getString(R.string.yes),
+            new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    setResult(RESULT_RESTART);
+                    gameThread.interrupt();
+                    finish();
+                }
+            }
+        )
+        .setNegativeButton(getString(R.string.no),
+            new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    if(signalSelection) {
+                        signalSelection();
+                    }
+                }
+            }
+        )
+        .show();
+    }
+
+    private void showQuitAlertDialog(){
+        new AlertDialog.Builder(THIS)
+        .setCancelable(false)
+        .setTitle("Quit?")
+        .setMessage("Do you really want to Quit?")
+        .setPositiveButton("Yes",
+            new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog,  int whichButton) {
+                    setResult(RESULT_CANCELED);
+                    gameThread.interrupt();
+                    finish();
+                }
+            }
+        )
+        .setNegativeButton(getString(R.string.no), null)
+        .show();
     }
 
     private void signalSelection(){
@@ -492,27 +508,17 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
                     .setPositiveButton("Quit", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int id) {
-                            new AlertDialog.Builder(THIS)
-                                    .setCancelable(false)
-                                    .setTitle("Quit?")
-                                    .setMessage("Do you really want to Quit?")
-                                    .setPositiveButton("Yes",
-                                            new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int id) {
-                                                    setResult(RESULT_CANCELED);
-                                                    finish();
-                                                }})
-                                    .setNegativeButton("No", null)
-                                    .show();
+                            showQuitAlertDialog();
                         }
                     })
-                   .setNeutralButton("New Game", new DialogInterface.OnClickListener(){
+                    .setNeutralButton("New Game", new DialogInterface.OnClickListener(){
                        @Override
                        public void onClick(DialogInterface dialogInterface, int id) {
+                           //dont ask if player really want to start new game as game is over here
                            setResult(RESULT_OK);
                            finish();
                        }
-                   })
+                    })
                     .setNegativeButton("Show Gameboard", null)
                     .show();
                 }
@@ -541,12 +547,10 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
                                 signalSelection();
                             }
                         })
-                        .setNegativeButton("New Game", new DialogInterface.OnClickListener(){
+                        .setNegativeButton(getString(R.string.start_new_game), new DialogInterface.OnClickListener(){
                             @Override
                             public void onClick(DialogInterface dialogInterface, int id) {
-                                setResult(RESULT_RESTART);
-                                gameThread.interrupt();
-                                finish();
+                                showNewGameAlertDialog(true);
                             }
                         })
                         .setCancelable(false)
