@@ -140,17 +140,17 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
             playerBlack.setSetCount(5);
             playerWhite.setSetCount(5);
             field = new Mill5();
-            fieldLayout.setBackgroundResource(R.drawable.brett5);
+            fieldLayout.setBackgroundResource(R.drawable.gameboard5);
         } else if (options.millVariant == Options.MillVariant.MILL7) {
             playerBlack.setSetCount(7);
             playerWhite.setSetCount(7);
             field = new Mill7();
-            fieldLayout.setBackgroundResource(R.drawable.brett7);
+            fieldLayout.setBackgroundResource(R.drawable.gameboard7);
         } else if (options.millVariant == Options.MillVariant.MILL9) {
             playerBlack.setSetCount(9);
             playerWhite.setSetCount(9);
             field = new Mill9();
-            fieldLayout.setBackgroundResource(R.drawable.brett9);
+            fieldLayout.setBackgroundResource(R.drawable.gameboard9);
         }
         selected = false;
 

@@ -106,9 +106,9 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
         
         final ItemsAdapter items = new ItemsAdapter(this,
                 layout.simple_list_item_1);
-        items.add("Nine Mens Morris", R.drawable.brett9);
-        items.add("Seven Mens Morris", R.drawable.brett7);
-        items.add("Five Mens Morris", R.drawable.brett5);
+        items.add("Nine Mens Morris", R.drawable.gameboard9);
+        items.add("Seven Mens Morris", R.drawable.gameboard7);
+        items.add("Five Mens Morris", R.drawable.gameboard5);
         
         millModeSpinner = (Spinner) findViewById(R.id.millModeSpinner);
         
