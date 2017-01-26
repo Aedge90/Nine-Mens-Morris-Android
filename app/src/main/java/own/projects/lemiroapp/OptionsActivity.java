@@ -28,6 +28,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -104,8 +105,7 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
 
     private void setMillVariant() {
         
-        final ItemsAdapter items = new ItemsAdapter(this,
-                layout.simple_list_item_1);
+        final ItemsAdapter items = new ItemsAdapter(this, R.layout.spinner_item);
         items.add("Nine Mens Morris", R.drawable.gameboard9);
         items.add("Seven Mens Morris", R.drawable.gameboard7);
         items.add("Five Mens Morris", R.drawable.gameboard5);
@@ -116,8 +116,7 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
         millModeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
 
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, 
-                    int pos, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 if(pos == 0){
                     options.millVariant = Options.MillVariant.MILL9;
                 }else if(pos == 1){
@@ -143,8 +142,7 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
 
     private void setPlayerDifficultyFor(final Player player) {
         
-        final ArrayAdapter<String> items = new ArrayAdapter<String>(
-                this, layout.simple_list_item_1);
+        final ArrayAdapter<String> items = new ArrayAdapter<String>(this, R.layout.spinner_item);
         items.add("Human Player");
 
         for(Options.Difficulties diff : Options.Difficulties.values()){
@@ -191,19 +189,17 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
 
     private void setWhoStarts() {
         
-        final ArrayAdapter<String> items = new ArrayAdapter<String>(
-                this, layout.simple_list_item_1);
+        final ArrayAdapter<String> items = new ArrayAdapter<String>(this, R.layout.spinner_item);
         items.add("White");
         items.add("Black");
         
         whoStartsSpinner = (Spinner) findViewById(R.id.whoStartsSpinner);
-        
+
         whoStartsSpinner.setAdapter(items);
         whoStartsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
 
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, 
-                    int pos, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 if(pos == 0){
                     options.whoStarts = Options.Color.WHITE;
                 }else if(pos == 1){
@@ -273,6 +269,8 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
 
             TextView mTitle = new TextView(context);
             mTitle.setText(item);
+            //This is correct. Size in pixels is needed as output type
+            mTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.text_size));
             layout.addView(mTitle, margin);
 
             return layout;
