@@ -270,7 +270,7 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
             TextView mTitle = new TextView(context);
             mTitle.setText(item);
             //This is correct. Size in pixels is needed as output type
-            mTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.text_size));
+            mTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.text_size_spinner_item));
             layout.addView(mTitle, margin);
 
             return layout;
