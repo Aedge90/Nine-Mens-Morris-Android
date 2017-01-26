@@ -23,7 +23,8 @@
         android:prompt="@string/select_millVariant"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/margin_size" />
+        android:layout_marginLeft="@dimen/margin_size"
+        android:layout_marginRight="@dimen/margin_size"/>
     
     <TextView
             android:layout_width="wrap_content"
@@ -37,7 +38,8 @@
         android:id="@+id/playerWhiteSpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/margin_size" />
+        android:layout_marginLeft="@dimen/margin_size"
+        android:layout_marginRight="@dimen/margin_size"/>
     
     <TextView
             android:layout_width="wrap_content"
@@ -51,7 +53,8 @@
         android:id="@+id/playerBlackSpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/margin_size" />
+        android:layout_marginLeft="@dimen/margin_size"
+        android:layout_marginRight="@dimen/margin_size"/>
     
     <TextView
             android:layout_width="wrap_content"
@@ -65,13 +68,19 @@
         android:id="@+id/whoStartsSpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/margin_size" />
+        android:layout_marginLeft="@dimen/margin_size"
+        android:layout_marginRight="@dimen/margin_size"/>
 
     <Button
         android:id="@+id/buttonOK"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/ok" />
+        android:layout_marginTop="@dimen/margin_size"
+        android:layout_marginLeft="@dimen/margin_size"
+        android:layout_marginRight="@dimen/margin_size"
+        android:gravity="center_horizontal"
+        android:textSize="@dimen/text_size"
+        android:text="@string/start_game" />
     
 </LinearLayout>
 </ScrollView>

@@ -21,6 +21,7 @@
     <string name="remis_title">Remis</string>
     <string name="remis_message">Remis! No Player could close a mill since %1$d moves. Do you want to continue?</string>
     <string name="start_new_game">Start New Game</string>
+    <string name="start_game">Start Game!</string>
     <string name="want_to_start_new_game">Do you want to start a new Game?</string>
     <string name="black">Black</string>
     <string name="white">White</string>
