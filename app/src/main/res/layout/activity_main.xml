@@ -40,5 +40,11 @@
         android:columnOrderPreserved="true" >
     </GridLayout>
 
+    <FrameLayout
+        android:id="@+id/player_pieces_space"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+    </FrameLayout>
 
 </LinearLayout>

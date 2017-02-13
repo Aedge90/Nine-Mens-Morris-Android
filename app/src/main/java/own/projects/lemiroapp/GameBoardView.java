@@ -1,15 +1,19 @@
 package own.projects.lemiroapp;
 
+import java.util.LinkedList;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import android.util.Log;
 
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.ObjectAnimator;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
+
+import android.view.Gravity;
+import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -21,8 +25,11 @@ public class GameBoardView {
     private Lock lock;
     private Condition uiupdate;
     private ImageView[][] fieldView;
+    private LinkedList<ImageView> piecesSpaceViewsBlack;
+    private LinkedList<ImageView> piecesSpaceViewsWhite;
     private GameModeActivity c; 
     private GridLayout fieldLayout;
+    private FrameLayout piecesSpaceLayout;
     
     GameBoardView(GameModeActivity c , GridLayout fieldLayout) {
         this.c = c;
@@ -43,6 +50,29 @@ public class GameBoardView {
             }
         }
 
+        int setCount = 0;
+        if (c.options.millVariant == Options.MillVariant.MILL5) {
+            setCount = 5;
+        } else if (c.options.millVariant == Options.MillVariant.MILL7) {
+            setCount = 7;
+        } else if (c.options.millVariant == Options.MillVariant.MILL9) {
+            setCount = 9;
+        }
+        piecesSpaceViewsBlack = new LinkedList<>();
+        piecesSpaceViewsWhite = new LinkedList<>();
+        piecesSpaceLayout = (FrameLayout) c.findViewById(R.id.player_pieces_space);
+        for(int i = 0; i < setCount; i++) {
+            piecesSpaceViewsBlack.push(createSectorInPiecesSpace(Options.Color.BLACK, i * ((c.screenWidth-(c.screenWidth/GameBoard.LENGTH))/2)/setCount));
+            piecesSpaceViewsWhite.push(createSectorInPiecesSpace(Options.Color.WHITE, i * ((c.screenWidth-(c.screenWidth/GameBoard.LENGTH))/2)/setCount));
+            piecesSpaceLayout.addView(piecesSpaceViewsBlack.peek());
+            piecesSpaceLayout.addView(piecesSpaceViewsWhite.peek());
+        }
+
+        //disable clipping so that we can animate views from one layout that move into another layout
+        ((LinearLayout)fieldLayout.getParent()).setClipChildren(false);
+        fieldLayout.setClipChildren(false);
+        piecesSpaceLayout.setClipChildren(false);
+
         // set witdh not to screenwidth so the gridlayout size matches its content size
         // this way the background image of the gridview will always be aligned independent of screen resolution
         ((LinearLayout) fieldLayout.getParent()).updateViewLayout(fieldLayout,
@@ -52,7 +82,8 @@ public class GameBoardView {
     public ImageView getPos(Position pos){
         return fieldView[pos.getY()][pos.getX()]; 
     }
-    
+
+
     public void setPos(final Position pos, final Options.Color color) throws InterruptedException{
         
         c.runOnUiThread(new Runnable() {
@@ -69,7 +100,7 @@ public class GameBoardView {
         waitforUIupdate();
 
     }
-    
+
     private void waitforUIupdate() throws InterruptedException{
         lock.lock();
         try {
@@ -88,25 +119,85 @@ public class GameBoardView {
         uiupdate.signal();
         lock.unlock();
     }
-    
+
+    public void makeSetMove(final Move move, final Options.Color color) throws InterruptedException {
+
+        c.runOnUiThread(new Runnable() {
+            public void run() {
+
+                final ImageView animSector;
+                if(color.equals(Options.Color.BLACK)) {
+                    animSector = piecesSpaceViewsBlack.pop();
+                }else{
+                    animSector = piecesSpaceViewsWhite.pop();
+                }
+
+                final ImageView destSector = fieldView[move.getDest().getY()][move.getDest().getX()];
+                final ImageView newDestSector = createSector(color, move.getDest().getX(), move.getDest().getY());
+
+                //in y-direction we subtract the height of the layout of the field. That is because the vector is calculated in
+                //relation to the parent layout of the anim sector, which is another one than the parent layout of the dest sector
+                //so we have to do that so the coordinates are also relative to the animSector (negative, so piece moves somewhere upwards)
+                ObjectAnimator oleft = ObjectAnimator.ofInt(animSector, "left", animSector.getLeft(), destSector.getLeft());
+                ObjectAnimator otop = ObjectAnimator.ofInt(animSector, "top", animSector.getTop(), destSector.getTop() - fieldLayout.getHeight());
+                ObjectAnimator oright = ObjectAnimator.ofInt(animSector, "right", animSector.getRight(), destSector.getRight());
+                ObjectAnimator obottom = ObjectAnimator.ofInt(animSector, "bottom",animSector.getBottom(),destSector.getBottom() - fieldLayout.getHeight());
+                AnimatorListener listen = new AnimatorListener(){
+
+                    @Override
+                    public void onAnimationCancel(Animator arg0) {}
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        piecesSpaceLayout.removeView(animSector);
+                        fieldLayout.addView(newDestSector);
+                        signalUIupdate();
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {}
+
+                    @Override
+                    public void onAnimationStart(Animator animation) {}
+
+                };
+                oleft.setDuration(1000);
+                oleft.start();
+                oright.setDuration(1000);
+                oright.start();
+                otop.setDuration(1000);
+                otop.start();
+                obottom.setDuration(1000);
+                obottom.start();
+                obottom.addListener(listen);
+
+                fieldLayout.removeView(destSector);
+
+                fieldView[move.getDest().getY()][move.getDest().getX()] = newDestSector;
+
+            }
+        });
+
+        //continues when fieldView has played animation
+        waitforUIupdate();
+
+    }
+
     public void makeMove(final Move move, final Options.Color color) throws InterruptedException{
         
         c.runOnUiThread(new Runnable() {
             public void run() {
-        
-                final ImageView srcSector = fieldView[move.getSrc().getY()][move.getSrc().getX()];
+
+                final ImageView animSector = fieldView[move.getSrc().getY()][move.getSrc().getX()];
                 final ImageView destSector = fieldView[move.getDest().getY()][move.getDest().getX()];
                 
                 final ImageView newSrcSector = createSector(Options.Color.NOTHING, move.getSrc().getX(), move.getSrc().getY());
                 final ImageView newDestSector = createSector(color, move.getDest().getX(), move.getDest().getY());
-                final ImageView animSector = createSector(color, move.getSrc().getX(), move.getSrc().getY());;
-        
-                fieldLayout.addView(animSector);
                 
-                ObjectAnimator oleft = ObjectAnimator.ofInt(animSector, "left", srcSector.getLeft(), destSector.getLeft());
-                ObjectAnimator otop = ObjectAnimator.ofInt(animSector, "top", srcSector.getTop(), destSector.getTop());
-                ObjectAnimator oright = ObjectAnimator.ofInt(animSector, "right", srcSector.getRight(), destSector.getRight());
-                ObjectAnimator obottom = ObjectAnimator.ofInt(animSector, "bottom", srcSector.getBottom(), destSector.getBottom());
+                ObjectAnimator oleft = ObjectAnimator.ofInt(animSector, "left", animSector.getLeft(), destSector.getLeft());
+                ObjectAnimator otop = ObjectAnimator.ofInt(animSector, "top", animSector.getTop(), destSector.getTop());
+                ObjectAnimator oright = ObjectAnimator.ofInt(animSector, "right", animSector.getRight(), destSector.getRight());
+                ObjectAnimator obottom = ObjectAnimator.ofInt(animSector, "bottom", animSector.getBottom(), destSector.getBottom());
                 AnimatorListener listen = new AnimatorListener(){
         
                     @Override
@@ -136,8 +227,7 @@ public class GameBoardView {
                 obottom.setDuration(1000);
                 obottom.start();
                 obottom.addListener(listen);
-                
-                fieldLayout.removeView(srcSector);
+
                 fieldLayout.removeView(destSector);
                 
                 fieldView[move.getSrc().getY()][move.getSrc().getX()] = newSrcSector;
@@ -159,6 +249,33 @@ public class GameBoardView {
         sector.setLayoutParams(params);
         sector.setAdjustViewBounds(false);
 
+        setBitMapForImageView(sector, color, params.width);
+
+        return sector;
+    }
+
+    private ImageView createSectorInPiecesSpace(Options.Color color, int margin) {
+
+        final ImageView sector = new ImageView(c);
+        FrameLayout.LayoutParams params;
+        int width = c.screenWidth / GameBoard.LENGTH;
+        int height = c.screenWidth / GameBoard.LENGTH;
+        if(color.equals(Options.Color.BLACK)) {
+            params = new FrameLayout.LayoutParams(width, height, Gravity.RIGHT);
+            params.setMargins(0, 0, margin, 0);
+        }else{
+            params = new FrameLayout.LayoutParams(width, height, Gravity.LEFT);
+            params.setMargins(margin, 0, 0, 0);
+        }
+        sector.setLayoutParams(params);
+        sector.setAdjustViewBounds(false);
+
+        setBitMapForImageView(sector, color, width);
+
+        return sector;
+    }
+
+    private void setBitMapForImageView(ImageView imageView, Options.Color color, int size){
         Bitmap bmp = null;
         if (color.equals(Options.Color.BLACK)) {
             bmp = BitmapFactory.decodeResource(c.getResources(), R.drawable.piece_black);
@@ -175,10 +292,9 @@ public class GameBoardView {
             c.finish();
         }
         float scaleFactor = 1.16f;    //used to fine tune the size of the pieces
-        bmp = Bitmap.createScaledBitmap(bmp, (int)(params.width * scaleFactor), (int)(params.width * scaleFactor), true);
-        sector.setImageBitmap(bmp);
-        sector.setScaleType(ImageView.ScaleType.CENTER);
-        return sector;
+        bmp = Bitmap.createScaledBitmap(bmp, (int)(size * scaleFactor), (int)(size * scaleFactor), true);
+        imageView.setImageBitmap(bmp);
+        imageView.setScaleType(ImageView.ScaleType.CENTER);
     }
     
     void paintMill(final Position[] mill, final ImageView[] millSectors) throws InterruptedException{

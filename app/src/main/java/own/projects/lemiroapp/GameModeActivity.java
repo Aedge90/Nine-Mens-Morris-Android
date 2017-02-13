@@ -353,7 +353,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
             state = State.SET;
             // wait for human to set
             waitforSelection();
-            fieldView.setPos(currMove.getDest(), human.getColor());
+            fieldView.makeSetMove(currMove, human.getColor());
             fieldView.getPos(currMove.getDest()).setOnClickListener(new OnFieldClickListener(currMove.getDest()));
             newPosition = currMove.getDest();
         }
@@ -414,7 +414,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
 
             //setTextinUIThread(progressText, "Bot is moving!");
 
-            fieldView.setPos(currMove.getDest(), bot.getColor());
+            fieldView.makeSetMove(currMove, bot.getColor());
             fieldView.getPos(currMove.getDest()).setOnClickListener(
                     new OnFieldClickListener(currMove.getDest()));
             newPosition = currMove.getDest();
