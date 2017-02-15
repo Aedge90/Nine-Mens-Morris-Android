@@ -30,21 +30,22 @@
 
     </LinearLayout>
 
-    <GridLayout
-        android:id="@+id/field"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:columnCount="7"
-        android:rowCount="7"
-        android:rowOrderPreserved="true" 
-        android:columnOrderPreserved="true" >
-    </GridLayout>
-
     <FrameLayout
         android:id="@+id/player_pieces_space"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal">
+
+        <GridLayout
+            android:id="@+id/field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="7"
+            android:rowCount="7"
+            android:rowOrderPreserved="true"
+            android:columnOrderPreserved="true" >
+        </GridLayout>
+
     </FrameLayout>
 
 </LinearLayout>

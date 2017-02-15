@@ -72,17 +72,15 @@ public class GameBoardView {
             piecesSpaceLayout.addView(piecesSpaceViewsWhite.peek());
         }
 
-        //TODO check why its not working on api 14 and api 16 (and probably other low api versions)
-
-        //disable clipping so that we can animate views from one layout that move into another layout
-        ((LinearLayout)fieldLayout.getParent()).setClipChildren(false);
-        fieldLayout.setClipChildren(false);
-        piecesSpaceLayout.setClipChildren(false);
-
         // set witdh not to screenwidth so the gridlayout size matches its content size
         // this way the background image of the gridview will always be aligned independent of screen resolution
-        ((LinearLayout) fieldLayout.getParent()).updateViewLayout(fieldLayout,
-                new LinearLayout.LayoutParams(c.screenWidth - remainingPixels, c.screenWidth - remainingPixels));
+        ((FrameLayout) fieldLayout.getParent()).updateViewLayout(fieldLayout,
+                new FrameLayout.LayoutParams(c.screenWidth - remainingPixels, c.screenWidth - remainingPixels));
+
+        // piecesSpaceLayout contains the fieldlayout. This way we dont ned setClipChildren on the Parent View, as the animated pieces
+        // never leave the piecesSpaceLayout. Here we make sure that there is extra space below the gameboard for the pieces
+        ((LinearLayout) piecesSpaceLayout.getParent()).updateViewLayout(piecesSpaceLayout,
+                new LinearLayout.LayoutParams(c.screenWidth - remainingPixels, c.screenWidth - remainingPixels + c.screenWidth/GameBoard.LENGTH));
     }
     
     public ImageView getPos(Position pos){
@@ -145,9 +143,9 @@ public class GameBoardView {
                 //relation to the parent layout of the anim sector, which is another one than the parent layout of the dest sector
                 //so we have to do that so the coordinates are also relative to the animSector (negative, so piece moves somewhere upwards)
                 ObjectAnimator oleft = ObjectAnimator.ofInt(animSector, "left", animSector.getLeft(), destSector.getLeft());
-                ObjectAnimator otop = ObjectAnimator.ofInt(animSector, "top", animSector.getTop(), destSector.getTop() - fieldLayout.getHeight());
+                ObjectAnimator otop = ObjectAnimator.ofInt(animSector, "top", animSector.getTop(), destSector.getTop());
                 ObjectAnimator oright = ObjectAnimator.ofInt(animSector, "right", animSector.getRight(), destSector.getRight());
-                ObjectAnimator obottom = ObjectAnimator.ofInt(animSector, "bottom",animSector.getBottom(),destSector.getBottom() - fieldLayout.getHeight());
+                ObjectAnimator obottom = ObjectAnimator.ofInt(animSector, "bottom",animSector.getBottom(),destSector.getBottom());
                 AnimatorListener listen = new AnimatorListener(){
 
                     @Override
@@ -267,10 +265,10 @@ public class GameBoardView {
         int width = c.screenWidth / GameBoard.LENGTH;
         int height = c.screenWidth / GameBoard.LENGTH;
         if(color.equals(Options.Color.BLACK)) {
-            params = new FrameLayout.LayoutParams(width, height, Gravity.RIGHT);
+            params = new FrameLayout.LayoutParams(width, height, Gravity.RIGHT | Gravity.BOTTOM);
             params.setMargins(0, 0, margin, 0);
         }else{
-            params = new FrameLayout.LayoutParams(width, height, Gravity.LEFT);
+            params = new FrameLayout.LayoutParams(width, height, Gravity.LEFT | Gravity.BOTTOM);
             params.setMargins(margin, 0, 0, 0);
         }
         sector.setLayoutParams(params);
