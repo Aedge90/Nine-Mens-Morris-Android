@@ -62,11 +62,17 @@ public class GameBoardView {
         piecesSpaceViewsWhite = new LinkedList<>();
         piecesSpaceLayout = (FrameLayout) c.findViewById(R.id.player_pieces_space);
         for(int i = 0; i < setCount; i++) {
+
+            //TODO make sure that the piece the player is moving is drawn on top of the other
+            // so we dont have pieces moving underneath other pieces while juming or setting
+
             piecesSpaceViewsBlack.push(createSectorInPiecesSpace(Options.Color.BLACK, i * ((c.screenWidth-(c.screenWidth/GameBoard.LENGTH))/2)/setCount));
             piecesSpaceViewsWhite.push(createSectorInPiecesSpace(Options.Color.WHITE, i * ((c.screenWidth-(c.screenWidth/GameBoard.LENGTH))/2)/setCount));
             piecesSpaceLayout.addView(piecesSpaceViewsBlack.peek());
             piecesSpaceLayout.addView(piecesSpaceViewsWhite.peek());
         }
+
+        //TODO check why its not working on api 14 and api 16 (and probably other low api versions)
 
         //disable clipping so that we can animate views from one layout that move into another layout
         ((LinearLayout)fieldLayout.getParent()).setClipChildren(false);

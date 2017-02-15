@@ -398,8 +398,6 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
         if(bot.getSetCount() <= 0){
             currMove = brain.computeMove();
 
-            //setTextinUIThread(progressText, "Bot is moving!");
-
             fieldView.makeMove(currMove, bot.getColor());
             fieldView.getPos(currMove.getSrc()).setOnClickListener(
                     new OnFieldClickListener(currMove.getSrc()));
@@ -408,11 +406,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
             newPosition = currMove.getDest();
         }else{
 
-            //TODO animate setting moves
-
             currMove = brain.computeMove();
-
-            //setTextinUIThread(progressText, "Bot is moving!");
 
             fieldView.makeSetMove(currMove, bot.getColor());
             fieldView.getPos(currMove.getDest()).setOnClickListener(
