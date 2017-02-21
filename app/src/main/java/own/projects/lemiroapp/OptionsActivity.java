@@ -167,7 +167,8 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
 
                 if(pos == 0){
-                    // no difficulty for human player
+                    // no difficulty for human player. Set difficulty to null if human is reselected
+                    player.setDifficulty(null);
                     return;
                 }else {
                     // -1 offset because first entry is the human player
