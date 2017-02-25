@@ -62,17 +62,14 @@ public class GameBoardView {
         piecesSpaceViewsWhite = new LinkedList<>();
         piecesSpaceLayout = (FrameLayout) c.findViewById(R.id.player_pieces_space);
         for(int i = 0; i < setCount; i++) {
-
-            //TODO make sure that the piece the player is moving is drawn on top of the other
-            // so we dont have pieces moving underneath other pieces while juming or setting
-
             piecesSpaceViewsBlack.push(createSectorInPiecesSpace(Options.Color.BLACK, i * ((c.screenWidth-(c.screenWidth/GameBoard.LENGTH))/2)/setCount));
             piecesSpaceViewsWhite.push(createSectorInPiecesSpace(Options.Color.WHITE, i * ((c.screenWidth-(c.screenWidth/GameBoard.LENGTH))/2)/setCount));
+            //adding the views in this order ensures there is no piece hidden by another one while setting
             piecesSpaceLayout.addView(piecesSpaceViewsBlack.peek());
             piecesSpaceLayout.addView(piecesSpaceViewsWhite.peek());
         }
 
-        // set witdh not to screenwidth so the gridlayout size matches its content size
+        // set width not to screenwidth so the gridlayout size matches its content size
         // this way the background image of the gridview will always be aligned independent of screen resolution
         ((FrameLayout) fieldLayout.getParent()).updateViewLayout(fieldLayout,
                 new FrameLayout.LayoutParams(c.screenWidth - remainingPixels, c.screenWidth - remainingPixels));
@@ -136,6 +133,8 @@ public class GameBoardView {
                     animSector = piecesSpaceViewsWhite.pop();
                 }
 
+                animSector.bringToFront();
+
                 final ImageView destSector = fieldView[move.getDest().getY()][move.getDest().getX()];
                 final ImageView newDestSector = createSector(color, move.getDest().getX(), move.getDest().getY());
 
@@ -193,6 +192,10 @@ public class GameBoardView {
             public void run() {
 
                 final ImageView animSector = fieldView[move.getSrc().getY()][move.getSrc().getX()];
+
+                //while jumping this is important so the moving pieces does not move underneath the others
+                animSector.bringToFront();
+
                 final ImageView destSector = fieldView[move.getDest().getY()][move.getDest().getX()];
                 
                 final ImageView newSrcSector = createSector(Options.Color.NOTHING, move.getSrc().getX(), move.getSrc().getY());
