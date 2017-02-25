@@ -137,10 +137,7 @@ public class GameBoardView {
 
                 final ImageView destSector = fieldView[move.getDest().getY()][move.getDest().getX()];
                 final ImageView newDestSector = createSector(color, move.getDest().getX(), move.getDest().getY());
-
-                //in y-direction we subtract the height of the layout of the field. That is because the vector is calculated in
-                //relation to the parent layout of the anim sector, which is another one than the parent layout of the dest sector
-                //so we have to do that so the coordinates are also relative to the animSector (negative, so piece moves somewhere upwards)
+                
                 ObjectAnimator oleft = ObjectAnimator.ofInt(animSector, "left", animSector.getLeft(), destSector.getLeft());
                 ObjectAnimator otop = ObjectAnimator.ofInt(animSector, "top", animSector.getTop(), destSector.getTop());
                 ObjectAnimator oright = ObjectAnimator.ofInt(animSector, "right", animSector.getRight(), destSector.getRight());
