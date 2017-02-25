@@ -121,6 +121,28 @@ public class GameBoardView {
         lock.unlock();
     }
 
+    public void runMoveAnimation (ImageView animSector, ImageView destSector, AnimatorListener listen) {
+
+        //while jumping this is important so the moving pieces does not move underneath the others
+        animSector.bringToFront();
+
+        ObjectAnimator oleft = ObjectAnimator.ofInt(animSector, "left", animSector.getLeft(), destSector.getLeft());
+        ObjectAnimator otop = ObjectAnimator.ofInt(animSector, "top", animSector.getTop(), destSector.getTop());
+        ObjectAnimator oright = ObjectAnimator.ofInt(animSector, "right", animSector.getRight(), destSector.getRight());
+        ObjectAnimator obottom = ObjectAnimator.ofInt(animSector, "bottom",animSector.getBottom(),destSector.getBottom());
+
+        oleft.setDuration(1000);
+        oleft.start();
+        oright.setDuration(1000);
+        oright.start();
+        otop.setDuration(1000);
+        otop.start();
+        obottom.setDuration(1000);
+        obottom.start();
+        obottom.addListener(listen);
+
+    }
+
     public void makeSetMove(final Move move, final Options.Color color) throws InterruptedException {
 
         c.runOnUiThread(new Runnable() {
@@ -132,16 +154,9 @@ public class GameBoardView {
                 }else{
                     animSector = piecesSpaceViewsWhite.pop();
                 }
-
-                animSector.bringToFront();
-
                 final ImageView destSector = fieldView[move.getDest().getY()][move.getDest().getX()];
                 final ImageView newDestSector = createSector(color, move.getDest().getX(), move.getDest().getY());
-                
-                ObjectAnimator oleft = ObjectAnimator.ofInt(animSector, "left", animSector.getLeft(), destSector.getLeft());
-                ObjectAnimator otop = ObjectAnimator.ofInt(animSector, "top", animSector.getTop(), destSector.getTop());
-                ObjectAnimator oright = ObjectAnimator.ofInt(animSector, "right", animSector.getRight(), destSector.getRight());
-                ObjectAnimator obottom = ObjectAnimator.ofInt(animSector, "bottom",animSector.getBottom(),destSector.getBottom());
+
                 AnimatorListener listen = new AnimatorListener(){
 
                     @Override
@@ -161,15 +176,8 @@ public class GameBoardView {
                     public void onAnimationStart(Animator animation) {}
 
                 };
-                oleft.setDuration(1000);
-                oleft.start();
-                oright.setDuration(1000);
-                oright.start();
-                otop.setDuration(1000);
-                otop.start();
-                obottom.setDuration(1000);
-                obottom.start();
-                obottom.addListener(listen);
+
+                runMoveAnimation(animSector, destSector, listen);
 
                 fieldLayout.removeView(destSector);
 
@@ -189,19 +197,10 @@ public class GameBoardView {
             public void run() {
 
                 final ImageView animSector = fieldView[move.getSrc().getY()][move.getSrc().getX()];
-
-                //while jumping this is important so the moving pieces does not move underneath the others
-                animSector.bringToFront();
-
                 final ImageView destSector = fieldView[move.getDest().getY()][move.getDest().getX()];
-                
                 final ImageView newSrcSector = createSector(Options.Color.NOTHING, move.getSrc().getX(), move.getSrc().getY());
                 final ImageView newDestSector = createSector(color, move.getDest().getX(), move.getDest().getY());
-                
-                ObjectAnimator oleft = ObjectAnimator.ofInt(animSector, "left", animSector.getLeft(), destSector.getLeft());
-                ObjectAnimator otop = ObjectAnimator.ofInt(animSector, "top", animSector.getTop(), destSector.getTop());
-                ObjectAnimator oright = ObjectAnimator.ofInt(animSector, "right", animSector.getRight(), destSector.getRight());
-                ObjectAnimator obottom = ObjectAnimator.ofInt(animSector, "bottom", animSector.getBottom(), destSector.getBottom());
+
                 AnimatorListener listen = new AnimatorListener(){
         
                     @Override
@@ -222,15 +221,8 @@ public class GameBoardView {
                     public void onAnimationStart(Animator animation) {}
                     
                 };
-                oleft.setDuration(1000);
-                oleft.start();
-                oright.setDuration(1000);
-                oright.start();
-                otop.setDuration(1000);
-                otop.start();
-                obottom.setDuration(1000);
-                obottom.start();
-                obottom.addListener(listen);
+
+                runMoveAnimation(animSector, destSector, listen);
 
                 fieldLayout.removeView(destSector);
                 
