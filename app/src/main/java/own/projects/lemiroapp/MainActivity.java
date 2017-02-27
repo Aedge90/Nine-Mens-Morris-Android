@@ -3,14 +3,12 @@ package own.projects.lemiroapp;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Point;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 
 public class MainActivity extends Activity {
@@ -18,12 +16,9 @@ public class MainActivity extends Activity {
     private final static int RUN_GAME = 67;
     private final static int SET_OPTIONS = 100;
     
-    private int screenWidth;
     private final MainActivity THIS = this;
     
     private Options options;
-
-    private LayoutInflater vi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,12 +26,9 @@ public class MainActivity extends Activity {
         
         options = new Options();
 
-        vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        screenWidth = size.x;
 
         setContentView(R.layout.activity_main);
         
@@ -61,10 +53,10 @@ public class MainActivity extends Activity {
                 
                 Log.i("MainActivity", "Starting new Game with Options:\n" + options);
 
-                Intent appvsbotIntent = new Intent(THIS, GameModeActivity.class);
-                appvsbotIntent.setExtrasClassLoader(Options.class.getClassLoader());
-                appvsbotIntent.putExtra("own.projects.lemiroapp.Options", options);
-                startActivityForResult(appvsbotIntent, RUN_GAME);
+                Intent gameModeIntent = new Intent(THIS, GameModeActivity.class);
+                gameModeIntent.setExtrasClassLoader(Options.class.getClassLoader());
+                gameModeIntent.putExtra("own.projects.lemiroapp.Options", options);
+                startActivityForResult(gameModeIntent, RUN_GAME);
                 
             }else {
                 finish();
