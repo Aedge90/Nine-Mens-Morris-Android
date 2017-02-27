@@ -61,7 +61,7 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
         
         setContentView(R.layout.options_layout);
         this.options = getIntent().getParcelableExtra("own.projects.lemiroapp.Options");
-        
+
         setMillVariant();
         setPlayerDifficultyFor(options.playerWhite);
         setPlayerDifficultyFor(options.playerBlack);
@@ -132,13 +132,12 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
     private void setPlayerDifficultyFor(final Player player) {
         
         final ArrayAdapter<String> items = new ArrayAdapter<String>(this, R.layout.spinner_item);
-        items.add("Human Player");
-
         for(Options.Difficulties diff : Options.Difficulties.values()){
             String difficulty = "" + diff;
             difficulty = difficulty.toUpperCase().charAt(0) + difficulty.substring(1).toLowerCase();
             items.add(difficulty + " Bot");
         }
+        items.add("Human Player");
 
         Spinner spinner = null;
         if(player.getColor().equals(Options.Color.WHITE)) {
@@ -150,18 +149,23 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
         }
 
         spinner.setAdapter(items);
+        //set current selection to previously chosen value (or the initial value)
+        if(player.getDifficulty() == null){
+            spinner.setSelection(Options.Difficulties.values().length);
+        }else {
+            spinner.setSelection(Options.Difficulties.valueOf(player.getDifficulty().name()).ordinal());
+        }
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
 
-                if(pos == 0){
+                if(pos == Options.Difficulties.values().length){
                     // no difficulty for human player. Set difficulty to null if human is reselected
                     player.setDifficulty(null);
                     return;
                 }else {
-                    // -1 offset because first entry is the human player
-                    player.setDifficulty(Options.Difficulties.values()[pos - 1]);
+                    player.setDifficulty(Options.Difficulties.values()[pos]);
                 }
             }
 
@@ -171,9 +175,6 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
             }
             
         });
-
-        spinner.setClickable(true);
-        spinner.setEnabled(true);
         
     }
 

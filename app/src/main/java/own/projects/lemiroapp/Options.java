@@ -25,7 +25,7 @@ public class Options implements Parcelable {
 		this.millVariant = MillVariant.MILL9;
 		this.whoStarts = Color.WHITE;
 		this.playerWhite = new Player(Options.Color.WHITE);
-		this.playerBlack = new Player(Options.Color.BLACK);;
+		this.playerBlack = new Player(Options.Color.BLACK);
 	}
 	
 	public Options(Parcel in) {
