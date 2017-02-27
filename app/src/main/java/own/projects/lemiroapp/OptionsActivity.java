@@ -187,20 +187,13 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
         whoStartsSpinner = (Spinner) findViewById(R.id.whoStartsSpinner);
 
         whoStartsSpinner.setAdapter(items);
+        //set current selection to previously chosen value (or the initial value)
+        whoStartsSpinner.setSelection(Options.Color.valueOf(options.whoStarts.name()).ordinal());
         whoStartsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                if(pos == 0){
-                    options.whoStarts = Options.Color.WHITE;
-                }else if(pos == 1){
-                    options.whoStarts = Options.Color.BLACK;
-                }else{
-                    Log.e("Options", "setWhoStarts Failed");
-                    setResult(Activity.RESULT_CANCELED);
-                    finish();
-                }
-                //enableOKButtonIfReady(5);
+                options.whoStarts = Options.Color.values()[pos];
             }
 
             @Override
