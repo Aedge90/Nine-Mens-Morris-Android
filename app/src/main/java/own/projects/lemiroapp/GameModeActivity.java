@@ -280,7 +280,6 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
 
     private void showQuitAlertDialog(){
         new AlertDialog.Builder(THIS)
-        .setCancelable(false)
         .setTitle("Quit?")
         .setMessage("Do you really want to Quit?")
         .setPositiveButton("Yes",
