@@ -60,8 +60,8 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
         super.onCreate(savedInstanceState);
         
         setContentView(R.layout.options_layout);
-        this.options = new Options();
-
+        this.options = getIntent().getParcelableExtra("own.projects.lemiroapp.Options");
+        
         setMillVariant();
         setPlayerDifficultyFor(options.playerWhite);
         setPlayerDifficultyFor(options.playerBlack);
@@ -106,35 +106,24 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
     private void setMillVariant() {
         
         final ItemsAdapter items = new ItemsAdapter(this, R.layout.spinner_item);
-        items.add("Nine Mens Morris", R.drawable.gameboard9);
-        items.add("Seven Mens Morris", R.drawable.gameboard7);
-        items.add("Five Mens Morris", R.drawable.gameboard5);
-        
+        items.add("Five Men's Morris", R.drawable.gameboard5);
+        items.add("Seven Men's Morris", R.drawable.gameboard7);
+        items.add("Nine Men's Morris", R.drawable.gameboard9);
+
         millModeSpinner = (Spinner) findViewById(R.id.millModeSpinner);
         
         millModeSpinner.setAdapter(items);
+        //set current selection to previously chosen value (or the initial value)
+        millModeSpinner.setSelection(Options.MillVariant.valueOf(options.millVariant.name()).ordinal());
         millModeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                if(pos == 0){
-                    options.millVariant = Options.MillVariant.MILL9;
-                }else if(pos == 1){
-                    options.millVariant = Options.MillVariant.MILL7;
-                }else if(pos == 2){
-                    options.millVariant = Options.MillVariant.MILL5;
-                }else{
-                    Log.e("Options", "setMillVariant Failed");
-                    setResult(Activity.RESULT_CANCELED);
-                    finish();
-                }
-                //enableOKButtonIfReady(1);
+                options.millVariant = Options.MillVariant.values()[pos];
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                
-            }
+            public void onNothingSelected(AdapterView<?> parent) {}
             
         });
 

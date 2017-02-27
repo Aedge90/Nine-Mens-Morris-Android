@@ -23,7 +23,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         options = new Options();
 
         Display display = getWindowManager().getDefaultDisplay();
@@ -31,10 +31,15 @@ public class MainActivity extends Activity {
         display.getSize(size);
 
         setContentView(R.layout.activity_main);
-        
-        Intent setOptionsIntent = new Intent(this, OptionsActivity.class);
-        startActivityForResult(setOptionsIntent, SET_OPTIONS);
 
+        startSetOptionsIntent();
+
+    }
+
+    private void startSetOptionsIntent () {
+        Intent setOptionsIntent = new Intent(this, OptionsActivity.class);
+        setOptionsIntent.putExtra("own.projects.lemiroapp.Options", options);
+        startActivityForResult(setOptionsIntent, SET_OPTIONS);
     }
 
     @Override
@@ -50,7 +55,7 @@ public class MainActivity extends Activity {
             if (resultCode == RESULT_OK) {
                 
                 options = data.getParcelableExtra("own.projects.lemiroapp.Options");
-                
+
                 Log.i("MainActivity", "Starting new Game with Options:\n" + options);
 
                 Intent gameModeIntent = new Intent(THIS, GameModeActivity.class);
@@ -65,8 +70,7 @@ public class MainActivity extends Activity {
             if(resultCode == RESULT_CANCELED){
                 finish();
             }else{
-                Intent setOptionsIntent = new Intent(THIS, OptionsActivity.class);
-                startActivityForResult(setOptionsIntent, SET_OPTIONS);
+                startSetOptionsIntent();
             }
         }
 
