@@ -1,4 +1,4 @@
-package own.projects.lemiroapp;
+package com.github.aedge90.nmm;
 
 import android.os.Bundle;
 import android.app.Activity;

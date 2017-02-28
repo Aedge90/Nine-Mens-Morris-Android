@@ -1,4 +1,4 @@
-package own.projects.lemiroapp;
+package com.github.aedge90.nmm;
 
 import org.junit.Before;
 import org.junit.Test;

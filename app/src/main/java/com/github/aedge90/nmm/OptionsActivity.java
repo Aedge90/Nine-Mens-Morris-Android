@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package own.projects.lemiroapp;
+package com.github.aedge90.nmm;
 
 import java.util.ArrayList;
-import android.R.layout;
-import android.app.Activity;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -27,7 +26,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;

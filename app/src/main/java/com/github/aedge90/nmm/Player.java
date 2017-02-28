@@ -1,6 +1,4 @@
-package own.projects.lemiroapp;
-
-import android.graphics.Path;
+package com.github.aedge90.nmm;
 
 import java.io.Serializable;
 

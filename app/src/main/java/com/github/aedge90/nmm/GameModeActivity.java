@@ -1,4 +1,4 @@
-package own.projects.lemiroapp;
+package com.github.aedge90.nmm;
 
 import android.view.View;
 import android.widget.Toast;
@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.Menu;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
