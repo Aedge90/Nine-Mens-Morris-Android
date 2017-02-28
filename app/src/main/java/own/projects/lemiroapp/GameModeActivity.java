@@ -219,13 +219,6 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
         return new Thread(game);
 
     }
-    
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.activity_main, menu);
-        return true;
-    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
