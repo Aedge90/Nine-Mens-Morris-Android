@@ -46,7 +46,6 @@ public class Strategy {
         StrategyRunnable.resultEvaluation = Integer.MIN_VALUE;
         for (int i = 0; i < nThreads; i++) {
             threads[i] = new Thread(runnables[i]);
-            Log.i("Strategy", "thread " + i + "started");
             threads[i].start();
         }
         for (int i = 0; i < nThreads; i++){
