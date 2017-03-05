@@ -231,7 +231,9 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
             LinearLayout layout = new LinearLayout(context);
             layout.setGravity(Gravity.CENTER_VERTICAL);
             layout.setOrientation(LinearLayout.HORIZONTAL);
-            layout.setPadding(10, 10, 10, 10);
+
+            int padding = (int) getResources().getDimension(R.dimen.padding_spinner_item);
+            layout.setPadding(padding, padding, padding, padding);
 
             LinearLayout.LayoutParams margin = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,

@@ -4,5 +4,5 @@
     android:layout_height="wrap_content"
     android:textSize="@dimen/text_size_spinner_item"
     android:gravity="left"
-    android:padding="10dp"
+    android:padding="@dimen/padding_spinner_item"
 />

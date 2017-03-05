@@ -3,4 +3,5 @@
    <dimen name="text_size">26sp</dimen>
    <dimen name="text_size_spinner_item">21sp</dimen>
    <dimen name="margin_size">13dp</dimen>
+   <dimen name="padding_spinner_item">4dp</dimen>
 </resources>
