@@ -198,7 +198,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
                             break;
                         }
                         if(field.getState(currPlayer).equals(GameBoard.GameState.REMIS)
-                                && field.getRemisCount() % 10 == 0){    //only ask every 10 moves if there was a remis
+                                && field.getRemisCount() % 20 == 0){    //only ask every 20 moves if there was a remis
                             showRemisMsg();
                             waitforSelection();
                         }
