@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">N Men\'s Morris</string>
+    <string name="black">Schwarz</string>
+    <string name="black_turn">Schwarz ist am Zug!</string>
+    <string name="bots_turn">Der Bot ist am Zug!</string>
+    <string name="clicking_in_botvsbot">Beide Spieler sind Bots!</string>
+    <string name="no">Nein</string>
+    <string name="remis_message">Remis! Seit %1$d Zügen konnte kein Spieler eine Mühle schließen. Weiterspielen?</string>
+    <string name="select_millVariant">Mühle-Variante:</string>
+    <string name="select_player_black">Spieler Schwarz:</string>
+    <string name="select_player_white">Spieler Weiß:</string>
+    <string name="select_whoStarts">Wer fängt an?</string>
+    <string name="start_game">Spiel starten!</string>
+    <string name="start_new_game">Neues Spiel Starten</string>
+    <string name="want_to_start_new_game">Möchtest du ein neues Spiel starten?</string>
+    <string name="white">Weiß</string>
+    <string name="white_turn">Weiß ist am Zug!</string>
+    <string name="yes">Ja</string>
+    <string name="your_turn">Du bist am Zug!</string>
+    <string name="five_mens_morris">5er-Mühle</string>
+    <string name="nine_mens_morris">9er-Mühle</string>
+    <string name="seven_mens_morris">7er-Mühle</string>
+    <string name="want_to_quit">Möchtest du das Spiel wirklich beenden?</string>
+    <string name="quit_game">Spiel Beenden</string>
+    <string name="options">Optionen</string>
+    <string name="what_do">Was möchtest du tun?</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="easy_bot">Bot (Einfach)</string>
+    <string name="normal_bot">Bot (Normal)</string>
+    <string name="hard_bot">Bot (Schwer)</string>
+    <string name="harder_bot">Bot (Schwerer)</string>
+    <string name="hardest_bot">Bot (Am Schwersten)</string>
+    <string name="human_player">Mensch</string>
+</resources>

@@ -2,13 +2,9 @@
 <resources>
 
     <string name="app_name">N Men\'s Morris</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="menu_settings">Settings</string>
-    <string name="ok">OK</string>
+    <string name="ok" translatable="false">OK</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="app_unusable">Application can not be used</string>
-    <string name="choose_connection">Choose Connection</string>
     <string name="your_turn">It\'s your turn!</string>
     <string name="bots_turn">It\'s the Bot\'s turn!</string>
     <string name="white_turn">It\'s White\'s turn!</string>
@@ -18,12 +14,26 @@
     <string name="select_player_white">Select Player White:</string>
     <string name="select_whoStarts">Who Starts?</string>
     <string name="clicking_in_botvsbot">Both Players are Bots!</string>
-    <string name="remis_title">Remis</string>
+    <string name="remis_title" translatable="false">Remis</string>
     <string name="remis_message">Remis! No Player could close a mill since %1$d moves. Do you want to continue?</string>
     <string name="start_new_game">Start New Game</string>
     <string name="start_game">Start Game!</string>
     <string name="want_to_start_new_game">Do you want to start a new Game?</string>
     <string name="black">Black</string>
     <string name="white">White</string>
+    <string name="five_mens_morris">Five Men\'s Morris</string>
+    <string name="seven_mens_morris">Seven Men\'s Morris</string>
+    <string name="nine_mens_morris">Nine Men\'s Morris</string>
+    <string name="want_to_quit">Do you really want to quit?</string>
+    <string name="quit_game">Quit Game</string>
+    <string name="options">Options</string>
+    <string name="what_do">What do you want to do?</string>
+    <string name="cancel">Cancel</string>
+    <string name="easy_bot">Easy Bot</string>
+    <string name="normal_bot">Normal Bot</string>
+    <string name="hard_bot">Hard Bot</string>
+    <string name="harder_bot">Harder Bot</string>
+    <string name="hardest_bot">Hardest Bot</string>
+    <string name="human_player">Human Player</string>
 
 </resources>
