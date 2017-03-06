@@ -83,15 +83,15 @@ public class MainActivity extends Activity {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
             new AlertDialog.Builder(THIS)
                     .setIcon(android.R.drawable.ic_dialog_info)
-                    .setTitle("Quit")
-                    .setMessage("Do you really want to quit?")
-                    .setPositiveButton("YES",
+                    .setTitle(getResources().getString(R.string.quit_game))
+                    .setMessage(getResources().getString(R.string.want_to_quit))
+                    .setPositiveButton(getResources().getString(R.string.yes),
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog,
                                         int id) {
                                     quit();
                                 }
-                            }).setNegativeButton("NO", null).show();
+                            }).setNegativeButton(getResources().getString(R.string.no), null).show();
             return true;
         }
         return super.onKeyDown(keyCode, event);

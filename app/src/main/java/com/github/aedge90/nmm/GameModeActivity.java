@@ -225,15 +225,15 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
         if(keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
             new AlertDialog.Builder(THIS)
             .setIcon(android.R.drawable.ic_dialog_info)
-            .setTitle("Options")
-            .setMessage("What do you want to do?")
-            .setPositiveButton("Quit", new DialogInterface.OnClickListener() {
+            .setTitle(getResources().getString(R.string.options))
+            .setMessage(getResources().getString(R.string.what_do))
+            .setPositiveButton(getResources().getString(R.string.quit_game), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     showQuitAlertDialog();
                 }
             })
-            .setNegativeButton("Cancel", null)
-            .setNeutralButton("New Game", new DialogInterface.OnClickListener() {
+            .setNegativeButton(getResources().getString(R.string.cancel), null)
+            .setNeutralButton(getResources().getString(R.string.start_new_game), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     showNewGameAlertDialog(false);
                 }
@@ -272,9 +272,9 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
 
     private void showQuitAlertDialog(){
         new AlertDialog.Builder(THIS)
-        .setTitle("Quit?")
-        .setMessage("Do you really want to Quit?")
-        .setPositiveButton("Yes",
+        .setTitle(getResources().getString(R.string.quit_game))
+        .setMessage(getResources().getString(R.string.want_to_quit))
+        .setPositiveButton(getResources().getString(R.string.yes),
             new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog,  int whichButton) {
                     setResult(RESULT_CANCELED);

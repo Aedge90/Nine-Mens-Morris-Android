@@ -86,16 +86,15 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
         if(keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
             new AlertDialog.Builder(THIS)
             .setIcon(android.R.drawable.ic_dialog_info)
-            .setTitle("Quit?")
-            .setMessage("Do you want to quit?")
-            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog,
-                        int id) {
+            .setTitle(getResources().getString(R.string.quit_game))
+            .setMessage(getResources().getString(R.string.want_to_quit))
+            .setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
                     setResult(RESULT_CANCELED);
                     finish();
                 }
             })
-            .setNegativeButton("No", null)            
+            .setNegativeButton(getResources().getString(R.string.no), null)
             .show();
         }
         return super.onKeyDown(keyCode, event);
@@ -104,9 +103,9 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
     private void setMillVariant() {
         
         final ItemsAdapter items = new ItemsAdapter(this, R.layout.spinner_item);
-        items.add("Five Men's Morris", R.drawable.gameboard5);
-        items.add("Seven Men's Morris", R.drawable.gameboard7);
-        items.add("Nine Men's Morris", R.drawable.gameboard9);
+        items.add(getResources().getString(R.string.five_mens_morris), R.drawable.gameboard5);
+        items.add(getResources().getString(R.string.seven_mens_morris), R.drawable.gameboard7);
+        items.add(getResources().getString(R.string.nine_mens_morris), R.drawable.gameboard9);
 
         millModeSpinner = (Spinner) findViewById(R.id.millModeSpinner);
         
@@ -130,12 +129,12 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
     private void setPlayerDifficultyFor(final Player player) {
         
         final ArrayAdapter<String> items = new ArrayAdapter<String>(this, R.layout.spinner_item);
-        for(Options.Difficulties diff : Options.Difficulties.values()){
-            String difficulty = "" + diff;
-            difficulty = difficulty.toUpperCase().charAt(0) + difficulty.substring(1).toLowerCase();
-            items.add(difficulty + " Bot");
-        }
-        items.add("Human Player");
+        items.add(getResources().getString(R.string.easy_bot));
+        items.add(getResources().getString(R.string.normal_bot));
+        items.add(getResources().getString(R.string.hard_bot));
+        items.add(getResources().getString(R.string.harder_bot));
+        items.add(getResources().getString(R.string.hardest_bot));
+        items.add(getResources().getString(R.string.human_player));
 
         Spinner spinner = null;
         if(player.getColor().equals(Options.Color.WHITE)) {
@@ -179,8 +178,8 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
     private void setWhoStarts() {
         
         final ArrayAdapter<String> items = new ArrayAdapter<String>(this, R.layout.spinner_item);
-        items.add("White");
-        items.add("Black");
+        items.add(getResources().getString(R.string.white));
+        items.add(getResources().getString(R.string.black));
         
         whoStartsSpinner = (Spinner) findViewById(R.id.whoStartsSpinner);
 
