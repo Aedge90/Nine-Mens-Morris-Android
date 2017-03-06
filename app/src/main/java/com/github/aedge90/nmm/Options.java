@@ -48,8 +48,6 @@ public class Options implements Parcelable {
 
     /* everything below here is for implementing Parcelable */
 
-    //TODO make sure old values are restored on restart of activity
-
     // 99.9% of the time you can just ignore this
     public int describeContents() {
         return 0;
