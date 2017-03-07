@@ -345,14 +345,14 @@ public class StrategyRunnable implements Runnable{
         if(nPositions > 3){
             return startDepth;
         }else if(nPositions == 0){
-            return 1;
+            return Math.min(startDepth, 3);
         }else if (nPositions == 1){
             //4 is minimun, as otherwise high difficulty player will look dumb if they dont prevent mills
             return Math.min(startDepth, 4);
         }else if (nPositions == 2){
-            return Math.min(startDepth, 4);
-        }else if (nPositions == 3){
             return Math.min(startDepth, 5);
+        }else if (nPositions == 3){
+            return Math.min(startDepth, 6);
         }
         return startDepth;
     }
