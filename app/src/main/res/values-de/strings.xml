@@ -29,8 +29,10 @@
     <string name="human_player">Mensch</string>
     <string name="you_have_won">Du hast gewonnen!</string>
     <string name="has_won">hat gewonnen!</string>
-    <string name="no_moves">Der Gegner kann keinen Zug mehr machen!</string>
-    <string name="no_pieces">Der Gegner hat alle seine Steine verloren!</string>
+    <string name="no_moves_bot">Sein Gegner kann keinen Zug mehr machen!</string>
+    <string name="no_moves_human">Du kannst keinen Zug mehr machen!</string>
+    <string name="no_pieces_bot">Sein Gegner hat nur noch zwei Steine!</string>
+    <string name="no_pieces_human">Du hast nur noch zwei Steine!</string>
     <string name="show_gameboard">Spielfeld anzeigen</string>
     <string name="pos_occupied">Die Position ist besetzt!</string>
     <string name="nothing_to_move">Hier gibt es nichts zum Bewegen. Klicke auf einen von deinen Steinen!</string>

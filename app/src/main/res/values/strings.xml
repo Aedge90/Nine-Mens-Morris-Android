@@ -37,8 +37,8 @@
     <string name="HARDEST">Hardest</string>
     <string name="you_have_won">You have won!</string>
     <string name="has_won">has won!</string>
-    <string name="no_moves">The opponent can not make any further move!</string>
-    <string name="no_pieces">The opponent has lost all of his pieces!</string>
+    <string name="no_moves_bot">His opponent can not make any further move!</string>
+    <string name="no_pieces_bot">His opponent has only two pieces left!</string>
     <string name="show_gameboard">Show Gameboard</string>
     <string name="pos_occupied">This Position is occupied!</string>
     <string name="nothing_to_move">Nothing to move here. Click on one of your pieces!</string>
@@ -47,5 +47,6 @@
     <string name="nothing_to_kill">Nothing to kill here. Choose a piece from your opponent!</string>
     <string name="cannot_kill_mill">You can not kill a mill. Choose another target!</string>
     <string name="turn_of">Turn of</string>
-
+    <string name="no_moves_human">You can not make any further move!</string>
+    <string name="no_pieces_human">You only have two pieces left!</string>
 </resources>
