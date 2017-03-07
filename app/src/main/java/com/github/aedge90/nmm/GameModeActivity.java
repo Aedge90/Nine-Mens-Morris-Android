@@ -375,13 +375,13 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
             setTextinUIThread(progressText, R.string.bots_turn);
         }else{
             String localizedDifficulty = getString(getResources().getIdentifier(bot.getDifficulty().name(), "string", getPackageName()));
+            String s = getString(R.string.turn_of);
             if(bot.getColor().equals(Options.Color.BLACK)) {
-                String s = getString(R.string.black_turn) + "\n(" + localizedDifficulty + ")";
-                setTextinUIThread(progressText, s);
+                s += " " + getString(R.string.black) + " (" + localizedDifficulty + ")" ;
             }else{
-                String s = getString(R.string.white_turn) + "\n("  + localizedDifficulty + ")" ;
-                setTextinUIThread(progressText, s);
+                s += " " + getString(R.string.white) + " (" + localizedDifficulty + ")" ;
             }
+            setTextinUIThread(progressText, s);
         }
 
         Position newPosition = null;

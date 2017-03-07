@@ -46,5 +46,6 @@
     <string name="not_your_turn">It is not your turn!</string>
     <string name="nothing_to_kill">Nothing to kill here. Choose a piece from your opponent!</string>
     <string name="cannot_kill_mill">You can not kill a mill. Choose another target!</string>
+    <string name="turn_of">Turn of</string>
 
 </resources>

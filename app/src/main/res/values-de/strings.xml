@@ -43,4 +43,5 @@
     <string name="HARD">Schwer</string>
     <string name="HARDER">Schwerer</string>
     <string name="HARDEST">Sehr Schwer</string>
+    <string name="turn_of">Zug von</string>
 </resources>
