@@ -49,4 +49,5 @@
     <string name="turn_of">Turn of</string>
     <string name="no_moves_human">You can not make any further move!</string>
     <string name="no_pieces_human">You only have two pieces left!</string>
+    <string name="EASIEST">Easiest</string>
 </resources>

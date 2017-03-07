@@ -203,9 +203,9 @@ public class StrategyTestParameterized {
     public void computeMoveShouldCloseMillOnHighDifficulties() throws InterruptedException {
 
         //workaround to skip easier difficulties
-        if(mPlayer1.getDifficulty().equals(Options.Difficulties.EASY)
-                || mPlayer1.getDifficulty().equals(Options.Difficulties.NORMAL)
-                || mPlayer1.getDifficulty().equals(Options.Difficulties.HARD)){
+        if(mPlayer1.getDifficulty().equals(Options.Difficulties.EASIEST)
+                || mPlayer1.getDifficulty().equals(Options.Difficulties.EASY)
+                || mPlayer1.getDifficulty().equals(Options.Difficulties.NORMAL)){
             return;
         }
 
@@ -249,10 +249,10 @@ public class StrategyTestParameterized {
     @Test
     //in this scenario P1 makes a mistake, P2 should compute the perfect move, so that P1 cant prevent loosing
     //then P1 should at least try to prevent a mill, although he cant prevent that the P2 still can close
-    //his mill in another way. Is ok that P2 does not make the perfect move on EASY
+    //his mill in another way. Is ok that P2 does not make the perfect move on EASIEST
     public void computeMoveShouldTryToPreventLoosingEvenIfItsImpossible() throws InterruptedException {
 
-        if(mPlayer2.getDifficulty() == Options.Difficulties.EASY){
+        if(mPlayer2.getDifficulty() == Options.Difficulties.EASIEST){
             return;
         }
 
@@ -510,8 +510,8 @@ public class StrategyTestParameterized {
     public void computeMoveShouldPreventCornerMillOnGameStartOnHigherDifficulties() throws InterruptedException {
 
         //workaround to skip easier difficulties
-        if(mPlayer1.getDifficulty().equals(Options.Difficulties.EASY)
-                || mPlayer1.getDifficulty().equals(Options.Difficulties.NORMAL)){
+        if(mPlayer1.getDifficulty().equals(Options.Difficulties.EASIEST)
+                || mPlayer1.getDifficulty().equals(Options.Difficulties.EASY)){
             return;
         }
 
