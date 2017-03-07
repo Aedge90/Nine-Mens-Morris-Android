@@ -74,7 +74,7 @@ public class GameBoardView {
         ((FrameLayout) fieldLayout.getParent()).updateViewLayout(fieldLayout,
                 new FrameLayout.LayoutParams(c.screenWidth - remainingPixels, c.screenWidth - remainingPixels));
 
-        // piecesSpaceLayout contains the fieldlayout. This way we dont ned setClipChildren on the Parent View, as the animated pieces
+        // piecesSpaceLayout contains the fieldlayout. This way we dont need setClipChildren on the Parent View, as the animated pieces
         // never leave the piecesSpaceLayout. Here we make sure that there is extra space below the gameboard for the pieces
         ((LinearLayout) piecesSpaceLayout.getParent()).updateViewLayout(piecesSpaceLayout,
                 new LinearLayout.LayoutParams(c.screenWidth - remainingPixels, c.screenWidth - remainingPixels + c.screenWidth/GameBoard.LENGTH));

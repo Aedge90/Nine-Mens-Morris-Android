@@ -49,8 +49,6 @@ public class MainActivity extends Activity {
                 
                 options = data.getParcelableExtra("own.projects.lemiroapp.Options");
 
-                Log.i("MainActivity", "Starting new Game with Options:\n" + options);
-
                 Intent gameModeIntent = new Intent(THIS, GameModeActivity.class);
                 gameModeIntent.setExtrasClassLoader(Options.class.getClassLoader());
                 gameModeIntent.putExtra("own.projects.lemiroapp.Options", options);
