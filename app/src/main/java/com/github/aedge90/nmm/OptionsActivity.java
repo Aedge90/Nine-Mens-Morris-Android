@@ -129,11 +129,11 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
     private void setPlayerDifficultyFor(final Player player) {
         
         final ArrayAdapter<String> items = new ArrayAdapter<String>(this, R.layout.spinner_item);
-        items.add(getResources().getString(R.string.easy_bot));
-        items.add(getResources().getString(R.string.normal_bot));
-        items.add(getResources().getString(R.string.hard_bot));
-        items.add(getResources().getString(R.string.harder_bot));
-        items.add(getResources().getString(R.string.hardest_bot));
+        items.add("Bot (" + getString(getResources().getIdentifier(Options.Difficulties.EASY.name(), "string", getPackageName())) + ")");
+        items.add("Bot (" + getString(getResources().getIdentifier(Options.Difficulties.NORMAL.name(), "string", getPackageName())) + ")");
+        items.add("Bot (" + getString(getResources().getIdentifier(Options.Difficulties.HARD.name(), "string", getPackageName())) + ")");
+        items.add("Bot (" + getString(getResources().getIdentifier(Options.Difficulties.HARDER.name(), "string", getPackageName())) + ")");
+        items.add("Bot (" + getString(getResources().getIdentifier(Options.Difficulties.HARDEST.name(), "string", getPackageName())) + ")");
         items.add(getResources().getString(R.string.human_player));
 
         Spinner spinner = null;

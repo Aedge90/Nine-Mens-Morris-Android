@@ -371,18 +371,15 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
 
     void botTurn(Player bot, Strategy brain) throws InterruptedException{
 
-        String difficultyString = bot.getDifficulty().name();
-        difficultyString = difficultyString.toUpperCase().charAt(0) + difficultyString.substring(1).toLowerCase();
         if(bot.getOtherPlayer().getDifficulty() == null) {
             setTextinUIThread(progressText, R.string.bots_turn);
         }else{
+            String localizedDifficulty = getString(getResources().getIdentifier(bot.getDifficulty().name(), "string", getPackageName()));
             if(bot.getColor().equals(Options.Color.BLACK)) {
-                String s = getString(R.string.black_turn);
-                s = s.replace(getString(R.string.black), getString(R.string.black)+ " (" + difficultyString + ")" );
+                String s = getString(R.string.black_turn) + "\n(" + localizedDifficulty + ")";
                 setTextinUIThread(progressText, s);
             }else{
-                String s = getString(R.string.white_turn);
-                s = s.replace(getString(R.string.white), getString(R.string.white) + " (" + difficultyString + ")" );
+                String s = getString(R.string.white_turn) + "\n("  + localizedDifficulty + ")" ;
                 setTextinUIThread(progressText, s);
             }
         }

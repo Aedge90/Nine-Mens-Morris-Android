@@ -29,12 +29,12 @@
     <string name="options">Options</string>
     <string name="what_do">What do you want to do?</string>
     <string name="cancel">Cancel</string>
-    <string name="easy_bot">Easy Bot</string>
-    <string name="normal_bot">Normal Bot</string>
-    <string name="hard_bot">Hard Bot</string>
-    <string name="harder_bot">Harder Bot</string>
-    <string name="hardest_bot">Hardest Bot</string>
     <string name="human_player">Human Player</string>
+    <string name="EASY">Easy</string>
+    <string name="NORMAL">Normal</string>
+    <string name="HARD">Hard</string>
+    <string name="HARDER">Harder</string>
+    <string name="HARDEST">Hardest</string>
     <string name="you_have_won">You have won!</string>
     <string name="has_won">has won!</string>
     <string name="no_moves">The opponent can not make any further move!</string>

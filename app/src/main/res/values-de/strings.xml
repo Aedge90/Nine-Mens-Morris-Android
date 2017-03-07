@@ -26,11 +26,6 @@
     <string name="options">Optionen</string>
     <string name="what_do">Was möchtest du tun?</string>
     <string name="cancel">Abbrechen</string>
-    <string name="easy_bot">Bot (Einfach)</string>
-    <string name="normal_bot">Bot (Normal)</string>
-    <string name="hard_bot">Bot (Schwer)</string>
-    <string name="harder_bot">Bot (Schwerer)</string>
-    <string name="hardest_bot">Bot (Am Schwersten)</string>
     <string name="human_player">Mensch</string>
     <string name="you_have_won">Du hast gewonnen!</string>
     <string name="has_won">hat gewonnen!</string>
@@ -43,4 +38,9 @@
     <string name="not_your_turn">Du bist noch nicht dran!</string>
     <string name="nothing_to_kill">Hier ist nichts zum Schmeißen. Wähle einen Stein vom Gegner!</string>
     <string name="cannot_kill_mill">Mühlen können nicht geschmissen werden.  Wähle ein anderes Ziel!</string>
+    <string name="EASY">Einfach</string>
+    <string name="NORMAL">Normal</string>
+    <string name="HARD">Schwer</string>
+    <string name="HARDER">Schwerer</string>
+    <string name="HARDEST">Sehr Schwer</string>
 </resources>
