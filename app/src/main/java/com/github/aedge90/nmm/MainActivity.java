@@ -6,10 +6,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Point;
-import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
-import android.view.Menu;
 
 public class MainActivity extends Activity {
 

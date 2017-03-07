@@ -378,11 +378,11 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
         }else{
             if(bot.getColor().equals(Options.Color.BLACK)) {
                 String s = getString(R.string.black_turn);
-                s = s.replace(getString(R.string.black)+"'s", getString(R.string.black)+ "'s (" + difficultyString + ")" );
+                s = s.replace(getString(R.string.black), getString(R.string.black)+ " (" + difficultyString + ")" );
                 setTextinUIThread(progressText, s);
             }else{
                 String s = getString(R.string.white_turn);
-                s = s.replace(getString(R.string.white)+"'s", getString(R.string.white) + "'s (" + difficultyString + ")" );
+                s = s.replace(getString(R.string.white), getString(R.string.white) + " (" + difficultyString + ")" );
                 setTextinUIThread(progressText, s);
             }
         }
@@ -454,24 +454,27 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
 
     boolean ShowGameOverMessageIfWon() {
 
-        String winningColor = currPlayer.getColor().toString();
-        winningColor = winningColor.toUpperCase().charAt(0) + winningColor.substring(1).toLowerCase();
+        String winningColor;
+        if(currPlayer.getColor().equals(Options.Color.BLACK)){
+            winningColor = getResources().getString(R.string.black);
+        }else{
+            winningColor = getResources().getString(R.string.white);
+        }
         String message;
         if(currPlayer.getDifficulty() == null) {
             //the player is a human
-            message = "You have won!";
+            message = getResources().getString(R.string.you_have_won);
         }else{
-
-            message = winningColor + " has won!";
+            message = winningColor + " " + getResources().getString(R.string.has_won);
         }
 
         if(field.getState(currPlayer).equals(GameBoard.GameState.WON_NO_MOVES)){
-            showGameOverMsg(message, "The opponent could not make any further move.");
-            setTextinUIThread(progressText, "Game Over! " + winningColor + " has won");
+            showGameOverMsg(message, getResources().getString(R.string.no_moves));
+            setTextinUIThread(progressText, message);
             return true;
         }else if (field.getState(currPlayer).equals(GameBoard.GameState.WON_KILLED_ALL)) {
-            showGameOverMsg(message, "The opponent has lost all of his pieces.");
-            setTextinUIThread(progressText, "Game Over! " + winningColor + " has won");
+            showGameOverMsg(message, getResources().getString(R.string.no_pieces));
+            setTextinUIThread(progressText, message);
             return true;
         }
         return false;
@@ -492,13 +495,13 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
                     .setIcon(android.R.drawable.ic_dialog_info)
                     .setTitle(title)
                     .setMessage(message)
-                    .setPositiveButton("Quit", new DialogInterface.OnClickListener() {
+                    .setPositiveButton(getResources().getString(R.string.quit_game), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int id) {
                             showQuitAlertDialog();
                         }
                     })
-                    .setNeutralButton("New Game", new DialogInterface.OnClickListener(){
+                    .setNeutralButton(getResources().getString(R.string.start_new_game), new DialogInterface.OnClickListener(){
                        @Override
                        public void onClick(DialogInterface dialogInterface, int id) {
                            //dont ask if player really want to start new game as game is over here
@@ -506,7 +509,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
                            finish();
                        }
                     })
-                    .setNegativeButton("Show Gameboard", null)
+                    .setNegativeButton(getResources().getString(R.string.show_gameboard), null)
                     .show();
                 }
             });
@@ -572,7 +575,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
             if (state == State.SET) {
                 if(field.getColorAt(new Position(x,y)).equals(currPlayer.getColor())
                         || field.getColorAt(new Position(x,y)).equals((currPlayer.getOtherPlayer().getColor()))){
-                    showToast("You can not set to this Position!");
+                    showToast(getResources().getString(R.string.pos_occupied));
                 }else{
                     Position pos = new Position(x, y);
                     currMove = new Move(pos, null, null);
@@ -581,7 +584,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
                 }
             } else if (state == State.MOVEFROM) {
                 if(!(field.getColorAt(new Position(x,y)).equals(currPlayer.getColor()))){
-                    showToast("Nothing to move here!");
+                    showToast(getResources().getString(R.string.nothing_to_move));
                 }else{
                     redSector = fieldView.createSector(Options.Color.GREEN, x, y);
                     fieldLayout.addView(redSector);
@@ -595,7 +598,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
                     //signal that currMove could not be set
                     currMove = null;
                     fieldLayout.removeView(redSector);
-                    showToast("You can not move to this Position!");
+                    showToast(getResources().getString(R.string.can_not_move));
                 }else{
                     fieldLayout.removeView(redSector);
                     currMove = new Move(new Position(x,y), currMove.getSrc(), null);
@@ -603,10 +606,10 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
                     signalSelection();
                 }
             } else if (state == State.IGNORE) {
-                showToast("It is not your turn!");
+                showToast(getResources().getString(R.string.not_your_turn));
             }else if (state == State.KILL) {
                 if(!(field.getColorAt(new Position(x,y)).equals(currPlayer.getOtherPlayer().getColor()))){
-                    showToast("Nothing to kill here!");
+                    showToast(getResources().getString(R.string.nothing_to_kill));
                 }else if(field.inMill(new Position(x,y), currPlayer.getOtherPlayer().getColor())){
                     //if every single stone of enemy is part of a mill we are allowed to kill
                     LinkedList<Position> enemypos = field.getPositions(currPlayer.getOtherPlayer().getColor());
@@ -623,7 +626,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
                         state = State.IGNORE;
                         signalSelection();
                     }else{
-                        showToast("You can not kill a mill! Choose another target!");
+                        showToast(getResources().getString(R.string.cannot_kill_mill));
                     }
                 }else{
                     Position killPos = new Position(x, y);
