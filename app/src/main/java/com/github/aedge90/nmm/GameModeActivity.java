@@ -462,22 +462,22 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
             //the player is a human
             message = getResources().getString(R.string.you_have_won);
             if(field.getState(currPlayer).equals(GameBoard.GameState.WON_NO_MOVES)){
-                showGameOverMsg(message, getResources().getString(R.string.no_moves_human));
+                showGameOverMsg(message, getResources().getString(R.string.won_no_moves_human));
                 setTextinUIThread(progressText, message);
                 return true;
             }else if (field.getState(currPlayer).equals(GameBoard.GameState.WON_KILLED_ALL)) {
-                showGameOverMsg(message, getResources().getString(R.string.no_pieces_human));
+                showGameOverMsg(message, getResources().getString(R.string.won_no_pieces_human));
                 setTextinUIThread(progressText, message);
                 return true;
             }
         }else{
             message = winningColor + " " + getResources().getString(R.string.has_won);
             if(field.getState(currPlayer).equals(GameBoard.GameState.WON_NO_MOVES)){
-                showGameOverMsg(message, getResources().getString(R.string.no_moves_bot));
+                showGameOverMsg(message, getResources().getString(R.string.won_no_moves_bot));
                 setTextinUIThread(progressText, message);
                 return true;
             }else if (field.getState(currPlayer).equals(GameBoard.GameState.WON_KILLED_ALL)) {
-                showGameOverMsg(message, getResources().getString(R.string.no_pieces_bot));
+                showGameOverMsg(message, getResources().getString(R.string.won_no_pieces_bot));
                 setTextinUIThread(progressText, message);
                 return true;
             }
