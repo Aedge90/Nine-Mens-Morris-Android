@@ -50,4 +50,7 @@
     <string name="won_no_moves_human">Your opponent can not make any further move!</string>
     <string name="won_no_pieces_human">Your opponent only has two pieces left!</string>
     <string name="EASIEST">Easiest</string>
+    <string name="you_have_lost">You have lost!</string>
+    <string name="lost_no_moves">You can not make any further move!</string>
+    <string name="lost_no_pieces">You only have two pieces left!</string>
 </resources>

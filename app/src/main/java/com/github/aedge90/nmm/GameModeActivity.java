@@ -451,15 +451,9 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
 
     boolean ShowGameOverMessageIfWon() {
 
-        String winningColor;
-        if(currPlayer.getColor().equals(Options.Color.BLACK)){
-            winningColor = getResources().getString(R.string.black);
-        }else{
-            winningColor = getResources().getString(R.string.white);
-        }
         String message;
-        if(currPlayer.getDifficulty() == null) {
-            //the player is a human
+        if(currPlayer.getDifficulty() == null && currPlayer.getOtherPlayer().getDifficulty() != null) {
+            //the winning player is a human and the bot has lost
             message = getResources().getString(R.string.you_have_won);
             if(field.getState(currPlayer).equals(GameBoard.GameState.WON_NO_MOVES)){
                 showGameOverMsg(message, getResources().getString(R.string.won_no_moves_human));
@@ -470,7 +464,26 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
                 setTextinUIThread(progressText, message);
                 return true;
             }
+        }else if (currPlayer.getDifficulty() != null && currPlayer.getOtherPlayer().getDifficulty() == null){
+            //bot has won against a human player
+            message = getResources().getString(R.string.you_have_lost);
+            if(field.getState(currPlayer).equals(GameBoard.GameState.WON_NO_MOVES)){
+                showGameOverMsg(message, getResources().getString(R.string.lost_no_moves));
+                setTextinUIThread(progressText, message);
+                return true;
+            }else if (field.getState(currPlayer).equals(GameBoard.GameState.WON_KILLED_ALL)) {
+                showGameOverMsg(message, getResources().getString(R.string.lost_no_pieces));
+                setTextinUIThread(progressText, message);
+                return true;
+            }
         }else{
+            //bot has won against another bot. Or human has won against another human
+            String winningColor;
+            if(currPlayer.getColor().equals(Options.Color.BLACK)){
+                winningColor = getResources().getString(R.string.black);
+            }else{
+                winningColor = getResources().getString(R.string.white);
+            }
             message = winningColor + " " + getResources().getString(R.string.has_won);
             if(field.getState(currPlayer).equals(GameBoard.GameState.WON_NO_MOVES)){
                 showGameOverMsg(message, getResources().getString(R.string.won_no_moves_bot));
