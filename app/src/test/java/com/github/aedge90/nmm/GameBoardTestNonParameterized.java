@@ -118,7 +118,7 @@ public class GameBoardTestNonParameterized {
     }
 
     @Test
-    public void getMill_ShouldbeNullForMill7(){
+    public void getMill_ShouldBeNullForMill7(){
 
         Options.Color[][] mill7 =
 
@@ -143,6 +143,66 @@ public class GameBoardTestNonParameterized {
         assertNull(mill4);
         Position[] mill5 = gameBoard.getMill(new Position(3,5), W);
         assertNull(mill5);
+
+    }
+
+    @Test
+    public void inMill_ShouldBeTrueForMill7 () {
+
+        //Tests if inMill is true even if there are FOUR neighbouring pieces in one direction
+
+        Options.Color[][] mill7 =
+
+                {{N, I, I, W, I, I, B},
+                { I, W, I, N, I, W, I},
+                { I, I, I, I, I, I, I},
+                { B, W, I, W, I, N, W},
+                { I, I, I, I, I, I, I},
+                { I, B, I, W, I, N, I},
+                { B, I, I, N, I, I, B}};
+
+        GameBoard gameBoard = new Mill7(mill7);
+
+        mPlayerBlack.setSetCount(0);
+        mPlayerWhite.setSetCount(0);
+
+        Move m1 = new Move(new Position(5,3), new Position(5,1), new Position(0,6));
+
+        gameBoard.executeSetOrMovePhase(m1, mPlayerWhite);
+
+        assertTrue(gameBoard.inMill(m1.getDest(), mPlayerWhite.getColor()));
+
+        Move m2 = new Move(new Position(3,1), new Position(1,1), new Position(6,6));
+
+        gameBoard.executeSetOrMovePhase(m2, mPlayerWhite);
+
+        assertTrue(gameBoard.inMill(m2.getDest(), mPlayerWhite.getColor()));
+
+    }
+
+    @Test
+    public void inMill_ShouldBeFalseForMill7 () {
+
+        //Tests if inMill is true even if there are FOUR neighbouring pieces in one direction
+
+        Options.Color[][] mill7 =
+
+                {{N, I, I, B, I, I, N},
+                { I, N, I, N, I, N, I},
+                { I, I, I, I, I, I, I},
+                { B, W, I, W, I, N, N},
+                { I, I, I, I, I, I, I},
+                { I, N, I, B, I, N, I},
+                { W, I, I, W, I, I, B}};
+
+        GameBoard gameBoard = new Mill7(mill7);
+
+        mPlayerBlack.setSetCount(3);
+        mPlayerWhite.setSetCount(3);
+
+        Move m1 = new Move(new Position(5,3), null, null);
+
+        assertFalse(gameBoard.inMill(m1.getDest(), mPlayerWhite.getColor()));
 
     }
 
@@ -333,7 +393,6 @@ public class GameBoardTestNonParameterized {
         assertFalse(gameBoard.opensMillSafely(new Move(new Position(6,3), new Position(5,3), null), mPlayerBlack));
 
     }
-
 
     @Test
     public void getStateShouldBeDraw () {

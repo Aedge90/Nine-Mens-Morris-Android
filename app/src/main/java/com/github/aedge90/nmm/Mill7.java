@@ -80,19 +80,31 @@ public class Mill7 extends GameBoard {
     @Override
     Position[] getMill(Position p, Options.Color player){
 
-        Position[] superMill = super.getMill(p, player);
+        GameBoardPosition critical = getGameBoardPosAt(new Position(3,3));
 
-        if (superMill == null){
-            return null;
+        if(!critical.getColor().equals(player) && !critical.equals(getGameBoardPosAt(p))){
+            //critical position is not occupied by player AND not checked, so no special computing needed
+            return super.getMill(p, player);
         }
 
-        //find incorrectly detected mill, that contains the middle position in the middle of the mill
-        if(superMill[1].equals(new Position(3,3))){
+        //now check if one of the special mills is formed together with p
+        Position[] result = null;
+        GameBoardPosition[] neighbors = critical.getNeighbors();
+        for(int i = 0; i < neighbors.length; i++) {
+            if (neighbors[i] != null && (getColorAt(neighbors[i]).equals(player)
+                    || neighbors[i].equals(getGameBoardPosAt(p))) ) {
+                GameBoardPosition neighborOfNeighbor = neighbors[i].getNeighbors()[i];
+                if (neighborOfNeighbor != null && (getColorAt(neighborOfNeighbor).equals(player)
+                        || neighborOfNeighbor.equals(getGameBoardPosAt(p))) ) {
+                    result = new Position[]{new Position(neighborOfNeighbor), new Position(neighbors[i]), new Position(critical)};
+                }
+            }
+        }
+        if(result != null && (result[0].equals(p) || result[1].equals(p) || result[2].equals(p))){
+            return result;
+        }else{
             return null;
         }
-
-        return superMill;
-
     }
 
 }
