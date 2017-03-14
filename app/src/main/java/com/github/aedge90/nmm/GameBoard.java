@@ -15,7 +15,7 @@ public abstract class GameBoard {
 
     LinkedList<Position> allValidPositions = new LinkedList<Position>();
 
-    public static final int REMISMAX = 30;
+    public static final int REMISMAX = 40;
 
     private int remisCount = 0;
     private int remisCountBeforeKill = 0;
@@ -353,15 +353,14 @@ public abstract class GameBoard {
 
     GameState getState(Player player) {
 
-        if(remisCount >= REMISMAX){
-            return GameState.REMIS;
-        }
-
         //only the other player can have lost as its impossible for maxPlayer to commit suicide
         if(!movesPossible(player.getOtherPlayer().getColor(), player.getOtherPlayer().getSetCount())){
             return GameState.WON_NO_MOVES;
         }else if ((getPositions(player.getOtherPlayer().getColor()).size() < 3 && player.getOtherPlayer().getSetCount() <= 0)) {
             return GameState.WON_KILLED_ALL;
+        }else if(remisCount >= REMISMAX){
+            //important to do this last, as remisCount is not reset when the opponent can not make any move
+            return GameState.REMIS;
         }
 
         return GameState.RUNNING;
