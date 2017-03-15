@@ -28,6 +28,8 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
     protected Lock lock = new ReentrantLock();
     protected Condition selection = lock.newCondition();
     protected volatile boolean selected;
+    private Object mPauseLock;
+    private boolean mPaused;
 
     volatile Move currMove;
     Thread gameThread;
@@ -117,6 +119,9 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
         
         currMove = null;
         fieldView = new GameBoardView(THIS, fieldLayout);
+
+        mPauseLock = new Object();
+        mPaused = false;
         
         init();
 
@@ -204,6 +209,13 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
 
                         currPlayer = currPlayer.getOtherPlayer();
 
+                        //if the activity was paused wait here until it is resumed
+                        synchronized (mPauseLock) {
+                            while (mPaused) {
+                                mPauseLock.wait();
+                            }
+                        }
+
                     }
                 } catch ( InterruptedException e ) {
                     Log.d("GameModeActivity", "Interrupted!");
@@ -216,6 +228,23 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
 
         return new Thread(game);
 
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        synchronized (mPauseLock) {
+            mPaused = true;
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        synchronized (mPauseLock) {
+            mPaused = false;
+            mPauseLock.notifyAll();
+        }
     }
 
     @Override
