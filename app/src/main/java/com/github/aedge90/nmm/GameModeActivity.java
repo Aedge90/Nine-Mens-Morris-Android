@@ -41,7 +41,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
     ProgressUpdater progressUpdater;
     GameBoard field;
     int screenWidth;
-    ImageView redSector;
+    ImageView greenSector;
 
     Toast lastToast;
     final GameModeActivity THIS = this;
@@ -628,8 +628,8 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
                 if(!(field.getColorAt(new Position(x,y)).equals(currPlayer.getColor()))){
                     showToast(getResources().getString(R.string.nothing_to_move));
                 }else{
-                    redSector = fieldView.createSector(Options.Color.GREEN, x, y);
-                    fieldLayout.addView(redSector);
+                    greenSector = fieldView.createSector(Options.Color.GREEN, x, y);
+                    fieldLayout.addView(greenSector);
                     //set invalid position for now so that constructor doesnt throw IllegalArgumentException
                     currMove = new Move(new Position(-1,-1), new Position(x,y), null);
                     state = State.MOVETO;
@@ -639,10 +639,10 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
                     state = State.MOVEFROM;
                     //signal that currMove could not be set
                     currMove = null;
-                    fieldLayout.removeView(redSector);
+                    fieldLayout.removeView(greenSector);
                     showToast(getResources().getString(R.string.can_not_move));
                 }else{
-                    fieldLayout.removeView(redSector);
+                    fieldLayout.removeView(greenSector);
                     currMove = new Move(new Position(x,y), currMove.getSrc(), null);
                     state = State.IGNORE;
                     signalSelection();
