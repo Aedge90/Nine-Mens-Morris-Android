@@ -30,10 +30,13 @@ public class GameBoardView {
     private GameModeActivity c; 
     private GridLayout fieldLayout;
     private FrameLayout piecesSpaceLayout;
+    ImageView[] millSectors;
     
     GameBoardView(GameModeActivity c , GridLayout fieldLayout) {
         this.c = c;
         this.fieldLayout = fieldLayout;
+
+        millSectors = new ImageView[3];
 
         fieldView = new ImageView[GameBoard.LENGTH][GameBoard.LENGTH];
         
@@ -293,7 +296,7 @@ public class GameBoardView {
         imageView.setScaleType(ImageView.ScaleType.CENTER);
     }
     
-    void paintMill(final Position[] mill, final ImageView[] millSectors) throws InterruptedException{
+    void paintMill(final Position[] mill) throws InterruptedException{
         
         c.runOnUiThread(new Runnable() {
             public void run() {
@@ -308,7 +311,7 @@ public class GameBoardView {
         waitforUIupdate();
     }
     
-    void unpaintMill(final ImageView[] millSectors) throws InterruptedException{
+    void unpaintMill() throws InterruptedException{
         c.runOnUiThread(new Runnable() {
             public void run() {
                 fieldLayout.removeView(millSectors[0]);
