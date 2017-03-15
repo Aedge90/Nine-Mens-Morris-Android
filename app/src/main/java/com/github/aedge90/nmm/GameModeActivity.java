@@ -380,7 +380,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
         if (field.inMill(newPosition, human.getColor())) {
             state = State.KILL;
             Position[] mill = field.getMill(newPosition, human.getColor());
-            fieldView.paintMill(mill);
+            fieldView.paintMill(mill, null);
             //wait until kill is chosen
             waitforSelection();
             fieldView.setPos(currMove.getKill(), Options.Color.NOTHING);
@@ -432,13 +432,12 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
         if (currMove.getKill() != null) {
             Position[] mill = field.getMill(newPosition, bot.getColor());
 
-            fieldView.paintMill(mill);
-
+            fieldView.paintMill(mill, currMove.getKill());
+            Thread.sleep(1500);
+            fieldView.unpaintMill();
             fieldView.setPos(currMove.getKill(), Options.Color.NOTHING);
             fieldView.getPos(currMove.getKill()).setOnClickListener(
                     new OnFieldClickListener(currMove.getKill()));
-            Thread.sleep(1500);
-            fieldView.unpaintMill();
 
             field.executeKillPhase(currMove, bot);
         }
