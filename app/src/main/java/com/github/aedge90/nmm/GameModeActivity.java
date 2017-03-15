@@ -48,7 +48,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
 
     volatile State state;
     protected enum State {
-        SET, MOVEFROM, MOVETO, IGNORE, KILL, GAMEOVER
+        SET, MOVEFROM, MOVETO, IGNORE, KILL
     }
 
     Player currPlayer;
@@ -392,9 +392,6 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
             field.executeKillPhase(currMove, human);
         }
 
-        if(!field.equals(GameBoard.GameState.RUNNING)) {
-            state = State.GAMEOVER;
-        }
     }
 
     void botTurn(Player bot, Strategy brain) throws InterruptedException{
