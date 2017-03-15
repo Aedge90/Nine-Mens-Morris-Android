@@ -152,6 +152,10 @@ public class StrategyRunnable implements Runnable{
     @VisibleForTesting
     int evaluation(Player player, LinkedList<Move> moves, int depth) {
 
+        //TODO evaluate having an almost mill better, as otherwise the bot will just randomly place pieces
+        // this causes the bot to be weaker especially on bigger gameboards as he just prevents mills but
+        // does not really try to build a mill
+
         int ret = 0;
 
         if (moves.size() == 0) {
