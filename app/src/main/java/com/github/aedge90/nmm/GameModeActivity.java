@@ -25,7 +25,6 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
 
     protected final static int RESULT_RESTART = Activity.RESULT_FIRST_USER + 1;
     
-    protected final int LENGTH = 7;
     protected Lock lock = new ReentrantLock();
     protected Condition selection = lock.newCondition();
     protected volatile boolean selected;
@@ -308,8 +307,8 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
 
     void setSectorListeners() {
 
-        for (int y = 0; y < LENGTH; y++) {
-            for (int x = 0; x < LENGTH; x++) {
+        for (int y = 0; y < GameBoard.LENGTH; y++) {
+            for (int x = 0; x < GameBoard.LENGTH; x++) {
                 if (!field.getColorAt(x, y).equals(Options.Color.INVALID)) {
                     fieldView.getPos(new Position(x, y)).setOnClickListener(
                             new  OnFieldClickListener(x,y));
