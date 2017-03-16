@@ -5,8 +5,11 @@ public class Move {
     private final Position src;
     private final Position dest; //if only dest is set, then this is a move in the set phase
     private final Position kill;
+
+    private int evaluation;
     
     Move(Position dest, Position src, Position kill){
+        this.evaluation = 0;
         this.src = src;
         this.dest = dest;
         this.kill = kill;
@@ -32,7 +35,15 @@ public class Move {
     public Position getKill() {
         return kill;
     }
-    
+
+    public int getEvaluation() {
+        return evaluation;
+    }
+
+    public void setEvaluation(int evaluation) {
+        this.evaluation = evaluation;
+    }
+
     @Override
     public String toString(){
         return "src: " + src + " dest: " + dest + " kill: " + kill;

@@ -78,6 +78,62 @@ public class StrategyTestParameterized {
     }
 
     @Test
+    public void computeMoveShouldFormPotentialMills () throws InterruptedException {
+
+        Options.Color[][] mill5 =
+                {{N , I , I , N , I , I , N },
+                { I , I , I , I , I , I , I },
+                { I , I , N , N , N , I , I },
+                { N , I , N , I , P1, I , N },
+                { I , I , N , N , N , I , I },
+                { I , I , I , I , I , I , I },
+                { N , I , I , N , I , I , N}};
+
+        GameBoard gameBoard = new Mill5(mill5);
+        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
+        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+
+        mPlayer1.setSetCount(4);
+        mPlayer2.setSetCount(4);
+
+        Move result = strategy.computeMove();
+
+        assertThat(result.getDest(), anyOf(is(new Position(4,2)), is(new Position(4,4))));
+    }
+
+    @Test
+    public void computeMoveShouldPreventPotentialMill () throws InterruptedException {
+
+        Options.Color[][] mill5 =
+                {{N , I , I , N , I , I , N },
+                { I , I , I , I , I , I , I },
+                { I , I , N , N , N , I , I },
+                { N , I , N , I , N , I , N },
+                { I , I , N , N , P2, I , I },
+                { I , I , I , I , I , I , I },
+                { N , I , I , N , I , I , N}};
+
+        GameBoard gameBoard = new Mill5(mill5);
+
+        mPlayer1.setSetCount(5);
+        mPlayer2.setSetCount(4);
+
+        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
+
+        Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+
+        mPlayer1.setSetCount(4);
+        mPlayer2.setSetCount(4);
+
+        Move result = strategyP1.computeMove();
+
+        assertThat(result.getDest(), anyOf(is(new Position(4,2)), is(new Position(4,3)), is(new Position(3,4)), is(new Position(2,4))));
+
+    }
+
+    @Test
     public void computeMoveShouldPreventMillWhileSetting () throws InterruptedException {
 
         Options.Color[][] mill5 =
@@ -377,6 +433,7 @@ public class StrategyTestParameterized {
         mPlayer2.setSetCount(0);
 
         Move result1 = strategy.computeMove();
+        assertEquals(new Position(0,3), result1.getSrc());
         assertEquals(new Position(0,0), result1.getDest());
 
         //change kill of the move, as it may be another equally evaluated kill, but we want to test with this one
@@ -388,6 +445,7 @@ public class StrategyTestParameterized {
         Move result2 = strategy.computeMove();
         gameBoard.executeCompleteTurn(result2, mPlayer1);
 
+        assertEquals(new Position(0,0), result2.getSrc());
         assertEquals(new Position(0,3), result2.getDest());
 
     }
@@ -660,14 +718,16 @@ public class StrategyTestParameterized {
 
     //if this test fails may (but probably not) be because of a tiny chance that not all possible moves were chosen
     @Test
-    public void computeMoveShouldReturn15DifferentMovesOverTime () throws InterruptedException {
+    public void computeMoveShouldReturn16DifferentMovesOverTime () throws InterruptedException {
+
+        int nPos = 16;
 
         Options.Color[][] mill5 =
                 {{N , I , I , N , I , I , N },
                 { I , I , I , I , I , I , I },
                 { I , I , N , N , N , I , I },
                 { N , I , N , I , N , I , N },
-                { I , I , N , P1, N , I , I },
+                { I , I , N , N , N , I , I },
                 { I , I , I , I , I , I , I },
                 { N , I , I , N , I , I , N}};
 
@@ -689,12 +749,12 @@ public class StrategyTestParameterized {
                 list.add(result);
             }
             //check after 100 iterations if list contains enough (or too much) elements and break
-            if(i % 100 == 0 && list.size() >= 15){
+            if(i % 100 == 0 && list.size() >= nPos){
                 break;
             }
         }
 
-        assertEquals(15, list.size());
+        assertEquals(nPos, list.size());
 
     }
 

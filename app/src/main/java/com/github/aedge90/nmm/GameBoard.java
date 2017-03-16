@@ -50,15 +50,12 @@ public abstract class GameBoard {
         }
     }
 
-    //copy constructor
-    GameBoard(GameBoard other){
-        field = new GameBoardPosition[LENGTH][LENGTH];
+    void initGameBoardPositionsFrom(GameBoard other){
         //copy the field from other
         for(int i = 0; i < LENGTH; i++){
             for(int j = 0; j < LENGTH; j++){
                 if(other.field[i][j] != null) {
-                    field[i][j] = new GameBoardPosition(other.field[i][j]);
-                    allValidPositions.add(new Position(field[i][j]));
+                    field[i][j].setColor(other.field[i][j].getColor());
                 }
             }
         }
@@ -186,32 +183,8 @@ public abstract class GameBoard {
         }    
     }
 
-    // returns true if move opens a mill and the mill can not be denied by the opponent in the next move
-    // by moving (or setting) into the open mill (its not checked if he can still kill the open mill if he closes his own mill)
-    // the jumping phase in the end is ignored. Opening a mill then is still considered save, as the other
-    // player can not close an own mill when he jumps into this open mill
-    boolean opensMillSafely (Move move, Player player){
-        if(move.getSrc() == null){
-            return false;
-        }
-        if(!inMill(move.getSrc(), player.getColor())){
-            return false;
-        }
-        //check if enemy could move a piece into the mill in the next move
-        if(player.getOtherPlayer().getSetCount() > 0){
-            return false;
-        }
-        GameBoardPosition[] neighbors = getGameBoardPosAt(move.getSrc()).getNeighbors();
-        for(int i = 0; i < neighbors.length; i++) {
-            if (neighbors[i] != null && getColorAt(neighbors[i]).equals(player.getOtherPlayer().getColor())) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    // returns true if player moved into an open mill in order to prevent it
-    boolean preventsMill (Position p, Player player){
+    // returns true if player has a piece in an enemy mill, which the enemy could close if it werent there
+    boolean preventedMill (Position p, Player player){
         Position[] preventedMill = getMill(p, player.getOtherPlayer().getColor());
         if(preventedMill == null){
             return false;
@@ -221,10 +194,10 @@ public abstract class GameBoard {
             return true;
         }
         GameBoardPosition[] neighbors = getGameBoardPosAt(p).getNeighbors();
-        for(int i = 0; i < neighbors.length; i++) {
+        for(GameBoardPosition neighbor : neighbors) {
             //check if enemy could actually move a piece that is not part of the mill to form his mill
-            if(!preventedMill[0].equals(neighbors[i]) && !preventedMill[1].equals(neighbors[i]) && !preventedMill[2].equals(neighbors[i])) {
-                if (neighbors[i] != null && getColorAt(neighbors[i]).equals(player.getOtherPlayer().getColor())) {
+            if(!preventedMill[0].equals(neighbor) && !preventedMill[1].equals(neighbor) && !preventedMill[2].equals(neighbor)) {
+                if (neighbor != null && getColorAt(neighbor).equals(player.getOtherPlayer().getColor())) {
                     return true;
                 }
             }
@@ -242,24 +215,67 @@ public abstract class GameBoard {
         }
     }
 
+    boolean inPotentialMill (Position p, Options.Color player) {
+        if(null != getPotentialMill(p, player)){
+            //mill was found
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    Position[] getPotentialMill (Position p, Options.Color player) {
+        return getMillOrPartialMill(p, player, true);
+    }
+
+    Position[] getMill(Position p, Options.Color player) {
+        return getMillOrPartialMill(p, player, false);
+    }
+
     //if two pieces of color player are found, that form a mill together with position
     //an array containing the two pieces and position is returned, else null is returned
-    Position[] getMill(Position p, Options.Color player) {
-        GameBoardPosition[] neighbors = getGameBoardPosAt(p).getNeighbors();
-        for(int i = 0; i < neighbors.length; i++) {
-            if (neighbors[i] != null && getColorAt(neighbors[i]).equals(player)) {
-                GameBoardPosition neighborOfNeighbor = neighbors[i].getNeighbors()[i];
-                if (neighborOfNeighbor != null && getColorAt(neighborOfNeighbor).equals(player)) {
-                    return new Position[]{new Position(neighborOfNeighbor), new Position(neighbors[i]), new Position(p)};
+    Position[] getMillOrPartialMill(Position p, Options.Color player, boolean partial) {
+        GameBoardPosition checkPos = getGameBoardPosAt(p);
+        GameBoardPosition[] neighbors = checkPos.getNeighbors();
+        for(GameBoardPosition neighbor : neighbors) {
+            if(neighbor != null && checkPos.getOpposite(neighbor) != null){
+                if(belongTo(neighbor, checkPos.getOpposite(neighbor), player, partial)){
+                    return new GameBoardPosition[] {neighbor, checkPos, checkPos.getOpposite(neighbor)};
                 }
-                GameBoardPosition oppositeNeighbor = getGameBoardPosAt(p).getOpposite(neighbors[i]);
-                if (neighbors[i] != null && getColorAt(neighbors[i]).equals(player) &&
-                        oppositeNeighbor != null && getColorAt(oppositeNeighbor).equals(player)) {
-                    return new Position[]{new Position(neighbors[i]), new Position(p), new Position(oppositeNeighbor)};
+            }
+            if(neighbor != null && neighbor.getOpposite(checkPos) != null){
+                if(belongTo(neighbor.getOpposite(checkPos), neighbor, player, partial)){
+                    return new GameBoardPosition[] {neighbor.getOpposite(checkPos), neighbor, checkPos};
                 }
             }
         }
         return null;
+    }
+
+    protected boolean belongTo(GameBoardPosition p1, GameBoardPosition p2, Options.Color player, boolean partial){
+        if(partial){
+            return oneBelongsToPlayerOtherToNobody(p1, p2, player);
+        }else{
+            return bothBelongTo(p1, p2, player);
+        }
+    }
+
+    private boolean bothBelongTo(GameBoardPosition p1, GameBoardPosition p2, Options.Color player){
+        if(p1.getColor().equals(player) && p2.getColor().equals(player)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    private boolean oneBelongsToPlayerOtherToNobody(GameBoardPosition p1, GameBoardPosition p2, Options.Color player){
+        if(p1.getColor().equals(player) && p2.getColor().equals(Options.Color.NOTHING)){
+            return true;
+        }else if(p2.getColor().equals(player) && p1.getColor().equals(Options.Color.NOTHING)){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     //is any move possible?

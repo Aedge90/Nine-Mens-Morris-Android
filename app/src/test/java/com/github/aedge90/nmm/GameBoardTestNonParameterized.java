@@ -241,7 +241,7 @@ public class GameBoardTestNonParameterized {
     }
 
     @Test
-    public void preventsMillShouldReturnTrue1() {
+    public void preventedMillShouldReturnTrue1() {
 
         Options.Color[][] mill7 =
 
@@ -258,12 +258,12 @@ public class GameBoardTestNonParameterized {
         mPlayerBlack.setSetCount(0);
         mPlayerWhite.setSetCount(0);
 
-        assertTrue(gameBoard.preventsMill(new Position(5,3), mPlayerWhite));
+        assertTrue(gameBoard.preventedMill(new Position(5,3), mPlayerWhite));
 
     }
 
     @Test
-    public void preventsMillShouldReturnFalse1() {
+    public void preventedMillShouldReturnFalse2() {
 
         Options.Color[][] mill7 =
 
@@ -280,12 +280,12 @@ public class GameBoardTestNonParameterized {
         mPlayerBlack.setSetCount(0);
         mPlayerWhite.setSetCount(0);
 
-        assertFalse(gameBoard.preventsMill(new Position(5,3), mPlayerWhite));
+        assertFalse(gameBoard.preventedMill(new Position(5,3), mPlayerWhite));
 
     }
 
     @Test
-    public void preventsMillShouldReturnTrue2() {
+    public void preventedMillShouldReturnTrue2() {
 
         Options.Color[][] mill7 =
 
@@ -302,12 +302,12 @@ public class GameBoardTestNonParameterized {
         mPlayerBlack.setSetCount(0);
         mPlayerWhite.setSetCount(0);
 
-        assertTrue(gameBoard.preventsMill(new Position(5,3), mPlayerWhite));
+        assertTrue(gameBoard.preventedMill(new Position(5,3), mPlayerWhite));
 
     }
 
     @Test
-    public void preventsMillShouldReturnFalse2() {
+    public void preventedMillShouldReturnFalse3() {
 
         Options.Color[][] mill7 =
 
@@ -324,73 +324,116 @@ public class GameBoardTestNonParameterized {
         mPlayerBlack.setSetCount(0);
         mPlayerWhite.setSetCount(0);
 
-        assertFalse(gameBoard.preventsMill(new Position(5,3), mPlayerWhite));
+        assertFalse(gameBoard.preventedMill(new Position(5,3), mPlayerWhite));
 
     }
 
     @Test
-    public void opensMillSafelyShouldReturnTrue () {
-
-        Options.Color[][] mill7 =
-
-                {{W, I, I, N, I, I, N},
-                { I, N, I, W, I, B, I},
-                { I, I, I, I, I, I, I},
-                { N, W, I, N, I, B, N},
-                { I, I, I, I, I, I, I},
-                { I, B, I, W, I, B, I},
-                { B, I, I, N, I, I, N}};
-
-        GameBoard gameBoard = new Mill7(mill7);
-
-        mPlayerBlack.setSetCount(0);
-        mPlayerWhite.setSetCount(0);
-
-        assertTrue(gameBoard.opensMillSafely(new Move(new Position(6,3), new Position(5,3), null), mPlayerBlack));
-
-    }
-
-    @Test
-    public void opensMillSafelyShouldReturnFalse2 () {
+    public void inPotentialMillShouldBeTrue1 () {
 
         Options.Color[][] mill7 =
 
                 {{N, I, I, N, I, I, N},
-                { I, N, I, W, I, N, I},
+                { I, N, I, N, I, B, I},
                 { I, I, I, I, I, I, I},
-                { N, W, I, N, I, B, N},
+                { N, N, I, N, I, N, N},
                 { I, I, I, I, I, I, I},
-                { I, B, I, W, I, B, I},
-                { B, I, I, N, I, I, N}};
+                { I, N, I, N, I, N, I},
+                { N, I, I, W, I, I, N}};
 
         GameBoard gameBoard = new Mill7(mill7);
 
         mPlayerBlack.setSetCount(0);
         mPlayerWhite.setSetCount(0);
 
-        assertFalse(gameBoard.opensMillSafely(new Move(new Position(6,3), new Position(5,3), null), mPlayerBlack));
+        assertTrue(gameBoard.inPotentialMill(new Position(6,6), mPlayerWhite.getColor()));
 
     }
 
     @Test
-    public void opensMillSafelyShouldReturnFalse3 () {
+    public void inPotentialMillShouldBeTrue2 () {
 
         Options.Color[][] mill7 =
 
                 {{N, I, I, N, I, I, N},
-                { I, N, I, W, I, B, I},
+                { I, N, I, N, I, B, I},
                 { I, I, I, I, I, I, I},
-                { N, W, I, W, I, B, N},
+                { N, N, I, N, I, N, N},
                 { I, I, I, I, I, I, I},
-                { I, B, I, W, I, B, I},
-                { B, I, I, N, I, I, N}};
+                { I, N, I, N, I, N, I},
+                { N, I, I, N, I, I, W}};
 
         GameBoard gameBoard = new Mill7(mill7);
 
         mPlayerBlack.setSetCount(0);
         mPlayerWhite.setSetCount(0);
 
-        assertFalse(gameBoard.opensMillSafely(new Move(new Position(6,3), new Position(5,3), null), mPlayerBlack));
+        assertTrue(gameBoard.inPotentialMill(new Position(3,6), mPlayerWhite.getColor()));
+
+    }
+
+    @Test
+    public void inPotentialMillShouldBeTrue3 () {
+
+        Options.Color[][] mill5 =
+                {{N , I , I , N , I , I , N },
+                { I , I , I , I , I , I , I },
+                { I , I , N , N , N , I , I },
+                { N , I , N , I , W , I , N },
+                { I , I , N , N , N , I , I },
+                { I , I , I , I , I , I , I },
+                { N , I , I , B , I , I , N}};
+
+        GameBoard gameBoard = new Mill5(mill5);
+
+        mPlayerBlack.setSetCount(4);
+        mPlayerWhite.setSetCount(4);
+
+        assertTrue(gameBoard.inPotentialMill(new Position(4,2), mPlayerWhite.getColor()));
+
+    }
+
+    @Test
+    public void inPotentialMillShouldBeFalse () {
+
+        Options.Color[][] mill7 =
+
+                {{N, I, I, N, I, I, N},
+                { I, N, I, N, I, B, I},
+                { I, I, I, I, I, I, I},
+                { N, N, I, N, I, N, N},
+                { I, I, I, I, I, I, I},
+                { I, N, I, N, I, N, I},
+                { B, I, I, W, I, I, N}};
+
+        GameBoard gameBoard = new Mill7(mill7);
+
+        mPlayerBlack.setSetCount(0);
+        mPlayerWhite.setSetCount(0);
+
+        assertFalse(gameBoard.inPotentialMill(new Position(6,6), mPlayerWhite.getColor()));
+
+    }
+
+    @Test
+    public void inPotentialMillShouldBeFalseForMill7 () {
+
+        Options.Color[][] mill7 =
+
+                {{N, I, I, N, I, I, W},
+                { I, N, I, N, I, N, I},
+                { I, I, I, I, I, I, I},
+                { N, N, I, N, I, N, N},
+                { I, I, I, I, I, I, I},
+                { I, B, I, W, I, B, I},
+                { N, I, I, B, I, I, N}};
+
+        GameBoard gameBoard = new Mill7(mill7);
+
+        mPlayerBlack.setSetCount(5);
+        mPlayerWhite.setSetCount(5);
+
+        assertFalse(gameBoard.inPotentialMill(new Position(3,3), mPlayerWhite.getColor()));
 
     }
 

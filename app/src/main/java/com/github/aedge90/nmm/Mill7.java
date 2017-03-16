@@ -72,39 +72,50 @@ public class Mill7 extends GameBoard {
 
     //copy constructor
     Mill7(Mill7 other) {
-        super(other);
+        initField();
+        initGameBoardPositionsFrom(other);
     }
 
 
     //Mill7 is a special case so override the function here
     @Override
-    Position[] getMill(Position p, Options.Color player){
+    Position[] getMillOrPartialMill(Position p, Options.Color player, boolean partial){
 
-        GameBoardPosition critical = getGameBoardPosAt(new Position(3,3));
+        Position[] mill = super.getMillOrPartialMill(p, player, partial);
 
-        if(!critical.getColor().equals(player) && !critical.equals(getGameBoardPosAt(p))){
-            //critical position is not occupied by player AND not checked, so no special computing needed
-            return super.getMill(p, player);
+        Position criticalPos = new Position(3,3);
+
+        // do not just dismiss a mill with 3,3 in the middle. It may still be that there is a mill
+        // depsite that, that has 3,3 at the corner, which is valid
+        if(mill != null && (criticalPos.equals(mill[0]) || criticalPos.equals(mill[1]) || criticalPos.equals(mill[2]))){
+            return getMillOrPartialMillForMill7(p, player, partial);
         }
 
-        //now check if one of the special mills is formed together with p
-        Position[] result = null;
-        GameBoardPosition[] neighbors = critical.getNeighbors();
-        for(int i = 0; i < neighbors.length; i++) {
-            if (neighbors[i] != null && (getColorAt(neighbors[i]).equals(player)
-                    || neighbors[i].equals(getGameBoardPosAt(p))) ) {
-                GameBoardPosition neighborOfNeighbor = neighbors[i].getNeighbors()[i];
-                if (neighborOfNeighbor != null && (getColorAt(neighborOfNeighbor).equals(player)
-                        || neighborOfNeighbor.equals(getGameBoardPosAt(p))) ) {
-                    result = new Position[]{new Position(neighborOfNeighbor), new Position(neighbors[i]), new Position(critical)};
+        return mill;
+    }
+
+    Position[] getMillOrPartialMillForMill7(Position p, Options.Color player, boolean partial) {
+        Position criticalPos = new Position(3,3);
+        GameBoardPosition criticalGameBoardPos = getGameBoardPosAt(criticalPos);
+        GameBoardPosition checkPos = getGameBoardPosAt(p);
+        GameBoardPosition[] neighbors = criticalGameBoardPos.getNeighbors();
+        if (checkPos.equals(criticalGameBoardPos)) {
+            for(GameBoardPosition neighbor : neighbors) {
+                //check if next two neighbors belong to player
+                if (belongTo(neighbor.getOpposite(checkPos), neighbor, player, partial)) {
+                    return new GameBoardPosition[]{neighbor.getOpposite(checkPos), neighbor, checkPos};
                 }
             }
         }
-        if(result != null && (result[0].equals(p) || result[1].equals(p) || result[2].equals(p))){
-            return result;
-        }else{
-            return null;
+        for(GameBoardPosition neighbor : neighbors) {
+            if (checkPos.equals(neighbor)) {
+                //check if checkPos is between two positions that belong to player
+                if(belongTo(criticalGameBoardPos, checkPos.getOpposite(criticalGameBoardPos), player, partial)){
+                    return new GameBoardPosition[] {criticalGameBoardPos, checkPos, checkPos.getOpposite(criticalGameBoardPos)};
+                }
+            }
         }
+        return null;
     }
 
 }

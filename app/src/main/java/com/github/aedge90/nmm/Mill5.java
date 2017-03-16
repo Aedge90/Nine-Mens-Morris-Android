@@ -68,7 +68,8 @@ public class Mill5 extends GameBoard {
 
     //copy constructor
     Mill5(Mill5 other){
-        super(other);
+        initField();
+        initGameBoardPositionsFrom(other);
     }
 
     

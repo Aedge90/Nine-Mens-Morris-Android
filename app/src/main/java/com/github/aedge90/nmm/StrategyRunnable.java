@@ -15,8 +15,8 @@ public class StrategyRunnable implements Runnable{
 
     private final ProgressUpdater up;
     //not Int.Max as the evaluation function would create overflows
-    static final int MAX = 100000;
-    static final int MIN = -100000;
+    static final int MAX = (int) Math.pow(2,25);
+    static final int MIN = - (int) Math.pow(2,25);
     private LinkedList<Move> movesToEvaluate;
     private Move prevMove;
 
@@ -94,6 +94,8 @@ public class StrategyRunnable implements Runnable{
     @VisibleForTesting
     void addpossibleKillstoMove(LinkedList<Move> possibleMovessoFar, Move move, Player player){
             boolean inMill = false;
+            //this is important so there are no mills wrongly detected when move contains a source and
+            //destination that is inside the same mill
             localGameBoard.executeSetOrMovePhase(move, player);
             inMill = localGameBoard.inMill(move.getDest(), player.getColor());
             localGameBoard.reverseCompleteTurn(move, player);
@@ -152,10 +154,6 @@ public class StrategyRunnable implements Runnable{
     @VisibleForTesting
     int evaluation(Player player, LinkedList<Move> moves, int depth) {
 
-        //TODO evaluate having an almost mill better, as otherwise the bot will just randomly place pieces
-        // this causes the bot to be weaker especially on bigger gameboards as he just prevents mills but
-        // does not really try to build a mill
-
         int ret = 0;
 
         if (moves.size() == 0) {
@@ -182,40 +180,14 @@ public class StrategyRunnable implements Runnable{
             return ret;
         }
 
-        //globalGameBoard is correct as we want to look at the unmodified current gameboard
-        //better evaluation if in the first move, we can do something useful
-        if(globalGameBoard.preventsMill(movesToEvaluate.getFirst().getDest(), localMaxPlayer)){
-            ret += 1;
-        }else if(movesToEvaluate.getFirst().getSrc() != null &&
-                globalGameBoard.inMill(movesToEvaluate.getFirst().getSrc(), localMaxPlayer.getColor())){
-            //mill was opened
-            if(globalGameBoard.opensMillSafely(movesToEvaluate.getFirst(), localMaxPlayer)) {
-                ret += 1;
-            }else{
-                // opening a mill is not a good idea if it can be blocked by the enemy
-                // this prevents bots on all difficulties to evaluate doing a random move
-                // the same as opening a mill which can be blocked in the next move
-                ret -= 1;
-            }
-        }
-
         //evaluate how often the players can kill, and prefer kills that are in the near future
-        int weight = 2048;
         int i = 0;
         for(Move move : movesToEvaluate){
             if(i % 2 == 0) {    //even numbers are moves of the maximizing player
-                ret += evaluateMove(move, weight);
+                ret += move.getEvaluation();
             }else{
-                ret -= evaluateMove(move, weight);
+                ret -= move.getEvaluation();
             }
-            // next weight will be half the weight
-            // this has to be done so players wont do the same move over and over again
-            // as they would not choose a path in which they kill but the other player kills in a
-            // distant future (which is seen in higher difficulties, when he can make jump moves)
-            // thus lowers the evaluation drastically and the game is stalled
-            // also this prefers kills in the near future, so they are done now and not later
-            // as could be the case if all were weighted equally
-            weight /= 2;
             i++;
         }
 
@@ -235,12 +207,43 @@ public class StrategyRunnable implements Runnable{
 
     }
 
-    private int evaluateMove(Move move, int weight){
+    private void evaluateMove(Move move, Player player) {
+        int eval = 0;
+        int killweight = (int) (Math.pow(2, 24) / Math.pow(2, movesToEvaluate.size()));
+        int weight = (int) (Math.pow(2, 12) / Math.pow(2, movesToEvaluate.size()));
         if (move.getKill() != null) {
-            return weight;
-        }else{
-            return 0;
+            // next weight will be half the weight
+            // this has to be done so players wont do the same move over and over again
+            // as they would not choose a path in which they kill but the other player kills in a
+            // distant future (which is seen in higher difficulties, when he can make jump moves)
+            // thus lowers the evaluation drastically and the game is stalled
+            // also this prefers kills in the near future, so they are done now and not later
+            // as could be the case if all were weighted equally
+            eval += killweight;
+        }else if(move.getSrc() != null && movesToEvaluate.size() == 1){
+            // evaluate opening a mill in the first move better, so the bot will open mills.
+            // There is no need to check if the mill can be opened safely (without the enemy blocking it in the next move)
+            // as even depth 2 bots will already NOT open a mill as preventedMill will be true for the next move
+            localGameBoard.reverseCompleteTurn(move, player);
+            if(localGameBoard.inMill(move.getSrc(), player.getColor())){
+                eval += 1;
+            }
+            localGameBoard.executeCompleteTurn(move, player);
+        }else if(localGameBoard.preventedMill(move.getDest(), player)){
+            eval += weight;
+        }else if(player.getOtherPlayer().getSetCount() >= 1 &&
+                localGameBoard.inPotentialMill(move.getDest(), player.getOtherPlayer().getColor())){
+            // check if a potential mill of the other player is prevented. This is necessary, as if the enemy
+            // can form two potential mills in the next move, there will always be a negative evaluation
+            // and any move can be chosen. This way a move will be chosen that prevents one of the two
+            eval += weight;
+        }else if(player.getSetCount() >= 1 &&   //only makes sense if the player can actually close the mill
+                localGameBoard.inPotentialMill(move.getDest(), player.getColor())){
+            // evaluate having a potential future mill better, as otherwise the bot will just randomly place pieces
+            // this causes the bot to be weaker especially on bigger gameboards as he does not really try to build a mill.
+            eval += weight;
         }
+        move.setEvaluation(eval);
     }
 
     private int max(int depth, int alpha, int beta, Player player) throws InterruptedException {
@@ -257,6 +260,7 @@ public class StrategyRunnable implements Runnable{
         for (Move z : moves) {
             localGameBoard.executeCompleteTurn(z, player);
             movesToEvaluate.addLast(z);
+            evaluateMove(z, player);
             int wert = min(depth-1, maxWert, beta, player.getOtherPlayer());
             movesToEvaluate.removeLast();
             localGameBoard.reverseCompleteTurn(z, player);
@@ -286,6 +290,7 @@ public class StrategyRunnable implements Runnable{
 
             localGameBoard.executeCompleteTurn(z, player);
             movesToEvaluate.addLast(z);
+            evaluateMove(z, player);
             int wert = min(depth - 1, maxWertKickoff, Integer.MAX_VALUE, player.getOtherPlayer());
             movesToEvaluate.removeLast();
             localGameBoard.reverseCompleteTurn(z, player);
@@ -315,6 +320,7 @@ public class StrategyRunnable implements Runnable{
         for (Move z : moves) {
             localGameBoard.executeCompleteTurn(z, player);
             movesToEvaluate.addLast(z);
+            evaluateMove(z, player);
             int wert = max(depth-1, alpha, minWert, player.getOtherPlayer());
             movesToEvaluate.removeLast();
             localGameBoard.reverseCompleteTurn(z, player);
@@ -338,7 +344,6 @@ public class StrategyRunnable implements Runnable{
         startDepth = lowerDepthOnGameEnd(startDepth);
 
         maxKickoff(startDepth, localMaxPlayer);
-
     }
 
     private int lowerDepthOnGameStart (int startDepth) {
