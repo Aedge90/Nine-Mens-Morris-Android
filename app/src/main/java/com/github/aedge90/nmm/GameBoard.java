@@ -205,8 +205,9 @@ public abstract class GameBoard {
         return false;
     }
 
-    //returns true if two pieces of color player are found, that form a mill together with position
-    boolean inMill(Position p, Options.Color player) {
+    // returns true if two pieces of color player are found, that form a mill together with p
+    // the color of p itself is NOT checked
+    boolean isInMill(Position p, Options.Color player) {
         if(null != getMill(p, player)){
             //mill was found
             return true;
@@ -215,7 +216,10 @@ public abstract class GameBoard {
         }
     }
 
-    boolean inPotentialMill (Position p, Options.Color player) {
+    // returns true if one piece of color player is found and one that belongs to nobody
+    // and the two position could form a mill together with p later
+    // the color of p itself is NOT checked
+    boolean isInPotentialMill(Position p, Options.Color player) {
         if(null != getPotentialMill(p, player)){
             //mill was found
             return true;

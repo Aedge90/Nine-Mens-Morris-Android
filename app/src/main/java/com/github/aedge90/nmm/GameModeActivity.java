@@ -377,7 +377,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
 
         field.executeSetOrMovePhase(currMove, human);
 
-        if (field.inMill(newPosition, human.getColor())) {
+        if (field.isInMill(newPosition, human.getColor())) {
             state = State.KILL;
             Position[] mill = field.getMill(newPosition, human.getColor());
             fieldView.paintMill(mill);
@@ -652,12 +652,12 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
             }else if (state == State.KILL) {
                 if(!(field.getColorAt(new Position(x,y)).equals(currPlayer.getOtherPlayer().getColor()))){
                     showToast(getResources().getString(R.string.nothing_to_kill));
-                }else if(field.inMill(new Position(x,y), currPlayer.getOtherPlayer().getColor())){
+                }else if(field.isInMill(new Position(x,y), currPlayer.getOtherPlayer().getColor())){
                     //if every single stone of enemy is part of a mill we are allowed to kill
                     LinkedList<Position> enemypos = field.getPositions(currPlayer.getOtherPlayer().getColor());
                     boolean allInMill = true;
                     for(int i = 0; i<enemypos.size(); i++){
-                        if(!field.inMill(enemypos.get(i), currPlayer.getOtherPlayer().getColor())){
+                        if(!field.isInMill(enemypos.get(i), currPlayer.getOtherPlayer().getColor())){
                             allInMill = false;
                             break;
                         }

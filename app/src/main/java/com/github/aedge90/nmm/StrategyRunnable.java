@@ -97,13 +97,13 @@ public class StrategyRunnable implements Runnable{
             //this is important so there are no mills wrongly detected when move contains a source and
             //destination that is inside the same mill
             localGameBoard.executeSetOrMovePhase(move, player);
-            inMill = localGameBoard.inMill(move.getDest(), player.getColor());
+            inMill = localGameBoard.isInMill(move.getDest(), player.getColor());
             localGameBoard.reverseCompleteTurn(move, player);
             //player has a mill after doing this move --> he can kill a piece of the opponent
             if(inMill){
                 int added = 0;
                 for (Position kill : localGameBoard.getPositions(player.getOtherPlayer().getColor())) {
-                    if(!localGameBoard.inMill(kill, player.getOtherPlayer().getColor())){
+                    if(!localGameBoard.isInMill(kill, player.getOtherPlayer().getColor())){
                         Move killMove = new Move(move.getDest(), move.getSrc(), kill);
                         // using add first is important, so the kill moves will be at the beginning of the list
                         // by that its more likely that the alpha beta algorithms does more cutoffs
@@ -160,7 +160,7 @@ public class StrategyRunnable implements Runnable{
             if(movesToEvaluate.size() > 1) {
                 localGameBoard.reverseCompleteTurn(movesToEvaluate.getLast(), player.getOtherPlayer());
                 //check if the loosing player, prevented a mill in his last move (which is the size-2th move)
-                if (localGameBoard.inMill(movesToEvaluate.get(movesToEvaluate.size() - 2).getDest(), player.getOtherPlayer().getColor())) {
+                if (localGameBoard.isInMill(movesToEvaluate.get(movesToEvaluate.size() - 2).getDest(), player.getOtherPlayer().getColor())) {
                     //evaluate this better, as it looks stupid if he does not try to prevent one mill even if the other player
                     //can close another mill despite that
                     ret = 1;
@@ -225,20 +225,20 @@ public class StrategyRunnable implements Runnable{
             // There is no need to check if the mill can be opened safely (without the enemy blocking it in the next move)
             // as even depth 2 bots will already NOT open a mill as preventedMill will be true for the next move
             localGameBoard.reverseCompleteTurn(move, player);
-            if(localGameBoard.inMill(move.getSrc(), player.getColor())){
+            if(localGameBoard.isInMill(move.getSrc(), player.getColor())){
                 eval += 1;
             }
             localGameBoard.executeCompleteTurn(move, player);
         }else if(localGameBoard.preventedMill(move.getDest(), player)){
             eval += weight;
         }else if(player.getOtherPlayer().getSetCount() >= 1 &&
-                localGameBoard.inPotentialMill(move.getDest(), player.getOtherPlayer().getColor())){
+                localGameBoard.isInPotentialMill(move.getDest(), player.getOtherPlayer().getColor())){
             // check if a potential mill of the other player is prevented. This is necessary, as if the enemy
             // can form two potential mills in the next move, there will always be a negative evaluation
             // and any move can be chosen. This way a move will be chosen that prevents one of the two
             eval += weight;
         }else if(player.getSetCount() >= 1 &&   //only makes sense if the player can actually close the mill
-                localGameBoard.inPotentialMill(move.getDest(), player.getColor())){
+                localGameBoard.isInPotentialMill(move.getDest(), player.getColor())){
             // evaluate having a potential future mill better, as otherwise the bot will just randomly place pieces
             // this causes the bot to be weaker especially on bigger gameboards as he does not really try to build a mill.
             eval += weight;
