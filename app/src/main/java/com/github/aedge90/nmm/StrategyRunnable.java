@@ -220,7 +220,11 @@ public class StrategyRunnable implements Runnable{
             // also this prefers kills in the near future, so they are done now and not later
             // as could be the case if all were weighted equally
             eval += killweight;
-        }else if(move.getSrc() != null && movesToEvaluate.size() == 1){
+            move.setEvaluation(eval);
+            //return as the other cases should not return true if its a kill move
+            return;
+        }
+        if(move.getSrc() != null && movesToEvaluate.size() == 1){
             // evaluate opening a mill in the first move better, so the bot will open mills.
             // There is no need to check if the mill can be opened safely (without the enemy blocking it in the next move)
             // as even depth 2 bots will already NOT open a mill as preventedMill will be true for the next move
@@ -229,19 +233,26 @@ public class StrategyRunnable implements Runnable{
                 eval += 1;
             }
             localGameBoard.executeCompleteTurn(move, player);
-        }else if(localGameBoard.preventedMill(move.getDest(), player)){
+        }
+        if(localGameBoard.preventedMill(move.getDest(), player)){
             eval += weight;
-        }else if(player.getOtherPlayer().getSetCount() >= 1 &&
-                localGameBoard.isInNPotentialMills(move.getDest(), player.getOtherPlayer().getColor()) > 0){
-            // check if a potential mill of the other player is prevented. This is necessary, as if the enemy
-            // can form two potential mills in the next move, there will always be a negative evaluation
-            // and any move can be chosen. This way a move will be chosen that prevents one of the two
-            eval += weight;
-        }else if(player.getSetCount() >= 1 &&   //only makes sense if the player can actually close the mill
-                localGameBoard.isInNPotentialMills(move.getDest(), player.getColor()) > 0){
-            // evaluate having a potential future mill better, as otherwise the bot will just randomly place pieces
-            // this causes the bot to be weaker especially on bigger gameboards as he does not really try to build a mill.
-            eval += weight;
+        }
+        if(player.getOtherPlayer().getSetCount() >= 1){
+            int n = localGameBoard.isInNPotentialMills(move.getDest(), player.getOtherPlayer().getColor());
+            if(n > 0) {
+                // check if a potential mill of the other player is prevented. This is necessary, as if the enemy
+                // can form two potential mills in the next move, there will always be a negative evaluation
+                // and any move can be chosen. This way a move will be chosen that prevents one of the two
+                eval += weight*n;
+            }
+        }
+        if(player.getSetCount() >= 1){
+            int n = localGameBoard.isInNPotentialMills(move.getDest(), player.getColor());
+            if(n > 0) {
+                // evaluate having a potential future mill better, as otherwise the bot will just randomly place pieces
+                // this causes the bot to be weaker especially on bigger gameboards as he does not really try to build a mill.
+                eval += weight*n;
+            }
         }
         move.setEvaluation(eval);
     }
