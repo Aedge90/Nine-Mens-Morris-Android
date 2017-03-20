@@ -239,24 +239,45 @@ public abstract class GameBoard {
     //if two pieces of color player are found, that form a mill together with position
     //an array containing the two pieces and position is returned, else null is returned
     Position[] getMillOrPartialMill(Position p, Options.Color player, boolean partial) {
+        Position[] mill = null;
         GameBoardPosition checkPos = getGameBoardPosAt(p);
-        GameBoardPosition[] neighbors = checkPos.getNeighbors();
+        mill = getMillWithPosInMiddle(checkPos, player, partial);
+        if(mill != null){
+            return mill;
+        }
+        mill = getMillWithPosAtCorner(checkPos, player, partial);
+        if(mill != null){
+            return mill;
+        }
+        return null;
+    }
+
+    protected Position[] getMillWithPosInMiddle(GameBoardPosition middlePos, Options.Color player, boolean partial){
+        GameBoardPosition[] neighbors = middlePos.getNeighbors();
         for(GameBoardPosition neighbor : neighbors) {
-            if(neighbor != null && checkPos.getOpposite(neighbor) != null){
-                if(belongTo(neighbor, checkPos.getOpposite(neighbor), player, partial)){
-                    return new GameBoardPosition[] {neighbor, checkPos, checkPos.getOpposite(neighbor)};
-                }
-            }
-            if(neighbor != null && neighbor.getOpposite(checkPos) != null){
-                if(belongTo(neighbor.getOpposite(checkPos), neighbor, player, partial)){
-                    return new GameBoardPosition[] {neighbor.getOpposite(checkPos), neighbor, checkPos};
+            if (neighbor != null && middlePos.getOpposite(neighbor) != null) {
+                if (belongTo(neighbor, middlePos.getOpposite(neighbor), player, partial)) {
+                    return new Position[]{neighbor, middlePos, middlePos.getOpposite(neighbor)};
                 }
             }
         }
         return null;
     }
 
-    protected boolean belongTo(GameBoardPosition p1, GameBoardPosition p2, Options.Color player, boolean partial){
+    protected Position[] getMillWithPosAtCorner(GameBoardPosition cornerPos, Options.Color player, boolean partial){
+        GameBoardPosition[] neighbors = cornerPos.getNeighbors();
+        for(GameBoardPosition neighbor : neighbors) {
+            if (neighbor != null && neighbor.getOpposite(cornerPos) != null) {
+                if (belongTo(neighbor.getOpposite(cornerPos), neighbor, player, partial)) {
+                    return new GameBoardPosition[]{neighbor.getOpposite(cornerPos), neighbor, cornerPos};
+                }
+            }
+        }
+        return null;
+    }
+
+
+    private boolean belongTo(GameBoardPosition p1, GameBoardPosition p2, Options.Color player, boolean partial){
         if(partial){
             return oneBelongsToPlayerOtherToNobody(p1, p2, player);
         }else{

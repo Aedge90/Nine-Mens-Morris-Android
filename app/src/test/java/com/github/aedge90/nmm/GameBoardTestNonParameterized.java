@@ -414,6 +414,28 @@ public class GameBoardTestNonParameterized {
     }
 
     @Test
+    public void isInPotentialMillShouldBeTrueForMill7 () {
+
+        Options.Color[][] mill7 =
+
+                {{N, I, I, N, I, I, N},
+                { I, N, I, N, I, N, I},
+                { I, I, I, I, I, I, I},
+                { N, N, I, N, I, W, N},
+                { I, I, I, I, I, I, I},
+                { I, N, I, N, I, N, I},
+                { N, I, I, N, I, I, W}};
+
+        GameBoard gameBoard = new Mill7(mill7);
+
+        mPlayerBlack.setSetCount(0);
+        mPlayerWhite.setSetCount(0);
+
+        assertTrue(gameBoard.isInPotentialMill(new Position(6,3), mPlayerWhite.getColor()));
+
+    }
+
+    @Test
     public void isInPotentialMillShouldBeFalseForMill7 () {
 
         Options.Color[][] mill7 =

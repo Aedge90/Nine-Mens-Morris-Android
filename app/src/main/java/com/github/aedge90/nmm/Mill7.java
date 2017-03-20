@@ -81,41 +81,28 @@ public class Mill7 extends GameBoard {
     @Override
     Position[] getMillOrPartialMill(Position p, Options.Color player, boolean partial){
 
-        Position[] mill = super.getMillOrPartialMill(p, player, partial);
+        Position[] mill = super.getMillOrPartialMill(p, player ,partial);
 
-        Position criticalPos = new Position(3,3);
+        Position middle = new Position(3,3);
+        Position[] criticalPositions = {new Position(1,3), new Position(5,3), new Position(3,1), new Position(3,5)};
 
-        // do not just dismiss a mill with 3,3 in the middle. It may still be that there is a mill
-        // depsite that, that has 3,3 at the corner, which is valid
-        if(mill != null && (criticalPos.equals(mill[0]) || criticalPos.equals(mill[1]) || criticalPos.equals(mill[2]))){
-            return getMillOrPartialMillForMill7(p, player, partial);
+        //overwrite mill as it may not really be a mill for mill7
+        if(p.equals(middle)) {
+            mill = getMillWithPosAtCorner(getGameBoardPosAt(p), player, partial);
+            if (mill != null) {
+                return mill;
+            }
+        }
+        for(Position criticalPos : criticalPositions) {
+            if(p.equals(criticalPos)) {
+                mill = getMillWithPosInMiddle(getGameBoardPosAt(p), player, partial);
+                if (mill != null) {
+                    return mill;
+                }
+            }
         }
 
         return mill;
-    }
-
-    Position[] getMillOrPartialMillForMill7(Position p, Options.Color player, boolean partial) {
-        Position criticalPos = new Position(3,3);
-        GameBoardPosition criticalGameBoardPos = getGameBoardPosAt(criticalPos);
-        GameBoardPosition checkPos = getGameBoardPosAt(p);
-        GameBoardPosition[] neighbors = criticalGameBoardPos.getNeighbors();
-        if (checkPos.equals(criticalGameBoardPos)) {
-            for(GameBoardPosition neighbor : neighbors) {
-                //check if next two neighbors belong to player
-                if (belongTo(neighbor.getOpposite(checkPos), neighbor, player, partial)) {
-                    return new GameBoardPosition[]{neighbor.getOpposite(checkPos), neighbor, checkPos};
-                }
-            }
-        }
-        for(GameBoardPosition neighbor : neighbors) {
-            if (checkPos.equals(neighbor)) {
-                //check if checkPos is between two positions that belong to player
-                if(belongTo(criticalGameBoardPos, checkPos.getOpposite(criticalGameBoardPos), player, partial)){
-                    return new GameBoardPosition[] {criticalGameBoardPos, checkPos, checkPos.getOpposite(criticalGameBoardPos)};
-                }
-            }
-        }
-        return null;
     }
 
 }
