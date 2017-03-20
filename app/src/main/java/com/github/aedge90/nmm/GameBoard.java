@@ -269,7 +269,7 @@ public abstract class GameBoard {
         for(GameBoardPosition neighbor : neighbors) {
             if (neighbor != null && middlePos.getOpposite(neighbor) != null) {
                 if (belongTo(neighbor, middlePos.getOpposite(neighbor), player, partial)) {
-                    return new Position[]{neighbor, middlePos, middlePos.getOpposite(neighbor)};
+                    return new Position[]{new Position(neighbor), new Position(middlePos), new Position(middlePos.getOpposite(neighbor))};
                 }
             }
         }
@@ -281,7 +281,7 @@ public abstract class GameBoard {
         for(GameBoardPosition neighbor : neighbors) {
             if (neighbor != null && neighbor.getOpposite(cornerPos) != null) {
                 if (belongTo(neighbor.getOpposite(cornerPos), neighbor, player, partial)) {
-                    return new GameBoardPosition[]{neighbor.getOpposite(cornerPos), neighbor, cornerPos};
+                    return new Position[]{new Position(neighbor.getOpposite(cornerPos)), new Position(neighbor), new Position(cornerPos)};
                 }
             }
         }

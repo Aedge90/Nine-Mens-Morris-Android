@@ -392,6 +392,31 @@ public class GameBoardTestNonParameterized {
     }
 
     @Test
+    public void isInNPotentialMillsShouldBeOne4 () {
+
+        //check if this returns 1 for Player White while the position is occupied by black
+        //it should be 1 as the color of the position itself is not checked
+
+        Options.Color[][] mill9 =
+            {{N , I , I , N , I , I , N },
+            { I , N , I , N , I , N , I },
+            { I , I , W , N , N , I , I },
+            { N , N , B , I , B , N , N },
+            { I , I , N , N , W , I , I },
+            { I , N , I , N , I , N , I },
+            { N , I , I , N , I , I , N}};
+
+        GameBoard gameBoard = new Mill9(mill9);
+
+        mPlayerBlack.setSetCount(7);
+        mPlayerWhite.setSetCount(8);
+
+        assertEquals(1, gameBoard.isInNPotentialMills(new Position(4,3), mPlayerWhite.getColor()));
+
+
+    }
+
+    @Test
     public void isInNPotentialMillsShouldBeZero () {
 
         Options.Color[][] mill7 =
