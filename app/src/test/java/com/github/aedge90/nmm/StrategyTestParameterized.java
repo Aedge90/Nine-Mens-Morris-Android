@@ -19,6 +19,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotEquals;
 
 
+// TODO check if bots are smarter for the tests where easy bots are excluded
+// TODO maybe even check if a move prevented not only one but two potential mill
+// TODO as this would be smart but easy to implement now
+
+
 @RunWith(value = Parameterized.class)
 public class StrategyTestParameterized {
 
@@ -130,6 +135,39 @@ public class StrategyTestParameterized {
         Move result = strategyP1.computeMove();
 
         assertThat(result.getDest(), anyOf(is(new Position(4,2)), is(new Position(4,3)), is(new Position(3,4)), is(new Position(2,4))));
+
+    }
+
+    @Test
+    public void computeMoveShouldPreventTwoPotentialMillsInOneMove () throws InterruptedException {
+
+        //check if the bot prevents both potential mills instead of only one, in which case P1 could definitely close a mill
+
+        Options.Color[][] mill9 =
+                {{N , I , I , N , I , I , N },
+                { I , N , I , N , I , N , I },
+                { I , I , P1, N , N , I , I },
+                { N , N , P2, I , N , N , N },
+                { I , I , N , N , P1, I , I },
+                { I , N , I , N , I , N , I },
+                { N , I , I , N , I , I , N}};
+
+        GameBoard gameBoard = new Mill9(mill9);
+
+        mPlayer1.setSetCount(5);
+        mPlayer2.setSetCount(4);
+
+        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
+
+        Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+
+        mPlayer1.setSetCount(7);
+        mPlayer2.setSetCount(8);
+
+        Move result = strategyP1.computeMove();
+
+        assertEquals(new Position(4,2), result.getDest());
 
     }
 

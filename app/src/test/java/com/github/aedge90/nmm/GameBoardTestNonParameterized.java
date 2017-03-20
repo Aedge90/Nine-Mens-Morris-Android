@@ -327,7 +327,7 @@ public class GameBoardTestNonParameterized {
     }
 
     @Test
-    public void inPotentialMillShouldBeTrue1 () {
+    public void isInNPotentialMillsShouldBeOne1 () {
 
         Options.Color[][] mill7 =
 
@@ -344,12 +344,12 @@ public class GameBoardTestNonParameterized {
         mPlayerBlack.setSetCount(0);
         mPlayerWhite.setSetCount(0);
 
-        assertTrue(gameBoard.isInPotentialMill(new Position(6,6), mPlayerWhite.getColor()));
+        assertEquals(1, gameBoard.isInNPotentialMills(new Position(6,6), mPlayerWhite.getColor()));
 
     }
 
     @Test
-    public void inPotentialMillShouldBeTrue2 () {
+    public void isInNPotentialMillsShouldBeOne2 () {
 
         Options.Color[][] mill7 =
 
@@ -366,12 +366,12 @@ public class GameBoardTestNonParameterized {
         mPlayerBlack.setSetCount(0);
         mPlayerWhite.setSetCount(0);
 
-        assertTrue(gameBoard.isInPotentialMill(new Position(3,6), mPlayerWhite.getColor()));
+        assertEquals(1, gameBoard.isInNPotentialMills(new Position(3,6), mPlayerWhite.getColor()));
 
     }
 
     @Test
-    public void isInPotentialMillShouldBeTrue3 () {
+    public void isInNPotentialMillsShouldBeOne3 () {
 
         Options.Color[][] mill5 =
                 {{N , I , I , N , I , I , N },
@@ -387,12 +387,12 @@ public class GameBoardTestNonParameterized {
         mPlayerBlack.setSetCount(4);
         mPlayerWhite.setSetCount(4);
 
-        assertTrue(gameBoard.isInPotentialMill(new Position(4,2), mPlayerWhite.getColor()));
+        assertEquals(1, gameBoard.isInNPotentialMills(new Position(4,2), mPlayerWhite.getColor()));
 
     }
 
     @Test
-    public void isInPotentialMillShouldBeFalse () {
+    public void isInNPotentialMillsShouldBeZero () {
 
         Options.Color[][] mill7 =
 
@@ -409,12 +409,12 @@ public class GameBoardTestNonParameterized {
         mPlayerBlack.setSetCount(0);
         mPlayerWhite.setSetCount(0);
 
-        assertFalse(gameBoard.isInPotentialMill(new Position(6,6), mPlayerWhite.getColor()));
+        assertEquals(0, gameBoard.isInNPotentialMills(new Position(6,6), mPlayerWhite.getColor()));
 
     }
 
     @Test
-    public void isInPotentialMillShouldBeTrueForMill7 () {
+    public void isInPotentialMillShouldBeTwo () {
 
         Options.Color[][] mill7 =
 
@@ -431,12 +431,12 @@ public class GameBoardTestNonParameterized {
         mPlayerBlack.setSetCount(0);
         mPlayerWhite.setSetCount(0);
 
-        assertTrue(gameBoard.isInPotentialMill(new Position(6,3), mPlayerWhite.getColor()));
+        assertEquals(2, gameBoard.isInNPotentialMills(new Position(6,3), mPlayerWhite.getColor()));
 
     }
 
     @Test
-    public void isInPotentialMillShouldBeFalseForMill7 () {
+    public void isInNPotentialMillsShouldBeZeroForMill7 () {
 
         Options.Color[][] mill7 =
 
@@ -453,7 +453,7 @@ public class GameBoardTestNonParameterized {
         mPlayerBlack.setSetCount(5);
         mPlayerWhite.setSetCount(5);
 
-        assertFalse(gameBoard.isInPotentialMill(new Position(3,3), mPlayerWhite.getColor()));
+        assertEquals(0, gameBoard.isInNPotentialMills(new Position(3,3), mPlayerWhite.getColor()));
 
     }
 

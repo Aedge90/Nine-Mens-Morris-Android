@@ -232,13 +232,13 @@ public class StrategyRunnable implements Runnable{
         }else if(localGameBoard.preventedMill(move.getDest(), player)){
             eval += weight;
         }else if(player.getOtherPlayer().getSetCount() >= 1 &&
-                localGameBoard.isInPotentialMill(move.getDest(), player.getOtherPlayer().getColor())){
+                localGameBoard.isInNPotentialMills(move.getDest(), player.getOtherPlayer().getColor()) > 0){
             // check if a potential mill of the other player is prevented. This is necessary, as if the enemy
             // can form two potential mills in the next move, there will always be a negative evaluation
             // and any move can be chosen. This way a move will be chosen that prevents one of the two
             eval += weight;
         }else if(player.getSetCount() >= 1 &&   //only makes sense if the player can actually close the mill
-                localGameBoard.isInPotentialMill(move.getDest(), player.getColor())){
+                localGameBoard.isInNPotentialMills(move.getDest(), player.getColor()) > 0){
             // evaluate having a potential future mill better, as otherwise the bot will just randomly place pieces
             // this causes the bot to be weaker especially on bigger gameboards as he does not really try to build a mill.
             eval += weight;

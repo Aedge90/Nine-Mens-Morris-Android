@@ -216,16 +216,28 @@ public abstract class GameBoard {
         }
     }
 
-    // returns true if one piece of color player is found and one that belongs to nobody
+    // returns 1 or 2 if one piece of color player is found and one that belongs to nobody
     // and the two position could form a mill together with p later
     // the color of p itself is NOT checked
-    boolean isInPotentialMill(Position p, Options.Color player) {
-        if(null != getPotentialMill(p, player)){
-            //mill was found
-            return true;
-        }else{
-            return false;
+    // 1 is returned if p is in one potential mill, 2 if it is in two.
+    public int isInNPotentialMills(Position p, Options.Color player) {
+        Position[] potentialMill = getPotentialMill(p, player);
+        if(null == potentialMill){
+            return 0;
         }
+        for(Position pos : potentialMill){
+            Options.Color colorBefore = getGameBoardPosAt(pos).getColor();
+            if(!pos.equals(p) && !colorBefore.equals(Options.Color.NOTHING)){
+                //remove the player piece of the found potential mill. If there is still one, then it has to be two
+                makeSetMove(pos, Options.Color.NOTHING);
+                potentialMill = getPotentialMill(p, player);
+                makeSetMove(pos, colorBefore);
+                if(null != potentialMill){
+                    return 2;
+                }
+            }
+        }
+        return 1;
     }
 
     Position[] getPotentialMill (Position p, Options.Color player) {
