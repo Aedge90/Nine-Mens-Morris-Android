@@ -6,7 +6,7 @@ public class Move {
     private final Position dest; //if only dest is set, then this is a move in the set phase
     private final Position kill;
 
-    private int evaluation;
+    private double evaluation;
     
     Move(Position dest, Position src, Position kill){
         this.evaluation = 0;
@@ -36,11 +36,11 @@ public class Move {
         return kill;
     }
 
-    public int getEvaluation() {
+    public double getEvaluation() {
         return evaluation;
     }
 
-    public void setEvaluation(int evaluation) {
+    public void setEvaluation(double evaluation) {
         this.evaluation = evaluation;
     }
 

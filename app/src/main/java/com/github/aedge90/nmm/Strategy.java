@@ -1,7 +1,6 @@
 package com.github.aedge90.nmm;
 
 import android.support.annotation.VisibleForTesting;
-import android.util.Log;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -82,7 +81,7 @@ public class Strategy {
     }
 
     @VisibleForTesting
-    public int getResultEvaluation() {
+    public double getResultEvaluation() {
         return StrategyRunnable.resultEvaluation;
     }
 

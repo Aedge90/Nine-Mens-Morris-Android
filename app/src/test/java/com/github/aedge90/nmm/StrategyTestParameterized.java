@@ -715,8 +715,8 @@ public class StrategyTestParameterized {
 
         int maxThreads = 16;
 
-        int prevResultEval = 0;
-        int resultEval = 0;
+        double prevResultEval = 0;
+        double resultEval = 0;
         Move resultMove = null;
 
         ProgressBar progBar = new ProgressBar(new MockContext());

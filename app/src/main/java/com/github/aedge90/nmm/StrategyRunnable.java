@@ -15,15 +15,15 @@ public class StrategyRunnable implements Runnable{
 
     private final ProgressUpdater up;
     //not Int.Max as the evaluation function would create overflows
-    static final int MAX = (int) Math.pow(2,25);
-    static final int MIN = - (int) Math.pow(2,25);
+    static final double MAX = (int) Math.pow(2,25);
+    static final double MIN = - (int) Math.pow(2,25);
     private LinkedList<Move> movesToEvaluate;
     private Move prevMove;
 
     private final int threadNr;
-    static int maxWertKickoff;
+    static double maxWertKickoff;
     static Move resultMove;
-    static int resultEvaluation;
+    static double resultEvaluation;
     static LinkedList<Move> possibleMovesKickoff;
 
     StrategyRunnable(final GameBoard gameBoard, final Player maxPlayer, final ProgressUpdater up, final int threadNr) {
@@ -152,9 +152,9 @@ public class StrategyRunnable implements Runnable{
     // maximizing player has got to return higher values for better situations
     // minimizing player has got to return lower values the better his situation
     @VisibleForTesting
-    int evaluation(Player player, LinkedList<Move> moves, int depth) {
+    double evaluation(Player player, LinkedList<Move> moves, int depth) {
 
-        int ret = 0;
+        double ret = 0;
 
         if (moves.size() == 0) {
             if(movesToEvaluate.size() > 1) {
@@ -182,12 +182,16 @@ public class StrategyRunnable implements Runnable{
 
         //evaluate how often the players can kill, and prefer kills that are in the near future
         int i = 0;
+        double weight = 1;
+        // it is important that never a evaluation of a subsequent move is better than the one of the current move
+        // a then this path will be chosen, but it contains a move that may not be good
         for(Move move : movesToEvaluate){
             if(i % 2 == 0) {    //even numbers are moves of the maximizing player
-                ret += move.getEvaluation();
+                ret += move.getEvaluation() / weight;
             }else{
-                ret -= move.getEvaluation();
+                ret -= move.getEvaluation() / weight;
             }
+            weight = weight*10;
             i++;
         }
 
@@ -208,9 +212,7 @@ public class StrategyRunnable implements Runnable{
     }
 
     private void evaluateMove(Move move, Player player) {
-        int eval = 0;
-        int killweight = (int) (Math.pow(2, 24) / Math.pow(2, movesToEvaluate.size()));
-        int weight = (int) (Math.pow(2, 12) / Math.pow(2, movesToEvaluate.size()));
+        double eval = 0;
         if (move.getKill() != null) {
             // next weight will be half the weight
             // this has to be done so players wont do the same move over and over again
@@ -219,7 +221,7 @@ public class StrategyRunnable implements Runnable{
             // thus lowers the evaluation drastically and the game is stalled
             // also this prefers kills in the near future, so they are done now and not later
             // as could be the case if all were weighted equally
-            eval += killweight;
+            eval += 9;
             move.setEvaluation(eval);
             //return as the other cases should not return true if its a kill move
             return;
@@ -230,12 +232,12 @@ public class StrategyRunnable implements Runnable{
             // as even depth 2 bots will already NOT open a mill as preventedMill will be true for the next move
             localGameBoard.reverseCompleteTurn(move, player);
             if(localGameBoard.isInMill(move.getSrc(), player.getColor())){
-                eval += 1;
+                eval += 0.1;
             }
             localGameBoard.executeCompleteTurn(move, player);
         }
         if(localGameBoard.preventedMill(move.getDest(), player)){
-            eval += weight;
+            eval += 5;
         }
         if(player.getOtherPlayer().getSetCount() >= 1){
             int n = localGameBoard.isInNPotentialMills(move.getDest(), player.getOtherPlayer().getColor());
@@ -243,7 +245,7 @@ public class StrategyRunnable implements Runnable{
                 // check if a potential mill of the other player is prevented. This is necessary, as if the enemy
                 // can form two potential mills in the next move, there will always be a negative evaluation
                 // and any move can be chosen. This way a move will be chosen that prevents one of the two
-                eval += weight*n;
+                eval += 2*n;
             }
         }
         if(player.getSetCount() >= 1){
@@ -251,28 +253,28 @@ public class StrategyRunnable implements Runnable{
             if(n > 0) {
                 // evaluate having a potential future mill better, as otherwise the bot will just randomly place pieces
                 // this causes the bot to be weaker especially on bigger gameboards as he does not really try to build a mill.
-                eval += weight*n;
+                eval += 2*n;
             }
         }
         move.setEvaluation(eval);
     }
 
-    private int max(int depth, int alpha, int beta, Player player) throws InterruptedException {
+    private double max(int depth, double alpha, double beta, Player player) throws InterruptedException {
         if(Thread.interrupted()){
             throw new InterruptedException("Computation of Bot " + player + " was interrupted!");
         }
         LinkedList<Move> moves = possibleMoves(player);
         //end reached or no more moves available, maybe because he is trapped or because he lost
         if (depth == 0 || moves.size() == 0){
-            int bewertung = evaluation(player, moves, depth);
+            double bewertung = evaluation(player, moves, depth);
             return bewertung;
         }
-        int maxWert = alpha;
+        double maxWert = alpha;
         for (Move z : moves) {
             localGameBoard.executeCompleteTurn(z, player);
             movesToEvaluate.addLast(z);
             evaluateMove(z, player);
-            int wert = min(depth-1, maxWert, beta, player.getOtherPlayer());
+            double wert = min(depth-1, maxWert, beta, player.getOtherPlayer());
             movesToEvaluate.removeLast();
             localGameBoard.reverseCompleteTurn(z, player);
             if (wert > maxWert) {
@@ -302,7 +304,7 @@ public class StrategyRunnable implements Runnable{
             localGameBoard.executeCompleteTurn(z, player);
             movesToEvaluate.addLast(z);
             evaluateMove(z, player);
-            int wert = min(depth - 1, maxWertKickoff, Integer.MAX_VALUE, player.getOtherPlayer());
+            double wert = min(depth - 1, maxWertKickoff, Integer.MAX_VALUE, player.getOtherPlayer());
             movesToEvaluate.removeLast();
             localGameBoard.reverseCompleteTurn(z, player);
 
@@ -318,21 +320,21 @@ public class StrategyRunnable implements Runnable{
         }
     }
 
-    private int min(int depth, int alpha, int beta, Player player) throws InterruptedException {
+    private double min(int depth, double alpha, double beta, Player player) throws InterruptedException {
         if(Thread.interrupted()){
             throw new InterruptedException("Computation of Bot " + player + " was interrupted!");
         }
         LinkedList<Move> moves = possibleMoves(player);
         if (depth == 0 || moves.size() == 0){
-            int bewertung = evaluation(player, moves, depth);
+            double bewertung = evaluation(player, moves, depth);
             return bewertung;
         }
-        int minWert = beta;
+        double minWert = beta;
         for (Move z : moves) {
             localGameBoard.executeCompleteTurn(z, player);
             movesToEvaluate.addLast(z);
             evaluateMove(z, player);
-            int wert = max(depth-1, alpha, minWert, player.getOtherPlayer());
+            double wert = max(depth-1, alpha, minWert, player.getOtherPlayer());
             movesToEvaluate.removeLast();
             localGameBoard.reverseCompleteTurn(z, player);
             if (wert < minWert) {
