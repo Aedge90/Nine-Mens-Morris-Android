@@ -19,9 +19,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotEquals;
 
 
-// TODO check if bots are smarter for the tests where easy bots are excluded
-
-
 @RunWith(value = Parameterized.class)
 public class StrategyTestParameterized {
 
