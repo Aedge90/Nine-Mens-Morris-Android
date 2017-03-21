@@ -628,47 +628,6 @@ public class StrategyTestParameterized {
     }
 
     @Test
-    public void computeMoveShouldPreventCornerMillOnGameStartOnHigherDifficulties() throws InterruptedException {
-
-        //workaround to skip easier difficulties
-        if(mPlayer1.getDifficulty().equals(Options.Difficulties.EASIEST)
-                || mPlayer1.getDifficulty().equals(Options.Difficulties.EASY)){
-            return;
-        }
-
-        Options.Color[][] mill9 =
-                {{N , I , I , N , I , I , N },
-                { I , N , I , P2, I , N , I },
-                { I , I , N , N , N , I , I },
-                { N , N , N , I , N , P2, N },
-                { I , I , N , N , N , I , I },
-                { I , N , I , N , I , N , I },
-                { N , I , I , P1, I , I , N}};
-
-        GameBoard gameBoard = new Mill9(mill9);
-        ProgressBar progBar = new ProgressBar(new MockContext());
-        ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
-        Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
-        Strategy strategyP2 = new Strategy(gameBoard, mPlayer2, updater, nThreads);
-
-        mPlayer1.setSetCount(4);
-        mPlayer2.setSetCount(3);
-
-        for(int i = 0; i<3; i++){
-
-            Move result1 = strategyP1.computeMove();
-            gameBoard.executeCompleteTurn(result1, mPlayer1);
-
-            Move result2 = strategyP2.computeMove();
-            gameBoard.executeCompleteTurn(result2, mPlayer2);
-
-        }
-
-        assertEquals(4, gameBoard.getPositions(mPlayer1.getColor()).size());
-
-    }
-
-    @Test
     public void computeMoveDoesNotAlterPassedObjects() throws InterruptedException {
 
         GameBoard gameBoard = new Mill9();
