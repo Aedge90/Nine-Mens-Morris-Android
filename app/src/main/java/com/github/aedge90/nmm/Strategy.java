@@ -84,4 +84,12 @@ public class Strategy {
         return StrategyRunnable.resultEvaluation;
     }
 
+    @VisibleForTesting
+    public void setPreviousMove(Move move) {
+        for (int i = 0; i < nThreads; i++) {
+            //runnables need to know which move was chosen
+            runnables[i].setPreviousMove(move);
+        }
+    }
+
 }
