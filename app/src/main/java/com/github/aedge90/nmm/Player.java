@@ -25,7 +25,7 @@ public class Player implements Serializable {
         this.color = color;
     }
 
-    //copy constructor
+    //copy constructor. does not deepcopy the other player !!!!!
     public Player (Player other){
         this.setCount = other.setCount;
         this.color = other.color;
@@ -65,20 +65,13 @@ public class Player implements Serializable {
 
         Player player = (Player) o;
 
-        if (setCount != player.setCount) return false;
-        if (color != player.color) return false;
-        if (difficulty != player.difficulty) return false;
-        return otherPlayer != null ? otherPlayer.equals(player.otherPlayer) : player.otherPlayer == null;
+        return color == player.color;
 
     }
 
     @Override
     public int hashCode() {
-        int result = setCount;
-        result = 31 * result + color.hashCode();
-        result = 31 * result + (difficulty != null ? difficulty.hashCode() : 0);
-        result = 31 * result + (otherPlayer != null ? otherPlayer.hashCode() : 0);
-        return result;
+        return color.hashCode();
     }
 
     public Player getOtherPlayer () {
