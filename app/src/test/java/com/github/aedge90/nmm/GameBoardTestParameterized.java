@@ -57,9 +57,6 @@ public class GameBoardTestParameterized {
         playerBlack.setSetCount(5);
         playerWhite.setSetCount(5);
 
-        StrategyRunnable strategyBlack = new StrategyRunnable(gameBoard, playerBlack ,null, 0);
-        StrategyRunnable strategyWhite = new StrategyRunnable(gameBoard, playerWhite ,null, 0);
-
         //every player executes 10 turns
         for (int i = 0; i < nMovesPerPlayer; i++) {
             LinkedList<Move> allPossibleMoves = gameBoard.possibleMoves(playerBlack);
@@ -77,8 +74,6 @@ public class GameBoardTestParameterized {
     public void reverseCompleteTurn_ShouldReverse(){
 
         final GameBoard gameBoardBefore = mGameBoard.getCopy();
-
-        StrategyRunnable strategy = new StrategyRunnable(mGameBoard, mPlayerBlack, null, 0);
 
         LinkedList<Move> allPossibleMoves = mGameBoard.possibleMoves(mPlayerBlack);
 
