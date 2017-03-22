@@ -19,6 +19,7 @@ public class Move {
     }
 
     Move(Move other){
+        this.evaluation = other.evaluation;
         this.src = other.src;
         this.dest = other.dest;
         this.kill = other.kill;
