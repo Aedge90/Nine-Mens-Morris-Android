@@ -92,12 +92,12 @@ public class StrategyTestParameterized {
         GameBoard gameBoard = new Mill5(mill5);
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
-        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+        Strategy strategy = new Strategy(gameBoard, updater, nThreads);
 
         mPlayer1.setSetCount(4);
         mPlayer2.setSetCount(4);
 
-        Move result = strategy.computeMove();
+        Move result = strategy.computeMove(mPlayer1);
 
         assertThat(result.getDest(), anyOf(is(new Position(4,2)), is(new Position(4,4))));
     }
@@ -124,9 +124,9 @@ public class StrategyTestParameterized {
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
 
-        Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+        Strategy strategy = new Strategy(gameBoard, updater, nThreads);
 
-        Move result = strategyP1.computeMove();
+        Move result = strategy.computeMove(mPlayer1);
 
         assertEquals(new Position(4,2), result.getDest());
 
@@ -152,12 +152,12 @@ public class StrategyTestParameterized {
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
 
-        Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+        Strategy strategy = new Strategy(gameBoard, updater, nThreads);
 
         mPlayer1.setSetCount(4);
         mPlayer2.setSetCount(4);
 
-        Move result = strategyP1.computeMove();
+        Move result = strategy.computeMove(mPlayer1);
 
         assertThat(result.getDest(), anyOf(is(new Position(4,2)), is(new Position(4,3)), is(new Position(3,4)), is(new Position(2,4))));
 
@@ -185,9 +185,9 @@ public class StrategyTestParameterized {
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
 
-        Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+        Strategy strategy = new Strategy(gameBoard, updater, nThreads);
 
-        Move result = strategyP1.computeMove();
+        Move result = strategy.computeMove(mPlayer1);
 
         assertEquals(new Position(4,2), result.getDest());
 
@@ -208,12 +208,12 @@ public class StrategyTestParameterized {
         GameBoard gameBoard = new Mill5(mill5);
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
-        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+        Strategy strategy = new Strategy(gameBoard, updater, nThreads);
 
         mPlayer1.setSetCount(2);
         mPlayer2.setSetCount(2);
 
-        Move result = strategy.computeMove();
+        Move result = strategy.computeMove(mPlayer1);
 
         assertEquals(new Position(4, 4), result.getDest());
         assertEquals(null, result.getSrc());
@@ -236,12 +236,12 @@ public class StrategyTestParameterized {
 
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
-        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+        Strategy strategy = new Strategy(gameBoard, updater, nThreads);
 
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
 
-        Move result = strategy.computeMove();
+        Move result = strategy.computeMove(mPlayer1);
 
         assertEquals(new Position(0, 0), result.getDest());
         assertEquals(new Position(3, 0), result.getSrc());
@@ -263,12 +263,12 @@ public class StrategyTestParameterized {
         GameBoard gameBoard = new Mill5(mill5);
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
-        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+        Strategy strategy = new Strategy(gameBoard, updater, nThreads);
 
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
 
-        Move result1 = strategy.computeMove();
+        Move result1 = strategy.computeMove(mPlayer1);
 
         assertEquals(new Position(2,3), result1.getDest());
         assertEquals(new Position(0,3), result1.getSrc());
@@ -276,7 +276,7 @@ public class StrategyTestParameterized {
         gameBoard.executeCompleteTurn(result1, mPlayer1);
 
         //just let black do the next move again, white cant do anything
-        Move result2 = strategy.computeMove();
+        Move result2 = strategy.computeMove(mPlayer1);
 
         assertEquals(new Position(0,3), result2.getDest());
         assertEquals(new Position(2,3), result2.getSrc());
@@ -298,12 +298,12 @@ public class StrategyTestParameterized {
         GameBoard gameBoard = new Mill5(mill5);
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
-        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+        Strategy strategy = new Strategy(gameBoard, updater, nThreads);
 
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
 
-        Move result = strategy.computeMove();
+        Move result = strategy.computeMove(mPlayer1);
 
         assertEquals(new Position(0, 0), result.getDest());
         assertEquals(new Position(3, 0), result.getSrc());
@@ -337,25 +337,24 @@ public class StrategyTestParameterized {
         GameBoard gameBoard = new Mill5(mill5);
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
-        Strategy strategyPlayer1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
-        Strategy strategyPlayer2 = new Strategy(gameBoard, mPlayer2, updater, nThreads);
+        Strategy strategy = new Strategy(gameBoard, updater, nThreads);
 
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
 
-        Move result1 = strategyPlayer1.computeMove();
+        Move result1 = strategy.computeMove(mPlayer1);
         gameBoard.executeCompleteTurn(result1, mPlayer1);
 
-        Move result2 = strategyPlayer2.computeMove();
+        Move result2 = strategy.computeMove(mPlayer2);
         gameBoard.executeCompleteTurn(result2, mPlayer2);
 
-        Move result3 = strategyPlayer1.computeMove();
+        Move result3 = strategy.computeMove(mPlayer1);
         gameBoard.executeCompleteTurn(result3, mPlayer1);
 
-        Move result4 = strategyPlayer2.computeMove();
+        Move result4 = strategy.computeMove(mPlayer2);
         gameBoard.executeCompleteTurn(result4, mPlayer2);
 
-        Move result5 = strategyPlayer1.computeMove();
+        Move result5 = strategy.computeMove(mPlayer1);
         gameBoard.executeCompleteTurn(result5, mPlayer1);
 
         assertEquals(3, gameBoard.getPositions(mPlayer2.getColor()).size());
@@ -384,8 +383,7 @@ public class StrategyTestParameterized {
         GameBoard gameBoard = new Mill5(mill5);
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
-        Strategy strategyPlayer1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
-        Strategy strategyPlayer2 = new Strategy(gameBoard, mPlayer2, updater, nThreads);
+        Strategy strategy = new Strategy(gameBoard, updater, nThreads);
 
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
@@ -394,12 +392,12 @@ public class StrategyTestParameterized {
 
         gameBoard.executeCompleteTurn(result, mPlayer1);
 
-        Move result2 = strategyPlayer2.computeMove();
+        Move result2 = strategy.computeMove(mPlayer2);
         gameBoard.executeCompleteTurn(result2, mPlayer2);
 
         assertEquals(new Position(4,2), result2.getDest());
 
-        Move result3 = strategyPlayer1.computeMove();
+        Move result3 = strategy.computeMove(mPlayer1);
         gameBoard.executeCompleteTurn(result3, mPlayer1);
 
         assertThat(result3.getDest(), anyOf(is(new Position(2,2)), is(new Position(4,3))));
@@ -420,12 +418,12 @@ public class StrategyTestParameterized {
         GameBoard gameBoard = new Mill5(mill5);
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
-        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+        Strategy strategy = new Strategy(gameBoard, updater, nThreads);
 
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
 
-        Move result = strategy.computeMove();
+        Move result = strategy.computeMove(mPlayer1);
         gameBoard.executeCompleteTurn(result, mPlayer1);
 
         assertEquals(new Position(6,0), result.getDest());
@@ -448,22 +446,21 @@ public class StrategyTestParameterized {
         GameBoard gameBoard = new Mill5(mill5);
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
-        Strategy strategyPlayer1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
-        Strategy strategyPlayer2 = new Strategy(gameBoard, mPlayer2, updater, nThreads);
+        Strategy strategy = new Strategy(gameBoard, updater, nThreads);
 
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
 
         LinkedList<Position> positionsP1Before = gameBoard.getPositions(mPlayer1.getColor());
 
-        Move result1 = strategyPlayer1.computeMove();
+        Move result1 = strategy.computeMove(mPlayer1);
         gameBoard.executeCompleteTurn(result1, mPlayer1);
 
-        strategyPlayer2.computeMove();
+        strategy.computeMove(mPlayer2);
         //do not use this move, but compute it to check that it doesnt influence Player1s decision
         gameBoard.executeCompleteTurn(new Move(new Position(4,4), new Position(3,4), null), mPlayer2);
 
-        Move result2 = strategyPlayer1.computeMove();
+        Move result2 = strategy.computeMove(mPlayer1);
         gameBoard.executeCompleteTurn(result2, mPlayer1);
 
         LinkedList<Position> positionsP1After = gameBoard.getPositions(mPlayer1.getColor());
@@ -487,12 +484,12 @@ public class StrategyTestParameterized {
         GameBoard gameBoard = new Mill5(mill5);
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
-        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+        Strategy strategy = new Strategy(gameBoard, updater, nThreads);
 
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
 
-        Move result1 = strategy.computeMove();
+        Move result1 = strategy.computeMove(mPlayer1);
         assertEquals(new Position(0,3), result1.getSrc());
         assertEquals(new Position(0,0), result1.getDest());
 
@@ -502,7 +499,7 @@ public class StrategyTestParameterized {
 
         gameBoard.executeCompleteTurn(new Move(new Position(4,4), new Position(3,4), null), mPlayer2);
 
-        Move result2 = strategy.computeMove();
+        Move result2 = strategy.computeMove(mPlayer1);
         gameBoard.executeCompleteTurn(result2, mPlayer1);
 
         assertEquals(new Position(0,0), result2.getSrc());
@@ -525,19 +522,19 @@ public class StrategyTestParameterized {
         GameBoard gameBoard = new Mill5(mill5);
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
-        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+        Strategy strategy = new Strategy(gameBoard, updater, nThreads);
 
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
 
-        Move result1 = strategy.computeMove();
+        Move result1 = strategy.computeMove(mPlayer1);
         gameBoard.executeCompleteTurn(result1, mPlayer1);
 
         assertEquals(new Position(0,3), result1.getDest());
 
         gameBoard.executeCompleteTurn(new Move(new Position(4,4), new Position(3,4), null), mPlayer2);
 
-        Move result2 = strategy.computeMove();
+        Move result2 = strategy.computeMove(mPlayer1);
         gameBoard.executeCompleteTurn(result2, mPlayer1);
 
         assertEquals(new Position(0,0), result2.getDest());
@@ -559,12 +556,12 @@ public class StrategyTestParameterized {
         GameBoard gameBoard = new Mill5(mill5);
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
-        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+        Strategy strategy = new Strategy(gameBoard, updater, nThreads);
 
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
 
-        Move result = strategy.computeMove();
+        Move result = strategy.computeMove(mPlayer1);
 
         assertEquals(new Position(4, 3), result.getDest());
         assertEquals(new Position(6, 3), result.getSrc());
@@ -587,12 +584,12 @@ public class StrategyTestParameterized {
         GameBoard gameBoard = new Mill9(mill9);
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
-        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+        Strategy strategy = new Strategy(gameBoard, updater, nThreads);
 
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
 
-        Move result = strategy.computeMove();
+        Move result = strategy.computeMove(mPlayer1);
 
         assertThat(result.getDest(), anyOf(is(new Position(6,3)), is(new Position(4,3))));
 
@@ -613,12 +610,12 @@ public class StrategyTestParameterized {
         GameBoard gameBoard = new Mill9(mill9);
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
-        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+        Strategy strategy = new Strategy(gameBoard, updater, nThreads);
 
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
 
-        Move result = strategy.computeMove();
+        Move result = strategy.computeMove(mPlayer1);
 
         assertEquals(result.getSrc(), new Position(0,0));
 
@@ -637,15 +634,14 @@ public class StrategyTestParameterized {
 
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
-        Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
-        Strategy strategyP2 = new Strategy(gameBoard, mPlayer2, updater, nThreads);
+        Strategy strategy = new Strategy(gameBoard, updater, nThreads);
 
         for(int i = 0; i<30; i++){
 
             GameBoard gameBoardBefore1 = gameBoard.getCopy();
 
             //test if computeMove makes unallowed changed to gameBoard or players now
-            Move result1 = strategyP1.computeMove();
+            Move result1 = strategy.computeMove(mPlayer1);
             gameBoard.executeCompleteTurn(result1, mPlayer1);
             if(!gameBoard.getState(mPlayer1).equals(GameBoard.GameState.RUNNING)){
                 break;
@@ -662,7 +658,7 @@ public class StrategyTestParameterized {
             assertEquals("round " + i, mPlayer2Before, mPlayer2);
 
             GameBoard gameBoardBefore2 = gameBoard.getCopy();
-            Move result2 = strategyP2.computeMove();
+            Move result2 = strategy.computeMove(mPlayer2);
             gameBoard.executeCompleteTurn(result2, mPlayer2);
             if(!gameBoard.getState(mPlayer2).equals(GameBoard.GameState.RUNNING)){
                 break;
@@ -704,10 +700,10 @@ public class StrategyTestParameterized {
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
 
-        Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+        Strategy strategy = new Strategy(gameBoard, updater, nThreads);
 
         for(int i = 0; i < 1000; i++) {
-            Move result = strategyP1.computeMove();
+            Move result = strategy.computeMove(mPlayer1);
             if(!list.contains(result)) {
                 list.add(result);
             }
@@ -743,10 +739,10 @@ public class StrategyTestParameterized {
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
 
-        Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+        Strategy strategy = new Strategy(gameBoard, updater, nThreads);
 
         for(int i = 0; i < 1000; i++) {
-            Move result = strategyP1.computeMove();
+            Move result = strategy.computeMove(mPlayer1);
             if(!list.contains(result)) {
                 list.add(result);
             }
@@ -779,9 +775,9 @@ public class StrategyTestParameterized {
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
 
-        Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+        Strategy strategy = new Strategy(gameBoard, updater, nThreads);
 
-        LinkedList<Move> result = strategyP1.shuffleListOfPossMoves();
+        LinkedList<Move> result = strategy.shuffleListOfPossMoves(gameBoard.possibleMoves(mPlayer1));
 
         assertEquals(5 + 7, result.size());
 

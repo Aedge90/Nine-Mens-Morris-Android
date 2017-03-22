@@ -171,10 +171,10 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
                 Strategy playerBlackBrain = null;
                 Strategy playerWhiteBrain = null;
                 if(playerWhite.getDifficulty() != null) {
-                    playerWhiteBrain = new Strategy(field, playerWhite, progressUpdater);
+                    playerWhiteBrain = new Strategy(field, progressUpdater);
                 }
                 if(playerBlack.getDifficulty() != null) {
-                    playerBlackBrain = new Strategy(field, playerBlack, progressUpdater);
+                    playerBlackBrain = new Strategy(field, progressUpdater);
                 }
 
                 if(options.whoStarts.equals(playerWhite.getColor())){
@@ -409,7 +409,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
 
         Position newPosition = null;
         if(bot.getSetCount() <= 0){
-            currMove = brain.computeMove();
+            currMove = brain.computeMove(bot);
 
             fieldView.makeMove(currMove, bot.getColor());
             fieldView.getPos(currMove.getSrc()).setOnClickListener(
@@ -419,7 +419,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
             newPosition = currMove.getDest();
         }else{
 
-            currMove = brain.computeMove();
+            currMove = brain.computeMove(bot);
 
             fieldView.makeSetMove(currMove, bot.getColor());
             fieldView.getPos(currMove.getDest()).setOnClickListener(

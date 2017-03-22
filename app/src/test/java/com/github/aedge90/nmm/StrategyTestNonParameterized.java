@@ -30,8 +30,7 @@ public class StrategyTestNonParameterized {
         GameBoard[] gameBoards = new Mill9[nThreads];
         Player[] mPlayerBlacks = new Player[nThreads];
         Player[] mPlayerWhites = new Player[nThreads];
-        Strategy[] strategiesBlack = new Strategy[nThreads];
-        Strategy[] strategiesWhite = new Strategy[nThreads];
+        Strategy[] strategies = new Strategy[nThreads];
 
         for(int j = 0; j < nThreads; j++) {
             gameBoards[j] = new Mill9();
@@ -43,17 +42,16 @@ public class StrategyTestNonParameterized {
             mPlayerWhites[j].setOtherPlayer(mPlayerBlacks[j]);
             mPlayerBlacks[j].setSetCount(9);
             mPlayerWhites[j].setSetCount(9);
-            strategiesBlack[j] = new Strategy(gameBoards[j], mPlayerBlacks[j], updater, j+1);
-            strategiesWhite[j] = new Strategy(gameBoards[j], mPlayerWhites[j], updater, j+1);
+            strategies[j] = new Strategy(gameBoards[j], updater, j+1);
         }
 
         //make 30 rounds and check if the results on all possible thread counts are the same
         for(int i = 0; i<30; i++){
-            computeMoveShouldHaveSameEvaluationForAnyNumberOfThreads_Turn(i, gameBoards, mPlayerBlacks, strategiesBlack, nThreads);
+            computeMoveShouldHaveSameEvaluationForAnyNumberOfThreads_Turn(i, gameBoards, mPlayerBlacks, strategies, nThreads);
             if(!gameBoards[0].getState(mPlayerBlacks[0]).equals(GameBoard.GameState.RUNNING)){
                 break;
             }
-            computeMoveShouldHaveSameEvaluationForAnyNumberOfThreads_Turn(i, gameBoards, mPlayerWhites, strategiesWhite, nThreads);
+            computeMoveShouldHaveSameEvaluationForAnyNumberOfThreads_Turn(i, gameBoards, mPlayerWhites, strategies, nThreads);
             if(!gameBoards[0].getState(mPlayerWhites[0]).equals(GameBoard.GameState.RUNNING)){
                 break;
             }
@@ -69,7 +67,7 @@ public class StrategyTestNonParameterized {
         Move resultMove = null;
 
         for(int j = 0; j < nThreads; j++) {
-            resultMove = strategies[j].computeMove();
+            resultMove = strategies[j].computeMove(players[j]);
             resultEval = strategies[j].getResultEvaluation();
             if(j > 0) {
                 assertEquals("round " + round + " strategy with: " + (j+1) + " threads" +

@@ -13,34 +13,29 @@ public class Strategy {
     final ProgressUpdater up;
 
     private final GameBoard gameBoard;
-    private final Player maxPlayer;
 
     double maxWertKickoff;
     Move resultMove;
     double resultEvaluation;
     LinkedList<Move> possibleMovesKickoff;
 
-    Strategy(final GameBoard field, final Player player, final ProgressUpdater up) {
-        this(field, player, up, 8);
+    Strategy(final GameBoard field, final ProgressUpdater up) {
+        this(field, up, 8);
     }
 
     @VisibleForTesting
-    Strategy(final GameBoard field, final Player player, final ProgressUpdater up, final int nThreads) {
+    Strategy(final GameBoard field, final ProgressUpdater up, final int nThreads) {
         this.gameBoard = field;
-        this.maxPlayer = player;
         this.nThreads = nThreads;
         this.threads = new Thread[nThreads];
         this.runnables = new StrategyRunnable[nThreads];
         this.up = up;
-        for (int i = 0; i < nThreads; i++){
-            runnables[i] = new StrategyRunnable(gameBoard, maxPlayer, up, this, i);
-        }
     }
 
-    public Move computeMove() throws InterruptedException {
+    public Move computeMove(Player maxPlayer) throws InterruptedException {
 
         // shuffle list, so we dont end up with the same moves every game
-        possibleMovesKickoff = shuffleListOfPossMoves();
+        possibleMovesKickoff = shuffleListOfPossMoves(gameBoard.possibleMoves(maxPlayer));
 
         up.setMax(possibleMovesKickoff.size());
 
@@ -48,6 +43,10 @@ public class Strategy {
         resultMove = null;
         //not StrategyRunnable.MIN as StrategyRunnable.MIN might be multiplied in evaluation and thus is not the minimal possible number
         resultEvaluation = Integer.MIN_VALUE;
+
+        for (int i = 0; i < nThreads; i++){
+            runnables[i] = new StrategyRunnable(gameBoard, maxPlayer, up, this, i);
+        }
         for (int i = 0; i < nThreads; i++) {
             threads[i] = new Thread(runnables[i]);
             threads[i].start();
@@ -64,9 +63,7 @@ public class Strategy {
     }
 
     @VisibleForTesting
-    public LinkedList<Move> shuffleListOfPossMoves(){
-
-        LinkedList<Move> shuffle = gameBoard.possibleMoves(maxPlayer);
+    public LinkedList<Move> shuffleListOfPossMoves(LinkedList<Move> shuffle){
 
         Collections.shuffle(shuffle);
         LinkedList<Move> result = new LinkedList<Move>();
