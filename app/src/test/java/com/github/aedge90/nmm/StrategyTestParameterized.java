@@ -679,62 +679,6 @@ public class StrategyTestParameterized {
 
     }
 
-    //test for same evaluation, as resulting move may be different for different nThreads
-    @Test
-    public void computeMoveShouldHaveSameEvaluationForAnyNumberOfThreads () throws InterruptedException {
-
-        if(nThreads > 1){
-            //do this test only once, as this test runs for all nThreads already
-            return;
-        }
-
-        GameBoard gameBoard = new Mill9();
-
-        mPlayer1.setSetCount(9);
-        mPlayer2.setSetCount(9);
-
-        //make 30 rounds and check if the results on all possible thread counts are the same
-        for(int i = 0; i<30; i++){
-            computeMoveShouldHaveSameEvaluationForAnyNumberOfThreads_Turn(i, gameBoard, mPlayer1);
-            if(!gameBoard.getState(mPlayer1).equals(GameBoard.GameState.RUNNING)){
-                break;
-            }
-            computeMoveShouldHaveSameEvaluationForAnyNumberOfThreads_Turn(i, gameBoard, mPlayer2);
-            if(!gameBoard.getState(mPlayer2).equals(GameBoard.GameState.RUNNING)){
-                break;
-            }
-        }
-
-    }
-
-
-    public void computeMoveShouldHaveSameEvaluationForAnyNumberOfThreads_Turn (int round, GameBoard gameBoard, Player player) throws InterruptedException{
-
-        int maxThreads = 16;
-
-        double prevResultEval = 0;
-        double resultEval = 0;
-        Move resultMove = null;
-
-        ProgressBar progBar = new ProgressBar(new MockContext());
-        ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
-
-        for(int j = 0; j < maxThreads; j++) {
-            int nThreads = j+1;
-            Strategy strategy = new Strategy(gameBoard, player, updater, nThreads);
-            resultMove = strategy.computeMove();
-            resultEval = strategy.getResultEvaluation();
-            if(j > 0) {
-                assertEquals("round " + round + " nTreads: " + nThreads +
-                        "; resultEval was different from previous one\n previous result: " +
-                        prevResultEval + "\n result: " + resultEval, prevResultEval, resultEval);
-            }
-            prevResultEval = resultEval;
-        }
-
-        gameBoard.executeCompleteTurn(resultMove, player);
-    }
-
     //if this test fails may (but probably not) be because of a tiny chance that not all possible moves were chosen
     @Test
     public void computeMoveShouldReturn16DifferentMovesOverTime () throws InterruptedException {
