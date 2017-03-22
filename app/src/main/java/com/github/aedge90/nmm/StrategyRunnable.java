@@ -19,7 +19,6 @@ public class StrategyRunnable implements Runnable{
     static final double MAX = (int) Math.pow(2,25);
     static final double MIN = - (int) Math.pow(2,25);
     private LinkedList<Move> movesToEvaluate;
-    private Move prevMove;
 
     private final int threadNr;
 
@@ -102,12 +101,12 @@ public class StrategyRunnable implements Runnable{
 
         //evaluate undoing a move, as its probably of no use. If it is, the other evaluation should overwrite this
         //this should break endless undoing and redoing of moves if all have the same evaluation so far
-        if(prevMove != null){
+        if(globalMaxPlayer.getPrevMove() != null){
             // closing and opening a mill should not be downgraded. Ignore setting phase
-            if (prevMove.getKill() != null || movesToEvaluate.get(0).getKill() != null || prevMove.getSrc() == null){
+            if (globalMaxPlayer.getPrevMove().getKill() != null || movesToEvaluate.get(0).getKill() != null || globalMaxPlayer.getPrevMove().getSrc() == null){
                 //do nothing
-            }else if (prevMove.getSrc().equals(movesToEvaluate.get(0).getDest())
-                    && prevMove.getDest().equals(movesToEvaluate.get(0).getSrc())) {
+            }else if (globalMaxPlayer.getPrevMove().getSrc().equals(movesToEvaluate.get(0).getDest())
+                    && globalMaxPlayer.getPrevMove().getDest().equals(movesToEvaluate.get(0).getSrc())) {
                 ret -= 1;
             }
         }
@@ -297,11 +296,6 @@ public class StrategyRunnable implements Runnable{
             return Math.min(startDepth, 4);
         }
         return startDepth;
-    }
-
-
-    public void setPreviousMove(Move prevMove) {
-       this.prevMove = prevMove;
     }
 
 }

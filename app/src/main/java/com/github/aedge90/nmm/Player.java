@@ -12,6 +12,8 @@ public class Player implements Serializable {
     //at the beginning of a game
     private int setCount;
 
+    private Move prevMove = null;
+
     //the color of this player (black or white)
     private final Options.Color color;
 
@@ -28,6 +30,9 @@ public class Player implements Serializable {
     //copy constructor. does not deepcopy the other player !!!!!
     public Player (Player other){
         this.setCount = other.setCount;
+        if(other.getPrevMove() != null) {
+            this.prevMove = new Move(other.prevMove);
+        }
         this.color = other.color;
         this.difficulty = other.difficulty;
         this.otherPlayer = other.otherPlayer;
@@ -38,6 +43,10 @@ public class Player implements Serializable {
             throw new IllegalArgumentException("setSetCount: setCount of player: " + getColor() + " may not be set below 0");
         }
         this.setCount = setCount;
+    }
+
+    public void setPrevMove(Move prevMove) {
+        this.prevMove = prevMove;
     }
 
     public void setOtherPlayer (Player otherPlayer) {
@@ -58,6 +67,29 @@ public class Player implements Serializable {
         return this.setCount;
     }
 
+    public Move getPrevMove() {
+        return prevMove;
+    }
+
+    public Player getOtherPlayer () {
+        return this.otherPlayer;
+    }
+
+    public Options.Color getColor (){
+        return color;
+    }
+
+    public Options.Difficulties getDifficulty () {
+        return this.difficulty;
+    }
+
+
+
+    @Override
+    public String toString(){
+        return "Player " + color + " on " + difficulty;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -73,22 +105,4 @@ public class Player implements Serializable {
     public int hashCode() {
         return color.hashCode();
     }
-
-    public Player getOtherPlayer () {
-        return this.otherPlayer;
-    }
-
-    public Options.Color getColor (){
-        return color;
-    }
-
-    public Options.Difficulties getDifficulty () {
-        return this.difficulty;
-    }
-
-    @Override
-    public String toString(){
-        return "Player " + color + " on " + difficulty;
-    }
-
 }

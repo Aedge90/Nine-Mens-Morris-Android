@@ -56,10 +56,7 @@ public class Strategy {
             threads[i].join();
         }
 
-        for (int i = 0; i < nThreads; i++) {
-           //runnables need to know which move was chosen
-           runnables[i].setPreviousMove(resultMove);
-        }
+        maxPlayer.setPrevMove(resultMove);
 
         up.reset();
 
@@ -87,14 +84,6 @@ public class Strategy {
     @VisibleForTesting
     public double getResultEvaluation() {
         return resultEvaluation;
-    }
-
-    @VisibleForTesting
-    public void setPreviousMove(Move move) {
-        for (int i = 0; i < nThreads; i++) {
-            //runnables need to know which move was chosen
-            runnables[i].setPreviousMove(move);
-        }
     }
     
 }

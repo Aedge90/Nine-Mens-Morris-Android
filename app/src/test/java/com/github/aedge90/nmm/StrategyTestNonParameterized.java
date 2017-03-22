@@ -83,8 +83,8 @@ public class StrategyTestNonParameterized {
         // important as there are different moves with same evaluation and we want every copy of the gameboard to be the same
         for(int j = 0; j < nThreads; j++) {
             gameBoards[j].executeCompleteTurn(resultMove, players[j]);
-            //also the strategies that decided for another move must have the same result move
-            strategies[j].setPreviousMove(resultMove);
+            //also the strategies that decided for another move must have the same previous move
+            players[j].setPrevMove(resultMove);
         }
     }
 
