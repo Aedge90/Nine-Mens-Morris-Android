@@ -276,6 +276,7 @@ public class StrategyTestParameterized {
         gameBoard.executeCompleteTurn(result1, mPlayer1);
 
         //just let black do the next move again, white cant do anything
+        strategy = new Strategy(gameBoard, updater, nThreads);
         Move result2 = strategy.computeMove(mPlayer1);
 
         assertEquals(new Position(0,3), result2.getDest());
@@ -499,6 +500,7 @@ public class StrategyTestParameterized {
 
         gameBoard.executeCompleteTurn(new Move(new Position(4,4), new Position(3,4), null), mPlayer2);
 
+        strategy = new Strategy(gameBoard, updater, nThreads);
         Move result2 = strategy.computeMove(mPlayer1);
         gameBoard.executeCompleteTurn(result2, mPlayer1);
 
@@ -534,6 +536,7 @@ public class StrategyTestParameterized {
 
         gameBoard.executeCompleteTurn(new Move(new Position(4,4), new Position(3,4), null), mPlayer2);
 
+        strategy = new Strategy(gameBoard, updater, nThreads);
         Move result2 = strategy.computeMove(mPlayer1);
         gameBoard.executeCompleteTurn(result2, mPlayer1);
 

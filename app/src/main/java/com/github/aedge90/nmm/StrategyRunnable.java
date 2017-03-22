@@ -196,17 +196,26 @@ public class StrategyRunnable implements Runnable{
 
         while(true) {
 
+            Node currentMoveNode = null;
+
             Move z;
             synchronized (strategy) {
                 if(strategy.possibleMovesKickoff.size() > 0) {
                     z = strategy.possibleMovesKickoff.removeFirst();
+                    for(Node n : strategy.root.getChildren()){
+                        if(n.getData().equals(z)){
+                            currentMoveNode = n;
+                            z = n.getData();
+                            break;
+                        }
+                    }
                 }else{
                     break;
                 }
             }
 
             localGameBoard.executeCompleteTurn(z, player);
-            movesToEvaluate.addLast(new Node(z));
+            movesToEvaluate.addLast(currentMoveNode);
             evaluateMove(z, player);
             double wert = min(depth - 1, strategy.maxWertKickoff, Integer.MAX_VALUE, player.getOtherPlayer());
             movesToEvaluate.removeLast();

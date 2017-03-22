@@ -2,6 +2,7 @@ package com.github.aedge90.nmm;
 
 import android.support.annotation.VisibleForTesting;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 
@@ -18,6 +19,7 @@ public class Strategy {
     Move resultMove;
     double resultEvaluation;
     LinkedList<Move> possibleMovesKickoff;
+    Node root;
 
     Strategy(final GameBoard field, final ProgressUpdater up) {
         this(field, up, 8);
@@ -30,9 +32,19 @@ public class Strategy {
         this.threads = new Thread[nThreads];
         this.runnables = new StrategyRunnable[nThreads];
         this.up = up;
+        this.root = new Node(null);
     }
 
     public Move computeMove(Player maxPlayer) throws InterruptedException {
+
+        //TODO make this work for human vs. bot too
+        for(Node n : root.getChildren()){
+            if(n.getData().equals(maxPlayer.getOtherPlayer().getPrevMove())){
+                root = n;
+            }
+        }
+
+        addPossibleMovesTo(root, maxPlayer, gameBoard);
 
         // shuffle list, so we dont end up with the same moves every game
         possibleMovesKickoff = shuffleListOfPossMoves(gameBoard.possibleMoves(maxPlayer));
@@ -82,5 +94,14 @@ public class Strategy {
     public double getResultEvaluation() {
         return resultEvaluation;
     }
-    
+
+    public void addPossibleMovesTo(Node parent, Player player, GameBoard gameBoard) {
+        if (parent.getChildren().size() == 0) {
+            LinkedList<Move> moves = gameBoard.possibleMoves(player);
+            for (Move move : moves) {
+                parent.getChildren().add(new Node(move));
+            }
+        }
+    }
+
 }
