@@ -61,9 +61,8 @@ public class StrategyRunnableTest {
 
         //black is the maximizing player
         StrategyRunnable strategy = new StrategyRunnable(gameBoard, mPlayerBlack, null, 0);
-        strategy.updateState();
 
-        LinkedList<Move> possibleMoves = strategy.possibleMoves(mPlayerWhite);
+        LinkedList<Move> possibleMoves = gameBoard.possibleMoves(mPlayerWhite);
         assertEquals(0, possibleMoves.size());
 
         //minimizing players worst case is MAX. black is the maximizing player
@@ -88,11 +87,9 @@ public class StrategyRunnableTest {
 
         executeMoveSeries(gameBoard, moves, mPlayerBlack);
 
-        strategyBlack.updateState();
-
         //black closes his mill, kill should be added to this move
         Move killMove = new Move(new Position(0,3), null, null);
-        strategyBlack.addpossibleKillstoMove(possibleMovessoFar, killMove, mPlayerBlack);
+        gameBoard.addpossibleKillstoMove(possibleMovessoFar, killMove, mPlayerBlack);
 
         Move expected0 = new Move(new Position(0,3), null, new Position(3,0));
         Move expected1 = new Move(new Position(0,3), null, new Position(3,2));
@@ -108,11 +105,9 @@ public class StrategyRunnableTest {
 
         possibleMovessoFar = new LinkedList<Move>();
 
-        strategyWhite.updateState();
-
         //now white sets to (6,6)
         Move nextMove = new Move(new Position(6,6), null, null);
-        strategyWhite.addpossibleKillstoMove(possibleMovessoFar, nextMove, mPlayerWhite);
+        gameBoard.addpossibleKillstoMove(possibleMovessoFar, nextMove, mPlayerWhite);
 
         //assert that white can not kill
         assertEquals(1, possibleMovessoFar.size());
@@ -142,13 +137,12 @@ public class StrategyRunnableTest {
 
         GameBoard gameBoard = new Mill5(field);
         StrategyRunnable strategy = new StrategyRunnable(gameBoard, mPlayerBlack, null, 0);
-        strategy.updateState();
 
         LinkedList<Move> possibleMovessoFar = new LinkedList<Move>();
 
         Move move = new Move(new Position(6,6), null, null);
 
-        strategy.addpossibleKillstoMove(possibleMovessoFar, move, mPlayerBlack);
+        gameBoard.addpossibleKillstoMove(possibleMovessoFar, move, mPlayerBlack);
 
         //assert that black can not kill in this scenario
         assertEquals(1, possibleMovessoFar.size());
@@ -164,9 +158,8 @@ public class StrategyRunnableTest {
         mPlayerBlack.setSetCount(9);
 
         StrategyRunnable strategy = new StrategyRunnable(gameBoard, mPlayerBlack, null, 0);
-        strategy.updateState();
 
-        LinkedList<Move> moves = strategy.possibleMoves(mPlayerBlack);
+        LinkedList<Move> moves = gameBoard.possibleMoves(mPlayerBlack);
 
         assertEquals(24, moves.size());
 
@@ -196,9 +189,8 @@ public class StrategyRunnableTest {
         mPlayerWhite.setSetCount(0);
 
         StrategyRunnable strategy = new StrategyRunnable(gameBoard, mPlayerBlack, null, 0);
-        strategy.updateState();
 
-        LinkedList<Move> moves = strategy.possibleMoves(mPlayerBlack);
+        LinkedList<Move> moves = gameBoard.possibleMoves(mPlayerBlack);
 
         //minus one, as one move is replaced with 3 moves containing different kill targets
         assertEquals(3*18 - 1 + 3, moves.size());
@@ -228,9 +220,8 @@ public class StrategyRunnableTest {
         mPlayerWhite.setSetCount(0);
 
         StrategyRunnable strategy = new StrategyRunnable(gameBoard, mPlayerBlack, null, 0);
-        strategy.updateState();
 
-        LinkedList<Move> moves = strategy.possibleMoves(mPlayerBlack);
+        LinkedList<Move> moves = gameBoard.possibleMoves(mPlayerBlack);
 
         assertEquals(4 + 4, moves.size());
 

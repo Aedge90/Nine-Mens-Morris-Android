@@ -55,99 +55,6 @@ public class StrategyRunnable implements Runnable{
             Thread.currentThread().interrupt();
         }
     }
-    
-    private void addnonJumpMoves(LinkedList<Move> moves, Player player){
-        for (Position p : localGameBoard.getPositions(player.getColor())) {
-            if (localGameBoard.moveUp(p) != null) {
-                addpossibleKillstoMove(moves, localGameBoard.moveUp(p), player);
-            }
-            if (localGameBoard.moveDown(p) != null) {
-                addpossibleKillstoMove(moves, localGameBoard.moveDown(p), player);
-            }
-            if (localGameBoard.moveRight(p) != null) {
-                addpossibleKillstoMove(moves, localGameBoard.moveRight(p), player);
-            }
-            if (localGameBoard.moveLeft(p) != null) {
-                addpossibleKillstoMove(moves, localGameBoard.moveLeft(p), player);
-            }
-        }
-    }
-
-    private void addJumpMoves(LinkedList<Move> moves, Player player){
-        for (Position all : localGameBoard.getAllValidPositions()) {
-            if (localGameBoard.getColorAt(all).equals(Options.Color.NOTHING)) {
-                for (Position own: localGameBoard.getPositions(player.getColor())) {
-                    addpossibleKillstoMove(moves, new Move(all, own, null), player);
-                }
-            }
-        }
-    }
-    
-    private void addSetMoves(LinkedList<Move> moves, Player player){
-        for (Position all : localGameBoard.getAllValidPositions()) {
-            if (localGameBoard.getColorAt(all).equals(Options.Color.NOTHING)) {
-                addpossibleKillstoMove(moves, new Move(all, null, null), player);
-            }
-        }
-    }
-
-    @VisibleForTesting
-    void addpossibleKillstoMove(LinkedList<Move> possibleMovessoFar, Move move, Player player){
-            boolean inMill = false;
-            //this is important so there are no mills wrongly detected when move contains a source and
-            //destination that is inside the same mill
-            localGameBoard.executeSetOrMovePhase(move, player);
-            inMill = localGameBoard.isInMill(move.getDest(), player.getColor());
-            localGameBoard.reverseCompleteTurn(move, player);
-            //player has a mill after doing this move --> he can kill a piece of the opponent
-            if(inMill){
-                int added = 0;
-                for (Position kill : localGameBoard.getPositions(player.getOtherPlayer().getColor())) {
-                    if(!localGameBoard.isInMill(kill, player.getOtherPlayer().getColor())){
-                        Move killMove = new Move(move.getDest(), move.getSrc(), kill);
-                        // using add first is important, so the kill moves will be at the beginning of the list
-                        // by that its more likely that the alpha beta algorithms does more cutoffs
-                        possibleMovessoFar.addFirst(killMove);
-                        added++;
-                    }
-                }
-                //no pieces to kill because all are in a mill --> do it again but now add all pieces
-                //as you are allowed to kill if all pieces are part of a mill
-                if(added == 0){
-                    for (Position kill2 : localGameBoard.getPositions(player.getOtherPlayer().getColor())) {
-                        Move killMove = new Move(move.getDest(), move.getSrc(), kill2);
-                        possibleMovessoFar.addFirst(killMove);
-                    }
-                }
-            }else{
-                possibleMovessoFar.add(move);
-            }
-    }
-
-    //returns a list of moves that the player is able to do
-    LinkedList<Move> possibleMoves(Player player) {
-        LinkedList<Move> poss = new LinkedList<Move>();
-        int nPositions = localGameBoard.getPositions(player.getColor()).size();
-        //do not compute possible moves if the player has lost, otherwise it breaks the evaluation
-        //as a state AFTER loosing would be evaluated instead of the final state after the final kill
-        if(nPositions < 3 && player.getSetCount() <= 0){
-            return poss;
-        }
-        if(player.getSetCount() > 0){
-            addSetMoves(poss, player);
-        }else{
-            boolean jump = false;
-            if (nPositions <= 3){
-                jump = true;
-            }
-            if (!jump) {
-                addnonJumpMoves(poss, player);
-            } else {
-                addJumpMoves(poss, player);
-            }
-        }
-        return poss;
-    }
 
     // maximizing player has got to return higher values for better situations
     // minimizing player has got to return lower values the better his situation
@@ -263,7 +170,7 @@ public class StrategyRunnable implements Runnable{
         if(Thread.interrupted()){
             throw new InterruptedException("Computation of Bot " + player + " was interrupted!");
         }
-        LinkedList<Move> moves = possibleMoves(player);
+        LinkedList<Move> moves = localGameBoard.possibleMoves(player);
         //end reached or no more moves available, maybe because he is trapped or because he lost
         if (depth == 0 || moves.size() == 0){
             double bewertung = evaluation(player, moves, depth);
@@ -324,7 +231,7 @@ public class StrategyRunnable implements Runnable{
         if(Thread.interrupted()){
             throw new InterruptedException("Computation of Bot " + player + " was interrupted!");
         }
-        LinkedList<Move> moves = possibleMoves(player);
+        LinkedList<Move> moves = localGameBoard.possibleMoves(player);
         if (depth == 0 || moves.size() == 0){
             double bewertung = evaluation(player, moves, depth);
             return bewertung;

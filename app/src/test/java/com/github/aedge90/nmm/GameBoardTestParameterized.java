@@ -62,12 +62,10 @@ public class GameBoardTestParameterized {
 
         //every player executes 10 turns
         for (int i = 0; i < nMovesPerPlayer; i++) {
-            strategyBlack.updateState();
-            LinkedList<Move> allPossibleMoves = strategyBlack.possibleMoves(playerBlack);
+            LinkedList<Move> allPossibleMoves = gameBoard.possibleMoves(playerBlack);
             //just use the last possible move, first moves contain kills
             gameBoard.executeCompleteTurn(allPossibleMoves.getLast(), playerBlack);
-            strategyWhite.updateState();
-            allPossibleMoves = strategyWhite.possibleMoves(playerWhite);
+            allPossibleMoves = gameBoard.possibleMoves(playerWhite);
             gameBoard.executeCompleteTurn(allPossibleMoves.getLast(), playerWhite);
         }
 
@@ -81,9 +79,8 @@ public class GameBoardTestParameterized {
         final GameBoard gameBoardBefore = mGameBoard.getCopy();
 
         StrategyRunnable strategy = new StrategyRunnable(mGameBoard, mPlayerBlack, null, 0);
-        strategy.updateState();
 
-        LinkedList<Move> allPossibleMoves = strategy.possibleMoves(mPlayerBlack);
+        LinkedList<Move> allPossibleMoves = mGameBoard.possibleMoves(mPlayerBlack);
 
         for (int i = 0; i < allPossibleMoves.size(); i++) {
             mGameBoard.executeCompleteTurn(allPossibleMoves.get(i), mPlayerBlack);

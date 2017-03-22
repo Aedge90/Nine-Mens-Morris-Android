@@ -64,8 +64,7 @@ public class Strategy {
     @VisibleForTesting
     public LinkedList<Move> shuffleListOfPossMoves(){
 
-        runnables[0].updateState();
-        LinkedList<Move> shuffle = runnables[0].possibleMoves(maxPlayer);
+        LinkedList<Move> shuffle = gameBoard.possibleMoves(maxPlayer);
 
         Collections.shuffle(shuffle);
         LinkedList<Move> result = new LinkedList<Move>();
