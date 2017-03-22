@@ -13,6 +13,7 @@ public class StrategyRunnable implements Runnable{
     private final Player globalMaxPlayer;
     private Player localMaxPlayer;
 
+    private final Strategy strategy;
     private final ProgressUpdater up;
     //not Int.Max as the evaluation function would create overflows
     static final double MAX = (int) Math.pow(2,25);
@@ -21,14 +22,11 @@ public class StrategyRunnable implements Runnable{
     private Move prevMove;
 
     private final int threadNr;
-    static double maxWertKickoff;
-    static Move resultMove;
-    static double resultEvaluation;
-    static LinkedList<Move> possibleMovesKickoff;
 
-    StrategyRunnable(final GameBoard gameBoard, final Player maxPlayer, final ProgressUpdater up, final int threadNr) {
+    StrategyRunnable(final GameBoard gameBoard, final Player maxPlayer, final ProgressUpdater up, Strategy strategy, final int threadNr) {
         this.globalGameBoard = gameBoard;
         this.globalMaxPlayer = maxPlayer;
+        this.strategy = strategy;
         this.up = up;
         this.movesToEvaluate = new LinkedList<Move>();
         this.threadNr = threadNr;
@@ -200,9 +198,9 @@ public class StrategyRunnable implements Runnable{
         while(true) {
 
             Move z;
-            synchronized (StrategyRunnable.class) {
-                if(possibleMovesKickoff.size() > 0) {
-                    z = possibleMovesKickoff.removeFirst();
+            synchronized (strategy) {
+                if(strategy.possibleMovesKickoff.size() > 0) {
+                    z = strategy.possibleMovesKickoff.removeFirst();
                 }else{
                     break;
                 }
@@ -211,15 +209,15 @@ public class StrategyRunnable implements Runnable{
             localGameBoard.executeCompleteTurn(z, player);
             movesToEvaluate.addLast(z);
             evaluateMove(z, player);
-            double wert = min(depth - 1, maxWertKickoff, Integer.MAX_VALUE, player.getOtherPlayer());
+            double wert = min(depth - 1, strategy.maxWertKickoff, Integer.MAX_VALUE, player.getOtherPlayer());
             movesToEvaluate.removeLast();
             localGameBoard.reverseCompleteTurn(z, player);
 
-            synchronized (StrategyRunnable.class) {
-                if (wert > maxWertKickoff) {
-                    maxWertKickoff = wert;
-                    resultMove = z;
-                    resultEvaluation = wert;
+            synchronized (strategy) {
+                if (wert > strategy.maxWertKickoff) {
+                    strategy.maxWertKickoff = wert;
+                    strategy.resultMove = z;
+                    strategy.resultEvaluation = wert;
                 }
             }
 

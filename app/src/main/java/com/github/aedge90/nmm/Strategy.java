@@ -15,6 +15,11 @@ public class Strategy {
     private final GameBoard gameBoard;
     private final Player maxPlayer;
 
+    double maxWertKickoff;
+    Move resultMove;
+    double resultEvaluation;
+    LinkedList<Move> possibleMovesKickoff;
+
     Strategy(final GameBoard field, final Player player, final ProgressUpdater up) {
         this(field, player, up, 8);
     }
@@ -28,21 +33,21 @@ public class Strategy {
         this.runnables = new StrategyRunnable[nThreads];
         this.up = up;
         for (int i = 0; i < nThreads; i++){
-            runnables[i] = new StrategyRunnable(gameBoard, maxPlayer, up, i);
+            runnables[i] = new StrategyRunnable(gameBoard, maxPlayer, up, this, i);
         }
     }
 
     public Move computeMove() throws InterruptedException {
 
         // shuffle list, so we dont end up with the same moves every game
-        StrategyRunnable.possibleMovesKickoff = shuffleListOfPossMoves();
+        possibleMovesKickoff = shuffleListOfPossMoves();
 
-        up.setMax(StrategyRunnable.possibleMovesKickoff.size());
+        up.setMax(possibleMovesKickoff.size());
 
-        StrategyRunnable.maxWertKickoff = Integer.MIN_VALUE;
-        StrategyRunnable.resultMove = null;
+        maxWertKickoff = Integer.MIN_VALUE;
+        resultMove = null;
         //not StrategyRunnable.MIN as StrategyRunnable.MIN might be multiplied in evaluation and thus is not the minimal possible number
-        StrategyRunnable.resultEvaluation = Integer.MIN_VALUE;
+        resultEvaluation = Integer.MIN_VALUE;
         for (int i = 0; i < nThreads; i++) {
             threads[i] = new Thread(runnables[i]);
             threads[i].start();
@@ -53,12 +58,12 @@ public class Strategy {
 
         for (int i = 0; i < nThreads; i++) {
            //runnables need to know which move was chosen
-           runnables[i].setPreviousMove(StrategyRunnable.resultMove);
+           runnables[i].setPreviousMove(resultMove);
         }
 
         up.reset();
 
-        return StrategyRunnable.resultMove;
+        return resultMove;
     }
 
     @VisibleForTesting
@@ -81,7 +86,7 @@ public class Strategy {
 
     @VisibleForTesting
     public double getResultEvaluation() {
-        return StrategyRunnable.resultEvaluation;
+        return resultEvaluation;
     }
 
     @VisibleForTesting
@@ -91,5 +96,5 @@ public class Strategy {
             runnables[i].setPreviousMove(move);
         }
     }
-
+    
 }
