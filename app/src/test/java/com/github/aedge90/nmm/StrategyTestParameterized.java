@@ -827,6 +827,11 @@ public class StrategyTestParameterized {
 
                 //simulate human and just take the first move and do not use the strategy
                 Move result2 = gameBoard.possibleMoves(mPlayer2).getFirst();
+                mPlayer2.setDifficulty(Options.Difficulties.HARD);
+                strategy.computeMove(mPlayer2);
+                mPlayer2.setDifficulty(null);
+                strategy.setLastMove(result2);
+                mPlayer2.setPrevMove(result2);
                 gameBoard.executeCompleteTurn(result2, mPlayer2);
                 if (!gameBoard.getState(mPlayer2).equals(GameBoard.GameState.RUNNING)) {
                     break;

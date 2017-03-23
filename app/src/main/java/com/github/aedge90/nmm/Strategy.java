@@ -2,6 +2,7 @@ package com.github.aedge90.nmm;
 
 import android.support.annotation.VisibleForTesting;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 
@@ -19,6 +20,7 @@ public class Strategy {
     double resultEvaluation;
     LinkedList<Move> possibleMovesKickoff;
     MoveNode root;   //node of the last move
+    ArrayList<MoveNode> possibleMoveNodesKickoff;
 
     Strategy(final GameBoard field, final ProgressUpdater up) {
         this(field, up, 8);
@@ -36,9 +38,7 @@ public class Strategy {
 
     public Move computeMove(Player maxPlayer) throws InterruptedException {
 
-        setNewRoot(lastMove);
-
-        addPossibleMovesTo(root, maxPlayer, gameBoard);
+        possibleMoveNodesKickoff = addPossibleMovesTo(root, maxPlayer, gameBoard);
 
         // shuffle list, so we dont end up with the same moves every game
         possibleMovesKickoff = shuffleListOfPossMoves(gameBoard.possibleMoves(maxPlayer));
@@ -64,14 +64,17 @@ public class Strategy {
 
         maxPlayer.setPrevMove(lastMove);
 
+        // set one of the possibleMoveNodesKickoff as the new root
+        setNewRoot(lastMove);
+
         up.reset();
 
         return lastMove;
     }
 
-    public void setNewRoot(Move resultMove) {
-        for(MoveNode n : root.getChildren()){
-            if(n.getMove().equals(resultMove)){
+    public void setNewRoot(Move rootMove) {
+        for(MoveNode n : possibleMoveNodesKickoff){
+            if(n.getMove().equals(rootMove)){
                 root = n;
                 break;
             }
@@ -80,6 +83,7 @@ public class Strategy {
 
     public void setLastMove(Move move){
         lastMove = move;
+        setNewRoot(move);
     }
 
     @VisibleForTesting
@@ -103,13 +107,14 @@ public class Strategy {
         return resultEvaluation;
     }
 
-    public void addPossibleMovesTo(MoveNode parent, Player player, GameBoard gameBoard) {
+    public ArrayList<MoveNode> addPossibleMovesTo(MoveNode parent, Player player, GameBoard gameBoard) {
         if (parent.getChildren().size() == 0) {
             LinkedList<Move> moves = gameBoard.possibleMoves(player);
             for (Move move : moves) {
                 parent.addChild(new MoveNode(move));
             }
         }
+        return parent.getChildren();
     }
 
 }
