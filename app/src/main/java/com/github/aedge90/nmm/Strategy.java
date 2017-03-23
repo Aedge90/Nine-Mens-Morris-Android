@@ -15,10 +15,10 @@ public class Strategy {
     private final GameBoard gameBoard;
 
     double maxWertKickoff;
-    Move resultMove;
+    Move lastMove;
     double resultEvaluation;
     LinkedList<Move> possibleMovesKickoff;
-    MoveNode root;
+    MoveNode root;   //node of the last move
 
     Strategy(final GameBoard field, final ProgressUpdater up) {
         this(field, up, 8);
@@ -36,13 +36,7 @@ public class Strategy {
 
     public Move computeMove(Player maxPlayer) throws InterruptedException {
 
-        //TODO make this work for human vs. bot too
-        for(MoveNode n : root.getChildren()){
-            if(n.getMove().equals(maxPlayer.getOtherPlayer().getPrevMove())){
-                root = n;
-                break;
-            }
-        }
+        setNewRoot(lastMove);
 
         addPossibleMovesTo(root, maxPlayer, gameBoard);
 
@@ -53,7 +47,7 @@ public class Strategy {
 
         //not Double.MIN_VALUE as thats the number with the smallest magnitude....
         maxWertKickoff = -Double.MAX_VALUE;
-        resultMove = null;
+        lastMove = null;
         //not StrategyRunnable.MIN as StrategyRunnable.MIN might be multiplied in evaluation and thus is not the minimal possible number
         resultEvaluation = -Double.MAX_VALUE;
 
@@ -68,11 +62,24 @@ public class Strategy {
             threads[i].join();
         }
 
-        maxPlayer.setPrevMove(resultMove);
+        maxPlayer.setPrevMove(lastMove);
 
         up.reset();
 
-        return resultMove;
+        return lastMove;
+    }
+
+    public void setNewRoot(Move resultMove) {
+        for(MoveNode n : root.getChildren()){
+            if(n.getMove().equals(resultMove)){
+                root = n;
+                break;
+            }
+        }
+    }
+
+    public void setLastMove(Move move){
+        lastMove = move;
     }
 
     @VisibleForTesting
