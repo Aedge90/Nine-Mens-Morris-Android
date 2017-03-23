@@ -9,7 +9,7 @@ public class Move {
     private double evaluation;
     
     Move(Position dest, Position src, Position kill){
-        this.evaluation = 0;
+        this.evaluation = -Double.MAX_VALUE;
         this.src = src;
         this.dest = dest;
         this.kill = kill;

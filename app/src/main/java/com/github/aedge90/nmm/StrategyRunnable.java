@@ -115,7 +115,14 @@ public class StrategyRunnable implements Runnable{
 
     }
 
-    private void evaluateMove(Move move, Player player) {
+    private void evaluateMove(MoveNode moveNode, Player player) {
+
+        Move move = moveNode.getMove();
+
+        if(move.getEvaluation() != -Double.MAX_VALUE){
+            return;     //move was already evaluated
+        }
+
         double eval = 0;
         if (move.getKill() != null) {
             // next weight will be half the weight
@@ -177,7 +184,7 @@ public class StrategyRunnable implements Runnable{
         for (Move z : moves) {
             localGameBoard.executeCompleteTurn(z, player);
             movesToEvaluate.addLast(new MoveNode(z));
-            evaluateMove(z, player);
+            evaluateMove(new MoveNode(z), player);
             double wert = min(depth-1, maxWert, beta, player.getOtherPlayer());
             movesToEvaluate.removeLast();
             localGameBoard.reverseCompleteTurn(z, player);
@@ -198,14 +205,12 @@ public class StrategyRunnable implements Runnable{
 
             MoveNode currentMoveNode = null;
 
-            Move z;
             synchronized (strategy) {
                 if(strategy.possibleMovesKickoff.size() > 0) {
-                    z = strategy.possibleMovesKickoff.removeFirst();
+                    Move z = strategy.possibleMovesKickoff.removeFirst();
                     for(MoveNode n : strategy.root.getChildren()){
                         if(n.getMove().equals(z)){
                             currentMoveNode = n;
-                            z = n.getMove();
                             break;
                         }
                     }
@@ -214,17 +219,17 @@ public class StrategyRunnable implements Runnable{
                 }
             }
 
-            localGameBoard.executeCompleteTurn(z, player);
+            localGameBoard.executeCompleteTurn(currentMoveNode.getMove(), player);
             movesToEvaluate.addLast(currentMoveNode);
-            evaluateMove(z, player);
-            double wert = min(depth - 1, strategy.maxWertKickoff, Integer.MAX_VALUE, player.getOtherPlayer());
+            evaluateMove(currentMoveNode, player);
+            double wert = min(depth - 1, strategy.maxWertKickoff, Double.MAX_VALUE, player.getOtherPlayer());
             movesToEvaluate.removeLast();
-            localGameBoard.reverseCompleteTurn(z, player);
+            localGameBoard.reverseCompleteTurn(currentMoveNode.getMove(), player);
 
             synchronized (strategy) {
                 if (wert > strategy.maxWertKickoff) {
                     strategy.maxWertKickoff = wert;
-                    strategy.resultMove = z;
+                    strategy.resultMove = currentMoveNode.getMove();
                     strategy.resultEvaluation = wert;
                 }
             }
@@ -246,7 +251,7 @@ public class StrategyRunnable implements Runnable{
         for (Move z : moves) {
             localGameBoard.executeCompleteTurn(z, player);
             movesToEvaluate.addLast(new MoveNode(z));
-            evaluateMove(z, player);
+            evaluateMove(new MoveNode(z), player);
             double wert = max(depth-1, alpha, minWert, player.getOtherPlayer());
             movesToEvaluate.removeLast();
             localGameBoard.reverseCompleteTurn(z, player);
