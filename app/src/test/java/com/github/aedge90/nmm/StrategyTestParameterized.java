@@ -459,7 +459,9 @@ public class StrategyTestParameterized {
 
         strategy.computeMove(mPlayer2);
         //do not use this move, but compute it to check that it doesnt influence Player1s decision
-        gameBoard.executeCompleteTurn(new Move(new Position(4,4), new Position(3,4), null), mPlayer2);
+        Move actualMove = new Move(new Position(4,4), new Position(3,4), null);
+        mPlayer2.setPrevMove(actualMove);
+        gameBoard.executeCompleteTurn(actualMove, mPlayer2);
 
         Move result2 = strategy.computeMove(mPlayer1);
         gameBoard.executeCompleteTurn(result2, mPlayer1);

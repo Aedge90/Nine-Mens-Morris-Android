@@ -1,5 +1,6 @@
 package com.github.aedge90.nmm;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import android.support.annotation.VisibleForTesting;
@@ -56,7 +57,7 @@ public class StrategyRunnable implements Runnable{
     // maximizing player has got to return higher values for better situations
     // minimizing player has got to return lower values the better his situation
     @VisibleForTesting
-    double evaluation(Player player, LinkedList<Move> moves, int depth) {
+    double evaluation(Player player, ArrayList<MoveNode> moves, int depth) {
 
         double ret = 0;
 
@@ -120,6 +121,7 @@ public class StrategyRunnable implements Runnable{
         Move move = moveNode.getMove();
 
         if(move.getEvaluation() != -Double.MAX_VALUE){
+            //System.out.println("already evaluated: " + move + ": " + move.getEvaluation());
             return;     //move was already evaluated
         }
 
@@ -170,24 +172,25 @@ public class StrategyRunnable implements Runnable{
         move.setEvaluation(eval);
     }
 
-    private double max(int depth, double alpha, double beta, Player player) throws InterruptedException {
+    private double max(int depth, double alpha, double beta, Player player, MoveNode parentMoveNode) throws InterruptedException {
         if(Thread.interrupted()){
             throw new InterruptedException("Computation of Bot " + player + " was interrupted!");
         }
-        LinkedList<Move> moves = localGameBoard.possibleMoves(player);
+        strategy.addPossibleMovesTo(parentMoveNode, player, localGameBoard);
+        ArrayList<MoveNode> currentMoveNodes = parentMoveNode.getChildren();
         //end reached or no more moves available, maybe because he is trapped or because he lost
-        if (depth == 0 || moves.size() == 0){
-            double bewertung = evaluation(player, moves, depth);
+        if (depth == 0 || currentMoveNodes.size() == 0){
+            double bewertung = evaluation(player, currentMoveNodes, depth);
             return bewertung;
         }
         double maxWert = alpha;
-        for (Move z : moves) {
-            localGameBoard.executeCompleteTurn(z, player);
-            movesToEvaluate.addLast(new MoveNode(z));
-            evaluateMove(new MoveNode(z), player);
-            double wert = min(depth-1, maxWert, beta, player.getOtherPlayer());
+        for (MoveNode currentMoveNode : currentMoveNodes) {
+            localGameBoard.executeCompleteTurn(currentMoveNode.getMove(), player);
+            movesToEvaluate.addLast(currentMoveNode);
+            evaluateMove(currentMoveNode, player);
+            double wert = min(depth-1, maxWert, beta, player.getOtherPlayer(), currentMoveNode);
             movesToEvaluate.removeLast();
-            localGameBoard.reverseCompleteTurn(z, player);
+            localGameBoard.reverseCompleteTurn(currentMoveNode.getMove(), player);
             if (wert > maxWert) {
                 maxWert = wert;
                 if (maxWert >= beta) {
@@ -222,7 +225,7 @@ public class StrategyRunnable implements Runnable{
             localGameBoard.executeCompleteTurn(currentMoveNode.getMove(), player);
             movesToEvaluate.addLast(currentMoveNode);
             evaluateMove(currentMoveNode, player);
-            double wert = min(depth - 1, strategy.maxWertKickoff, Double.MAX_VALUE, player.getOtherPlayer());
+            double wert = min(depth - 1, strategy.maxWertKickoff, Double.MAX_VALUE, player.getOtherPlayer(), currentMoveNode);
             movesToEvaluate.removeLast();
             localGameBoard.reverseCompleteTurn(currentMoveNode.getMove(), player);
 
@@ -238,23 +241,24 @@ public class StrategyRunnable implements Runnable{
         }
     }
 
-    private double min(int depth, double alpha, double beta, Player player) throws InterruptedException {
+    private double min(int depth, double alpha, double beta, Player player, MoveNode parentMoveNode) throws InterruptedException {
         if(Thread.interrupted()){
             throw new InterruptedException("Computation of Bot " + player + " was interrupted!");
         }
-        LinkedList<Move> moves = localGameBoard.possibleMoves(player);
-        if (depth == 0 || moves.size() == 0){
-            double bewertung = evaluation(player, moves, depth);
+        strategy.addPossibleMovesTo(parentMoveNode, player, localGameBoard);
+        ArrayList<MoveNode> currentMoveNodes = parentMoveNode.getChildren();
+        if (depth == 0 || currentMoveNodes.size() == 0){
+            double bewertung = evaluation(player, currentMoveNodes, depth);
             return bewertung;
         }
         double minWert = beta;
-        for (Move z : moves) {
-            localGameBoard.executeCompleteTurn(z, player);
-            movesToEvaluate.addLast(new MoveNode(z));
-            evaluateMove(new MoveNode(z), player);
-            double wert = max(depth-1, alpha, minWert, player.getOtherPlayer());
+        for (MoveNode currentMoveNode : currentMoveNodes) {
+            localGameBoard.executeCompleteTurn(currentMoveNode.getMove(), player);
+            movesToEvaluate.addLast(currentMoveNode);
+            evaluateMove(currentMoveNode, player);
+            double wert = max(depth-1, alpha, minWert, player.getOtherPlayer(), currentMoveNode);
             movesToEvaluate.removeLast();
-            localGameBoard.reverseCompleteTurn(z, player);
+            localGameBoard.reverseCompleteTurn(currentMoveNode.getMove(), player);
             if (wert < minWert) {
                 minWert = wert;
                 if (minWert <= alpha){ 

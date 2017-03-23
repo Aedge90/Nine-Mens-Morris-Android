@@ -168,14 +168,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
             @Override
             public void run(){
 
-                Strategy playerBlackBrain = null;
-                Strategy playerWhiteBrain = null;
-                if(playerWhite.getDifficulty() != null) {
-                    playerWhiteBrain = new Strategy(field, progressUpdater);
-                }
-                if(playerBlack.getDifficulty() != null) {
-                    playerBlackBrain = new Strategy(field, progressUpdater);
-                }
+                Strategy strategy = new Strategy(field, progressUpdater);
 
                 if(options.whoStarts.equals(playerWhite.getColor())){
                     currPlayer = playerWhite;
@@ -189,11 +182,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
                         if(currPlayer.getDifficulty() == null) {
                             humanTurn(currPlayer);
                         }else{
-                            if(currPlayer.getColor().equals(Options.Color.WHITE)) {
-                                botTurn(currPlayer, playerWhiteBrain);
-                            }else{
-                                botTurn(currPlayer, playerBlackBrain);
-                            }
+                            botTurn(currPlayer, strategy);
                         }
 
                         if(ShowGameOverMessageIfWon()){
