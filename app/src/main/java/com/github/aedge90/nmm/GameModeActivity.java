@@ -180,7 +180,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
                     while(true){
 
                         if(currPlayer.getDifficulty() == null) {
-                            humanTurn(currPlayer);
+                            humanTurn(currPlayer, strategy);
                         }else{
                             botTurn(currPlayer, strategy);
                         }
@@ -333,7 +333,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
         }
     }
 
-    void humanTurn(Player human) throws InterruptedException{
+    void humanTurn(Player human, Strategy strategy) throws InterruptedException{
 
         if(human.getOtherPlayer().getDifficulty() != null) {
             setTextinUIThread(progressText, R.string.your_turn);
@@ -378,6 +378,9 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
 
             field.executeKillPhase(currMove, human);
         }
+
+        strategy.registerLastMove(currMove);
+        human.setPrevMove(currMove);
 
     }
 

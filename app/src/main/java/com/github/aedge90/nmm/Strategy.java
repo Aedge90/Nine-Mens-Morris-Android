@@ -81,7 +81,17 @@ public class Strategy {
         }
     }
 
-    public void setLastMove(Move move){
+    public void registerLastMove(Move move){
+        for(MoveNode n : root.getChildren()){
+            if (n.getMove().equals(move)) {
+                root = n;
+                break;
+            }
+        }
+    }
+
+    @VisibleForTesting
+    public void replaceLastMove(Move move){
         lastMove = move;
         setNewRoot(move);
     }

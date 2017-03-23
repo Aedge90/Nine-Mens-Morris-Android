@@ -462,7 +462,7 @@ public class StrategyTestParameterized {
         //do not use this move, but compute it to check that it doesnt influence Player1s decision
         Move actualMove = new Move(new Position(4,4), new Position(3,4), null);
         mPlayer2.setPrevMove(actualMove);
-        strategy.setLastMove(actualMove);
+        strategy.replaceLastMove(actualMove);
         gameBoard.executeCompleteTurn(actualMove, mPlayer2);
 
         Move result2 = strategy.computeMove(mPlayer1);
@@ -501,13 +501,13 @@ public class StrategyTestParameterized {
         //change kill of the move, as it may be another equally evaluated kill, but we want to test with this one
         Move actualResult1 = new Move(result1.getDest(), result1.getSrc(), new Position(6,6));
         mPlayer1.setPrevMove(actualResult1);
-        strategy.setLastMove(actualResult1);
+        strategy.replaceLastMove(actualResult1);
         gameBoard.executeCompleteTurn(actualResult1, mPlayer1);
 
         Move result2 = strategy.computeMove(mPlayer2);
         Move actualResult2 = new Move(new Position(4,4), new Position(3,4), null);
         mPlayer2.setPrevMove(actualResult2);
-        strategy.setLastMove(actualResult2);
+        strategy.replaceLastMove(actualResult2);
         gameBoard.executeCompleteTurn(actualResult2, mPlayer2);
 
         Move result3 = strategy.computeMove(mPlayer1);
@@ -546,7 +546,7 @@ public class StrategyTestParameterized {
         Move result2 = strategy.computeMove(mPlayer2);
         Move actualResult2 = new Move(new Position(4,4), new Position(3,4), null);
         mPlayer2.setPrevMove(actualResult2);
-        strategy.setLastMove(actualResult2);
+        strategy.replaceLastMove(actualResult2);
         gameBoard.executeCompleteTurn(actualResult2, mPlayer2);
 
         Move result3 = strategy.computeMove(mPlayer1);
@@ -803,7 +803,16 @@ public class StrategyTestParameterized {
     }
 
     @Test
-    public void gameAgainstHumanShouldNotCrash() {
+    public void gameAgainstHumanShouldNotCrashIfBotStarts() {
+        gameAgainstHumanShouldNotCrash(true);
+    }
+
+    @Test
+    public void gameAgainstHumanShouldNotCrashIfHumanStarts() {
+        gameAgainstHumanShouldNotCrash(false);
+    }
+
+    public void gameAgainstHumanShouldNotCrash(boolean botStarts) {
 
         try {
 
@@ -817,23 +826,25 @@ public class StrategyTestParameterized {
 
             mPlayer2.setDifficulty(null); //now its a human
 
-            for (int i = 0; i < 30; i++) {
+            if(botStarts) {
+                Move firstMove = strategy.computeMove(mPlayer1);
+                gameBoard.executeCompleteTurn(firstMove, mPlayer1);
+            }
+
+            for (int i = 0; i < 50; i++) {
+
+                //simulate human and just take the first move and do not use the strategy
+                Move result2 = gameBoard.possibleMoves(mPlayer2).getFirst();
+                strategy.registerLastMove(result2);
+                mPlayer2.setPrevMove(result2);
+                gameBoard.executeCompleteTurn(result2, mPlayer2);
+                if (!gameBoard.getState(mPlayer2).equals(GameBoard.GameState.RUNNING)) {
+                    break;
+                }
 
                 Move result1 = strategy.computeMove(mPlayer1);
                 gameBoard.executeCompleteTurn(result1, mPlayer1);
                 if (!gameBoard.getState(mPlayer1).equals(GameBoard.GameState.RUNNING)) {
-                    break;
-                }
-
-                //simulate human and just take the first move and do not use the strategy
-                Move result2 = gameBoard.possibleMoves(mPlayer2).getFirst();
-                mPlayer2.setDifficulty(Options.Difficulties.HARD);
-                strategy.computeMove(mPlayer2);
-                mPlayer2.setDifficulty(null);
-                strategy.setLastMove(result2);
-                mPlayer2.setPrevMove(result2);
-                gameBoard.executeCompleteTurn(result2, mPlayer2);
-                if (!gameBoard.getState(mPlayer2).equals(GameBoard.GameState.RUNNING)) {
                     break;
                 }
 
@@ -843,4 +854,5 @@ public class StrategyTestParameterized {
         }
 
     }
+
 }
