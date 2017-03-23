@@ -40,6 +40,7 @@ public class Strategy {
         for(MoveNode n : root.getChildren()){
             if(n.getMove().equals(maxPlayer.getOtherPlayer().getPrevMove())){
                 root = n;
+                break;
             }
         }
 
@@ -99,7 +100,7 @@ public class Strategy {
         if (parent.getChildren().size() == 0) {
             LinkedList<Move> moves = gameBoard.possibleMoves(player);
             for (Move move : moves) {
-                parent.getChildren().add(new MoveNode(move));
+                parent.addChild(new MoveNode(move));
             }
         }
     }
