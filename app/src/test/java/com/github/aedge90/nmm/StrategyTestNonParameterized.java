@@ -4,7 +4,6 @@ package com.github.aedge90.nmm;
 import android.test.mock.MockContext;
 import android.widget.ProgressBar;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
@@ -83,6 +82,7 @@ public class StrategyTestNonParameterized {
             gameBoards[j].executeCompleteTurn(resultMove, players[j]);
             //also the strategies that decided for another move must have the same previous move
             players[j].setPrevMove(resultMove);
+            strategies[j].setLastMove(resultMove);
         }
     }
 

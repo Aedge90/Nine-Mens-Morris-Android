@@ -462,6 +462,7 @@ public class StrategyTestParameterized {
         //do not use this move, but compute it to check that it doesnt influence Player1s decision
         Move actualMove = new Move(new Position(4,4), new Position(3,4), null);
         mPlayer2.setPrevMove(actualMove);
+        strategy.setLastMove(actualMove);
         gameBoard.executeCompleteTurn(actualMove, mPlayer2);
 
         Move result2 = strategy.computeMove(mPlayer1);
@@ -500,11 +501,13 @@ public class StrategyTestParameterized {
         //change kill of the move, as it may be another equally evaluated kill, but we want to test with this one
         Move actualResult1 = new Move(result1.getDest(), result1.getSrc(), new Position(6,6));
         mPlayer1.setPrevMove(actualResult1);
+        strategy.setLastMove(actualResult1);
         gameBoard.executeCompleteTurn(actualResult1, mPlayer1);
 
         Move result2 = strategy.computeMove(mPlayer2);
         Move actualResult2 = new Move(new Position(4,4), new Position(3,4), null);
         mPlayer2.setPrevMove(actualResult2);
+        strategy.setLastMove(actualResult2);
         gameBoard.executeCompleteTurn(actualResult2, mPlayer2);
 
         Move result3 = strategy.computeMove(mPlayer1);
@@ -543,6 +546,7 @@ public class StrategyTestParameterized {
         Move result2 = strategy.computeMove(mPlayer2);
         Move actualResult2 = new Move(new Position(4,4), new Position(3,4), null);
         mPlayer2.setPrevMove(actualResult2);
+        strategy.setLastMove(actualResult2);
         gameBoard.executeCompleteTurn(actualResult2, mPlayer2);
 
         Move result3 = strategy.computeMove(mPlayer1);
@@ -711,9 +715,8 @@ public class StrategyTestParameterized {
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
 
-        Strategy strategy = new Strategy(gameBoard, updater, nThreads);
-
-        for(int i = 0; i < 1000; i++) {
+        for(int i = 0; i < 2000; i++) {
+            Strategy strategy = new Strategy(gameBoard, updater, nThreads);
             Move result = strategy.computeMove(mPlayer1);
             if(!list.contains(result)) {
                 list.add(result);
@@ -750,9 +753,8 @@ public class StrategyTestParameterized {
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
 
-        Strategy strategy = new Strategy(gameBoard, updater, nThreads);
-
-        for(int i = 0; i < 1000; i++) {
+        for(int i = 0; i < 2000; i++) {
+            Strategy strategy = new Strategy(gameBoard, updater, nThreads);
             Move result = strategy.computeMove(mPlayer1);
             if(!list.contains(result)) {
                 list.add(result);
