@@ -13,6 +13,7 @@ import java.util.LinkedList;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -799,4 +800,40 @@ public class StrategyTestParameterized {
 
     }
 
+    @Test
+    public void gameAgainstHumanShouldNotCrash() {
+
+        try {
+
+            GameBoard gameBoard = new Mill9();
+            ProgressBar progBar = new ProgressBar(new MockContext());
+            ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
+            Strategy strategy = new Strategy(gameBoard, updater, nThreads);
+
+            mPlayer1.setSetCount(9);
+            mPlayer2.setSetCount(9);
+
+            mPlayer2.setDifficulty(null); //now its a human
+
+            for (int i = 0; i < 30; i++) {
+
+                Move result1 = strategy.computeMove(mPlayer1);
+                gameBoard.executeCompleteTurn(result1, mPlayer1);
+                if (!gameBoard.getState(mPlayer1).equals(GameBoard.GameState.RUNNING)) {
+                    break;
+                }
+
+                //simulate human and just take the first move and do not use the strategy
+                Move result2 = gameBoard.possibleMoves(mPlayer2).getFirst();
+                gameBoard.executeCompleteTurn(result2, mPlayer2);
+                if (!gameBoard.getState(mPlayer2).equals(GameBoard.GameState.RUNNING)) {
+                    break;
+                }
+
+            }
+        } catch (Throwable e) {
+            fail(e.getMessage());
+        }
+
+    }
 }
