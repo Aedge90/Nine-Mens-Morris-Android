@@ -16,7 +16,7 @@ public class Strategy {
     private final GameBoard gameBoard;
 
     double maxWertKickoff;
-    Move lastMove;
+    MoveNode lastMove;
     double resultEvaluation;
     LinkedList<Move> possibleMovesKickoff;
     MoveNode root;   //node of the last move
@@ -62,23 +62,18 @@ public class Strategy {
             threads[i].join();
         }
 
-        maxPlayer.setPrevMove(lastMove);
+        maxPlayer.setPrevMove(lastMove.getMove());
 
         // set one of the possibleMoveNodesKickoff as the new root
         setNewRoot(lastMove);
 
         up.reset();
 
-        return lastMove;
+        return lastMove.getMove();
     }
 
-    public void setNewRoot(Move rootMove) {
-        for(MoveNode n : possibleMoveNodesKickoff){
-            if(n.getMove().equals(rootMove)){
-                root = n;
-                break;
-            }
-        }
+    public void setNewRoot(MoveNode rootMoveNode) {
+        root = rootMoveNode;
     }
 
     public void registerLastMove(Move move){
@@ -92,8 +87,13 @@ public class Strategy {
 
     @VisibleForTesting
     public void replaceLastMove(Move move){
-        lastMove = move;
-        setNewRoot(move);
+        for(MoveNode n : possibleMoveNodesKickoff){
+            if(n.getMove().equals(move)){
+                lastMove = n;
+                break;
+            }
+        }
+        setNewRoot(lastMove);
     }
 
     @VisibleForTesting

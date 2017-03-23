@@ -232,7 +232,7 @@ public class StrategyRunnable implements Runnable{
             synchronized (strategy) {
                 if (wert > strategy.maxWertKickoff) {
                     strategy.maxWertKickoff = wert;
-                    strategy.lastMove = currentMoveNode.getMove();
+                    strategy.lastMove = currentMoveNode;
                     strategy.resultEvaluation = wert;
                 }
             }
