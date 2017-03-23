@@ -20,20 +20,19 @@ public class MoveNode {
         return children;
     }
 
-    public void setParent(MoveNode parent) {
-        parent.addChild(this);
+    private void setParent(MoveNode parent) {
         this.parent = parent;
-    }
-
-    public void addChild(Move data) {
-        MoveNode child = new MoveNode(data);
-        child.setParent(this);
-        this.children.add(child);
     }
 
     public void addChild(MoveNode child) {
         child.setParent(this);
         this.children.add(child);
+    }
+
+    public void addChild(Move data) {
+        MoveNode newChild = new MoveNode(data);
+        newChild.setParent(this);
+        children.add(newChild);
     }
 
     public Move getMove() {
