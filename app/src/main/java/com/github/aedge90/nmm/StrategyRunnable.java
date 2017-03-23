@@ -18,7 +18,7 @@ public class StrategyRunnable implements Runnable{
     //not Int.Max as the evaluation function would create overflows
     static final double MAX = (int) Math.pow(2,25);
     static final double MIN = - (int) Math.pow(2,25);
-    private LinkedList<Node> movesToEvaluate;
+    private LinkedList<MoveNode> movesToEvaluate;
 
     private final int threadNr;
 
@@ -27,7 +27,7 @@ public class StrategyRunnable implements Runnable{
         this.globalMaxPlayer = maxPlayer;
         this.strategy = strategy;
         this.up = up;
-        this.movesToEvaluate = new LinkedList<Node>();
+        this.movesToEvaluate = new LinkedList<MoveNode>();
         this.threadNr = threadNr;
     }
 
@@ -62,14 +62,14 @@ public class StrategyRunnable implements Runnable{
 
         if (moves.size() == 0) {
             if(movesToEvaluate.size() > 1) {
-                localGameBoard.reverseCompleteTurn(movesToEvaluate.getLast().getData(), player.getOtherPlayer());
+                localGameBoard.reverseCompleteTurn(movesToEvaluate.getLast().getMove(), player.getOtherPlayer());
                 //check if the loosing player, prevented a mill in his last move (which is the size-2th move)
-                if (localGameBoard.isInMill(movesToEvaluate.get(movesToEvaluate.size() - 2).getData().getDest(), player.getOtherPlayer().getColor())) {
+                if (localGameBoard.isInMill(movesToEvaluate.get(movesToEvaluate.size() - 2).getMove().getDest(), player.getOtherPlayer().getColor())) {
                     //evaluate this better, as it looks stupid if he does not try to prevent one mill even if the other player
                     //can close another mill despite that
                     ret = 1;
                 }
-                localGameBoard.executeCompleteTurn(movesToEvaluate.getLast().getData(), player.getOtherPlayer());
+                localGameBoard.executeCompleteTurn(movesToEvaluate.getLast().getMove(), player.getOtherPlayer());
             }
             //worst case: player can not make any moves --> game is lost
             //or player has less than 3 pieces and has no pieces left to set --> game is lost
@@ -89,11 +89,11 @@ public class StrategyRunnable implements Runnable{
         double weight = 1;
         // it is important that never a evaluation of a subsequent move is better than the one of the current move
         // a then this path will be chosen, but it contains a move that may not be good
-        for(Node move : movesToEvaluate){
+        for(MoveNode move : movesToEvaluate){
             if(i % 2 == 0) {    //even numbers are moves of the maximizing player
-                ret += move.getData().getEvaluation() / weight;
+                ret += move.getMove().getEvaluation() / weight;
             }else{
-                ret -= move.getData().getEvaluation() / weight;
+                ret -= move.getMove().getEvaluation() / weight;
             }
             weight = weight*10;
             i++;
@@ -103,10 +103,10 @@ public class StrategyRunnable implements Runnable{
         //this should break endless undoing and redoing of moves if all have the same evaluation so far
         if(globalMaxPlayer.getPrevMove() != null){
             // closing and opening a mill should not be downgraded. Ignore setting phase
-            if (globalMaxPlayer.getPrevMove().getKill() != null || movesToEvaluate.get(0).getData().getKill() != null || globalMaxPlayer.getPrevMove().getSrc() == null){
+            if (globalMaxPlayer.getPrevMove().getKill() != null || movesToEvaluate.get(0).getMove().getKill() != null || globalMaxPlayer.getPrevMove().getSrc() == null){
                 //do nothing
-            }else if (globalMaxPlayer.getPrevMove().getSrc().equals(movesToEvaluate.get(0).getData().getDest())
-                    && globalMaxPlayer.getPrevMove().getDest().equals(movesToEvaluate.get(0).getData().getSrc())) {
+            }else if (globalMaxPlayer.getPrevMove().getSrc().equals(movesToEvaluate.get(0).getMove().getDest())
+                    && globalMaxPlayer.getPrevMove().getDest().equals(movesToEvaluate.get(0).getMove().getSrc())) {
                 ret -= 1;
             }
         }
@@ -176,7 +176,7 @@ public class StrategyRunnable implements Runnable{
         double maxWert = alpha;
         for (Move z : moves) {
             localGameBoard.executeCompleteTurn(z, player);
-            movesToEvaluate.addLast(new Node(z));
+            movesToEvaluate.addLast(new MoveNode(z));
             evaluateMove(z, player);
             double wert = min(depth-1, maxWert, beta, player.getOtherPlayer());
             movesToEvaluate.removeLast();
@@ -196,16 +196,16 @@ public class StrategyRunnable implements Runnable{
 
         while(true) {
 
-            Node currentMoveNode = null;
+            MoveNode currentMoveNode = null;
 
             Move z;
             synchronized (strategy) {
                 if(strategy.possibleMovesKickoff.size() > 0) {
                     z = strategy.possibleMovesKickoff.removeFirst();
-                    for(Node n : strategy.root.getChildren()){
-                        if(n.getData().equals(z)){
+                    for(MoveNode n : strategy.root.getChildren()){
+                        if(n.getMove().equals(z)){
                             currentMoveNode = n;
-                            z = n.getData();
+                            z = n.getMove();
                             break;
                         }
                     }
@@ -245,7 +245,7 @@ public class StrategyRunnable implements Runnable{
         double minWert = beta;
         for (Move z : moves) {
             localGameBoard.executeCompleteTurn(z, player);
-            movesToEvaluate.addLast(new Node(z));
+            movesToEvaluate.addLast(new MoveNode(z));
             evaluateMove(z, player);
             double wert = max(depth-1, alpha, minWert, player.getOtherPlayer());
             movesToEvaluate.removeLast();

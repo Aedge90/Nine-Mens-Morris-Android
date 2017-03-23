@@ -2,46 +2,46 @@ package com.github.aedge90.nmm;
 
 import java.util.ArrayList;
 
-public class Node {
-    private ArrayList<Node> children = new ArrayList<>();
-    private Node parent = null;
+public class MoveNode {
+    private ArrayList<MoveNode> children = new ArrayList<>();
+    private MoveNode parent = null;
     private Move data = null;
 
-    public Node(Move data) {
-        this.data = data;
+    public MoveNode(Move move) {
+        this.data = move;
     }
 
-    public Node(Move data, Node parent) {
-        this.data = data;
+    public MoveNode(Move move, MoveNode parent) {
+        this.data = move;
         this.parent = parent;
     }
 
-    public ArrayList<Node> getChildren() {
+    public ArrayList<MoveNode> getChildren() {
         return children;
     }
 
-    public void setParent(Node parent) {
+    public void setParent(MoveNode parent) {
         parent.addChild(this);
         this.parent = parent;
     }
 
     public void addChild(Move data) {
-        Node child = new Node(data);
+        MoveNode child = new MoveNode(data);
         child.setParent(this);
         this.children.add(child);
     }
 
-    public void addChild(Node child) {
+    public void addChild(MoveNode child) {
         child.setParent(this);
         this.children.add(child);
     }
 
-    public Move getData() {
+    public Move getMove() {
         return this.data;
     }
 
-    public void setData(Move data) {
-        this.data = data;
+    public void setMove(Move move) {
+        this.data = move;
     }
 
     public boolean isRoot() {

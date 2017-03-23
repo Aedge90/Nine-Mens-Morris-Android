@@ -2,7 +2,6 @@ package com.github.aedge90.nmm;
 
 import android.support.annotation.VisibleForTesting;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 
@@ -19,7 +18,7 @@ public class Strategy {
     Move resultMove;
     double resultEvaluation;
     LinkedList<Move> possibleMovesKickoff;
-    Node root;
+    MoveNode root;
 
     Strategy(final GameBoard field, final ProgressUpdater up) {
         this(field, up, 8);
@@ -32,14 +31,14 @@ public class Strategy {
         this.threads = new Thread[nThreads];
         this.runnables = new StrategyRunnable[nThreads];
         this.up = up;
-        this.root = new Node(null);
+        this.root = new MoveNode(null);
     }
 
     public Move computeMove(Player maxPlayer) throws InterruptedException {
 
         //TODO make this work for human vs. bot too
-        for(Node n : root.getChildren()){
-            if(n.getData().equals(maxPlayer.getOtherPlayer().getPrevMove())){
+        for(MoveNode n : root.getChildren()){
+            if(n.getMove().equals(maxPlayer.getOtherPlayer().getPrevMove())){
                 root = n;
             }
         }
@@ -95,11 +94,11 @@ public class Strategy {
         return resultEvaluation;
     }
 
-    public void addPossibleMovesTo(Node parent, Player player, GameBoard gameBoard) {
+    public void addPossibleMovesTo(MoveNode parent, Player player, GameBoard gameBoard) {
         if (parent.getChildren().size() == 0) {
             LinkedList<Move> moves = gameBoard.possibleMoves(player);
             for (Move move : moves) {
-                parent.getChildren().add(new Node(move));
+                parent.getChildren().add(new MoveNode(move));
             }
         }
     }
