@@ -497,17 +497,20 @@ public class StrategyTestParameterized {
         assertEquals(new Position(0,0), result1.getDest());
 
         //change kill of the move, as it may be another equally evaluated kill, but we want to test with this one
-        result1 = new Move(result1.getDest(), result1.getSrc(), new Position(6,6));
-        gameBoard.executeCompleteTurn(result1, mPlayer1);
+        Move actualResult1 = new Move(result1.getDest(), result1.getSrc(), new Position(6,6));
+        mPlayer1.setPrevMove(actualResult1);
+        gameBoard.executeCompleteTurn(actualResult1, mPlayer1);
 
-        gameBoard.executeCompleteTurn(new Move(new Position(4,4), new Position(3,4), null), mPlayer2);
+        Move result2 = strategy.computeMove(mPlayer2);
+        Move actualResult2 = new Move(new Position(4,4), new Position(3,4), null);
+        mPlayer2.setPrevMove(actualResult2);
+        gameBoard.executeCompleteTurn(actualResult2, mPlayer2);
 
-        strategy = new Strategy(gameBoard, updater, nThreads);
-        Move result2 = strategy.computeMove(mPlayer1);
-        gameBoard.executeCompleteTurn(result2, mPlayer1);
+        Move result3 = strategy.computeMove(mPlayer1);
+        gameBoard.executeCompleteTurn(result3, mPlayer1);
 
-        assertEquals(new Position(0,0), result2.getSrc());
-        assertEquals(new Position(0,3), result2.getDest());
+        assertEquals(new Position(0,0), result3.getSrc());
+        assertEquals(new Position(0,3), result3.getDest());
 
     }
 
@@ -536,13 +539,15 @@ public class StrategyTestParameterized {
 
         assertEquals(new Position(0,3), result1.getDest());
 
-        gameBoard.executeCompleteTurn(new Move(new Position(4,4), new Position(3,4), null), mPlayer2);
+        Move result2 = strategy.computeMove(mPlayer2);
+        Move actualResult2 = new Move(new Position(4,4), new Position(3,4), null);
+        mPlayer2.setPrevMove(actualResult2);
+        gameBoard.executeCompleteTurn(actualResult2, mPlayer2);
 
-        strategy = new Strategy(gameBoard, updater, nThreads);
-        Move result2 = strategy.computeMove(mPlayer1);
-        gameBoard.executeCompleteTurn(result2, mPlayer1);
+        Move result3 = strategy.computeMove(mPlayer1);
+        gameBoard.executeCompleteTurn(result3, mPlayer1);
 
-        assertEquals(new Position(0,0), result2.getDest());
+        assertEquals(new Position(0,0), result3.getDest());
 
     }
 
