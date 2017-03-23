@@ -100,6 +100,16 @@ public class StrategyRunnable implements Runnable{
             i++;
         }
 
+        Move firstMove = movesToEvaluate.getFirst().getMove();
+        if(firstMove.getSrc() != null) {
+            // evaluate opening a mill in the first move better, so the bot will open mills.
+            // There is no need to check if the mill can be opened safely (without the enemy blocking it in the next move)
+            // as even depth 2 bots will already NOT open a mill as preventedMill will be true for the next move
+            if (globalGameBoard.isInMill(firstMove.getSrc(), player.getColor())) {
+                ret += 0.1;
+            }
+        }
+
         //evaluate undoing a move, as its probably of no use. If it is, the other evaluation should overwrite this
         //this should break endless undoing and redoing of moves if all have the same evaluation so far
         if(globalMaxPlayer.getPrevMove() != null){
@@ -138,16 +148,6 @@ public class StrategyRunnable implements Runnable{
             move.setEvaluation(eval);
             //return as the other cases should not return true if its a kill move
             return;
-        }
-        if(move.getSrc() != null && movesToEvaluate.size() == 1){
-            // evaluate opening a mill in the first move better, so the bot will open mills.
-            // There is no need to check if the mill can be opened safely (without the enemy blocking it in the next move)
-            // as even depth 2 bots will already NOT open a mill as preventedMill will be true for the next move
-            localGameBoard.reverseCompleteTurn(move, player);
-            if(localGameBoard.isInMill(move.getSrc(), player.getColor())){
-                eval += 0.1;
-            }
-            localGameBoard.executeCompleteTurn(move, player);
         }
         if(localGameBoard.preventedMill(move.getDest(), player)){
             eval += 5;
