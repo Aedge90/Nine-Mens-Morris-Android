@@ -31,7 +31,6 @@ public class StrategyTestParameterized {
     private Player mPlayer1;
     private Player mPlayer2;
     private int nThreads;
-    private final static int maxThreads = 9;
 
     // name attribute is optional, provide an unique name for test
     // multiple parameters, uses Collection<Object[]>
@@ -48,10 +47,21 @@ public class StrategyTestParameterized {
             playerBlack.setSetCount(5);
             playerWhite.setSetCount(5);
 
-            for (int nThreads = 1; nThreads <= maxThreads; nThreads++) {
-                player1andnThreadsList.add(new Object[]{playerBlack, nThreads});
-                player1andnThreadsList.add(new Object[]{playerWhite, nThreads});
-            }
+            int nrThreads = 1;
+            player1andnThreadsList.add(new Object[]{playerBlack, nrThreads});
+            player1andnThreadsList.add(new Object[]{playerWhite, nrThreads});
+            nrThreads = 2;
+            player1andnThreadsList.add(new Object[]{playerBlack, nrThreads});
+            player1andnThreadsList.add(new Object[]{playerWhite, nrThreads});
+            nrThreads = 3;
+            player1andnThreadsList.add(new Object[]{playerBlack, nrThreads});
+            player1andnThreadsList.add(new Object[]{playerWhite, nrThreads});
+            nrThreads = 5;
+            player1andnThreadsList.add(new Object[]{playerBlack, nrThreads});
+            player1andnThreadsList.add(new Object[]{playerWhite, nrThreads});
+            nrThreads = 8;
+            player1andnThreadsList.add(new Object[]{playerBlack, nrThreads});
+            player1andnThreadsList.add(new Object[]{playerWhite, nrThreads});
 
         }
 
