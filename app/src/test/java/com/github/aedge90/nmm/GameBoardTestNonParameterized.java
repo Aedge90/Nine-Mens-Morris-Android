@@ -668,12 +668,12 @@ public class GameBoardTestNonParameterized {
 
         Options.Color[][] mill5 =
                 {{N , I , I , B , I , I , W },
-                        { I , I , I , I , I , I , I },
-                        { I , I , B , N , W , I , I },
-                        { B , I , B , I , N , I , N },
-                        { I , I , N , N , W , I , I },
-                        { I , I , I , I , I , I , I },
-                        { B , I , I , W , I , I , N}};
+                { I , I , I , I , I , I , I },
+                { I , I , B , N , W , I , I },
+                { B , I , B , I , N , I , N },
+                { I , I , N , N , W , I , I },
+                { I , I , I , I , I , I , I },
+                { B , I , I , W , I , I , N}};
 
         GameBoard gameBoard = new Mill5(mill5);
 

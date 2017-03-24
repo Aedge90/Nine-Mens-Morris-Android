@@ -2,7 +2,6 @@ package com.github.aedge90.nmm;
 
 import android.support.annotation.VisibleForTesting;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 
@@ -20,7 +19,7 @@ public class Strategy {
     double resultEvaluation;
     LinkedList<Move> possibleMovesKickoff;
     MoveNode root;   //node of the last move
-    ArrayList<MoveNode> possibleMoveNodesKickoff;
+    MoveNode[] possibleMoveNodesKickoff;
 
     Strategy(final GameBoard field, final ProgressUpdater up) {
         this(field, up, 8);
@@ -76,10 +75,17 @@ public class Strategy {
         root = rootMoveNode;
     }
 
-    public void registerLastMove(Move move){
-        for(MoveNode n : root.getChildren()){
+    // registers a child of the rootmove as the new rootmove.
+    // Can not be undone as the old root is gone when a new one is set
+    // this is called AFTER the move was done on the gameboard
+    public void registerLastMove(Move move, Player player){
+        gameBoard.reverseCompleteTurn(move, player);    //reverse the turn as the move was already done
+        possibleMoveNodesKickoff = addPossibleMovesTo(root, player, gameBoard);
+        gameBoard.executeCompleteTurn(move, player);
+        for(MoveNode n : possibleMoveNodesKickoff){
             if (n.getMove().equals(move)) {
                 root = n;
+                lastMove = n;
                 break;
             }
         }
@@ -117,13 +123,13 @@ public class Strategy {
         return resultEvaluation;
     }
 
-    public ArrayList<MoveNode> addPossibleMovesTo(MoveNode parent, Player player, GameBoard gameBoard) {
-        if (parent.getChildren().size() == 0) {
+    public MoveNode[] addPossibleMovesTo(MoveNode parent, Player player, GameBoard gameBoard) {
+        if (parent.getChildren() == null) {
+            //first time we add children
             LinkedList<Move> moves = gameBoard.possibleMoves(player);
-            for (Move move : moves) {
-                parent.addChild(new MoveNode(move));
-            }
+            parent.addChildren(moves);
         }
+        //if getChildren() is not null there may still bei zero children in the array, which is ok if no moves are left
         return parent.getChildren();
     }
 

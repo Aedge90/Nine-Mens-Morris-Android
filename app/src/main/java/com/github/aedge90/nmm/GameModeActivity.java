@@ -379,7 +379,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
             field.executeKillPhase(currMove, human);
         }
 
-        strategy.registerLastMove(currMove);
+        strategy.registerLastMove(currMove, human);
         human.setPrevMove(currMove);
 
     }

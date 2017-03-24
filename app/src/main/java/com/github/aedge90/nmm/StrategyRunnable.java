@@ -1,6 +1,5 @@
 package com.github.aedge90.nmm;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 import android.support.annotation.VisibleForTesting;
@@ -57,11 +56,11 @@ public class StrategyRunnable implements Runnable{
     // maximizing player has got to return higher values for better situations
     // minimizing player has got to return lower values the better his situation
     @VisibleForTesting
-    double evaluation(Player player, ArrayList<MoveNode> moves, int depth) {
+    double evaluation(Player player, MoveNode[] moves, int depth) {
 
         double ret = 0;
 
-        if (moves.size() == 0) {
+        if (moves.length == 0) {
             if(movesToEvaluate.size() > 1) {
                 localGameBoard.reverseCompleteTurn(movesToEvaluate.getLast().getMove(), player.getOtherPlayer());
                 //check if the loosing player, prevented a mill in his last move (which is the size-2th move)
@@ -177,9 +176,9 @@ public class StrategyRunnable implements Runnable{
             throw new InterruptedException("Computation of Bot " + player + " was interrupted!");
         }
         strategy.addPossibleMovesTo(parentMoveNode, player, localGameBoard);
-        ArrayList<MoveNode> currentMoveNodes = parentMoveNode.getChildren();
+        MoveNode[] currentMoveNodes = parentMoveNode.getChildren();
         //end reached or no more moves available, maybe because he is trapped or because he lost
-        if (depth == 0 || currentMoveNodes.size() == 0){
+        if (depth == 0 || currentMoveNodes.length == 0){
             double bewertung = evaluation(player, currentMoveNodes, depth);
             return bewertung;
         }
@@ -246,8 +245,8 @@ public class StrategyRunnable implements Runnable{
             throw new InterruptedException("Computation of Bot " + player + " was interrupted!");
         }
         strategy.addPossibleMovesTo(parentMoveNode, player, localGameBoard);
-        ArrayList<MoveNode> currentMoveNodes = parentMoveNode.getChildren();
-        if (depth == 0 || currentMoveNodes.size() == 0){
+        MoveNode[] currentMoveNodes = parentMoveNode.getChildren();
+        if (depth == 0 || currentMoveNodes.length == 0){
             double bewertung = evaluation(player, currentMoveNodes, depth);
             return bewertung;
         }

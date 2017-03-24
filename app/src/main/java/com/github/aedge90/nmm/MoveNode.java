@@ -1,9 +1,10 @@
 package com.github.aedge90.nmm;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class MoveNode {
-    private ArrayList<MoveNode> children = new ArrayList<>();
+    //just use an array instead of datastructures to save memory and performance
+    private MoveNode[] children = null;
     private MoveNode parent = null;
     private Move data = null;
 
@@ -16,7 +17,7 @@ public class MoveNode {
         this.parent = parent;
     }
 
-    public ArrayList<MoveNode> getChildren() {
+    public MoveNode[] getChildren() {
         return children;
     }
 
@@ -24,15 +25,16 @@ public class MoveNode {
         this.parent = parent;
     }
 
-    public void addChild(MoveNode child) {
-        child.setParent(this);
-        this.children.add(child);
-    }
-
-    public void addChild(Move data) {
-        MoveNode newChild = new MoveNode(data);
-        newChild.setParent(this);
-        children.add(newChild);
+    public void addChildren (List<Move> newChildren){
+        //this may also be 0, but luckily java allows arrays of zero size. so no child is added then
+        children = new MoveNode[newChildren.size()];
+        int index = 0;
+        for (Move child : newChildren) {
+            MoveNode childNode = new MoveNode(child);
+            childNode.setParent(this);
+            children[index] = childNode;
+            index++;
+        }
     }
 
     public Move getMove() {
@@ -45,13 +47,6 @@ public class MoveNode {
 
     public boolean isRoot() {
         return (this.parent == null);
-    }
-
-    public boolean isLeaf() {
-        if(this.children.size() == 0)
-            return true;
-        else
-            return false;
     }
 
     public void removeParent() {
