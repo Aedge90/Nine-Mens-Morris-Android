@@ -52,4 +52,16 @@ public class MoveNode {
     public void removeParent() {
         this.parent = null;
     }
+
+
+    public int getDepth() {
+        int deepest = 0;
+        if(children != null) {
+            for (MoveNode child : children) {
+                deepest = Math.max(deepest, child.getDepth());
+            }
+        }
+        return deepest + 1;
+    }
+
 }
