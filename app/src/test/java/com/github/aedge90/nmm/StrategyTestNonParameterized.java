@@ -21,38 +21,42 @@ public class StrategyTestNonParameterized {
     //test for same evaluation, as resulting move may be different for different nThreads
     public void computeMoveShouldHaveSameEvaluationForAnyNumberOfThreads () throws InterruptedException {
 
-        int nThreads = 16;
+        int nThreads = 12;
 
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
 
-        GameBoard[] gameBoards = new Mill9[nThreads];
+        GameBoard[] gameBoards = new Mill7[nThreads];
         Player[] mPlayerBlacks = new Player[nThreads];
         Player[] mPlayerWhites = new Player[nThreads];
         Strategy[] strategies = new Strategy[nThreads];
 
         for(int j = 0; j < nThreads; j++) {
-            gameBoards[j] = new Mill9();
+            gameBoards[j] = new Mill7();
             mPlayerBlacks[j] = new Player(Options.Color.BLACK);
             mPlayerWhites[j] = new Player(Options.Color.WHITE);
-            mPlayerBlacks[j].setDifficulty(Options.Difficulties.HARDEST);
-            mPlayerWhites[j].setDifficulty(Options.Difficulties.HARDEST);
+            mPlayerBlacks[j].setDifficulty(Options.Difficulties.HARDER);
+            mPlayerWhites[j].setDifficulty(Options.Difficulties.HARDER);
             mPlayerBlacks[j].setOtherPlayer(mPlayerWhites[j]);
             mPlayerWhites[j].setOtherPlayer(mPlayerBlacks[j]);
-            mPlayerBlacks[j].setSetCount(9);
-            mPlayerWhites[j].setSetCount(9);
+            mPlayerBlacks[j].setSetCount(7);
+            mPlayerWhites[j].setSetCount(7);
             strategies[j] = new Strategy(gameBoards[j], updater, j+1);
         }
 
         //make 30 rounds and check if the results on all possible thread counts are the same
-        for(int i = 0; i<30; i++){
+        for(int i = 0; i<40; i++){
             computeMoveShouldHaveSameEvaluationForAnyNumberOfThreads_Turn(i, gameBoards, mPlayerBlacks, strategies, nThreads);
             if(!gameBoards[0].getState(mPlayerBlacks[0]).equals(GameBoard.GameState.RUNNING)){
-                break;
+                if(!gameBoards[0].getState(mPlayerBlacks[0]).equals(GameBoard.GameState.REMIS)) {
+                    break;
+                }
             }
             computeMoveShouldHaveSameEvaluationForAnyNumberOfThreads_Turn(i, gameBoards, mPlayerWhites, strategies, nThreads);
             if(!gameBoards[0].getState(mPlayerWhites[0]).equals(GameBoard.GameState.RUNNING)){
-                break;
+                if(!gameBoards[0].getState(mPlayerWhites[0]).equals(GameBoard.GameState.REMIS)) {
+                    break;
+                }
             }
         }
 

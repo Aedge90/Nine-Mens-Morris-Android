@@ -669,7 +669,9 @@ public class StrategyTestParameterized {
             Move result1 = strategy.computeMove(mPlayer1);
             gameBoard.executeCompleteTurn(result1, mPlayer1);
             if(!gameBoard.getState(mPlayer1).equals(GameBoard.GameState.RUNNING)){
-                break;
+                if(!gameBoard.getState(mPlayer1).equals(GameBoard.GameState.REMIS)) {
+                    break;
+                }
             }
 
             //computeMove should not alter anything but the last move of course
@@ -686,7 +688,9 @@ public class StrategyTestParameterized {
             Move result2 = strategy.computeMove(mPlayer2);
             gameBoard.executeCompleteTurn(result2, mPlayer2);
             if(!gameBoard.getState(mPlayer2).equals(GameBoard.GameState.RUNNING)){
-                break;
+                if(!gameBoard.getState(mPlayer2).equals(GameBoard.GameState.REMIS)) {
+                    break;
+                }
             }
 
             gameBoardBefore2.executeCompleteTurn(result2, mPlayer2Before);
@@ -850,13 +854,17 @@ public class StrategyTestParameterized {
                 strategy.registerLastMove(result2, mPlayer2);
                 mPlayer2.setPrevMove(result2);
                 if (!gameBoard.getState(mPlayer2).equals(GameBoard.GameState.RUNNING)) {
-                    break;
+                    if(!gameBoard.getState(mPlayer2).equals(GameBoard.GameState.REMIS)) {
+                        break;
+                    }
                 }
 
                 Move result1 = strategy.computeMove(mPlayer1);
                 gameBoard.executeCompleteTurn(result1, mPlayer1);
                 if (!gameBoard.getState(mPlayer1).equals(GameBoard.GameState.RUNNING)) {
-                    break;
+                    if(!gameBoard.getState(mPlayer1).equals(GameBoard.GameState.REMIS)) {
+                        break;
+                    }
                 }
 
             }

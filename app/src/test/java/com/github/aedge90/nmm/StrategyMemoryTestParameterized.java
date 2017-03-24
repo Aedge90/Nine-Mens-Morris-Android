@@ -12,13 +12,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
-import static org.hamcrest.CoreMatchers.anyOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertNotEquals;
-
 
 @RunWith(value = Parameterized.class)
 public class StrategyMemoryTestParameterized {
@@ -79,12 +72,14 @@ public class StrategyMemoryTestParameterized {
 
         for (int i = 0; i < 50; i++) {
 
-            System.out.println("round " + i + "\n\n" + gameBoard);
+            //System.out.println("round " + i + "\n\n" + gameBoard);
 
             Move result1 = strategy.computeMove(mPlayer1);
             gameBoard.executeCompleteTurn(result1, mPlayer1);
             if (!gameBoard.getState(mPlayer1).equals(GameBoard.GameState.RUNNING)) {
-                break;
+                if(!gameBoard.getState(mPlayer1).equals(GameBoard.GameState.REMIS)) {
+                    break;
+                }
             }
             // the height of the tree should be 1 (the root move = last move) + startDepth
             // or if the other player has a higher difficulty he explored the tree deeper already
@@ -94,12 +89,14 @@ public class StrategyMemoryTestParameterized {
                 assertEquals("Round " + i, expectedDepth1, strategy.root.getDepth());
             }
 
-            System.out.println(gameBoard);
+            //System.out.println(gameBoard);
 
             Move result2 = strategy.computeMove(mPlayer2);
             gameBoard.executeCompleteTurn(result2, mPlayer2);
             if (!gameBoard.getState(mPlayer2).equals(GameBoard.GameState.RUNNING)) {
-                break;
+                if(!gameBoard.getState(mPlayer2).equals(GameBoard.GameState.REMIS)) {
+                    break;
+                }
             }
             int expectedDepth2 = Math.max(mPlayer2.getDifficulty().ordinal() + 2 + 1, mPlayer1.getDifficulty().ordinal() + 2);
             assertEquals("Round " + i, expectedDepth2, strategy.root.getDepth());
