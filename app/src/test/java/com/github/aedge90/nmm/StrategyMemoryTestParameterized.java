@@ -4,6 +4,7 @@ package com.github.aedge90.nmm;
 import android.test.mock.MockContext;
 import android.widget.ProgressBar;
 
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -12,6 +13,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 
 @RunWith(value = Parameterized.class)
 public class StrategyMemoryTestParameterized {
@@ -61,18 +63,19 @@ public class StrategyMemoryTestParameterized {
     @Test
     public void stategyShouldHaveSameDepthAfterEachComputeMove() throws InterruptedException {
 
-        GameBoard gameBoard = new Mill5();
+        GameBoard gameBoard = new Mill9();
 
-        mPlayer1.setSetCount(5);
-        mPlayer2.setSetCount(5);
+        mPlayer1.setSetCount(9);
+        mPlayer2.setSetCount(9);
+
+        int checkStart = 4;
+        int checkEnd = 7;
 
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
         Strategy strategy = new Strategy(gameBoard, updater);
 
         for (int i = 0; i < 50; i++) {
-
-            //System.out.println("round " + i + "\n\n" + gameBoard);
 
             Move result1 = strategy.computeMove(mPlayer1);
             gameBoard.executeCompleteTurn(result1, mPlayer1);
@@ -85,11 +88,16 @@ public class StrategyMemoryTestParameterized {
             // or if the other player has a higher difficulty he explored the tree deeper already
             // so it should then be his startDepth (but not his root move as the root was set one deeper by the weaker player)
             int expectedDepth1 = Math.max(mPlayer1.getDifficulty().ordinal() + 2 + 1, mPlayer2.getDifficulty().ordinal() + 2);
-            if(i > 1) {
-                assertEquals("Round " + i, expectedDepth1, strategy.root.getDepth());
+            //do not check depth in the beginning as its lowered intentionally in StrategyRunnable
+            if(i > checkStart) {
+                if(i < checkEnd){
+                    // workaround to at least check two times if root is same as expected
+                    assertEquals("Round " + i, expectedDepth1, strategy.root.getDepth());
+                }else{
+                    // it could be that there is no move left and one player wins, so a lower depth would be ok
+                    assertTrue("Round " + i, expectedDepth1 >= strategy.root.getDepth());
+                }
             }
-
-            //System.out.println(gameBoard);
 
             Move result2 = strategy.computeMove(mPlayer2);
             gameBoard.executeCompleteTurn(result2, mPlayer2);
@@ -98,11 +106,28 @@ public class StrategyMemoryTestParameterized {
                     break;
                 }
             }
+
             int expectedDepth2 = Math.max(mPlayer2.getDifficulty().ordinal() + 2 + 1, mPlayer1.getDifficulty().ordinal() + 2);
-            assertEquals("Round " + i, expectedDepth2, strategy.root.getDepth());
+
+            if(i > checkStart) {
+                if(i < checkEnd){
+                    assertEquals("Round " + i, expectedDepth2, strategy.root.getDepth());
+                }else{
+                    assertTrue("Round " + i, expectedDepth2 >= strategy.root.getDepth());
+                }
+            }
 
         }
 
+        strategy.root = null;
+
+    }
+
+    @After
+    public void tearDown()
+    {
+        this.mPlayer1 = null;
+        this.mPlayer2 = null;
     }
 
 
