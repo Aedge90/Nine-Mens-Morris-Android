@@ -34,13 +34,12 @@ public class StrategyMemoryTestParameterized {
         LinkedList<Object[]> player1andnThreadsList = new LinkedList<>();
         for (Options.Difficulties playerBlackDiff : Options.Difficulties.values()) {
 
-            Player playerBlack = new Player(Options.Color.BLACK);
-            playerBlack.setDifficulty(playerBlackDiff);
-            playerBlack.setSetCount(5);
-
             //test every possible configuration of players with different difficulties
             for (Options.Difficulties playerWhiteDiff : Options.Difficulties.values()) {
 
+                Player playerBlack = new Player(Options.Color.BLACK);
+                playerBlack.setDifficulty(playerBlackDiff);
+                playerBlack.setSetCount(5);
                 Player playerWhite = new Player(Options.Color.WHITE);
                 playerWhite.setDifficulty(playerWhiteDiff);
                 playerWhite.setSetCount(5);
@@ -62,6 +61,7 @@ public class StrategyMemoryTestParameterized {
 
         mPlayer1 = player1;
         mPlayer2 = player2;
+
     }
 
 
@@ -84,7 +84,7 @@ public class StrategyMemoryTestParameterized {
             Move result1 = strategy.computeMove(mPlayer1);
             gameBoard.executeCompleteTurn(result1, mPlayer1);
             if (!gameBoard.getState(mPlayer1).equals(GameBoard.GameState.RUNNING)) {
-                return;
+                break;
             }
             // the height of the tree should be 1 (the root move = last move) + startDepth
             // or if the other player has a higher difficulty he explored the tree deeper already
@@ -99,7 +99,7 @@ public class StrategyMemoryTestParameterized {
             Move result2 = strategy.computeMove(mPlayer2);
             gameBoard.executeCompleteTurn(result2, mPlayer2);
             if (!gameBoard.getState(mPlayer2).equals(GameBoard.GameState.RUNNING)) {
-                return;
+                break;
             }
             int expectedDepth2 = Math.max(mPlayer2.getDifficulty().ordinal() + 2 + 1, mPlayer1.getDifficulty().ordinal() + 2);
             assertEquals("Round " + i, expectedDepth2, strategy.root.getDepth());
