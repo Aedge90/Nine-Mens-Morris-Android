@@ -721,8 +721,8 @@ public class StrategyTestParameterized {
 
         GameBoard gameBoard = new Mill5(mill5);
 
-        mPlayer1.setSetCount(9);
-        mPlayer2.setSetCount(9);
+        mPlayer1.setSetCount(5);
+        mPlayer2.setSetCount(5);
 
         LinkedList<Move> list = new LinkedList<Move>();
 
