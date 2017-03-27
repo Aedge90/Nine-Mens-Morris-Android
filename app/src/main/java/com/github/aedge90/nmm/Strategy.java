@@ -106,6 +106,8 @@ public class Strategy {
     @VisibleForTesting
     public LinkedList<Move> shuffleListOfPossMoves(LinkedList<Move> shuffle){
 
+        //TODO shuffle somewhere else as it drastically lowers StrategyMemory usefulness
+
         Collections.shuffle(shuffle);
         LinkedList<Move> result = new LinkedList<Move>();
         // but make sure the kill moves are at the beginning again, to improve performance
@@ -117,6 +119,7 @@ public class Strategy {
             }
         }
         return result;
+
     }
 
     @VisibleForTesting

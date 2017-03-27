@@ -187,7 +187,10 @@ public class StrategyMemoryTestParameterized {
         GameBoard gameBoard = new Mill9(mill9);
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
-        Strategy strategy = new Strategy(gameBoard, updater, 8, new StrategyMemoryLogger());
+
+        StrategyMemoryLogger memory = new StrategyMemoryLogger();
+
+        Strategy strategy = new Strategy(gameBoard, updater, 8, memory);
 
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
@@ -197,16 +200,20 @@ public class StrategyMemoryTestParameterized {
 
         //System.out.println("chosen move: " + result2);
 
+        System.out.println("total evaluations: " + memory.nExecutedEval);
+        System.out.println("skipped evaluations: " + memory.nSkippedEval);
+        ((StrategyMemoryLogger)strategy.memory).resetLog();
+
         //player 2 should have initialized the tree and set his last move as root
 
         // player 1 should compute his move and use values that were computed already
         Move result1 = strategy.computeMove(mPlayer1);
         gameBoard.executeCompleteTurn(result1, mPlayer1);
 
-        assertTrue(strategy.memory.nSkippedEval > 0);
+        assertTrue(memory.nSkippedEval > 0);
 
-        System.out.println("total evaluations: " + strategy.memory.nTotalEval);
-        System.out.println("skipped evaluations: " + strategy.memory.nSkippedEval);
+        System.out.println("total evaluations: " + memory.nExecutedEval);
+        System.out.println("skipped evaluations: " + memory.nSkippedEval);
     }
 
 }
