@@ -18,6 +18,11 @@ import static junit.framework.Assert.assertTrue;
 @RunWith(value = Parameterized.class)
 public class StrategyMemoryTestParameterized {
 
+    private final Options.Color P1;
+    private final Options.Color P2;
+    private final Options.Color N = Options.Color.NOTHING;
+    private final Options.Color I = Options.Color.INVALID;
+
     private Player mPlayer1;
     private Player mPlayer2;
 
@@ -57,6 +62,8 @@ public class StrategyMemoryTestParameterized {
         mPlayer1 = player1;
         mPlayer2 = player2;
 
+        P1 = mPlayer1.getColor();
+        P2 = mPlayer2.getColor();
     }
 
 
@@ -84,6 +91,9 @@ public class StrategyMemoryTestParameterized {
                     break;
                 }
             }
+
+            //System.out.println("round: " + i + "\n" + gameBoard);
+
             // the height of the tree should be 1 (the root move = last move) + startDepth
             // or if the other player has a higher difficulty he explored the tree deeper already
             // so it should then be his startDepth (but not his root move as the root was set one deeper by the weaker player)
@@ -106,6 +116,8 @@ public class StrategyMemoryTestParameterized {
                     break;
                 }
             }
+
+            //System.out.println("round: " + i + "\n" + gameBoard);
 
             int expectedDepth2 = Math.max(mPlayer2.getDifficulty().ordinal() + 2 + 1, mPlayer1.getDifficulty().ordinal() + 2);
 
@@ -130,5 +142,33 @@ public class StrategyMemoryTestParameterized {
         this.mPlayer2 = null;
     }
 
+
+    @Test
+    public void strategyRootMoveShouldHave36Children() throws InterruptedException {
+
+        Options.Color[][] mill9 =
+            {{N , I , I , P2, I , I , P1},
+            { I , N , I , N , I , N , I },
+            { I , I , P2, P2, P1, I , I },
+            { N , P2, P2, I , P2, N , N },
+            { I , I , P2, P1, N , I , I },
+            { I , N , I , P2, I , N , I },
+            { N , I , I , P2, I , I , N }};
+
+        GameBoard gameBoard = new Mill9(mill9);
+        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
+        Strategy strategy = new Strategy(gameBoard, updater);
+
+        mPlayer1.setSetCount(0);
+        mPlayer2.setSetCount(0);
+
+        Move result2 = strategy.computeMove(mPlayer2);
+        gameBoard.executeCompleteTurn(result2, mPlayer2);
+
+        //player 2 should have initialized the tree and set his last move as root
+        // so now the children should be the possible moves of P1! which should be 36 in total
+        assertEquals(3*12, strategy.root.getChildren().length);
+    }
 
 }
