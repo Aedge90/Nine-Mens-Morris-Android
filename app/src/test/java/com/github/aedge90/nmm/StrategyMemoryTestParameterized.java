@@ -9,10 +9,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertSame;
 import static junit.framework.Assert.assertTrue;
 
 @RunWith(value = Parameterized.class)
@@ -167,6 +169,67 @@ public class StrategyMemoryTestParameterized {
         //player 2 should have initialized the tree and set his last move as root
         // so now the children should be the possible moves of P1! which should be 36 in total
         assertEquals(3*12, strategy.memory.getRoot().getChildren().length);
+    }
+
+
+    @Test
+    public void strategyShouldNotComputeAnyNewEvaluation() throws InterruptedException {
+
+        if(mPlayer2.getDifficulty().ordinal() <= mPlayer1.getDifficulty().ordinal()){
+            return;     //test makes only sense if player 2 is stronger than the other
+        }
+
+        Options.Color[][] mill9 =
+                {{N , I , I , P2, I , I , P1},
+                { I , P2, I , N , I , N , I },
+                { I , I , P2, P2, N , I , I },
+                { N , P2, N , I , N , P1, N },
+                { I , I , P2, P2, N , I , I },
+                { I , P2, I , N , I , N , I },
+                { P1, I , I , P2, I , I , P1}};
+
+        GameBoard gameBoard = new Mill9(mill9);
+        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
+        Strategy strategy = new Strategy(gameBoard, updater);
+
+        mPlayer1.setSetCount(0);
+        mPlayer2.setSetCount(0);
+
+        Move result2 = strategy.computeMove(mPlayer2);
+        gameBoard.executeCompleteTurn(result2, mPlayer2);
+
+        System.out.println("chosen move: " + result2);
+
+        //player 2 should have initialized the tree and set his last move as root
+        LinkedList<MoveNode> listBefore = new LinkedList<>();
+        storeAllMoveNodes(listBefore, strategy.memory.getRoot());
+
+        // player 1 should compute his move but the tree should not change at all
+        Move result1 = strategy.computeMove(mPlayer1);
+        gameBoard.executeCompleteTurn(result1, mPlayer1);
+
+        LinkedList<MoveNode> listAfter = new LinkedList<>();
+        storeAllMoveNodes(listAfter, strategy.memory.getRoot());
+
+
+        for(MoveNode nodeAfter : listAfter){
+            //check if the list before already contains the move
+            int index = listBefore.indexOf(nodeAfter);
+            assertTrue(nodeAfter.getMove() + " was not contained!" ,index >= 0);
+            //do not use equals as it would not check if its the exact same instance
+            assertSame(nodeAfter, listBefore.get(index));
+        }
+    }
+
+    public void storeAllMoveNodes(LinkedList<MoveNode> set, MoveNode currentNode) {
+        set.add(currentNode);
+        System.out.println(currentNode.getMove() + " " + currentNode.getDepth());
+        if(currentNode.getChildren() != null) {
+            for (MoveNode childBefore : currentNode.getChildren()) {
+                storeAllMoveNodes(set, childBefore);
+            }
+        }
     }
 
 }
