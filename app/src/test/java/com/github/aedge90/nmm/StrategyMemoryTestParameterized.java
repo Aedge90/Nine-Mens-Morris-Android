@@ -102,10 +102,10 @@ public class StrategyMemoryTestParameterized {
             if(i > checkStart) {
                 if(i < checkEnd){
                     // workaround to at least check two times if root is same as expected
-                    assertEquals("Round " + i, expectedDepth1, strategy.root.getDepth());
+                    assertEquals("Round " + i, expectedDepth1, strategy.memory.getRoot().getDepth());
                 }else{
                     // it could be that there is no move left and one player wins, so a lower depth would be ok
-                    assertTrue("Round " + i, expectedDepth1 >= strategy.root.getDepth());
+                    assertTrue("Round " + i, expectedDepth1 >= strategy.memory.getRoot().getDepth());
                 }
             }
 
@@ -123,15 +123,13 @@ public class StrategyMemoryTestParameterized {
 
             if(i > checkStart) {
                 if(i < checkEnd){
-                    assertEquals("Round " + i, expectedDepth2, strategy.root.getDepth());
+                    assertEquals("Round " + i, expectedDepth2, strategy.memory.getRoot().getDepth());
                 }else{
-                    assertTrue("Round " + i, expectedDepth2 >= strategy.root.getDepth());
+                    assertTrue("Round " + i, expectedDepth2 >= strategy.memory.getRoot().getDepth());
                 }
             }
 
         }
-
-        strategy.root = null;
 
     }
 
@@ -168,7 +166,7 @@ public class StrategyMemoryTestParameterized {
 
         //player 2 should have initialized the tree and set his last move as root
         // so now the children should be the possible moves of P1! which should be 36 in total
-        assertEquals(3*12, strategy.root.getChildren().length);
+        assertEquals(3*12, strategy.memory.getRoot().getChildren().length);
     }
 
 }

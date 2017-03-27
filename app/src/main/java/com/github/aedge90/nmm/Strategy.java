@@ -18,8 +18,8 @@ public class Strategy {
     MoveNode lastMove;
     double resultEvaluation;
     LinkedList<Move> possibleMovesKickoff;
-    MoveNode root;   //node of the last move
-    MoveNode[] possibleMoveNodesKickoff;
+
+    StrategyMemory memory;
 
     Strategy(final GameBoard field, final ProgressUpdater up) {
         this(field, up, 8);
@@ -32,12 +32,12 @@ public class Strategy {
         this.threads = new Thread[nThreads];
         this.runnables = new StrategyRunnable[nThreads];
         this.up = up;
-        this.root = new MoveNode(null);
+        this.memory = new StrategyMemory();
     }
 
     public Move computeMove(Player maxPlayer) throws InterruptedException {
 
-        possibleMoveNodesKickoff = addPossibleMovesTo(root, maxPlayer, gameBoard);
+        memory.addPossibleMoveNodesToRoot(maxPlayer, gameBoard);
 
         // shuffle list, so we dont end up with the same moves every game
         possibleMovesKickoff = shuffleListOfPossMoves(gameBoard.possibleMoves(maxPlayer));
@@ -64,15 +64,11 @@ public class Strategy {
         maxPlayer.setPrevMove(lastMove.getMove());
 
         // set one of the possibleMoveNodesKickoff as the new root
-        setNewRoot(lastMove);
+        memory.setRoot(lastMove);
 
         up.reset();
 
         return lastMove.getMove();
-    }
-
-    public void setNewRoot(MoveNode rootMoveNode) {
-        root = rootMoveNode;
     }
 
     // registers a child of the rootmove as the new rootmove.
@@ -80,11 +76,11 @@ public class Strategy {
     // this is called AFTER the move was done on the gameboard
     public void registerLastMove(Move move, Player player){
         gameBoard.reverseCompleteTurn(move, player);    //reverse the turn as the move was already done
-        possibleMoveNodesKickoff = addPossibleMovesTo(root, player, gameBoard);
+        memory.addPossibleMoveNodesToRoot(player, gameBoard);
         gameBoard.executeCompleteTurn(move, player);
-        for(MoveNode n : possibleMoveNodesKickoff){
+        for(MoveNode n : memory.getPossibleMoveNodesKickoff()){
             if (n.getMove().equals(move)) {
-                root = n;
+                memory.setRoot(n);
                 lastMove = n;
                 break;
             }
@@ -93,13 +89,13 @@ public class Strategy {
 
     @VisibleForTesting
     public void replaceLastMove(Move move){
-        for(MoveNode n : possibleMoveNodesKickoff){
+        for(MoveNode n : memory.getPossibleMoveNodesKickoff()){
             if(n.getMove().equals(move)){
                 lastMove = n;
                 break;
             }
         }
-        setNewRoot(lastMove);
+        memory.setRoot(lastMove);
     }
 
     @VisibleForTesting
@@ -121,16 +117,6 @@ public class Strategy {
     @VisibleForTesting
     public double getResultEvaluation() {
         return resultEvaluation;
-    }
-
-    public MoveNode[] addPossibleMovesTo(MoveNode parent, Player player, GameBoard gameBoard) {
-        if (parent.getChildren() == null) {
-            //first time we add children
-            LinkedList<Move> moves = gameBoard.possibleMoves(player);
-            parent.addChildren(moves);
-        }
-        //if getChildren() is not null there may still bei zero children in the array, which is ok if no moves are left
-        return parent.getChildren();
     }
 
 }

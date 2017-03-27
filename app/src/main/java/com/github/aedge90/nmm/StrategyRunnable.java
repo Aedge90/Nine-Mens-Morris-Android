@@ -175,7 +175,7 @@ public class StrategyRunnable implements Runnable{
         if(Thread.interrupted()){
             throw new InterruptedException("Computation of Bot " + player + " was interrupted!");
         }
-        strategy.addPossibleMovesTo(parentMoveNode, player, localGameBoard);
+        strategy.memory.addPossibleMovesTo(parentMoveNode, player, localGameBoard);
         MoveNode[] currentMoveNodes = parentMoveNode.getChildren();
         //end reached or no more moves available, maybe because he is trapped or because he lost
         if (depth == 0 || currentMoveNodes.length == 0){
@@ -210,7 +210,7 @@ public class StrategyRunnable implements Runnable{
             synchronized (strategy) {
                 if(strategy.possibleMovesKickoff.size() > 0) {
                     Move z = strategy.possibleMovesKickoff.removeFirst();
-                    for(MoveNode n : strategy.root.getChildren()){
+                    for(MoveNode n : strategy.memory.getRoot().getChildren()){
                         if(n.getMove().equals(z)){
                             currentMoveNode = n;
                             break;
@@ -244,7 +244,7 @@ public class StrategyRunnable implements Runnable{
         if(Thread.interrupted()){
             throw new InterruptedException("Computation of Bot " + player + " was interrupted!");
         }
-        strategy.addPossibleMovesTo(parentMoveNode, player, localGameBoard);
+        strategy.memory.addPossibleMovesTo(parentMoveNode, player, localGameBoard);
         MoveNode[] currentMoveNodes = parentMoveNode.getChildren();
         if (depth == 0 || currentMoveNodes.length == 0){
             double bewertung = evaluation(player, currentMoveNodes, depth);
