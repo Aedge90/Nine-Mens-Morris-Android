@@ -129,12 +129,9 @@ public class StrategyRunnable implements Runnable{
 
         Move move = moveNode.getMove();
 
-        if(move.getEvaluation() != -Double.MAX_VALUE){
-            //System.out.println("already evaluated: " + move + ": " + move.getEvaluation());
-            strategy.nSkippedEval++;
-            return;     //move was already evaluated
+        if(strategy.memory.hasEvaluation(move)){
+            return;
         }
-        strategy.nTotalEval++;
 
         double eval = 0;
         if (move.getKill() != null) {

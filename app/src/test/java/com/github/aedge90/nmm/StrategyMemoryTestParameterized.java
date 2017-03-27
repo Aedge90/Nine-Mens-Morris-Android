@@ -187,7 +187,7 @@ public class StrategyMemoryTestParameterized {
         GameBoard gameBoard = new Mill9(mill9);
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
-        Strategy strategy = new Strategy(gameBoard, updater);
+        Strategy strategy = new Strategy(gameBoard, updater, 8, new StrategyMemoryLogger());
 
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
@@ -203,10 +203,10 @@ public class StrategyMemoryTestParameterized {
         Move result1 = strategy.computeMove(mPlayer1);
         gameBoard.executeCompleteTurn(result1, mPlayer1);
 
-        assertTrue(strategy.nSkippedEval > 0);
+        assertTrue(strategy.memory.nSkippedEval > 0);
 
-        System.out.println("total evaluations: " + strategy.nTotalEval);
-        System.out.println("skipped evaluations: " + strategy.nSkippedEval);
+        System.out.println("total evaluations: " + strategy.memory.nTotalEval);
+        System.out.println("skipped evaluations: " + strategy.memory.nSkippedEval);
     }
 
 }

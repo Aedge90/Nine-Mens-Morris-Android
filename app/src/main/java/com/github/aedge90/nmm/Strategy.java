@@ -20,8 +20,6 @@ public class Strategy {
     LinkedList<Move> possibleMovesKickoff;
 
     StrategyMemory memory;
-    protected int nTotalEval = 0;
-    protected int nSkippedEval = 0;
 
     Strategy(final GameBoard field, final ProgressUpdater up) {
         this(field, up, 8);
@@ -29,12 +27,17 @@ public class Strategy {
 
     @VisibleForTesting
     Strategy(final GameBoard field, final ProgressUpdater up, final int nThreads) {
+        this(field, up, nThreads, new StrategyMemory());
+    }
+
+    @VisibleForTesting
+    Strategy(final GameBoard field, final ProgressUpdater up, final int nThreads, final StrategyMemory memory) {
         this.gameBoard = field;
         this.nThreads = nThreads;
         this.threads = new Thread[nThreads];
         this.runnables = new StrategyRunnable[nThreads];
         this.up = up;
-        this.memory = new StrategyMemory();
+        this.memory = memory;
     }
 
     public Move computeMove(Player maxPlayer) throws InterruptedException {

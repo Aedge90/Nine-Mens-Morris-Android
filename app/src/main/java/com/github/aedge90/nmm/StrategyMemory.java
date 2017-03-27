@@ -8,6 +8,10 @@ public class StrategyMemory {
     MoveNode root;   //node of the last move
     MoveNode[] possibleMoveNodesKickoff;
 
+    //just for debugging
+    protected int nTotalEval = 0;
+    protected int nSkippedEval = 0;
+
     public StrategyMemory() {
         this.root = new MoveNode(null);
     }
@@ -38,5 +42,19 @@ public class StrategyMemory {
         //if getChildren() is not null there may still bei zero children in the array, which is ok if no moves are left
         return parent.getChildren();
     }
+
+    public boolean hasEvaluation (Move move) {
+        if(move.getEvaluation() != -Double.MAX_VALUE){
+            //System.out.println("already evaluated: " + move + ": " + move.getEvaluation());
+            logSkipped();
+            return true;     //move was already evaluated
+        }
+        logTotal();
+        return false;
+    }
+
+    public void logSkipped () {}
+
+    public void logTotal () {}
 
 }
