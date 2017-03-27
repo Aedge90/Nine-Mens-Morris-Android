@@ -5,24 +5,14 @@ import java.util.List;
 public class MoveNode {
     //just use an array instead of datastructures to save memory and performance
     private MoveNode[] children = null;
-    private MoveNode parent = null;
     private Move data = null;
 
     public MoveNode(Move move) {
         this.data = move;
     }
 
-    public MoveNode(Move move, MoveNode parent) {
-        this.data = move;
-        this.parent = parent;
-    }
-
     public MoveNode[] getChildren() {
         return children;
-    }
-
-    private void setParent(MoveNode parent) {
-        this.parent = parent;
     }
 
     public void addChildren (List<Move> newChildren){
@@ -31,7 +21,6 @@ public class MoveNode {
         int index = 0;
         for (Move child : newChildren) {
             MoveNode childNode = new MoveNode(child);
-            childNode.setParent(this);
             children[index] = childNode;
             index++;
         }
@@ -45,15 +34,6 @@ public class MoveNode {
         this.data = move;
     }
 
-    public boolean isRoot() {
-        return (this.parent == null);
-    }
-
-    public void removeParent() {
-        this.parent = null;
-    }
-
-
     public int getDepth() {
         int deepest = 0;
         if(children != null) {
@@ -63,5 +43,4 @@ public class MoveNode {
         }
         return deepest + 1;
     }
-
 }
