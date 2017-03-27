@@ -20,6 +20,8 @@ public class Strategy {
     LinkedList<Move> possibleMovesKickoff;
 
     StrategyMemory memory;
+    protected int nTotalEval = 0;
+    protected int nSkippedEval = 0;
 
     Strategy(final GameBoard field, final ProgressUpdater up) {
         this(field, up, 8);

@@ -173,11 +173,7 @@ public class StrategyMemoryTestParameterized {
 
 
     @Test
-    public void strategyShouldNotComputeAnyNewEvaluation() throws InterruptedException {
-
-        if(mPlayer2.getDifficulty().ordinal() <= mPlayer1.getDifficulty().ordinal()){
-            return;     //test makes only sense if player 2 is stronger than the other
-        }
+    public void strategyShouldSkipEvaluations() throws InterruptedException {
 
         Options.Color[][] mill9 =
                 {{N , I , I , P2, I , I , P1},
@@ -199,37 +195,18 @@ public class StrategyMemoryTestParameterized {
         Move result2 = strategy.computeMove(mPlayer2);
         gameBoard.executeCompleteTurn(result2, mPlayer2);
 
-        System.out.println("chosen move: " + result2);
+        //System.out.println("chosen move: " + result2);
 
         //player 2 should have initialized the tree and set his last move as root
-        LinkedList<MoveNode> listBefore = new LinkedList<>();
-        storeAllMoveNodes(listBefore, strategy.memory.getRoot());
 
-        // player 1 should compute his move but the tree should not change at all
+        // player 1 should compute his move and use values that were computed already
         Move result1 = strategy.computeMove(mPlayer1);
         gameBoard.executeCompleteTurn(result1, mPlayer1);
 
-        LinkedList<MoveNode> listAfter = new LinkedList<>();
-        storeAllMoveNodes(listAfter, strategy.memory.getRoot());
+        assertTrue(strategy.nSkippedEval > 0);
 
-
-        for(MoveNode nodeAfter : listAfter){
-            //check if the list before already contains the move
-            int index = listBefore.indexOf(nodeAfter);
-            assertTrue(nodeAfter.getMove() + " was not contained!" ,index >= 0);
-            //do not use equals as it would not check if its the exact same instance
-            assertSame(nodeAfter, listBefore.get(index));
-        }
-    }
-
-    public void storeAllMoveNodes(LinkedList<MoveNode> set, MoveNode currentNode) {
-        set.add(currentNode);
-        System.out.println(currentNode.getMove() + " " + currentNode.getDepth());
-        if(currentNode.getChildren() != null) {
-            for (MoveNode childBefore : currentNode.getChildren()) {
-                storeAllMoveNodes(set, childBefore);
-            }
-        }
+        System.out.println("total evaluations: " + strategy.nTotalEval);
+        System.out.println("skipped evaluations: " + strategy.nSkippedEval);
     }
 
 }
