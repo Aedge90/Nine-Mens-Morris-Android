@@ -104,7 +104,7 @@ public class StrategyRunnable implements Runnable{
             // evaluate opening a mill in the first move better, so the bot will open mills.
             // There is no need to check if the mill can be opened safely (without the enemy blocking it in the next move)
             // as even depth 2 bots will already NOT open a mill as preventedMill will be true for the next move
-            if (globalGameBoard.isInMill(firstMove.getSrc(), player.getColor())) {
+            if (globalGameBoard.isInMill(firstMove.getSrc(), globalMaxPlayer.getColor())) {
                 ret += 0.1;
             }
         }

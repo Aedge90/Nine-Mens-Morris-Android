@@ -591,7 +591,7 @@ public class StrategyTestParameterized {
 
     }
 
-    //Test if especially bots on easy open their mill, as they cant see the gameboard after 3 moves
+    //Test if especially bots on EASIER open their mill, as they cant see the gameboard after 2 moves
     @Test
     public void computeMoveShouldOpenMill() throws InterruptedException {
 
