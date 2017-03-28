@@ -4,7 +4,6 @@ package com.github.aedge90.nmm;
 import android.test.mock.MockContext;
 import android.widget.ProgressBar;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
@@ -37,8 +36,8 @@ public class StrategyTestNonParameterized {
             gameBoards[j] = new Mill9();
             mPlayerBlacks[j] = new Player(Options.Color.BLACK);
             mPlayerWhites[j] = new Player(Options.Color.WHITE);
-            mPlayerBlacks[j].setDifficulty(Options.Difficulties.HARDEST);
-            mPlayerWhites[j].setDifficulty(Options.Difficulties.HARDEST);
+            mPlayerBlacks[j].setDifficulty(Options.Difficulties.HARDER);
+            mPlayerWhites[j].setDifficulty(Options.Difficulties.HARDER);
             mPlayerBlacks[j].setOtherPlayer(mPlayerWhites[j]);
             mPlayerWhites[j].setOtherPlayer(mPlayerBlacks[j]);
             mPlayerBlacks[j].setSetCount(9);
