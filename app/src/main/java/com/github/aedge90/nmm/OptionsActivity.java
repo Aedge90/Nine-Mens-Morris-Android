@@ -135,6 +135,7 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
         items.add("Bot (" + getString(getResources().getIdentifier(Options.Difficulties.ADVANCED.name(), "string", getPackageName())) + ")");
         items.add("Bot (" + getString(getResources().getIdentifier(Options.Difficulties.HARD.name(), "string", getPackageName())) + ")");
         items.add("Bot (" + getString(getResources().getIdentifier(Options.Difficulties.HARDER.name(), "string", getPackageName())) + ")");
+        items.add("Bot (" + getString(getResources().getIdentifier(Options.Difficulties.HARDEST.name(), "string", getPackageName())) + ")");
         items.add(getResources().getString(R.string.human_player));
 
         Spinner spinner = null;

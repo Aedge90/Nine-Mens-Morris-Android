@@ -164,6 +164,8 @@ public class StrategyRunnable implements Runnable{
         move.setEvaluation(eval);
     }
 
+    //TODO evaluate creating a double mill
+
     private double max(int depth, double alpha, double beta, Player player) throws InterruptedException {
         if(Thread.interrupted()){
             throw new InterruptedException("Computation of Bot " + player + " was interrupted!");

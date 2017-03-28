@@ -53,4 +53,6 @@
     <string name="you_have_lost">You have lost!</string>
     <string name="lost_no_moves">You can not make any further move!</string>
     <string name="lost_no_pieces">You only have two pieces left!</string>
+    <string name="ADVANCED">Advanced</string>
+    <string name="EASIER">Easier</string>
 </resources>

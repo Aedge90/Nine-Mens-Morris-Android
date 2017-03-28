@@ -50,4 +50,6 @@
     <string name="turn_of">Zug von</string>
     <string name="EASIEST">Sehr Einfach</string>
     <string name="you_have_lost">Du hast verloren!</string>
+    <string name="ADVANCED">Fortgeschritten</string>
+    <string name="EASIER">Einfacher</string>
 </resources>

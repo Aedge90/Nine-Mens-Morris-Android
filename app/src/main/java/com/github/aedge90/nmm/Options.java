@@ -15,7 +15,7 @@ public class Options implements Parcelable {
 
     //TODO add EASIEST with depth 0 and HARDEST with depth 7
 	protected static enum Difficulties {
-        EASIER, EASY, NORMAL, ADVANCED, HARD, HARDER
+        EASIER, EASY, NORMAL, ADVANCED, HARD, HARDER, HARDEST
 	};
 
 	protected Color whoStarts;
