@@ -26,6 +26,10 @@ public class MoveNode {
         }
     }
 
+    public void removeChildren(){
+        children = null;
+    }
+
     public Move getMove() {
         return this.data;
     }

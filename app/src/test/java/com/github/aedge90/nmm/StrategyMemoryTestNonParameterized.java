@@ -45,15 +45,14 @@ public class StrategyMemoryTestNonParameterized {
         playerWhiteNoMemory.setOtherPlayer(playerBlackNoMemory);
         playerBlackNoMemory.setSetCount(setCount);
         playerWhiteNoMemory.setSetCount(setCount);
-        Strategy strategyNoMemory = new Strategy(gameBoardNoMemory, updater);
+
+        StrategyMemoryDummy dummy = new StrategyMemoryDummy();
+        Strategy strategyNoMemory = new Strategy(gameBoardNoMemory, updater, 8, dummy);
 
         Player currPlayerMemory = playerBlackMemory;
         Player currPlayerNoMemory = playerBlackNoMemory;
 
         for(int i = 0; i<80; i++){
-
-            System.out.println(gameBoardMemory);
-            System.out.println(gameBoardNoMemory);
 
             Move resultMoveMemory = strategyMemory.computeMove(currPlayerMemory);
             Move resultMoveNoMemory = strategyNoMemory.computeMove(currPlayerNoMemory);
