@@ -270,7 +270,7 @@ public class StrategyRunnable implements Runnable{
 
     private void computeMove() throws InterruptedException {
                 
-        int startDepth = localMaxPlayer.getDifficulty().ordinal() + 2;
+        int startDepth = localMaxPlayer.getDifficulty().ordinal() + 1;
 
         startDepth = lowerDepthOnGameStart(startDepth);
 

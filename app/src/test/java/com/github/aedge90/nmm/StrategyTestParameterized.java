@@ -298,6 +298,11 @@ public class StrategyTestParameterized {
     @Test
     public void computeMoveShouldCloseMillAndPreventOtherPlayersMill() throws InterruptedException {
 
+        //its ok that the EASIER bot can not see that the other player can kill after his move
+        if(mPlayer1.getDifficulty().equals(Options.Difficulties.EASIER)){
+            return;
+        }
+
         Options.Color[][] mill5 =
                 {{N , I , I , P1, I , I , P2},
                 { I , I , I , I , I , I , I },
@@ -331,9 +336,10 @@ public class StrategyTestParameterized {
     public void computeMoveShouldCloseMillOnHighDifficulties() throws InterruptedException {
 
         //workaround to skip easier difficulties
-        if(mPlayer1.getDifficulty().equals(Options.Difficulties.EASIEST)
+        if(mPlayer1.getDifficulty().equals(Options.Difficulties.EASIER)
                 || mPlayer1.getDifficulty().equals(Options.Difficulties.EASY)
-                || mPlayer1.getDifficulty().equals(Options.Difficulties.NORMAL)){
+                || mPlayer1.getDifficulty().equals(Options.Difficulties.NORMAL)
+                || mPlayer1.getDifficulty().equals(Options.Difficulties.ADVANCED)){
             return;
         }
 
@@ -374,23 +380,18 @@ public class StrategyTestParameterized {
     }
 
     @Test
-    //in this scenario P1 makes a mistake, P2 should compute the perfect move, so that P1 cant prevent loosing
-    //then P1 should at least try to prevent a mill, although he cant prevent that the P2 still can close
-    //his mill in another way. Is ok that P2 does not make the perfect move on EASIEST
+    // P1 should at least try to prevent a mill, although he cant prevent that the P2 still can close
+    // his mill in another way. Is ok that P2 does not make the perfect move on EASIER
     public void computeMoveShouldTryToPreventLoosingEvenIfItsImpossible() throws InterruptedException {
 
-        if(mPlayer2.getDifficulty() == Options.Difficulties.EASIEST){
-            return;
-        }
-
         Options.Color[][] mill5 =
-                {{N , I , I , N , I , I , N },
+                {{N , I , I , N , I , I , P1},
                 { I , I , I , I , I , I , I },
-                { I , I , N , P2, P1, I , I },
-                { N , I , N , I , P2, I , P1},
+                { I , I , N , P2, P2, I , I },
+                { N , I , N , I , N , I , P1},
                 { I , I , N , N , P2, I , I },
                 { I , I , I , I , I , I , I },
-                { P2, I , I , N , I , I , P1}};
+                { N , I , I , N , I , I , P1}};
 
         GameBoard gameBoard = new Mill5(mill5);
         ProgressBar progBar = new ProgressBar(new MockContext());
@@ -400,16 +401,8 @@ public class StrategyTestParameterized {
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
 
-        Move result = new Move(new Position(6,0), new Position(4,2), new Position(4,3));
-
-        gameBoard.executeCompleteTurn(result, mPlayer1);
-
-        Move result2 = strategy.computeMove(mPlayer2);
-        gameBoard.executeCompleteTurn(result2, mPlayer2);
-
-        assertEquals(new Position(4,2), result2.getDest());
-
         Move result3 = strategy.computeMove(mPlayer1);
+
         gameBoard.executeCompleteTurn(result3, mPlayer1);
 
         assertThat(result3.getDest(), anyOf(is(new Position(2,2)), is(new Position(4,3))));
@@ -417,6 +410,11 @@ public class StrategyTestParameterized {
 
     @Test
     public void computeMoveShouldCloseMillAndPreventOtherPlayersMillWhenJumping() throws InterruptedException {
+
+        //its ok that the EASIER bot can not see that the other player can kill after his move
+        if(mPlayer1.getDifficulty().equals(Options.Difficulties.EASIER)){
+            return;
+        }
 
         Options.Color[][] mill5 =
                 {{P2, I , I , N , I , I , N },
@@ -622,6 +620,11 @@ public class StrategyTestParameterized {
 
     @Test
     public void computeMoveShouldNotOpenMill() throws InterruptedException {
+
+        //its ok that the EASIER bot can not see that the other player can prevent his next mill
+        if(mPlayer1.getDifficulty().equals(Options.Difficulties.EASIER)){
+            return;
+        }
 
         Options.Color[][] mill9 =
                 {{P1, I , I , N , I , I , N },
