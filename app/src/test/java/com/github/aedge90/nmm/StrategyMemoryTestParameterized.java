@@ -79,6 +79,9 @@ public class StrategyMemoryTestParameterized {
 
         int checkStart = 4;
         int checkEnd = 7;
+        int startDepthP1 = mPlayer1.getDifficulty().ordinal() + 1;
+        int startDepthP2 = mPlayer2.getDifficulty().ordinal() + 1;
+
 
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
@@ -99,7 +102,7 @@ public class StrategyMemoryTestParameterized {
             // the height of the tree should be 1 (the root move = last move) + startDepth
             // or if the other player has a higher difficulty he explored the tree deeper already
             // so it should then be his startDepth (but not his root move as the root was set one deeper by the weaker player)
-            int expectedDepth1 = Math.max(mPlayer1.getDifficulty().ordinal() + 2 + 1, mPlayer2.getDifficulty().ordinal() + 2);
+            int expectedDepth1 = Math.max(startDepthP1 + 1, startDepthP2);
             //do not check depth in the beginning as its lowered intentionally in StrategyRunnable
             if(i > checkStart) {
                 if(i < checkEnd){
@@ -121,7 +124,7 @@ public class StrategyMemoryTestParameterized {
 
             //System.out.println("round: " + i + "\n" + gameBoard);
 
-            int expectedDepth2 = Math.max(mPlayer2.getDifficulty().ordinal() + 2 + 1, mPlayer1.getDifficulty().ordinal() + 2);
+            int expectedDepth2 = Math.max(startDepthP2 + 1, startDepthP1);
 
             if(i > checkStart) {
                 if(i < checkEnd){
@@ -174,6 +177,11 @@ public class StrategyMemoryTestParameterized {
 
     @Test
     public void strategyShouldSkipEvaluations() throws InterruptedException {
+
+        // as EASIER bots will only compute 1 move (their own) no moves can be skipped
+        if(mPlayer2.getDifficulty().equals(Options.Difficulties.EASIER)){
+            return;
+        }
 
         Options.Color[][] mill9 =
                 {{N , I , I , P2, I , I , P1},
