@@ -62,14 +62,14 @@ public class StrategyRunnable implements Runnable{
 
         if (moves.length == 0) {
             if(movesToEvaluate.size() > 1) {
-                localGameBoard.reverseCompleteTurn(movesToEvaluate.getLast().getMove(), player.getOtherPlayer());
+                localGameBoard.reverseCompleteTurn(movesToEvaluate.getLast(), player.getOtherPlayer());
                 //check if the loosing player, prevented a mill in his last move (which is the size-2th move)
-                if (localGameBoard.isInMill(movesToEvaluate.get(movesToEvaluate.size() - 2).getMove().getDest(), player.getOtherPlayer().getColor())) {
+                if (localGameBoard.isInMill(movesToEvaluate.get(movesToEvaluate.size() - 2).getDest(), player.getOtherPlayer().getColor())) {
                     //evaluate this better, as it looks stupid if he does not try to prevent one mill even if the other player
                     //can close another mill despite that
                     ret = 1;
                 }
-                localGameBoard.executeCompleteTurn(movesToEvaluate.getLast().getMove(), player.getOtherPlayer());
+                localGameBoard.executeCompleteTurn(movesToEvaluate.getLast(), player.getOtherPlayer());
             }
             //worst case: player can not make any moves --> game is lost
             //or player has less than 3 pieces and has no pieces left to set --> game is lost
@@ -91,15 +91,15 @@ public class StrategyRunnable implements Runnable{
         // a then this path will be chosen, but it contains a move that may not be good
         for(MoveNode move : movesToEvaluate){
             if(i % 2 == 0) {    //even numbers are moves of the maximizing player
-                ret += move.getMove().getEvaluation() / weight;
+                ret += move.getEvaluation() / weight;
             }else{
-                ret -= move.getMove().getEvaluation() / weight;
+                ret -= move.getEvaluation() / weight;
             }
             weight = weight*10;
             i++;
         }
 
-        Move firstMove = movesToEvaluate.getFirst().getMove();
+        Move firstMove = movesToEvaluate.getFirst();
         if(firstMove.getSrc() != null) {
             // evaluate opening a mill in the first move better, so the bot will open mills.
             // There is no need to check if the mill can be opened safely (without the enemy blocking it in the next move)
@@ -113,10 +113,10 @@ public class StrategyRunnable implements Runnable{
         //this should break endless undoing and redoing of moves if all have the same evaluation so far
         if(globalMaxPlayer.getPrevMove() != null){
             // closing and opening a mill should not be downgraded. Ignore setting phase
-            if (globalMaxPlayer.getPrevMove().getKill() != null || movesToEvaluate.get(0).getMove().getKill() != null || globalMaxPlayer.getPrevMove().getSrc() == null){
+            if (globalMaxPlayer.getPrevMove().getKill() != null || movesToEvaluate.get(0).getKill() != null || globalMaxPlayer.getPrevMove().getSrc() == null){
                 //do nothing
-            }else if (globalMaxPlayer.getPrevMove().getSrc().equals(movesToEvaluate.get(0).getMove().getDest())
-                    && globalMaxPlayer.getPrevMove().getDest().equals(movesToEvaluate.get(0).getMove().getSrc())) {
+            }else if (globalMaxPlayer.getPrevMove().getSrc().equals(movesToEvaluate.get(0).getDest())
+                    && globalMaxPlayer.getPrevMove().getDest().equals(movesToEvaluate.get(0).getSrc())) {
                 ret -= 1;
             }
         }
@@ -127,7 +127,7 @@ public class StrategyRunnable implements Runnable{
 
     private void evaluateMove(MoveNode moveNode, Player player) {
 
-        Move move = moveNode.getMove();
+        Move move = moveNode;
 
         if(strategy.memory.hasEvaluation(move)){
             return;
@@ -183,12 +183,12 @@ public class StrategyRunnable implements Runnable{
         }
         double maxWert = alpha;
         for (MoveNode currentMoveNode : currentMoveNodes) {
-            localGameBoard.executeCompleteTurn(currentMoveNode.getMove(), player);
+            localGameBoard.executeCompleteTurn(currentMoveNode, player);
             movesToEvaluate.addLast(currentMoveNode);
             evaluateMove(currentMoveNode, player);
             double wert = min(depth-1, maxWert, beta, player.getOtherPlayer(), currentMoveNode);
             movesToEvaluate.removeLast();
-            localGameBoard.reverseCompleteTurn(currentMoveNode.getMove(), player);
+            localGameBoard.reverseCompleteTurn(currentMoveNode, player);
             if (wert > maxWert) {
                 maxWert = wert;
                 if (maxWert >= beta) {
@@ -210,7 +210,7 @@ public class StrategyRunnable implements Runnable{
                 if(strategy.possibleMovesKickoff.size() > 0) {
                     Move z = strategy.possibleMovesKickoff.removeFirst();
                     for(MoveNode n : strategy.memory.getRoot().getChildren()){
-                        if(n.getMove().equals(z)){
+                        if(n.equals(z)){
                             currentMoveNode = n;
                             break;
                         }
@@ -220,12 +220,12 @@ public class StrategyRunnable implements Runnable{
                 }
             }
 
-            localGameBoard.executeCompleteTurn(currentMoveNode.getMove(), player);
+            localGameBoard.executeCompleteTurn(currentMoveNode, player);
             movesToEvaluate.addLast(currentMoveNode);
             evaluateMove(currentMoveNode, player);
             double wert = min(depth - 1, strategy.maxWertKickoff, Double.MAX_VALUE, player.getOtherPlayer(), currentMoveNode);
             movesToEvaluate.removeLast();
-            localGameBoard.reverseCompleteTurn(currentMoveNode.getMove(), player);
+            localGameBoard.reverseCompleteTurn(currentMoveNode, player);
 
             synchronized (strategy) {
                 if (wert > strategy.maxWertKickoff) {
@@ -251,12 +251,12 @@ public class StrategyRunnable implements Runnable{
         }
         double minWert = beta;
         for (MoveNode currentMoveNode : currentMoveNodes) {
-            localGameBoard.executeCompleteTurn(currentMoveNode.getMove(), player);
+            localGameBoard.executeCompleteTurn(currentMoveNode, player);
             movesToEvaluate.addLast(currentMoveNode);
             evaluateMove(currentMoveNode, player);
             double wert = max(depth-1, alpha, minWert, player.getOtherPlayer(), currentMoveNode);
             movesToEvaluate.removeLast();
-            localGameBoard.reverseCompleteTurn(currentMoveNode.getMove(), player);
+            localGameBoard.reverseCompleteTurn(currentMoveNode, player);
             if (wert < minWert) {
                 minWert = wert;
                 if (minWert <= alpha){ 

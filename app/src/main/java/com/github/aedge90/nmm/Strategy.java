@@ -66,14 +66,14 @@ public class Strategy {
             threads[i].join();
         }
 
-        maxPlayer.setPrevMove(lastMove.getMove());
+        maxPlayer.setPrevMove(lastMove);
 
         // set one of the possibleMoveNodesKickoff as the new root
         memory.setRoot(lastMove);
 
         up.reset();
 
-        return lastMove.getMove();
+        return lastMove;
     }
 
     // registers a child of the rootmove as the new rootmove.
@@ -84,7 +84,7 @@ public class Strategy {
         memory.addPossibleMoveNodesToRoot(player, gameBoard);
         gameBoard.executeCompleteTurn(move, player);
         for(MoveNode n : memory.getPossibleMoveNodesKickoff()){
-            if (n.getMove().equals(move)) {
+            if (n.equals(move)) {
                 memory.setRoot(n);
                 lastMove = n;
                 break;
@@ -95,7 +95,7 @@ public class Strategy {
     @VisibleForTesting
     public void replaceLastMove(Move move){
         for(MoveNode n : memory.getPossibleMoveNodesKickoff()){
-            if(n.getMove().equals(move)){
+            if(n.equals(move)){
                 lastMove = n;
                 break;
             }

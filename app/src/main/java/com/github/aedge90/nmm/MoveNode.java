@@ -2,13 +2,13 @@ package com.github.aedge90.nmm;
 
 import java.util.List;
 
-public class MoveNode {
+public class MoveNode extends Move{
+
     //just use an array instead of datastructures to save memory and performance
     private MoveNode[] children = null;
-    private Move data = null;
 
-    public MoveNode(Move move) {
-        this.data = move;
+    public MoveNode(Position dest, Position src, Position kill) {
+        super(dest, src, kill);
     }
 
     public MoveNode[] getChildren() {
@@ -20,7 +20,7 @@ public class MoveNode {
         children = new MoveNode[newChildren.size()];
         int index = 0;
         for (Move child : newChildren) {
-            MoveNode childNode = new MoveNode(child);
+            MoveNode childNode = new MoveNode(child.getDest() , child.getSrc() , child.getKill());
             children[index] = childNode;
             index++;
         }
@@ -28,14 +28,6 @@ public class MoveNode {
 
     public void removeChildren(){
         children = null;
-    }
-
-    public Move getMove() {
-        return this.data;
-    }
-
-    public void setMove(Move move) {
-        this.data = move;
     }
 
     public int getDepth() {

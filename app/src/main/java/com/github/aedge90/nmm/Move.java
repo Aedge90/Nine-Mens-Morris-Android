@@ -49,18 +49,9 @@ public class Move {
     public String toString(){
         return "src: " + src + " dest: " + dest + " kill: " + kill;
     }
-    
+
     private boolean isPossible(){
-        if(src == null && dest == null && kill == null){
-            return false;
-        }
-        if(src == null && dest == null && kill != null){
-            return false;
-        }
         if(src != null && dest == null){
-            return false;
-        }
-        if(src != null && src.equals(dest)){
             return false;
         }
         return true;
@@ -69,7 +60,7 @@ public class Move {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Move)) return false;
 
         Move move = (Move) o;
 

@@ -20,7 +20,7 @@ public class MoveNodeTest {
 
         GameBoard gameBoard = new Mill5();
 
-        MoveNode root = new MoveNode(null);
+        MoveNode root = new MoveNode(null, null, null);
         LinkedList<Move> moves = gameBoard.possibleMoves(playerBlack);
         root.addChildren(moves);
 

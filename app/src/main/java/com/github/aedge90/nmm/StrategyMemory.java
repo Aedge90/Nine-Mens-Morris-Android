@@ -10,7 +10,7 @@ public class StrategyMemory {
 
 
     public StrategyMemory() {
-        this.root = new MoveNode(null);
+        this.root = new MoveNode(null, null, null);
     }
 
     public MoveNode[] getPossibleMoveNodesKickoff() {
