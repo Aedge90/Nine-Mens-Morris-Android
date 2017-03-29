@@ -88,7 +88,7 @@ public class GameBoardView {
     }
 
 
-    public void setPos(final Position pos, final Options.Color color) throws InterruptedException{
+    public void setPos(final Position pos, final Options.Color color, final GameModeActivity.OnFieldClickListener posListener) throws InterruptedException{
         
         c.runOnUiThread(new Runnable() {
             public void run() {
@@ -96,12 +96,10 @@ public class GameBoardView {
                 fieldLayout.removeView(fieldView[pos.getY()][pos.getX()]);
                 fieldLayout.addView(sector);
                 fieldView[pos.getY()][pos.getX()] = sector;
-                
                 signalUIupdate();
+                sector.setOnClickListener(posListener);
             }
         });
-        //continues when fieldView has updated selection on screen
-        waitforUIupdate();
 
     }
 
