@@ -40,7 +40,7 @@ public class GameBoardView {
 
         fieldView = new ImageView[GameBoard.LENGTH][GameBoard.LENGTH];
         
-        uiupdated = false;
+        uiupdated = true;
         lock = new ReentrantLock();
         uiupdate = lock.newCondition();
 
@@ -105,7 +105,7 @@ public class GameBoardView {
 
     }
 
-    private void waitforUIupdate() throws InterruptedException{
+    protected void waitforUIupdate() throws InterruptedException{
         lock.lock();
         try {
             while(!uiupdated) { //necessary to avoid lost wakeup
@@ -189,9 +189,6 @@ public class GameBoardView {
 
             }
         });
-
-        //continues when fieldView has played animation
-        waitforUIupdate();
 
     }
 

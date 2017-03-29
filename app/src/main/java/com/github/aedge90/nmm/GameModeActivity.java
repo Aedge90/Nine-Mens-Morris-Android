@@ -359,12 +359,16 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
         currMove = null;
         Position newPosition = null;
         if(human.getSetCount() <= 0){
+            // wait until the last animation is finished before waiting for the selection, as otherwise a selection can
+            // be chosen while the animation plays, which seems not right
+            fieldView.waitforUIupdate();
             state = State.MOVEFROM;
             // wait until a source piece and its destination position is chosen
             waitforSelection();
             fieldView.makeMove(currMove, human.getColor(), new OnFieldClickListener(currMove.getSrc()), new OnFieldClickListener(currMove.getDest()));
             newPosition = currMove.getDest();
         }else{
+            fieldView.waitforUIupdate();
             state = State.SET;
             // wait for human to set
             waitforSelection();
