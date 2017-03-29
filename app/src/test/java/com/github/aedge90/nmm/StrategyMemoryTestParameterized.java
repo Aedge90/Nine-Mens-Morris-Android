@@ -210,6 +210,8 @@ public class StrategyMemoryTestParameterized {
 
         System.out.println("executed evaluations: " + memory.nExecutedEval);
         System.out.println("skipped evaluations: " + memory.nSkippedEval);
+        System.out.println("executed poss move calculations: " + memory.nExecutedPossMoveCalc);
+        System.out.println("skipped poss move calculations: " + memory.nSkippedPossMoveCalc);
         ((StrategyMemoryLogger)strategy.memory).resetLog();
 
         //player 2 should have initialized the tree and set his last move as root
@@ -222,6 +224,8 @@ public class StrategyMemoryTestParameterized {
 
         System.out.println("executed evaluations: " + memory.nExecutedEval);
         System.out.println("skipped evaluations: " + memory.nSkippedEval);
+        System.out.println("executed poss move calculations: " + memory.nExecutedPossMoveCalc);
+        System.out.println("skipped poss move calculations: " + memory.nSkippedPossMoveCalc);
     }
 
 }
