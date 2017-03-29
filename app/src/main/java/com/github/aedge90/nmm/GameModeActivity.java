@@ -362,16 +362,13 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
             state = State.MOVEFROM;
             // wait until a source piece and its destination position is chosen
             waitforSelection();
-            fieldView.makeMove(currMove, human.getColor());
-            fieldView.getPos(currMove.getSrc()).setOnClickListener(new OnFieldClickListener(currMove.getSrc()));
-            fieldView.getPos(currMove.getDest()).setOnClickListener(new OnFieldClickListener(currMove.getDest()));
+            fieldView.makeMove(currMove, human.getColor(), new OnFieldClickListener(currMove.getSrc()), new OnFieldClickListener(currMove.getDest()));
             newPosition = currMove.getDest();
         }else{
             state = State.SET;
             // wait for human to set
             waitforSelection();
-            fieldView.makeSetMove(currMove, human.getColor());
-            fieldView.getPos(currMove.getDest()).setOnClickListener(new OnFieldClickListener(currMove.getDest()));
+            fieldView.makeSetMove(currMove, human.getColor(), new OnFieldClickListener(currMove.getDest()));
             newPosition = currMove.getDest();
         }
 
@@ -411,19 +408,14 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
         if(bot.getSetCount() <= 0){
             currMove = brain.computeMove();
 
-            fieldView.makeMove(currMove, bot.getColor());
-            fieldView.getPos(currMove.getSrc()).setOnClickListener(
-                    new OnFieldClickListener(currMove.getSrc()));
-            fieldView.getPos(currMove.getDest()).setOnClickListener(
-                    new OnFieldClickListener(currMove.getDest()));
+            fieldView.makeMove(currMove, bot.getColor(), new OnFieldClickListener(currMove.getSrc()), new OnFieldClickListener(currMove.getDest()));
             newPosition = currMove.getDest();
         }else{
 
             currMove = brain.computeMove();
 
-            fieldView.makeSetMove(currMove, bot.getColor());
-            fieldView.getPos(currMove.getDest()).setOnClickListener(
-                    new OnFieldClickListener(currMove.getDest()));
+            fieldView.makeSetMove(currMove, bot.getColor(), new OnFieldClickListener(currMove.getDest()));
+
             newPosition = currMove.getDest();
         }
 

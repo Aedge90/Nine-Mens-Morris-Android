@@ -146,7 +146,7 @@ public class GameBoardView {
 
     }
 
-    public void makeSetMove(final Move move, final Options.Color color) throws InterruptedException {
+    public void makeSetMove(final Move move, final Options.Color color, final GameModeActivity.OnFieldClickListener destListener) throws InterruptedException {
 
         c.runOnUiThread(new Runnable() {
             public void run() {
@@ -170,6 +170,7 @@ public class GameBoardView {
                         piecesSpaceLayout.removeView(animSector);
                         fieldLayout.addView(newDestSector);
                         signalUIupdate();
+                        newDestSector.setOnClickListener(destListener);
                     }
 
                     @Override
@@ -194,7 +195,8 @@ public class GameBoardView {
 
     }
 
-    public void makeMove(final Move move, final Options.Color color) throws InterruptedException{
+    public void makeMove(final Move move, final Options.Color color, final GameModeActivity.OnFieldClickListener srcListener,
+                         final GameModeActivity.OnFieldClickListener destListener) throws InterruptedException{
         
         c.runOnUiThread(new Runnable() {
             public void run() {
@@ -215,6 +217,8 @@ public class GameBoardView {
                         fieldLayout.addView(newDestSector);
                         fieldLayout.addView(newSrcSector);
                         signalUIupdate();
+                        newSrcSector.setOnClickListener(srcListener);
+                        newDestSector.setOnClickListener(destListener);
                     }
         
                     @Override
