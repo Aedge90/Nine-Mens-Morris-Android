@@ -379,9 +379,11 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
         field.executeSetOrMovePhase(currMove, human);
 
         if (field.isInMill(newPosition, human.getColor())) {
-            state = State.KILL;
             Position[] mill = field.getMill(newPosition, human.getColor());
+            fieldView.waitforUIupdate();
             fieldView.paintMill(mill);
+            fieldView.waitforUIupdate();
+            state = State.KILL;
             //wait until kill is chosen
             waitforSelection();
             fieldView.setPos(currMove.getKill(), Options.Color.NOTHING);

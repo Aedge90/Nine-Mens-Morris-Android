@@ -234,9 +234,6 @@ public class GameBoardView {
                 fieldView[move.getDest().getY()][move.getDest().getX()] = newDestSector;
             }
         });
-        
-        //continues when fieldView has played animation
-        waitforUIupdate();
 
     }
     
@@ -308,8 +305,6 @@ public class GameBoardView {
                 signalUIupdate();
             }
         });
-        //continues when fieldView has painted the mill
-        waitforUIupdate();
     }
     
     void unpaintMill() throws InterruptedException{
@@ -321,8 +316,6 @@ public class GameBoardView {
                 signalUIupdate();
             }
         });
-        //continues when fieldView has unpainted the mill
-        waitforUIupdate();
     }
     
     public String toString() {
