@@ -413,15 +413,13 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
         Position newPosition = null;
         if(bot.getSetCount() <= 0){
             currMove = brain.computeMove();
-
+            fieldView.waitforUIupdate();
             fieldView.makeMove(currMove, bot.getColor(), new OnFieldClickListener(currMove.getSrc()), new OnFieldClickListener(currMove.getDest()));
             newPosition = currMove.getDest();
         }else{
-
             currMove = brain.computeMove();
-
+            fieldView.waitforUIupdate();
             fieldView.makeSetMove(currMove, bot.getColor(), new OnFieldClickListener(currMove.getDest()));
-
             newPosition = currMove.getDest();
         }
 
