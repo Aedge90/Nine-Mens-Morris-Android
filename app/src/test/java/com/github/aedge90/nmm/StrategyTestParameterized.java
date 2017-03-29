@@ -786,7 +786,7 @@ public class StrategyTestParameterized {
     }
 
     @Test
-    public void shuffleListShouldHaveKillsAtBeginning(){
+    public void strategyAfterShufflePositionsShouldHaveKillsAtBeginning(){
 
         Options.Color[][] mill9 =
                 {{N , I , I , N , I , I , P2},
@@ -807,7 +807,9 @@ public class StrategyTestParameterized {
 
         Strategy strategy = new Strategy(gameBoard, updater, nThreads);
 
-        LinkedList<Move> result = strategy.shuffleListOfPossMoves(gameBoard.possibleMoves(mPlayer1));
+        strategy.prepareMove(mPlayer1);
+
+        LinkedList<MoveNode> result = strategy.possibleMoveNodesKickoffListCopy;
 
         assertEquals(5 + 7, result.size());
 

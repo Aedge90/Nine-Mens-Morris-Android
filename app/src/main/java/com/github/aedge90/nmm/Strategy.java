@@ -2,7 +2,6 @@ package com.github.aedge90.nmm;
 
 import android.support.annotation.VisibleForTesting;
 
-import java.util.Collections;
 import java.util.LinkedList;
 
 public class Strategy {
@@ -17,7 +16,7 @@ public class Strategy {
     double maxWertKickoff;
     MoveNode lastMove;
     double resultEvaluation;
-    LinkedList<Move> possibleMovesKickoff;
+    LinkedList<MoveNode> possibleMoveNodesKickoffListCopy;
 
     StrategyMemory memory;
 
@@ -40,20 +39,37 @@ public class Strategy {
         this.memory = memory;
     }
 
-    public Move computeMove(Player maxPlayer) throws InterruptedException {
+    @VisibleForTesting
+    public void prepareMove(Player maxPlayer){
+
+        // shuffle all valid positions of gameboard,
+        // this ensures that the possibleMoves method will not return moves in the same order everytime
+        gameBoard.shuffleAllValidPositions();
 
         memory.addPossibleMoveNodesToRoot(maxPlayer, gameBoard);
 
-        // shuffle list, so we dont end up with the same moves every game
-        possibleMovesKickoff = shuffleListOfPossMoves(gameBoard.possibleMoves(maxPlayer));
+        // create a new copy of the possible moves, so the list can be consumend by the StrategyRunnables
+        // it is very important that the list is in the same order as the children of the root node of the memory
+        // otherwise the strategy would start computing with another branch than the run before and would
+        // not be able to skip a lot of evaluations that were already done
+        possibleMoveNodesKickoffListCopy = new LinkedList<>();
+        for(MoveNode moveNode : memory.getPossibleMoveNodesKickoff()) {
+            possibleMoveNodesKickoffListCopy.add(moveNode);
+        }
 
-        up.setMax(possibleMovesKickoff.size());
+        up.setMax(possibleMoveNodesKickoffListCopy.size());
 
         //not Double.MIN_VALUE as thats the number with the smallest magnitude....
         maxWertKickoff = -Double.MAX_VALUE;
         lastMove = null;
         //not StrategyRunnable.MIN as StrategyRunnable.MIN might be multiplied in evaluation and thus is not the minimal possible number
         resultEvaluation = -Double.MAX_VALUE;
+
+    }
+
+    public Move computeMove(Player maxPlayer) throws InterruptedException {
+
+        prepareMove(maxPlayer);
 
         for (int i = 0; i < nThreads; i++){
             runnables[i] = new StrategyRunnable(gameBoard, maxPlayer, up, this, i);
@@ -101,25 +117,6 @@ public class Strategy {
             }
         }
         memory.setRoot(lastMove);
-    }
-
-    @VisibleForTesting
-    public LinkedList<Move> shuffleListOfPossMoves(LinkedList<Move> shuffle){
-
-        //TODO shuffle somewhere else as it drastically lowers StrategyMemory usefulness
-
-        Collections.shuffle(shuffle);
-        LinkedList<Move> result = new LinkedList<Move>();
-        // but make sure the kill moves are at the beginning again, to improve performance
-        for(Move m : shuffle) {
-            if (m.getKill() != null) {
-                result.addFirst(m);
-            } else {
-                result.addLast(m);
-            }
-        }
-        return result;
-
     }
 
     @VisibleForTesting

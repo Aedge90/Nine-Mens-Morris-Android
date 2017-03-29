@@ -1,5 +1,6 @@
 package com.github.aedge90.nmm;
 
+import java.util.Collections;
 import java.util.LinkedList;
 
 import android.support.annotation.VisibleForTesting;
@@ -491,9 +492,13 @@ public abstract class GameBoard {
         return null;
     }
 
-    //TODO remove this?
     public LinkedList<Position> getAllValidPositions() {
         return allValidPositions;
+    }
+
+    @VisibleForTesting
+    public void shuffleAllValidPositions(){
+        Collections.shuffle(allValidPositions);
     }
 
     GameState getState(Player player) {

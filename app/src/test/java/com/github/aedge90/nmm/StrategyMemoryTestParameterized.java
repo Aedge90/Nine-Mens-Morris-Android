@@ -208,7 +208,7 @@ public class StrategyMemoryTestParameterized {
 
         //System.out.println("chosen move: " + result2);
 
-        System.out.println("total evaluations: " + memory.nExecutedEval);
+        System.out.println("executed evaluations: " + memory.nExecutedEval);
         System.out.println("skipped evaluations: " + memory.nSkippedEval);
         ((StrategyMemoryLogger)strategy.memory).resetLog();
 
@@ -220,7 +220,7 @@ public class StrategyMemoryTestParameterized {
 
         assertTrue(memory.nSkippedEval > 0);
 
-        System.out.println("total evaluations: " + memory.nExecutedEval);
+        System.out.println("executed evaluations: " + memory.nExecutedEval);
         System.out.println("skipped evaluations: " + memory.nSkippedEval);
     }
 

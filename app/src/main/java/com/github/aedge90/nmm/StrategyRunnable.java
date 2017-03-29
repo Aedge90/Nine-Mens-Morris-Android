@@ -207,14 +207,8 @@ public class StrategyRunnable implements Runnable{
             MoveNode currentMoveNode = null;
 
             synchronized (strategy) {
-                if(strategy.possibleMovesKickoff.size() > 0) {
-                    Move z = strategy.possibleMovesKickoff.removeFirst();
-                    for(MoveNode n : strategy.memory.getRoot().getChildren()){
-                        if(n.equals(z)){
-                            currentMoveNode = n;
-                            break;
-                        }
-                    }
+                if(strategy.possibleMoveNodesKickoffListCopy.size() > 0) {
+                    currentMoveNode = strategy.possibleMoveNodesKickoffListCopy.removeFirst();
                 }else{
                     break;
                 }
