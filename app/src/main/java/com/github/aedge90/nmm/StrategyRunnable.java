@@ -146,12 +146,9 @@ public class StrategyRunnable implements Runnable{
         }
         if(player.getOtherPlayer().getSetCount() >= 1){
             int n = localGameBoard.isInNPotentialMills(move.getDest(), player.getOtherPlayer().getColor());
-            if(n > 0) {
-                // check if a potential mill of the other player is prevented. This is necessary, as if the enemy
-                // can form two potential mills in the next move, there will always be a negative evaluation
-                // and any move can be chosen. This way a move will be chosen that prevents one of the two
-                eval += 2*n;
-            }
+                if(n >= 2){
+                    eval += 4;          // do only prevent two potential mills, preventing every single one lead
+                }                       // to a bot that does only prevent but not form own mills
         }
         if(player.getSetCount() >= 1){
             int n = localGameBoard.isInNPotentialMills(move.getDest(), player.getColor());
@@ -164,7 +161,8 @@ public class StrategyRunnable implements Runnable{
         move.setEvaluation(eval);
     }
 
-    //TODO evaluate creating a double mill. and try evaluating only the moves of max player so he is braver
+    // TODO evaluate creating a double mill. (E one pos in a mill, with inMill(pos.neighbor))
+    // TODO try evaluating only the moves of max player so he is braver
 
     private double max(int depth, double alpha, double beta, Player player) throws InterruptedException {
         if(Thread.interrupted()){

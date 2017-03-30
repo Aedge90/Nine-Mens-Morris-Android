@@ -112,6 +112,8 @@ public class StrategyTestParameterized {
         assertThat(result.getDest(), anyOf(is(new Position(4,2)), is(new Position(4,4))));
     }
 
+    // TODO how to get the bot to set to a position like P1 did here?
+
     @Test
     public void computeMoveShouldFormTwoPotentialMillsInOneMove () throws InterruptedException {
 
@@ -142,36 +144,6 @@ public class StrategyTestParameterized {
 
     }
 
-    @Test
-    public void computeMoveShouldPreventPotentialMill () throws InterruptedException {
-
-        Options.Color[][] mill5 =
-                {{N , I , I , N , I , I , N },
-                { I , I , I , I , I , I , I },
-                { I , I , N , N , N , I , I },
-                { N , I , N , I , N , I , N },
-                { I , I , N , N , P2, I , I },
-                { I , I , I , I , I , I , I },
-                { N , I , I , N , I , I , N}};
-
-        GameBoard gameBoard = new Mill5(mill5);
-
-        mPlayer1.setSetCount(5);
-        mPlayer2.setSetCount(4);
-
-        ProgressBar progBar = new ProgressBar(new MockContext());
-        ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
-
-        Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
-
-        mPlayer1.setSetCount(4);
-        mPlayer2.setSetCount(4);
-
-        Move result = strategyP1.computeMove();
-
-        assertThat(result.getDest(), anyOf(is(new Position(4,2)), is(new Position(4,3)), is(new Position(3,4)), is(new Position(2,4))));
-
-    }
 
     @Test
     public void computeMoveShouldPreventTwoPotentialMillsInOneMove () throws InterruptedException {
@@ -200,6 +172,34 @@ public class StrategyTestParameterized {
         Move result = strategyP1.computeMove();
 
         assertEquals(new Position(4,2), result.getDest());
+
+    }
+
+    @Test
+    public void computeMoveShouldNotPreventSinglePotentialMill () throws InterruptedException {
+
+        Options.Color[][] mill5 =
+                {{N , I , I , N , I , I , N },
+                { I , I , I , I , I , I , I },
+                { I , I , P1, N , N , I , I },
+                { N , I , P2, I , N , I , N },
+                { I , I , P2, N , N , I , I },
+                { I , I , I , I , I , I , I },
+                { N , I , I , N , I , I , N}};
+
+        GameBoard gameBoard = new Mill5(mill5);
+        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
+        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+
+        mPlayer1.setSetCount(4);
+        mPlayer2.setSetCount(3);
+
+        Move result = strategy.computeMove();
+
+        // setting to this position makes no sense as it can never produce a mill
+        assertNotEquals(new Position(3,4), result.getDest());
+        assertEquals(null, result.getSrc());
 
     }
 
@@ -699,7 +699,7 @@ public class StrategyTestParameterized {
     @Test
     public void computeMoveShouldReturn16DifferentMovesOverTime () throws InterruptedException {
 
-        int nPos = 16;
+        int nPosExpected = 16;
 
         Options.Color[][] mill5 =
                 {{N , I , I , N , I , I , N },
@@ -727,13 +727,18 @@ public class StrategyTestParameterized {
                 list.add(result);
             }
             //check after 100 iterations if list contains enough (or too much) elements and break
-            if(i % 100 == 0 && list.size() >= nPos){
+            if(i % 100 == 0 && list.size() >= nPosExpected){
                 break;
             }
         }
 
-        assertEquals(nPos, list.size());
-
+        // bots with startdepth of 3 actually should notice that the corner positions will enable
+        // them to have a potential mill in their next move no matter where the enemy sets
+        if(mPlayer1.getDifficulty().ordinal() >= Options.Difficulties.NORMAL.ordinal()){
+            assertTrue(list.size() < nPosExpected);
+        }else {
+            assertEquals(nPosExpected, list.size());
+        }
     }
 
     @Test
