@@ -31,7 +31,8 @@ public class GameBoardView {
     private GridLayout fieldLayout;
     private FrameLayout piecesSpaceLayout;
     ImageView[] millSectors;
-    
+    private int animDuration;
+
     GameBoardView(GameModeActivity c , GridLayout fieldLayout) {
         this.c = c;
         this.fieldLayout = fieldLayout;
@@ -39,7 +40,9 @@ public class GameBoardView {
         millSectors = new ImageView[3];
 
         fieldView = new ImageView[GameBoard.LENGTH][GameBoard.LENGTH];
-        
+
+        animDuration = 1200;
+
         uiupdated = true;
         lock = new ReentrantLock();
         uiupdate = lock.newCondition();
@@ -136,13 +139,13 @@ public class GameBoardView {
         ObjectAnimator oright = ObjectAnimator.ofInt(animSector, "right", animSector.getRight(), destSector.getRight());
         ObjectAnimator obottom = ObjectAnimator.ofInt(animSector, "bottom",animSector.getBottom(),destSector.getBottom());
 
-        oleft.setDuration(1000);
+        oleft.setDuration(animDuration);
         oleft.start();
-        oright.setDuration(1000);
+        oright.setDuration(animDuration);
         oright.start();
-        otop.setDuration(1000);
+        otop.setDuration(animDuration);
         otop.start();
-        obottom.setDuration(1000);
+        obottom.setDuration(animDuration);
         obottom.start();
         obottom.addListener(listen);
 
@@ -340,7 +343,7 @@ public class GameBoardView {
                     }
                 });
                 try {
-                    Thread.sleep(10000);
+                    Thread.sleep(animDuration);
                     unpaintMillOnUIThread();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
