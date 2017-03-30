@@ -4,15 +4,17 @@ import java.util.LinkedList;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
 import android.util.Log;
 
-import android.animation.Animator;
-import android.animation.Animator.AnimatorListener;
-import android.animation.ObjectAnimator;
+import android.view.View;
+import android.support.v4.view.ViewPropertyAnimatorListener;
+import android.view.Gravity;
+import android.support.v4.view.ViewCompat;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import android.view.Gravity;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageView;
@@ -31,7 +33,8 @@ public class GameBoardView {
     private GridLayout fieldLayout;
     private FrameLayout piecesSpaceLayout;
     ImageView[] millSectors;
-    
+    private int animDuration;
+
     GameBoardView(GameModeActivity c , GridLayout fieldLayout) {
         this.c = c;
         this.fieldLayout = fieldLayout;
@@ -39,8 +42,10 @@ public class GameBoardView {
         millSectors = new ImageView[3];
 
         fieldView = new ImageView[GameBoard.LENGTH][GameBoard.LENGTH];
-        
-        uiupdated = false;
+
+        animDuration = 1200;
+
+        uiupdated = true;
         lock = new ReentrantLock();
         uiupdate = lock.newCondition();
 
@@ -88,24 +93,26 @@ public class GameBoardView {
     }
 
 
-    public void setPos(final Position pos, final Options.Color color) throws InterruptedException{
+    public void setPosOnUIThread(final Position pos, final Options.Color color, final GameModeActivity.OnFieldClickListener posListener) throws InterruptedException{
         
         c.runOnUiThread(new Runnable() {
             public void run() {
-                ImageView sector = createSector(color, pos.getX(), pos.getY());
-                fieldLayout.removeView(fieldView[pos.getY()][pos.getX()]);
-                fieldLayout.addView(sector);
-                fieldView[pos.getY()][pos.getX()] = sector;
-                
+                setPos(pos, color, posListener);
                 signalUIupdate();
             }
         });
-        //continues when fieldView has updated selection on screen
-        waitforUIupdate();
 
     }
 
-    private void waitforUIupdate() throws InterruptedException{
+    private void setPos(final Position pos, final Options.Color color, final GameModeActivity.OnFieldClickListener posListener){
+        ImageView sector = createSector(color, pos.getX(), pos.getY());
+        fieldLayout.removeView(fieldView[pos.getY()][pos.getX()]);
+        fieldLayout.addView(sector);
+        fieldView[pos.getY()][pos.getX()] = sector;
+        sector.setOnClickListener(posListener);
+    }
+
+    protected void waitforAnimation() throws InterruptedException{
         lock.lock();
         try {
             while(!uiupdated) { //necessary to avoid lost wakeup
@@ -124,29 +131,22 @@ public class GameBoardView {
         lock.unlock();
     }
 
-    public void runMoveAnimation (ImageView animSector, ImageView destSector, AnimatorListener listen) {
+    public void runMoveAnimation (ImageView animSector, ImageView destSector, ViewPropertyAnimatorListener listen) {
 
         //while jumping this is important so the moving pieces does not move underneath the others
         animSector.bringToFront();
 
-        ObjectAnimator oleft = ObjectAnimator.ofInt(animSector, "left", animSector.getLeft(), destSector.getLeft());
-        ObjectAnimator otop = ObjectAnimator.ofInt(animSector, "top", animSector.getTop(), destSector.getTop());
-        ObjectAnimator oright = ObjectAnimator.ofInt(animSector, "right", animSector.getRight(), destSector.getRight());
-        ObjectAnimator obottom = ObjectAnimator.ofInt(animSector, "bottom",animSector.getBottom(),destSector.getBottom());
-
-        oleft.setDuration(1000);
-        oleft.start();
-        oright.setDuration(1000);
-        oright.start();
-        otop.setDuration(1000);
-        otop.start();
-        obottom.setDuration(1000);
-        obottom.start();
-        obottom.addListener(listen);
+        ViewCompat.animate(animSector)
+                .translationX( destSector.getLeft() - animSector.getLeft() )
+                .translationY( destSector.getTop() - animSector.getTop() )
+                .setDuration(animDuration)
+                .withLayer()                    //enables hardware acceleration for this animation
+                .setListener(listen)
+                .start();
 
     }
 
-    public void makeSetMove(final Move move, final Options.Color color) throws InterruptedException {
+    public void makeSetMove(final Move move, final Options.Color color, final GameModeActivity.OnFieldClickListener destListener) throws InterruptedException {
 
         c.runOnUiThread(new Runnable() {
             public void run() {
@@ -157,26 +157,27 @@ public class GameBoardView {
                 }else{
                     animSector = piecesSpaceViewsWhite.pop();
                 }
+
                 final ImageView destSector = fieldView[move.getDest().getY()][move.getDest().getX()];
                 final ImageView newDestSector = createSector(color, move.getDest().getX(), move.getDest().getY());
 
-                AnimatorListener listen = new AnimatorListener(){
+                ViewPropertyAnimatorListener listen = new ViewPropertyAnimatorListener(){
 
                     @Override
-                    public void onAnimationCancel(Animator arg0) {}
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        piecesSpaceLayout.removeView(animSector);
-                        fieldLayout.addView(newDestSector);
-                        signalUIupdate();
+                    public void onAnimationStart(View view) {
                     }
 
                     @Override
-                    public void onAnimationRepeat(Animator animation) {}
+                    public void onAnimationEnd(View view) {
+                        piecesSpaceLayout.removeView(animSector);
+                        fieldLayout.addView(newDestSector);
+                        signalUIupdate();
+                        newDestSector.setOnClickListener(destListener);
+                    }
 
                     @Override
-                    public void onAnimationStart(Animator animation) {}
+                    public void onAnimationCancel(View view) {
+                    }
 
                 };
 
@@ -189,13 +190,11 @@ public class GameBoardView {
             }
         });
 
-        //continues when fieldView has played animation
-        waitforUIupdate();
-
     }
 
-    public void makeMove(final Move move, final Options.Color color) throws InterruptedException{
-        
+    public void makeMove(final Move move, final Options.Color color, final GameModeActivity.OnFieldClickListener srcListener,
+                         final GameModeActivity.OnFieldClickListener destListener) throws InterruptedException{
+
         c.runOnUiThread(new Runnable() {
             public void run() {
 
@@ -204,24 +203,25 @@ public class GameBoardView {
                 final ImageView newSrcSector = createSector(Options.Color.NOTHING, move.getSrc().getX(), move.getSrc().getY());
                 final ImageView newDestSector = createSector(color, move.getDest().getX(), move.getDest().getY());
 
-                AnimatorListener listen = new AnimatorListener(){
-        
+                ViewPropertyAnimatorListener listen = new ViewPropertyAnimatorListener(){
+
                     @Override
-                    public void onAnimationCancel(Animator arg0) {}
-        
+                    public void onAnimationStart(View view) {
+                    }
+
                     @Override
-                    public void onAnimationEnd(Animator animation) {
+                    public void onAnimationEnd(View view) {
                         fieldLayout.removeView(animSector);
                         fieldLayout.addView(newDestSector);
                         fieldLayout.addView(newSrcSector);
                         signalUIupdate();
+                        newSrcSector.setOnClickListener(srcListener);
+                        newDestSector.setOnClickListener(destListener);
                     }
-        
+
                     @Override
-                    public void onAnimationRepeat(Animator animation) {}
-        
-                    @Override
-                    public void onAnimationStart(Animator animation) {}
+                    public void onAnimationCancel(View view) {
+                    }
                     
                 };
 
@@ -233,9 +233,6 @@ public class GameBoardView {
                 fieldView[move.getDest().getY()][move.getDest().getX()] = newDestSector;
             }
         });
-        
-        //continues when fieldView has played animation
-        waitforUIupdate();
 
     }
     
@@ -296,34 +293,59 @@ public class GameBoardView {
         imageView.setScaleType(ImageView.ScaleType.CENTER);
     }
     
-    void paintMill(final Position[] mill) throws InterruptedException{
-        
+    void paintMillOnUIThread(final Position[] mill) throws InterruptedException{
         c.runOnUiThread(new Runnable() {
             public void run() {
-                for (int i = 0; i < 3; i++) {
-                    millSectors[i] = createSector(Options.Color.RED, mill[i].getX(), mill[i].getY());
-                    fieldLayout.addView(millSectors[i]);
+                paintMill(mill);
+                signalUIupdate();
+            }
+        });
+    }
+
+    private void paintMill(final Position[] mill){
+        for (int i = 0; i < 3; i++) {
+            millSectors[i] = createSector(Options.Color.RED, mill[i].getX(), mill[i].getY());
+            fieldLayout.addView(millSectors[i]);
+        }
+    }
+    
+    void unpaintMillOnUIThread() throws InterruptedException{
+        c.runOnUiThread(new Runnable() {
+            public void run() {
+                unpaintMill();
+                signalUIupdate();
+            }
+        });
+    }
+
+    private void unpaintMill() {
+        fieldLayout.removeView(millSectors[0]);
+        fieldLayout.removeView(millSectors[1]);
+        fieldLayout.removeView(millSectors[2]);
+    }
+
+    public void animateKill(final Position[] mill, final Position kill, final GameModeActivity.OnFieldClickListener killPosListener) {
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                c.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        paintMill(mill);
+                        setPos(kill, Options.Color.NOTHING, killPosListener);
+                    }
+                });
+                try {
+                    Thread.sleep(animDuration);
+                    unpaintMillOnUIThread();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-                signalUIupdate();
             }
         });
-        //continues when fieldView has painted the mill
-        waitforUIupdate();
+        t.start();
     }
-    
-    void unpaintMill() throws InterruptedException{
-        c.runOnUiThread(new Runnable() {
-            public void run() {
-                fieldLayout.removeView(millSectors[0]);
-                fieldLayout.removeView(millSectors[1]);
-                fieldLayout.removeView(millSectors[2]);
-                signalUIupdate();
-            }
-        });
-        //continues when fieldView has unpainted the mill
-        waitforUIupdate();
-    }
-    
+
     public String toString() {
         String print = "";
         print += "    0 1 2 3 4 5 6\n------------------\n";
@@ -337,4 +359,5 @@ public class GameBoardView {
         return print;
 
     }
+
 }

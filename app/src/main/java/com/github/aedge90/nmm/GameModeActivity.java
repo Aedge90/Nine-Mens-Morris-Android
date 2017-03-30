@@ -114,7 +114,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         progressUpdater = new ProgressUpdater(progressBar, this);
-        
+
         currMove = null;
         fieldView = new GameBoardView(THIS, fieldLayout);
 
@@ -344,56 +344,97 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
         }
     }
 
-    void humanTurn(Player human) throws InterruptedException{
-
-        if(human.getOtherPlayer().getDifficulty() != null) {
-            setTextinUIThread(progressText, R.string.your_turn);
-        }else{
-            if(human.getColor().equals(Options.Color.BLACK)) {
-                setTextinUIThread(progressText, R.string.black_turn);
-            }else{
-                setTextinUIThread(progressText, R.string.white_turn);
-            }
-        }
+    void humanTurn(final Player human) throws InterruptedException{
 
         currMove = null;
         Position newPosition = null;
+        // wait until the last animation is finished before waiting for the selection, as otherwise a selection can
+        // be chosen while the animation plays, which seems not right
+        fieldView.waitforAnimation();
+
+        refreshTextHuman(human);
+
         if(human.getSetCount() <= 0){
             state = State.MOVEFROM;
             // wait until a source piece and its destination position is chosen
             waitforSelection();
-            fieldView.makeMove(currMove, human.getColor());
-            fieldView.getPos(currMove.getSrc()).setOnClickListener(new OnFieldClickListener(currMove.getSrc()));
-            fieldView.getPos(currMove.getDest()).setOnClickListener(new OnFieldClickListener(currMove.getDest()));
-            newPosition = currMove.getDest();
+            fieldView.makeMove(currMove, human.getColor(), new OnFieldClickListener(currMove.getSrc()), new OnFieldClickListener(currMove.getDest()));
         }else{
             state = State.SET;
             // wait for human to set
             waitforSelection();
-            fieldView.makeSetMove(currMove, human.getColor());
-            fieldView.getPos(currMove.getDest()).setOnClickListener(new OnFieldClickListener(currMove.getDest()));
-            newPosition = currMove.getDest();
+            fieldView.makeSetMove(currMove, human.getColor(), new OnFieldClickListener(currMove.getDest()));
         }
+        newPosition = currMove.getDest();
 
         field.executeSetOrMovePhase(currMove, human);
 
         if (field.isInMill(newPosition, human.getColor())) {
-            state = State.KILL;
             Position[] mill = field.getMill(newPosition, human.getColor());
-            fieldView.paintMill(mill);
+            fieldView.waitforAnimation();
+            fieldView.paintMillOnUIThread(mill);
+            fieldView.waitforAnimation();
+            state = State.KILL;
             //wait until kill is chosen
             waitforSelection();
-            fieldView.setPos(currMove.getKill(), Options.Color.NOTHING);
-            fieldView.getPos(currMove.getKill()).setOnClickListener(new OnFieldClickListener(currMove.getKill()));
-            fieldView.unpaintMill();
+            fieldView.setPosOnUIThread(currMove.getKill(), Options.Color.NOTHING, new OnFieldClickListener(currMove.getKill()));
+            fieldView.waitforAnimation();
+            fieldView.unpaintMillOnUIThread();
 
             field.executeKillPhase(currMove, human);
         }
 
     }
 
-    void botTurn(Player bot, Strategy brain) throws InterruptedException{
+    void botTurn(final Player bot, Strategy brain) throws InterruptedException{
 
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    fieldView.waitforAnimation();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                refreshTextBot(bot);
+                progressUpdater.setActive(true);
+            }
+        });
+
+        t.start();
+
+        Position newPosition = null;
+        currMove = brain.computeMove();
+
+        // Thread t waits until the last animation is finished while computing the move is done in this thread
+        // when the animation is finished the text, that its the bots turn that started computing already, is shown
+        // and the progress is shown. Wait here until the animation is done AND the move is computed
+        t.join();
+
+        // inactivate progress until the animations are finished
+        progressUpdater.setActive(false);
+
+        if(bot.getSetCount() <= 0){
+            fieldView.makeMove(currMove, bot.getColor(), new OnFieldClickListener(currMove.getSrc()), new OnFieldClickListener(currMove.getDest()));
+
+        }else{
+            fieldView.makeSetMove(currMove, bot.getColor(), new OnFieldClickListener(currMove.getDest()));
+        }
+        newPosition = currMove.getDest();
+
+        field.executeSetOrMovePhase(currMove, bot);
+
+        if (currMove.getKill() != null) {
+            Position[] mill = field.getMill(newPosition, bot.getColor());
+            fieldView.waitforAnimation();
+            fieldView.animateKill(mill, currMove.getKill(), new OnFieldClickListener(currMove.getKill()));
+
+            field.executeKillPhase(currMove, bot);
+        }
+
+    }
+
+    private void refreshTextBot(Player bot){
         if(bot.getOtherPlayer().getDifficulty() == null) {
             setTextinUIThread(progressText, R.string.bots_turn);
         }else{
@@ -406,43 +447,18 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
             }
             setTextinUIThread(progressText, s);
         }
+    }
 
-        Position newPosition = null;
-        if(bot.getSetCount() <= 0){
-            currMove = brain.computeMove();
-
-            fieldView.makeMove(currMove, bot.getColor());
-            fieldView.getPos(currMove.getSrc()).setOnClickListener(
-                    new OnFieldClickListener(currMove.getSrc()));
-            fieldView.getPos(currMove.getDest()).setOnClickListener(
-                    new OnFieldClickListener(currMove.getDest()));
-            newPosition = currMove.getDest();
+    private void refreshTextHuman(Player human){
+        if(human.getOtherPlayer().getDifficulty() != null) {
+            setTextinUIThread(progressText, R.string.your_turn);
         }else{
-
-            currMove = brain.computeMove();
-
-            fieldView.makeSetMove(currMove, bot.getColor());
-            fieldView.getPos(currMove.getDest()).setOnClickListener(
-                    new OnFieldClickListener(currMove.getDest()));
-            newPosition = currMove.getDest();
+            if(human.getColor().equals(Options.Color.BLACK)) {
+                setTextinUIThread(progressText, R.string.black_turn);
+            }else{
+                setTextinUIThread(progressText, R.string.white_turn);
+            }
         }
-
-        field.executeSetOrMovePhase(currMove, bot);
-
-        if (currMove.getKill() != null) {
-            Position[] mill = field.getMill(newPosition, bot.getColor());
-
-            fieldView.paintMill(mill);
-
-            fieldView.setPos(currMove.getKill(), Options.Color.NOTHING);
-            fieldView.getPos(currMove.getKill()).setOnClickListener(
-                    new OnFieldClickListener(currMove.getKill()));
-            Thread.sleep(1500);
-            fieldView.unpaintMill();
-
-            field.executeKillPhase(currMove, bot);
-        }
-
     }
 
     //shows a Toast and cancels others if they are showing
