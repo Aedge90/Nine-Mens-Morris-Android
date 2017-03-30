@@ -10,7 +10,7 @@ public class Strategy {
     private int nThreads;
     private Thread[] threads;
     private StrategyRunnable[] runnables;
-    final ProgressUpdater up;
+    private final ProgressUpdater up;
 
     private final GameBoard gameBoard;
     private final Player maxPlayer;

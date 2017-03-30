@@ -13,15 +13,15 @@ public class Options implements Parcelable {
     protected Player playerWhite;
 	protected Player playerBlack;
 
-    //TODO add EASIEST with depth 0 and HARDEST with depth 7
-	protected static enum Difficulties {
+    //TODO add EASIEST with depth 0
+	protected enum Difficulties {
         EASIER, EASY, NORMAL, ADVANCED, HARD, HARDER, HARDEST
-	};
+	}
 
 	protected Color whoStarts;
-	protected static enum Color {
+	protected enum Color {
 		WHITE, BLACK, RED, GREEN, NOTHING, INVALID
-	};
+	}
 	
 	public Options() {
 		this.millVariant = MillVariant.MILL9;

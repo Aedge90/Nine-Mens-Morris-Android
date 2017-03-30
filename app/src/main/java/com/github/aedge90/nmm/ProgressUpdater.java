@@ -6,7 +6,7 @@ public class ProgressUpdater {
 
     private boolean active;
     private ProgressBar progressBar;
-    GameModeActivity c;
+    private GameModeActivity c;
     private volatile int progress;
     
     public ProgressUpdater(ProgressBar progressBar, GameModeActivity c) {

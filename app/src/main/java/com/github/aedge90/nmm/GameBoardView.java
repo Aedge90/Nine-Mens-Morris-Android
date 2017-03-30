@@ -32,7 +32,7 @@ public class GameBoardView {
     private GameModeActivity c; 
     private GridLayout fieldLayout;
     private FrameLayout piecesSpaceLayout;
-    ImageView[] millSectors;
+    private ImageView[] millSectors;
     private int animDuration;
 
     GameBoardView(GameModeActivity c , GridLayout fieldLayout) {

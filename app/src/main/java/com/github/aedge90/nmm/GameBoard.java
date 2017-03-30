@@ -13,16 +13,16 @@ public abstract class GameBoard {
 
     GameBoardPosition[][] field;
 
-    LinkedList<Position> allValidPositions = new LinkedList<Position>();
+    private LinkedList<Position> allValidPositions = new LinkedList<Position>();
 
     public static final int REMISMAX = 40;
 
     private int remisCount = 0;
     private int remisCountBeforeKill = 0;
 
-    static enum GameState {
+    enum GameState {
         RUNNING, REMIS, WON_NO_MOVES, WON_KILLED_ALL
-    };
+    }
 
     GameBoard(){}
 
@@ -251,7 +251,7 @@ public abstract class GameBoard {
     //if two pieces of color player are found, that form a mill together with position
     //an array containing the two pieces and position is returned, else null is returned
     Position[] getMillOrPartialMill(Position p, Options.Color player, boolean partial) {
-        Position[] mill = null;
+        Position[] mill;
         GameBoardPosition checkPos = getGameBoardPosAt(p);
         mill = getMillWithPosInMiddle(checkPos, player, partial);
         if(mill != null){
@@ -316,7 +316,7 @@ public abstract class GameBoard {
     }
 
     //is any move possible?
-    boolean movesPossible(Options.Color player, int setCount) {
+    private boolean movesPossible(Options.Color player, int setCount) {
         LinkedList<Position> positionsOfPlayer = getPositions(player);
         if(setCount > 0){
             return true;
@@ -459,7 +459,7 @@ public abstract class GameBoard {
         return false;
     }
 
-    Move moveUp(Position p) {
+    private Move moveUp(Position p) {
         Position dest = getGameBoardPosAt(p).getUp();
         if(dest != null && getColorAt(dest).equals(Options.Color.NOTHING)){
             return new Move(new Position(dest), new Position(p), null);
@@ -467,7 +467,7 @@ public abstract class GameBoard {
         return null;
     }
 
-    Move moveDown(Position p) {
+    private Move moveDown(Position p) {
         Position dest = getGameBoardPosAt(p).getDown();
         if(dest != null && getColorAt(dest).equals(Options.Color.NOTHING)){
             return new Move(new Position(dest), new Position(p), null);
@@ -475,7 +475,7 @@ public abstract class GameBoard {
         return null;
     }
 
-    Move moveLeft(Position p) {
+    private Move moveLeft(Position p) {
         Position dest = getGameBoardPosAt(p).getLeft();
         if(dest != null && getColorAt(dest).equals(Options.Color.NOTHING)){
             return new Move(new Position(dest), new Position(p), null);
@@ -483,7 +483,7 @@ public abstract class GameBoard {
         return null;
     }
 
-    Move moveRight(Position p) {
+    private Move moveRight(Position p) {
         Position dest = getGameBoardPosAt(p).getRight();
         if(dest != null && getColorAt(dest).equals(Options.Color.NOTHING)){
             return new Move(new Position(dest), new Position(p), null);
@@ -491,8 +491,7 @@ public abstract class GameBoard {
         return null;
     }
 
-    //TODO remove this?
-    public LinkedList<Position> getAllValidPositions() {
+    private LinkedList<Position> getAllValidPositions() {
         return allValidPositions;
     }
 
