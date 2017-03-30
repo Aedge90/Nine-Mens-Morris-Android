@@ -660,7 +660,9 @@ public class StrategyTestParameterized {
             Move result1 = strategyP1.computeMove();
             gameBoard.executeCompleteTurn(result1, mPlayer1);
             if(!gameBoard.getState(mPlayer1).equals(GameBoard.GameState.RUNNING)){
-                break;
+                if(!gameBoard.getState(mPlayer1).equals(GameBoard.GameState.REMIS)) {
+                    break;
+                }
             }
 
             //computeMove should not alter anything but the last move of course
@@ -677,7 +679,9 @@ public class StrategyTestParameterized {
             Move result2 = strategyP2.computeMove();
             gameBoard.executeCompleteTurn(result2, mPlayer2);
             if(!gameBoard.getState(mPlayer2).equals(GameBoard.GameState.RUNNING)){
-                break;
+                if(!gameBoard.getState(mPlayer2).equals(GameBoard.GameState.REMIS)) {
+                    break;
+                }
             }
 
             gameBoardBefore2.executeCompleteTurn(result2, mPlayer2Before);

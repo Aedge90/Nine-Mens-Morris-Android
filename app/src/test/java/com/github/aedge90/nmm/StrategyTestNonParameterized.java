@@ -46,15 +46,19 @@ public class StrategyTestNonParameterized {
             strategiesWhite[j] = new Strategy(gameBoards[j], mPlayerWhites[j], updater, j+1);
         }
 
-        //make 30 rounds and check if the results on all possible thread counts are the same
-        for(int i = 0; i<30; i++){
+        //make some rounds and check if the results on all possible thread counts are the same
+        for(int i = 0; i<40; i++){
             computeMoveShouldHaveSameEvaluationForAnyNumberOfThreads_Turn(i, gameBoards, mPlayerBlacks, strategiesBlack, nThreads);
             if(!gameBoards[0].getState(mPlayerBlacks[0]).equals(GameBoard.GameState.RUNNING)){
-                break;
+                if(!gameBoards[0].getState(mPlayerBlacks[0]).equals(GameBoard.GameState.REMIS)) {
+                    break;
+                }
             }
             computeMoveShouldHaveSameEvaluationForAnyNumberOfThreads_Turn(i, gameBoards, mPlayerWhites, strategiesWhite, nThreads);
             if(!gameBoards[0].getState(mPlayerWhites[0]).equals(GameBoard.GameState.RUNNING)){
-                break;
+                if(!gameBoards[0].getState(mPlayerWhites[0]).equals(GameBoard.GameState.REMIS)) {
+                    break;
+                }
             }
         }
 
