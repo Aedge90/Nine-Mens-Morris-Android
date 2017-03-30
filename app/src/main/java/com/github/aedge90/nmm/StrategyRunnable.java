@@ -173,8 +173,7 @@ public class StrategyRunnable implements Runnable{
         LinkedList<Move> moves = localGameBoard.possibleMoves(player);
         //end reached or no more moves available, maybe because he is trapped or because he lost
         if (depth == 0 || moves.size() == 0){
-            double bewertung = evaluation(player, moves, depth);
-            return bewertung;
+            return evaluation(player, moves, depth);
         }
         double maxWert = alpha;
         for (Move z : moves) {
@@ -233,8 +232,7 @@ public class StrategyRunnable implements Runnable{
         }
         LinkedList<Move> moves = localGameBoard.possibleMoves(player);
         if (depth == 0 || moves.size() == 0){
-            double bewertung = evaluation(player, moves, depth);
-            return bewertung;
+            return evaluation(player, moves, depth);
         }
         double minWert = beta;
         for (Move z : moves) {

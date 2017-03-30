@@ -44,14 +44,6 @@ import android.widget.TextView;
 public class OptionsActivity extends android.support.v4.app.FragmentActivity{
 
     private Options options;
-    private Spinner millModeSpinner;
-    private Spinner playerWhiteSpinner;
-    private Spinner playerBlackSpinner;
-    private Spinner whoStartsSpinner;
-    private Button buttonOK;
-
-    
-    private final OptionsActivity THIS = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,8 +56,8 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
         setPlayerDifficultyFor(options.playerWhite);
         setPlayerDifficultyFor(options.playerBlack);
         setWhoStarts();
-                
-        buttonOK = (Button) findViewById(R.id.buttonOK);
+
+        Button buttonOK = (Button) findViewById(R.id.buttonOK);
         buttonOK.setOnClickListener(new OnClickListener(){
 
             @Override
@@ -84,7 +76,7 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-            new AlertDialog.Builder(THIS)
+            new AlertDialog.Builder(this)
             .setIcon(android.R.drawable.ic_dialog_info)
             .setTitle(getResources().getString(R.string.quit_game))
             .setMessage(getResources().getString(R.string.want_to_quit))
@@ -107,7 +99,7 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
         items.add(getResources().getString(R.string.seven_mens_morris), R.drawable.gameboard7);
         items.add(getResources().getString(R.string.nine_mens_morris), R.drawable.gameboard9);
 
-        millModeSpinner = (Spinner) findViewById(R.id.millModeSpinner);
+        Spinner millModeSpinner = (Spinner) findViewById(R.id.millModeSpinner);
         
         millModeSpinner.setAdapter(items);
         //set current selection to previously chosen value (or the initial value)
@@ -140,10 +132,10 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
 
         Spinner spinner = null;
         if(player.getColor().equals(Options.Color.WHITE)) {
-            playerWhiteSpinner = (Spinner) findViewById(R.id.playerWhiteSpinner);
+            Spinner playerWhiteSpinner = (Spinner) findViewById(R.id.playerWhiteSpinner);
             spinner = playerWhiteSpinner;
         }else {
-            playerBlackSpinner = (Spinner) findViewById(R.id.playerBlackSpinner);
+            Spinner playerBlackSpinner = (Spinner) findViewById(R.id.playerBlackSpinner);
             spinner = playerBlackSpinner;
         }
 
@@ -182,8 +174,8 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
         final ArrayAdapter<String> items = new ArrayAdapter<String>(this, R.layout.spinner_item);
         items.add(getResources().getString(R.string.white));
         items.add(getResources().getString(R.string.black));
-        
-        whoStartsSpinner = (Spinner) findViewById(R.id.whoStartsSpinner);
+
+        Spinner whoStartsSpinner = (Spinner) findViewById(R.id.whoStartsSpinner);
 
         whoStartsSpinner.setAdapter(items);
         //set current selection to previously chosen value (or the initial value)
