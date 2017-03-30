@@ -28,7 +28,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
     protected Lock lock = new ReentrantLock();
     protected Condition selection = lock.newCondition();
     protected volatile boolean selected;
-    private Object mPauseLock;
+    private final Object mPauseLock = new Object();
     private boolean mPaused;
 
     volatile Move currMove;
@@ -118,7 +118,6 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
         currMove = null;
         fieldView = new GameBoardView(THIS, fieldLayout);
 
-        mPauseLock = new Object();
         mPaused = false;
         
         init();
@@ -347,7 +346,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
     void humanTurn(final Player human) throws InterruptedException{
 
         currMove = null;
-        Position newPosition = null;
+        Position newPosition;
         // wait until the last animation is finished before waiting for the selection, as otherwise a selection can
         // be chosen while the animation plays, which seems not right
         fieldView.waitforAnimation();
@@ -403,7 +402,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
 
         t.start();
 
-        Position newPosition = null;
+        Position newPosition;
         currMove = brain.computeMove();
 
         // Thread t waits until the last animation is finished while computing the move is done in this thread
