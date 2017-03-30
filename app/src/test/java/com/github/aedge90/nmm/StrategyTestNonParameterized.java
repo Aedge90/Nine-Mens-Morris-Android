@@ -21,7 +21,7 @@ public class StrategyTestNonParameterized {
     //test for same evaluation, as resulting move may be different for different nThreads
     public void computeMoveShouldHaveSameEvaluationForAnyNumberOfThreads () throws InterruptedException {
 
-        int nThreads = 16;
+        int nThreads = 12;
 
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
