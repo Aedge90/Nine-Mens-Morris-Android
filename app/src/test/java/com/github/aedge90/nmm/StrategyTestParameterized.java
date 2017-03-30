@@ -578,7 +578,7 @@ public class StrategyTestParameterized {
 
     }
 
-    //Test if especially bots on easy open their mill, as they cant see the gameboard after 3 moves
+    //Test if especially bots on EASIER open their mill, as they cant see the gameboard after 2 moves
     @Test
     public void computeMoveShouldOpenMill() throws InterruptedException {
 
@@ -708,17 +708,16 @@ public class StrategyTestParameterized {
 
         GameBoard gameBoard = new Mill5(mill5);
 
-        mPlayer1.setSetCount(9);
-        mPlayer2.setSetCount(9);
+        mPlayer1.setSetCount(5);
+        mPlayer2.setSetCount(5);
 
         LinkedList<Move> list = new LinkedList<Move>();
 
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
 
-        Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
-
         for(int i = 0; i < 1000; i++) {
+            Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
             Move result = strategyP1.computeMove();
             if(!list.contains(result)) {
                 list.add(result);
@@ -755,9 +754,8 @@ public class StrategyTestParameterized {
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
 
-        Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
-
         for(int i = 0; i < 1000; i++) {
+            Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
             Move result = strategyP1.computeMove();
             if(!list.contains(result)) {
                 list.add(result);
