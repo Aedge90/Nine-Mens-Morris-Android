@@ -164,7 +164,8 @@ public class StrategyRunnable implements Runnable{
         move.setEvaluation(eval);
     }
 
-    //TODO evaluate creating a double mill. and try evaluating only the moves of max player so he is braver
+    // TODO evaluate creating a double mill. (E one pos in a mill, with inMill(pos.neighbor))
+    // TODO try evaluating only the moves of max player so he is braver
 
     private double max(int depth, double alpha, double beta, Player player) throws InterruptedException {
         if(Thread.interrupted()){

@@ -142,6 +142,8 @@ public class StrategyTestParameterized {
 
     }
 
+    // TODO does preventing a single potential mill make sense at all?
+    // TODO should the bot not try to form mills instead?
     @Test
     public void computeMoveShouldPreventPotentialMill () throws InterruptedException {
 
@@ -200,6 +202,60 @@ public class StrategyTestParameterized {
         Move result = strategyP1.computeMove();
 
         assertEquals(new Position(4,2), result.getDest());
+
+    }
+
+    @Test
+    public void computeMoveShouldForceTheOtherPlayerToPreventHisMill1 () throws InterruptedException {
+
+        Options.Color[][] mill5 =
+                {{N , I , I , N , I , I , N },
+                { I , I , I , I , I , I , I },
+                { I , I , P1, N , N , I , I },
+                { N , I , P2, I , N , I , N },
+                { I , I , P2, N , N , I , I },
+                { I , I , I , I , I , I , I },
+                { N , I , I , N , I , I , N}};
+
+        GameBoard gameBoard = new Mill5(mill5);
+        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
+        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+
+        mPlayer1.setSetCount(4);
+        mPlayer2.setSetCount(3);
+
+        Move result = strategy.computeMove();
+
+        assertEquals(new Position(4,2), result.getDest());
+        assertEquals(null, result.getSrc());
+
+    }
+
+    @Test
+    public void computeMoveShouldForceTheOtherPlayerToPreventHisMill2 () throws InterruptedException {
+
+        Options.Color[][] mill5 =
+                {{N , I , I , N , I , I , P2},
+                { I , I , I , I , I , I , I },
+                { I , I , P1, N , N , I , I },
+                { N , I , P2, I , N , I , N },
+                { I , I , P2, P1, N , I , I },
+                { I , I , I , I , I , I , I },
+                { N , I , I , N , I , I , N}};
+
+        GameBoard gameBoard = new Mill5(mill5);
+        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
+        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+
+        mPlayer1.setSetCount(3);
+        mPlayer2.setSetCount(2);
+
+        Move result = strategy.computeMove();
+
+        assertEquals(new Position(4,2), result.getDest());
+        assertEquals(null, result.getSrc());
 
     }
 
