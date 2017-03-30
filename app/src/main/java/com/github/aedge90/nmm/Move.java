@@ -13,9 +13,6 @@ public class Move {
         this.src = src;
         this.dest = dest;
         this.kill = kill;
-        if (!isPossible()){
-            throw new IllegalArgumentException("Move: invalid arguments for constructor: " + toString() );
-        }
     }
 
     Move(Move other){
@@ -48,22 +45,6 @@ public class Move {
     @Override
     public String toString(){
         return "src: " + src + " dest: " + dest + " kill: " + kill;
-    }
-    
-    private boolean isPossible(){
-        if(src == null && dest == null && kill == null){
-            return false;
-        }
-        if(src == null && dest == null && kill != null){
-            return false;
-        }
-        if(src != null && dest == null){
-            return false;
-        }
-        if(src != null && src.equals(dest)){
-            return false;
-        }
-        return true;
     }
 
     @Override
