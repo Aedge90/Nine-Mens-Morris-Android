@@ -88,19 +88,23 @@ public class GameBoardView {
     }
 
 
-    public void setPos(final Position pos, final Options.Color color, final GameModeActivity.OnFieldClickListener posListener) throws InterruptedException{
+    public void setPosOnUIThread(final Position pos, final Options.Color color, final GameModeActivity.OnFieldClickListener posListener) throws InterruptedException{
         
         c.runOnUiThread(new Runnable() {
             public void run() {
-                ImageView sector = createSector(color, pos.getX(), pos.getY());
-                fieldLayout.removeView(fieldView[pos.getY()][pos.getX()]);
-                fieldLayout.addView(sector);
-                fieldView[pos.getY()][pos.getX()] = sector;
+                setPos(pos, color, posListener);
                 signalUIupdate();
-                sector.setOnClickListener(posListener);
             }
         });
 
+    }
+
+    private void setPos(final Position pos, final Options.Color color, final GameModeActivity.OnFieldClickListener posListener){
+        ImageView sector = createSector(color, pos.getX(), pos.getY());
+        fieldLayout.removeView(fieldView[pos.getY()][pos.getX()]);
+        fieldLayout.addView(sector);
+        fieldView[pos.getY()][pos.getX()] = sector;
+        sector.setOnClickListener(posListener);
     }
 
     protected void waitforUIupdate() throws InterruptedException{
@@ -292,30 +296,38 @@ public class GameBoardView {
         imageView.setScaleType(ImageView.ScaleType.CENTER);
     }
     
-    void paintMill(final Position[] mill) throws InterruptedException{
+    void paintMillOnUIThread(final Position[] mill) throws InterruptedException{
         
         c.runOnUiThread(new Runnable() {
             public void run() {
-                for (int i = 0; i < 3; i++) {
-                    millSectors[i] = createSector(Options.Color.RED, mill[i].getX(), mill[i].getY());
-                    fieldLayout.addView(millSectors[i]);
-                }
+                paintMill(mill);
                 signalUIupdate();
             }
         });
     }
+
+    private void paintMill(final Position[] mill){
+        for (int i = 0; i < 3; i++) {
+            millSectors[i] = createSector(Options.Color.RED, mill[i].getX(), mill[i].getY());
+            fieldLayout.addView(millSectors[i]);
+        }
+    }
     
-    void unpaintMill() throws InterruptedException{
+    void unpaintMillOnUIThread() throws InterruptedException{
         c.runOnUiThread(new Runnable() {
             public void run() {
-                fieldLayout.removeView(millSectors[0]);
-                fieldLayout.removeView(millSectors[1]);
-                fieldLayout.removeView(millSectors[2]);
+                unpaintMill();
                 signalUIupdate();
             }
         });
     }
-    
+
+    private void unpaintMill() {
+        fieldLayout.removeView(millSectors[0]);
+        fieldLayout.removeView(millSectors[1]);
+        fieldLayout.removeView(millSectors[2]);
+    }
+
     public String toString() {
         String print = "";
         print += "    0 1 2 3 4 5 6\n------------------\n";

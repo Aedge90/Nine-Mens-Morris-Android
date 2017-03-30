@@ -381,14 +381,14 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
         if (field.isInMill(newPosition, human.getColor())) {
             Position[] mill = field.getMill(newPosition, human.getColor());
             fieldView.waitforUIupdate();
-            fieldView.paintMill(mill);
+            fieldView.paintMillOnUIThread(mill);
             fieldView.waitforUIupdate();
             state = State.KILL;
             //wait until kill is chosen
             waitforSelection();
-            fieldView.setPos(currMove.getKill(), Options.Color.NOTHING, new OnFieldClickListener(currMove.getKill()));
+            fieldView.setPosOnUIThread(currMove.getKill(), Options.Color.NOTHING, new OnFieldClickListener(currMove.getKill()));
             fieldView.waitforUIupdate();
-            fieldView.unpaintMill();
+            fieldView.unpaintMillOnUIThread();
 
             field.executeKillPhase(currMove, human);
         }
@@ -427,12 +427,13 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
 
         if (currMove.getKill() != null) {
             Position[] mill = field.getMill(newPosition, bot.getColor());
-
-            fieldView.paintMill(mill);
-
-            fieldView.setPos(currMove.getKill(), Options.Color.NOTHING, new OnFieldClickListener(currMove.getKill()));
+            fieldView.waitforUIupdate();
+            fieldView.paintMillOnUIThread(mill);
+            fieldView.waitforUIupdate();
+            fieldView.setPosOnUIThread(currMove.getKill(), Options.Color.NOTHING, new OnFieldClickListener(currMove.getKill()));
             Thread.sleep(1500);
-            fieldView.unpaintMill();
+            fieldView.waitforUIupdate();
+            fieldView.unpaintMillOnUIThread();
 
             field.executeKillPhase(currMove, bot);
         }
