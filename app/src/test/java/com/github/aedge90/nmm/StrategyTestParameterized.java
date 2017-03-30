@@ -699,7 +699,7 @@ public class StrategyTestParameterized {
     @Test
     public void computeMoveShouldReturn16DifferentMovesOverTime () throws InterruptedException {
 
-        int nPos = 16;
+        int nPosExpected = 16;
 
         Options.Color[][] mill5 =
                 {{N , I , I , N , I , I , N },
@@ -727,13 +727,18 @@ public class StrategyTestParameterized {
                 list.add(result);
             }
             //check after 100 iterations if list contains enough (or too much) elements and break
-            if(i % 100 == 0 && list.size() >= nPos){
+            if(i % 100 == 0 && list.size() >= nPosExpected){
                 break;
             }
         }
 
-        assertEquals(nPos, list.size());
-
+        // bots with startdepth of 3 actually should notice that the corner positions will enable
+        // them to have a potential mill in their next move no matter where the enemy sets
+        if(mPlayer1.getDifficulty().ordinal() >= Options.Difficulties.NORMAL.ordinal()){
+            assertTrue(list.size() < nPosExpected);
+        }else {
+            assertEquals(nPosExpected, list.size());
+        }
     }
 
     @Test
