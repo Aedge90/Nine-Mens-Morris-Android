@@ -413,6 +413,8 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
         Position newPosition = null;
         if(bot.getSetCount() <= 0){
             currMove = brain.computeMove();
+            // wait until the last animation is finished AFTER computing the next move
+            // so computing can be done while the animation plays
             fieldView.waitforUIupdate();
             fieldView.makeMove(currMove, bot.getColor(), new OnFieldClickListener(currMove.getSrc()), new OnFieldClickListener(currMove.getDest()));
             newPosition = currMove.getDest();
@@ -428,12 +430,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
         if (currMove.getKill() != null) {
             Position[] mill = field.getMill(newPosition, bot.getColor());
             fieldView.waitforUIupdate();
-            fieldView.paintMillOnUIThread(mill);
-            fieldView.waitforUIupdate();
-            fieldView.setPosOnUIThread(currMove.getKill(), Options.Color.NOTHING, new OnFieldClickListener(currMove.getKill()));
-            Thread.sleep(1500);
-            fieldView.waitforUIupdate();
-            fieldView.unpaintMillOnUIThread();
+            fieldView.animateKill(mill, currMove.getKill(), new OnFieldClickListener(currMove.getKill()));
 
             field.executeKillPhase(currMove, bot);
         }

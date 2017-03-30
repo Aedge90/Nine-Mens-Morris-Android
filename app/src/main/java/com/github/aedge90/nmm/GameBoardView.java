@@ -328,6 +328,28 @@ public class GameBoardView {
         fieldLayout.removeView(millSectors[2]);
     }
 
+    public void animateKill(final Position[] mill, final Position kill, final GameModeActivity.OnFieldClickListener killPosListener) {
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                c.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        paintMill(mill);
+                        setPos(kill, Options.Color.NOTHING, killPosListener);
+                    }
+                });
+                try {
+                    Thread.sleep(10000);
+                    unpaintMillOnUIThread();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        t.start();
+    }
+
     public String toString() {
         String print = "";
         print += "    0 1 2 3 4 5 6\n------------------\n";
@@ -341,4 +363,5 @@ public class GameBoardView {
         return print;
 
     }
+
 }
