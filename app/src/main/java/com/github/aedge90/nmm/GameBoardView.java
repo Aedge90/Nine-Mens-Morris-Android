@@ -4,15 +4,17 @@ import java.util.LinkedList;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
 import android.util.Log;
 
-import android.animation.Animator;
-import android.animation.Animator.AnimatorListener;
-import android.animation.ObjectAnimator;
+import android.view.View;
+import android.support.v4.view.ViewPropertyAnimatorListener;
+import android.view.Gravity;
+import android.support.v4.view.ViewCompat;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import android.view.Gravity;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageView;
@@ -129,25 +131,18 @@ public class GameBoardView {
         lock.unlock();
     }
 
-    public void runMoveAnimation (ImageView animSector, ImageView destSector, AnimatorListener listen) {
+    public void runMoveAnimation (ImageView animSector, ImageView destSector, ViewPropertyAnimatorListener listen) {
 
         //while jumping this is important so the moving pieces does not move underneath the others
         animSector.bringToFront();
 
-        ObjectAnimator oleft = ObjectAnimator.ofInt(animSector, "left", animSector.getLeft(), destSector.getLeft());
-        ObjectAnimator otop = ObjectAnimator.ofInt(animSector, "top", animSector.getTop(), destSector.getTop());
-        ObjectAnimator oright = ObjectAnimator.ofInt(animSector, "right", animSector.getRight(), destSector.getRight());
-        ObjectAnimator obottom = ObjectAnimator.ofInt(animSector, "bottom",animSector.getBottom(),destSector.getBottom());
-
-        oleft.setDuration(animDuration);
-        oleft.start();
-        oright.setDuration(animDuration);
-        oright.start();
-        otop.setDuration(animDuration);
-        otop.start();
-        obottom.setDuration(animDuration);
-        obottom.start();
-        obottom.addListener(listen);
+        ViewCompat.animate(animSector)
+                .translationX( destSector.getLeft() - animSector.getLeft() )
+                .translationY( destSector.getTop() - animSector.getTop() )
+                .setDuration(animDuration)
+                .withLayer()                    //enables hardware acceleration for this animation
+                .setListener(listen)
+                .start();
 
     }
 
@@ -162,16 +157,18 @@ public class GameBoardView {
                 }else{
                     animSector = piecesSpaceViewsWhite.pop();
                 }
+
                 final ImageView destSector = fieldView[move.getDest().getY()][move.getDest().getX()];
                 final ImageView newDestSector = createSector(color, move.getDest().getX(), move.getDest().getY());
 
-                AnimatorListener listen = new AnimatorListener(){
+                ViewPropertyAnimatorListener listen = new ViewPropertyAnimatorListener(){
 
                     @Override
-                    public void onAnimationCancel(Animator arg0) {}
+                    public void onAnimationStart(View view) {
+                    }
 
                     @Override
-                    public void onAnimationEnd(Animator animation) {
+                    public void onAnimationEnd(View view) {
                         piecesSpaceLayout.removeView(animSector);
                         fieldLayout.addView(newDestSector);
                         signalUIupdate();
@@ -179,10 +176,8 @@ public class GameBoardView {
                     }
 
                     @Override
-                    public void onAnimationRepeat(Animator animation) {}
-
-                    @Override
-                    public void onAnimationStart(Animator animation) {}
+                    public void onAnimationCancel(View view) {
+                    }
 
                 };
 
@@ -208,13 +203,14 @@ public class GameBoardView {
                 final ImageView newSrcSector = createSector(Options.Color.NOTHING, move.getSrc().getX(), move.getSrc().getY());
                 final ImageView newDestSector = createSector(color, move.getDest().getX(), move.getDest().getY());
 
-                AnimatorListener listen = new AnimatorListener(){
-        
+                ViewPropertyAnimatorListener listen = new ViewPropertyAnimatorListener(){
+
                     @Override
-                    public void onAnimationCancel(Animator arg0) {}
-        
+                    public void onAnimationStart(View view) {
+                    }
+
                     @Override
-                    public void onAnimationEnd(Animator animation) {
+                    public void onAnimationEnd(View view) {
                         fieldLayout.removeView(animSector);
                         fieldLayout.addView(newDestSector);
                         fieldLayout.addView(newSrcSector);
@@ -222,12 +218,10 @@ public class GameBoardView {
                         newSrcSector.setOnClickListener(srcListener);
                         newDestSector.setOnClickListener(destListener);
                     }
-        
+
                     @Override
-                    public void onAnimationRepeat(Animator animation) {}
-        
-                    @Override
-                    public void onAnimationStart(Animator animation) {}
+                    public void onAnimationCancel(View view) {
+                    }
                     
                 };
 
