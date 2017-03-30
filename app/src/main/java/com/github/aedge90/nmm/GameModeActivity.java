@@ -108,7 +108,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
         display.getSize(size);
         screenWidth = size.x;
 
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.gameboard_layout);
         fieldLayout = (GridLayout) findViewById(R.id.field);
         progressText = (TextView) findViewById(R.id.progressText);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);

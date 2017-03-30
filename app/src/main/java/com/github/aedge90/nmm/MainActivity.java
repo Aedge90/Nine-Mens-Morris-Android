@@ -28,8 +28,6 @@ public class MainActivity extends Activity {
         Point size = new Point();
         display.getSize(size);
 
-        setContentView(R.layout.activity_main);
-
         startSetOptionsIntent();
 
     }
