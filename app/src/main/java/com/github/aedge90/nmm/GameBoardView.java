@@ -110,7 +110,7 @@ public class GameBoardView {
         sector.setOnClickListener(posListener);
     }
 
-    protected void waitforUIupdate() throws InterruptedException{
+    protected void waitforAnimation() throws InterruptedException{
         lock.lock();
         try {
             while(!uiupdated) { //necessary to avoid lost wakeup
@@ -199,7 +199,7 @@ public class GameBoardView {
 
     public void makeMove(final Move move, final Options.Color color, final GameModeActivity.OnFieldClickListener srcListener,
                          final GameModeActivity.OnFieldClickListener destListener) throws InterruptedException{
-        
+
         c.runOnUiThread(new Runnable() {
             public void run() {
 
@@ -300,7 +300,6 @@ public class GameBoardView {
     }
     
     void paintMillOnUIThread(final Position[] mill) throws InterruptedException{
-        
         c.runOnUiThread(new Runnable() {
             public void run() {
                 paintMill(mill);

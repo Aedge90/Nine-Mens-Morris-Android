@@ -114,7 +114,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         progressUpdater = new ProgressUpdater(progressBar, this);
-        
+
         currMove = null;
         fieldView = new GameBoardView(THIS, fieldLayout);
 
@@ -344,15 +344,16 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
         }
     }
 
-    void humanTurn(Player human) throws InterruptedException{
+    void humanTurn(final Player human) throws InterruptedException{
 
         currMove = null;
         Position newPosition = null;
         // wait until the last animation is finished before waiting for the selection, as otherwise a selection can
         // be chosen while the animation plays, which seems not right
-        fieldView.waitforUIupdate();
-        // refresh text after the animation is finished or else it will be displayed to early
+        fieldView.waitforAnimation();
+
         refreshTextHuman(human);
+
         if(human.getSetCount() <= 0){
             state = State.MOVEFROM;
             // wait until a source piece and its destination position is chosen
@@ -370,14 +371,14 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
 
         if (field.isInMill(newPosition, human.getColor())) {
             Position[] mill = field.getMill(newPosition, human.getColor());
-            fieldView.waitforUIupdate();
+            fieldView.waitforAnimation();
             fieldView.paintMillOnUIThread(mill);
-            fieldView.waitforUIupdate();
+            fieldView.waitforAnimation();
             state = State.KILL;
             //wait until kill is chosen
             waitforSelection();
             fieldView.setPosOnUIThread(currMove.getKill(), Options.Color.NOTHING, new OnFieldClickListener(currMove.getKill()));
-            fieldView.waitforUIupdate();
+            fieldView.waitforAnimation();
             fieldView.unpaintMillOnUIThread();
 
             field.executeKillPhase(currMove, human);
@@ -385,14 +386,34 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
 
     }
 
-    void botTurn(Player bot, Strategy brain) throws InterruptedException{
+    void botTurn(final Player bot, Strategy brain) throws InterruptedException{
+
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    fieldView.waitforAnimation();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                refreshTextBot(bot);
+                progressUpdater.setActive(true);
+            }
+        });
+
+        t.start();
 
         Position newPosition = null;
         currMove = brain.computeMove();
-        // wait until the last animation is finished AFTER computing the next move
-        // so computing can be done while the animation plays
-        fieldView.waitforUIupdate();
-        refreshTextBot(bot);
+
+        // Thread t waits until the last animation is finished while computing the move is done in this thread
+        // when the animation is finished the text, that its the bots turn that started computing already, is shown
+        // and the progress is shown. Wait here until the animation is done AND the move is computed
+        t.join();
+
+        // inactivate progress until the animations are finished
+        progressUpdater.setActive(false);
+
         if(bot.getSetCount() <= 0){
             fieldView.makeMove(currMove, bot.getColor(), new OnFieldClickListener(currMove.getSrc()), new OnFieldClickListener(currMove.getDest()));
 
@@ -405,7 +426,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
 
         if (currMove.getKill() != null) {
             Position[] mill = field.getMill(newPosition, bot.getColor());
-            fieldView.waitforUIupdate();
+            fieldView.waitforAnimation();
             fieldView.animateKill(mill, currMove.getKill(), new OnFieldClickListener(currMove.getKill()));
 
             field.executeKillPhase(currMove, bot);
