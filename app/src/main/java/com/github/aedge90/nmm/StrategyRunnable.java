@@ -208,7 +208,7 @@ public class StrategyRunnable implements Runnable{
             localGameBoard.executeCompleteTurn(z, player);
             movesToEvaluate.addLast(z);
             evaluateMove(z, player);
-            double wert = min(depth - 1, strategy.maxWertKickoff, Integer.MAX_VALUE, player.getOtherPlayer());
+            double wert = min(depth - 1, strategy.maxWertKickoff, Double.MAX_VALUE, player.getOtherPlayer());
             movesToEvaluate.removeLast();
             localGameBoard.reverseCompleteTurn(z, player);
 

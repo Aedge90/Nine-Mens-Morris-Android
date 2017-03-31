@@ -44,10 +44,11 @@ public class Strategy {
 
         up.setMax(possibleMovesKickoff.size());
 
-        maxWertKickoff = Integer.MIN_VALUE;
+        //not Double.MIN_VALUE as thats the number with the smallest magnitude....
+        maxWertKickoff = -Double.MAX_VALUE;
         resultMove = null;
         //not StrategyRunnable.MIN as StrategyRunnable.MIN might be multiplied in evaluation and thus is not the minimal possible number
-        resultEvaluation = Integer.MIN_VALUE;
+        resultEvaluation = -Double.MAX_VALUE;
         for (int i = 0; i < nThreads; i++) {
             threads[i] = new Thread(runnables[i]);
             threads[i].start();
