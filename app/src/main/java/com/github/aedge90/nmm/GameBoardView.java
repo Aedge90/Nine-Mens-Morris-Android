@@ -15,6 +15,7 @@ import android.support.v4.view.ViewCompat;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import android.view.animation.AnticipateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageView;
@@ -33,7 +34,8 @@ public class GameBoardView {
     private GridLayout fieldLayout;
     private FrameLayout piecesSpaceLayout;
     private ImageView[] millSectors;
-    private int animDuration;
+
+    public static int ANIM_DURATION = 1250;
 
     GameBoardView(GameModeActivity c , GridLayout fieldLayout) {
         this.c = c;
@@ -42,8 +44,6 @@ public class GameBoardView {
         millSectors = new ImageView[3];
 
         fieldView = new ImageView[GameBoard.LENGTH][GameBoard.LENGTH];
-
-        animDuration = 1200;
 
         uiupdated = true;
         lock = new ReentrantLock();
@@ -93,25 +93,6 @@ public class GameBoardView {
     }
 
 
-    public void setPosOnUIThread(final Position pos, final Options.Color color, final GameModeActivity.OnFieldClickListener posListener) throws InterruptedException{
-        
-        c.runOnUiThread(new Runnable() {
-            public void run() {
-                setPos(pos, color, posListener);
-                signalUIupdate();
-            }
-        });
-
-    }
-
-    private void setPos(final Position pos, final Options.Color color, final GameModeActivity.OnFieldClickListener posListener){
-        ImageView sector = createSector(color, pos.getX(), pos.getY());
-        fieldLayout.removeView(fieldView[pos.getY()][pos.getX()]);
-        fieldLayout.addView(sector);
-        fieldView[pos.getY()][pos.getX()] = sector;
-        sector.setOnClickListener(posListener);
-    }
-
     protected void waitforAnimation() throws InterruptedException{
         lock.lock();
         try {
@@ -139,7 +120,7 @@ public class GameBoardView {
         ViewCompat.animate(animSector)
                 .translationX( destSector.getLeft() - animSector.getLeft() )
                 .translationY( destSector.getTop() - animSector.getTop() )
-                .setDuration(animDuration)
+                .setDuration(ANIM_DURATION)
                 .withLayer()                    //enables hardware acceleration for this animation
                 .setListener(listen)
                 .start();
@@ -235,7 +216,59 @@ public class GameBoardView {
         });
 
     }
-    
+
+
+    private void runKillAnimation(ImageView animSector, ViewPropertyAnimatorListener listen) {
+
+        ViewCompat.animate(animSector)
+                .scaleX(0)
+                .scaleY(0)
+                .setInterpolator(new AnticipateInterpolator())
+                .setDuration(ANIM_DURATION/2)
+                .withLayer()                    //enables hardware acceleration for this animation
+                .setListener(listen)
+                .start();
+
+    }
+
+
+    public void animateKill(final Position killPos, final GameModeActivity.OnFieldClickListener killPosListener){
+
+        c.runOnUiThread(new Runnable() {
+            public void run() {
+
+                final ImageView animSector = fieldView[killPos.getY()][killPos.getX()];
+                final ImageView newKillSector = createSector(Options.Color.NOTHING, killPos.getX(), killPos.getY());
+
+                ViewPropertyAnimatorListener listen = new ViewPropertyAnimatorListener() {
+
+                    @Override
+                    public void onAnimationStart(View view) {
+                    }
+
+                    @Override
+                    public void onAnimationEnd(View view) {
+                        fieldLayout.removeView(animSector);
+                        fieldLayout.addView(newKillSector);
+                        signalUIupdate();
+                        newKillSector.setOnClickListener(killPosListener);
+                    }
+
+                    @Override
+                    public void onAnimationCancel(View view) {
+                    }
+
+                };
+
+                runKillAnimation(animSector, listen);
+
+                fieldView[killPos.getY()][killPos.getX()] = newKillSector;
+
+            }
+        });
+
+    }
+
     protected ImageView createSector(Options.Color color, int x, int y) {
 
         ImageView sector = new ImageView(c);
@@ -322,28 +355,6 @@ public class GameBoardView {
         fieldLayout.removeView(millSectors[0]);
         fieldLayout.removeView(millSectors[1]);
         fieldLayout.removeView(millSectors[2]);
-    }
-
-    public void animateKill(final Position[] mill, final Position kill, final GameModeActivity.OnFieldClickListener killPosListener) {
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                c.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        paintMill(mill);
-                        setPos(kill, Options.Color.NOTHING, killPosListener);
-                    }
-                });
-                try {
-                    Thread.sleep(animDuration);
-                    unpaintMillOnUIThread();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        t.start();
     }
 
     public String toString() {
