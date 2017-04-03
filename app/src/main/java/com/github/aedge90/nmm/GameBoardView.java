@@ -93,25 +93,6 @@ public class GameBoardView {
     }
 
 
-    public void setPosOnUIThread(final Position pos, final Options.Color color, final GameModeActivity.OnFieldClickListener posListener) throws InterruptedException{
-        
-        c.runOnUiThread(new Runnable() {
-            public void run() {
-                setPos(pos, color, posListener);
-                signalUIupdate();
-            }
-        });
-
-    }
-
-    private void setPos(final Position pos, final Options.Color color, final GameModeActivity.OnFieldClickListener posListener){
-        ImageView sector = createSector(color, pos.getX(), pos.getY());
-        fieldLayout.removeView(fieldView[pos.getY()][pos.getX()]);
-        fieldLayout.addView(sector);
-        fieldView[pos.getY()][pos.getX()] = sector;
-        sector.setOnClickListener(posListener);
-    }
-
     protected void waitforAnimation() throws InterruptedException{
         lock.lock();
         try {
@@ -292,6 +273,25 @@ public class GameBoardView {
         imageView.setImageBitmap(bmp);
         imageView.setScaleType(ImageView.ScaleType.CENTER);
     }
+
+    public void animateKillOnUIThread(final Position pos, final GameModeActivity.OnFieldClickListener posListener) throws InterruptedException{
+
+        c.runOnUiThread(new Runnable() {
+            public void run() {
+                animateKill(pos, posListener);
+                signalUIupdate();
+            }
+        });
+
+    }
+
+    private void animateKill(final Position pos, final GameModeActivity.OnFieldClickListener posListener){
+        ImageView sector = createSector(Options.Color.NOTHING, pos.getX(), pos.getY());
+        fieldLayout.removeView(fieldView[pos.getY()][pos.getX()]);
+        fieldLayout.addView(sector);
+        fieldView[pos.getY()][pos.getX()] = sector;
+        sector.setOnClickListener(posListener);
+    }
     
     void paintMillOnUIThread(final Position[] mill) throws InterruptedException{
         c.runOnUiThread(new Runnable() {
@@ -324,7 +324,7 @@ public class GameBoardView {
         fieldLayout.removeView(millSectors[2]);
     }
 
-    public void animateKill(final Position[] mill, final Position kill, final GameModeActivity.OnFieldClickListener killPosListener) {
+    public void animateKillPhase(final Position[] mill, final Position kill, final GameModeActivity.OnFieldClickListener killPosListener) {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -332,7 +332,7 @@ public class GameBoardView {
                     @Override
                     public void run() {
                         paintMill(mill);
-                        setPos(kill, Options.Color.NOTHING, killPosListener);
+                        animateKill(kill, killPosListener);
                     }
                 });
                 try {

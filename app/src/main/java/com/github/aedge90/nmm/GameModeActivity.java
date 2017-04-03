@@ -376,7 +376,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
             state = State.KILL;
             //wait until kill is chosen
             waitforSelection();
-            fieldView.setPosOnUIThread(currMove.getKill(), Options.Color.NOTHING, new OnFieldClickListener(currMove.getKill()));
+            fieldView.animateKillOnUIThread(currMove.getKill(), new OnFieldClickListener(currMove.getKill()));
             fieldView.waitforAnimation();
             fieldView.unpaintMillOnUIThread();
 
@@ -426,7 +426,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
         if (currMove.getKill() != null) {
             Position[] mill = field.getMill(newPosition, bot.getColor());
             fieldView.waitforAnimation();
-            fieldView.animateKill(mill, currMove.getKill(), new OnFieldClickListener(currMove.getKill()));
+            fieldView.animateKillPhase(mill, currMove.getKill(), new OnFieldClickListener(currMove.getKill()));
 
             field.executeKillPhase(currMove, bot);
         }
