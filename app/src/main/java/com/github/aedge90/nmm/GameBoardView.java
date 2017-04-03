@@ -15,6 +15,7 @@ import android.support.v4.view.ViewCompat;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import android.view.animation.AnticipateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageView;
@@ -222,7 +223,8 @@ public class GameBoardView {
         ViewCompat.animate(animSector)
                 .scaleX(0)
                 .scaleY(0)
-                .setDuration(ANIM_DURATION)
+                .setInterpolator(new AnticipateInterpolator())
+                .setDuration(ANIM_DURATION/2)
                 .withLayer()                    //enables hardware acceleration for this animation
                 .setListener(listen)
                 .start();
