@@ -55,4 +55,5 @@
     <string name="lost_no_pieces">You only have two pieces left!</string>
     <string name="ADVANCED">Advanced</string>
     <string name="EASIER">Easier</string>
+    <string name="game_is_over">The Game is over!</string>
 </resources>

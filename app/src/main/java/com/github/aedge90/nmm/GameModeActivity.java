@@ -48,7 +48,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
 
     volatile State state;
     protected enum State {
-        SET, MOVEFROM, MOVETO, IGNORE, KILL
+        SET, MOVEFROM, MOVETO, WAITING, KILL, GAMEOVER
     }
 
     Player currPlayer;
@@ -128,7 +128,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
 
     protected void init(){
 
-        state = State.IGNORE;
+        state = State.WAITING;
 
         playerBlack = options.playerBlack;
         playerWhite = options.playerWhite;
@@ -196,6 +196,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
                         }
 
                         if(ShowGameOverMessageIfWon()){
+                            state = State.GAMEOVER;
                             break;
                         }
                         if(field.getState(currPlayer).equals(GameBoard.GameState.REMIS)
@@ -631,6 +632,9 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
         @Override
         public void onClick(View arg0) {
 
+            if(state == State.GAMEOVER){
+                showToast(getString(R.string.game_is_over));
+            }
             if(playerWhite.getDifficulty() != null && playerBlack.getDifficulty() != null) {
                 showToast(getString(R.string.clicking_in_botvsbot));
                 return;
@@ -643,7 +647,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
                 }else{
                     Position pos = new Position(x, y);
                     currMove = new Move(pos, null, null);
-                    state = State.IGNORE;
+                    state = State.WAITING;
                     signalSelection();
                 }
             } else if (state == State.MOVEFROM) {
@@ -666,10 +670,10 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
                 }else{
                     fieldLayout.removeView(greenSector);
                     currMove = new Move(new Position(x,y), currMove.getSrc(), null);
-                    state = State.IGNORE;
+                    state = State.WAITING;
                     signalSelection();
                 }
-            } else if (state == State.IGNORE) {
+            } else if (state == State.WAITING) {
                 showToast(getResources().getString(R.string.not_your_turn));
             }else if (state == State.KILL) {
                 if(!(field.getColorAt(new Position(x,y)).equals(currPlayer.getOtherPlayer().getColor()))){
@@ -687,7 +691,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
                     if(allInMill){
                         Position killPos = new Position(x, y);
                         currMove = new Move(currMove.getDest(), currMove.getSrc(), killPos);
-                        state = State.IGNORE;
+                        state = State.WAITING;
                         signalSelection();
                     }else{
                         showToast(getResources().getString(R.string.cannot_kill_mill));
@@ -695,7 +699,7 @@ public class GameModeActivity extends android.support.v4.app.FragmentActivity{
                 }else{
                     Position killPos = new Position(x, y);
                     currMove = new Move(currMove.getDest(), currMove.getSrc(), killPos);
-                    state = State.IGNORE;
+                    state = State.WAITING;
                     signalSelection();
                 }
             }

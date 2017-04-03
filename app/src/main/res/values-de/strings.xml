@@ -52,4 +52,5 @@
     <string name="you_have_lost">Du hast verloren!</string>
     <string name="ADVANCED">Fortgeschritten</string>
     <string name="EASIER">Einfacher</string>
+    <string name="game_is_over">Das Spiel ist vorbei!</string>
 </resources>
