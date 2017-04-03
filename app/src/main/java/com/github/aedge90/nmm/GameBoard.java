@@ -410,6 +410,16 @@ public abstract class GameBoard {
         }
     }
 
+    int nEmptyNeighbors(final Position pos){
+        int nEmptyNeighbors = 0;
+        for(GameBoardPosition neighbor : getGameBoardPosAt(pos).getNeighbors()){
+            if(neighbor != null && neighbor.getColor().equals(Options.Color.NOTHING)){
+                nEmptyNeighbors++;
+            }
+        }
+        return nEmptyNeighbors;
+    }
+
     //returns a list of moves that the player is able to do
     LinkedList<Move> possibleMoves(Player player) {
         LinkedList<Move> poss = new LinkedList<Move>();
