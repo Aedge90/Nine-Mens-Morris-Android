@@ -112,8 +112,6 @@ public class StrategyTestParameterized {
         assertThat(result.getDest(), anyOf(is(new Position(4,2)), is(new Position(4,4))));
     }
 
-    // TODO how to get the bot to set to a position like P1 did here?
-
     @Test
     public void computeMoveShouldFormTwoPotentialMillsInOneMove () throws InterruptedException {
 
