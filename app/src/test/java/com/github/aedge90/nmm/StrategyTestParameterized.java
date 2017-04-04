@@ -212,6 +212,7 @@ public class StrategyTestParameterized {
 
         // Bots with depth 4 will see, that they can prevent an enemy mill only by not setting to 0,6 or 6,0
         // but by trying to close their own mill which forces the enemy to prevent his mill instead
+        assumeTrue(mPlayer1.getDifficulty().ordinal() >= Options.Difficulties.ADVANCED.ordinal());
 
         Options.Color[][] mill5 =
                 {{P2, I , I , N , I , I , N },

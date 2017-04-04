@@ -140,9 +140,10 @@ public class StrategyRunnable implements Runnable{
             if(n > 0) {
                 // evaluate having a potential future mill better, as otherwise the bot will just randomly place pieces
                 // this causes the bot to be weaker especially on bigger gameboards as he does not really try to build a mill.
-                eval += 2;
+                eval += 2*n;
             }
         }
+
         move.setEvaluation(eval);
     }
 
