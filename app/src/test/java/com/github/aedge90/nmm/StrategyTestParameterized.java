@@ -4,6 +4,7 @@ package com.github.aedge90.nmm;
 import android.test.mock.MockContext;
 import android.widget.ProgressBar;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -116,7 +117,9 @@ public class StrategyTestParameterized {
     @Test
     public void computeMoveShouldFormTwoPotentialMillsInOneMove () throws InterruptedException {
 
-        //check if the bot prevents both potential mills instead of only one, in which case P1 could definitely close a mill
+        assumeTrue(mPlayer1.getDifficulty().ordinal() >= Options.Difficulties.NORMAL.ordinal());
+
+        //check if the bot P1 forms both potential mills instead of only one, in which case P1 could definitely close a mill
 
         Options.Color[][] mill9 =
                 {{N , I , I , N , I , I , N },
@@ -147,7 +150,10 @@ public class StrategyTestParameterized {
     @Test
     public void computeMoveShouldPreventTwoPotentialMillsInOneMove () throws InterruptedException {
 
-        //check if the bot prevents both potential mills instead of only one, in which case P2 could definitely close a mill
+        assumeTrue(mPlayer1.getDifficulty().ordinal() >= Options.Difficulties.ADVANCED.ordinal());
+
+        // check if bots with depth of 4 or more will prevent a mill, that P2 can definitely close
+        // in his second move if P1 does not prevent it by setting in the corner
 
         Options.Color[][] mill5 =
                 {{N , I , I , N , I , I , N },
@@ -597,6 +603,9 @@ public class StrategyTestParameterized {
     @Test
     public void computeMoveShouldUndoHisMoveIfItClosesMill1() throws InterruptedException {
 
+        //Only bots starting with depth 3 will not notice that opening a mill will enable him to close it again. Thats ok
+        assumeTrue(mPlayer1.getDifficulty().ordinal() >= Options.Difficulties.NORMAL.ordinal());
+
         Options.Color[][] mill5 =
                 {{N , I , I , P1, I , I , P1 },
                 { I , I , I , I , I , I , I },
@@ -634,6 +643,9 @@ public class StrategyTestParameterized {
 
     @Test
     public void computeMoveShouldUndoHisMoveIfItClosesMill2() throws InterruptedException {
+
+        //Only bots starting with depth 3 will not notice that opening a mill will enable him to close it again. Thats ok
+        assumeTrue(mPlayer1.getDifficulty().ordinal() >= Options.Difficulties.NORMAL.ordinal());
 
         Options.Color[][] mill5 =
                 {{P1, I , I , P1, I , I , P1},
@@ -693,9 +705,14 @@ public class StrategyTestParameterized {
 
     }
 
-    //Test if especially bots on EASIER open their mill, as they cant see the gameboard after 2 moves
     @Test
-    public void computeMoveShouldOpenMill() throws InterruptedException {
+    public void computeMoveShouldSometimesOpenMill() throws InterruptedException {
+
+        // its ok that bots on depth 1 and 2 do not open their mill everytime. However
+        // it is tested here if they do it at all, as they should.
+
+        Position expected1 = new Position(4,3);
+        Position expected2 = new Position(6,3);
 
         Options.Color[][] mill9 =
                 {{P1, I , I , N , I , I , N },
@@ -709,19 +726,28 @@ public class StrategyTestParameterized {
         GameBoard gameBoard = new Mill9(mill9);
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
-        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
 
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
 
-        Move result = strategy.computeMove();
+        Move result = null;
+        for(int i = 0; i < 500; i++) {
+            Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+            result = strategyP1.computeMove();
+            if (result.getDest().equals(expected1) || result.getDest().equals(expected2)) {
+                break;
+            }
+        }
 
-        assertThat(result.getDest(), anyOf(is(new Position(6,3)), is(new Position(4,3))));
+        assertThat(result.getDest(), anyOf(is(expected1), is(expected2)));
 
     }
 
     @Test
     public void computeMoveShouldNotOpenMill() throws InterruptedException {
+
+        //Bots starting with depth 2 should notice that the enemy can prevent the mill
+        assumeTrue(mPlayer1.getDifficulty().ordinal() >= Options.Difficulties.EASY.ordinal());
 
         Options.Color[][] mill9 =
                 {{P1, I , I , N , I , I , N },
