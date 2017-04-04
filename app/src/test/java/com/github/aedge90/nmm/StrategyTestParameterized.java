@@ -210,7 +210,7 @@ public class StrategyTestParameterized {
     @Test
     public void computeMoveShouldForceTheOtherPlayerToPreventHisMill2 () throws InterruptedException {
 
-        // Bots with depth 4 will see, that they can prevent an enemy mill ony by not setting to 0,6 or 6,0
+        // Bots with depth 4 will see, that they can prevent an enemy mill only by not setting to 0,6 or 6,0
         // but by trying to close their own mill which forces the enemy to prevent his mill instead
 
         Options.Color[][] mill5 =
@@ -363,9 +363,7 @@ public class StrategyTestParameterized {
     public void computeMoveShouldCloseMillAndPreventOtherPlayersMill() throws InterruptedException {
 
         //its ok that the EASIER bot can not see that the other player can kill after his move
-        if(mPlayer1.getDifficulty().equals(Options.Difficulties.EASIER)){
-            return;
-        }
+        assumeTrue(mPlayer1.getDifficulty().ordinal() >= Options.Difficulties.EASY.ordinal());
 
         Options.Color[][] mill5 =
                 {{N , I , I , P1, I , I , P2},
@@ -400,12 +398,7 @@ public class StrategyTestParameterized {
     public void computeMoveShouldCloseMillOnHighDifficulties() throws InterruptedException {
 
         //workaround to skip easier difficulties
-        if(mPlayer1.getDifficulty().equals(Options.Difficulties.EASIER)
-                || mPlayer1.getDifficulty().equals(Options.Difficulties.EASY)
-                || mPlayer1.getDifficulty().equals(Options.Difficulties.NORMAL)
-                || mPlayer1.getDifficulty().equals(Options.Difficulties.ADVANCED)){
-            return;
-        }
+        assumeTrue(mPlayer1.getDifficulty().ordinal() >= Options.Difficulties.HARD.ordinal());
 
         Options.Color[][] mill5 =
                 {{N , I , I , N , I , I , P2 },
@@ -532,9 +525,7 @@ public class StrategyTestParameterized {
     public void computeMoveShouldCloseMillAndPreventOtherPlayersMillWhenJumping() throws InterruptedException {
 
         //its ok that the EASIER bot can not see that the other player can kill after his move
-        if(mPlayer1.getDifficulty().equals(Options.Difficulties.EASIER)){
-            return;
-        }
+        assumeTrue(mPlayer1.getDifficulty().ordinal() >= Options.Difficulties.EASY.ordinal());
 
         Options.Color[][] mill5 =
                 {{P2, I , I , N , I , I , N },
