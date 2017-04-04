@@ -829,9 +829,9 @@ public class StrategyTestParameterized {
 
     //if this test fails may (but probably not) be because of a tiny chance that not all possible moves were chosen
     @Test
-    public void computeMoveShouldReturn16DifferentMovesOverTime () throws InterruptedException {
+    public void computeMoveShouldReturn8DifferentMovesOverTime () throws InterruptedException {
 
-        int nPosExpected = 16;
+        int nPosExpected = 8;
 
         Options.Color[][] mill5 =
                 {{N , I , I , N , I , I , N },
@@ -864,13 +864,8 @@ public class StrategyTestParameterized {
             }
         }
 
-        // bots with startdepth of 3 actually should notice that the corner positions will enable
-        // them to have a potential mill in their next move no matter where the enemy sets
-        if(mPlayer1.getDifficulty().ordinal() >= Options.Difficulties.NORMAL.ordinal()){
-            assertTrue(list.size() < nPosExpected);
-        }else {
-            assertEquals(nPosExpected, list.size());
-        }
+        assertEquals(nPosExpected, list.size());
+
     }
 
     @Test
