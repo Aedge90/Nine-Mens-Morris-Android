@@ -140,9 +140,11 @@ public class StrategyRunnable implements Runnable{
             if(n > 0) {
                 // evaluate having a potential future mill better, as otherwise the bot will just randomly place pieces
                 // this causes the bot to be weaker especially on bigger gameboards as he does not really try to build a mill.
-                eval += 2*n;
+                eval += n;
             }
         }
+        // always evaluate having more space to move better, as it is an important strategy in merels
+        eval += localGameBoard.nEmptyNeighbors(move.getDest()) * 2;
 
         move.setEvaluation(eval);
     }
