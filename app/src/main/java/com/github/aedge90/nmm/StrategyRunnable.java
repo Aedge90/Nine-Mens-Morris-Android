@@ -143,8 +143,10 @@ public class StrategyRunnable implements Runnable{
                 eval += n*2;
             }
         }
-        // always evaluate having more space to move better, as it is an important strategy in merels
-        eval += localGameBoard.nEmptyNeighbors(move.getDest());
+        if(player.getSetCount() >= 1) {
+            // evaluate having more space to move better, as it is an important strategy in merels
+            eval += localGameBoard.nEmptyNeighbors(move.getDest());
+        }
 
         move.setEvaluation(eval);
     }
