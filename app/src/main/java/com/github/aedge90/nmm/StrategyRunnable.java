@@ -132,7 +132,7 @@ public class StrategyRunnable implements Runnable{
             return;
         }
         if(localGameBoard.preventedMill(move.getDest(), player)){
-            //eval += 0.005;
+            eval += 0.005;
         }
         if(player.getOtherPlayer().getSetCount() >= 1){
             int n = localGameBoard.isInNPotentialMills(move.getDest(), player.getOtherPlayer().getColor());
