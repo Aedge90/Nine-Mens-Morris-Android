@@ -16,8 +16,8 @@ public class StrategyRunnable implements Runnable{
     private final Strategy strategy;
     private final ProgressUpdater up;
     //not Int.Max as the evaluation function would create overflows
-    static final double MAX = (int) Math.pow(2,25);
-    static final double MIN = - (int) Math.pow(2,25);
+    static final double MAX = (int) Math.pow(10,25);
+    static final double MIN = - (int) Math.pow(10,25);
     private LinkedList<Move> movesToEvaluate;
     private Move prevMove;
 
@@ -126,18 +126,19 @@ public class StrategyRunnable implements Runnable{
             // thus lowers the evaluation drastically and the game is stalled
             // also this prefers kills in the near future, so they are done now and not later
             // as could be the case if all were weighted equally
-            eval += 9;
+            eval += 9000000000.;
             move.setEvaluation(eval);
-            //return as the other cases should not return true if its a kill move
-            return;
         }
         if(localGameBoard.preventedMill(move.getDest(), player)){
-            eval += 0.005;
+            // preventedMill is needed to downgrade opening a mill if the enemy can prevent it in his next move
+            // still it has to be lower than every kill move, as a sure kill anytime in the future is still
+            // better than preventing a mill now
+            eval += 5;
         }
         if(player.getOtherPlayer().getSetCount() >= 1){
             int n = localGameBoard.isInNPotentialMills(move.getDest(), player.getOtherPlayer().getColor());
                 if(n >= 2){
-                    eval += 0.004;          // do only prevent two potential mills, preventing every single one lead
+                    eval += 4;          // do only prevent two potential mills, preventing every single one lead
                 }                       // to a bot that does only prevent but not form own mills
         }
         if(player.getSetCount() >= 1){
@@ -145,7 +146,7 @@ public class StrategyRunnable implements Runnable{
             if(n > 0) {
                 // evaluate having a potential future mill better, as otherwise the bot will just randomly place pieces
                 // this causes the bot to be weaker especially on bigger gameboards as he does not really try to build a mill.
-                eval += 0.002*n;
+                eval += 2;
             }
         }
         move.setEvaluation(eval);
