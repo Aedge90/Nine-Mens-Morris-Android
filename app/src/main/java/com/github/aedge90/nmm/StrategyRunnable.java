@@ -129,13 +129,13 @@ public class StrategyRunnable implements Runnable{
             eval += 9000000000.;
             move.setEvaluation(eval);
         }
-        if(localGameBoard.preventedMill(move.getDest(), player)){
+        else if(localGameBoard.preventedMill(move.getDest(), player)){
             // preventedMill is needed to downgrade opening a mill if the enemy can prevent it in his next move
             // still it has to be lower than every kill move, as a sure kill anytime in the future is still
             // better than preventing a mill now
             eval += 5;
         }
-        if(player.getSetCount() >= 1){
+        if(player.getSetCount() >= 1){      //only makes sense if there are still more pieces to set
             int n = localGameBoard.isInNPotentialMills(move.getDest(), player.getColor());
             if(n > 0) {
                 // evaluate having a potential future mill better, as otherwise the bot will just randomly place pieces
@@ -143,7 +143,7 @@ public class StrategyRunnable implements Runnable{
                 eval += n*2;
             }
         }
-        if(player.getSetCount() >= 1) {
+        if(move.getSrc() == null) {     // do this only for moves during the setting phase
             // evaluate having more space to move better, as it is an important strategy in merels
             eval += localGameBoard.nEmptyNeighbors(move.getDest());
         }
