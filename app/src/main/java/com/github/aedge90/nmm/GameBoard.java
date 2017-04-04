@@ -60,9 +60,7 @@ public abstract class GameBoard {
             }
         }
     }
-
-    //TODO allValidPositions to GameBoardPosition
-
+    
     void initGameBoardPositions(){
         for(int i = 0; i < LENGTH; i++){
             for(int j = 0; j < LENGTH; j++){
