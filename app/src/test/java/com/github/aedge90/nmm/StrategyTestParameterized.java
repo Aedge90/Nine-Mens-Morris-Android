@@ -186,6 +186,8 @@ public class StrategyTestParameterized {
 
     @Test
     public void computeMoveShouldForceTheOtherPlayerToPreventHisMill1 () throws InterruptedException {
+        
+        assumeTrue(mPlayer1.getDifficulty().ordinal() >= Options.Difficulties.ADVANCED.ordinal());
 
         Options.Color[][] mill5 =
                 {{P2, I , I , N , I , I , N },
@@ -263,8 +265,6 @@ public class StrategyTestParameterized {
         mPlayer2.setSetCount(3);
 
         Move result = strategy.computeMove();
-
-        System.out.println(result);
 
         // setting to this position makes no sense as it can never produce a mill
         assertNotEquals(new Position(6,3), result.getDest());
