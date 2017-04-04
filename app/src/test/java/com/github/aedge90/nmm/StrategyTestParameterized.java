@@ -175,16 +175,19 @@ public class StrategyTestParameterized {
     }
 
     @Test
-    public void computeMoveShouldNotPreventSinglePotentialMill () throws InterruptedException {
+    public void computeMoveShouldForceTheOtherPlayerToPreventHisMill () throws InterruptedException {
+
+        // Bots with depth 4 will see, that they can prevent an enemy mill ony by not setting to 0,6 or 6,0
+        // but by trying to close their own mill which forces the enemy to prevent his mill instead
 
         Options.Color[][] mill5 =
-                {{N , I , I , N , I , I , N },
+                {{P2, I , I , N , I , I , N },
                 { I , I , I , I , I , I , I },
-                { I , I , P1, N , N , I , I },
-                { N , I , P2, I , N , I , N },
-                { I , I , P2, N , N , I , I },
+                { I , I , N , P1, N , I , I },
+                { N , I , N , I , N , I , N },
+                { I , I , N , N , N , I , I },
                 { I , I , I , I , I , I , I },
-                { N , I , I , N , I , I , N}};
+                { N , I , I , N , I , I , P2}};
 
         GameBoard gameBoard = new Mill5(mill5);
         ProgressBar progBar = new ProgressBar(new MockContext());
@@ -196,8 +199,39 @@ public class StrategyTestParameterized {
 
         Move result = strategy.computeMove();
 
+        assertThat(result.getDest(), anyOf(is(new Position(2,2)), is(new Position(4,2))));
+        assertEquals(null, result.getSrc());
+
+    }
+
+    @Test
+    public void computeMoveShouldNotPreventSinglePotentialMill () throws InterruptedException {
+
+        Options.Color[][] mill5 =
+                {{N , I , I , N , I , I , N },
+                { I , I , I , I , I , I , I },
+                { I , I , N , N , N , I , I },
+                { N , I , N , I , N , I , N },
+                { I , I , N , N , N , I , I },
+                { I , I , I , I , I , I , I },
+                { N , I , I , N , I , I , P2}};
+
+        GameBoard gameBoard = new Mill5(mill5);
+        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
+        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+
+        mPlayer1.setSetCount(4);
+        mPlayer2.setSetCount(3);
+
+        Move result = strategy.computeMove();
+
+        System.out.println(result);
+
         // setting to this position makes no sense as it can never produce a mill
-        assertNotEquals(new Position(3,4), result.getDest());
+        assertNotEquals(new Position(6,3), result.getDest());
+        assertEquals(null, result.getSrc());
+        assertNotEquals(new Position(3,6), result.getDest());
         assertEquals(null, result.getSrc());
 
     }

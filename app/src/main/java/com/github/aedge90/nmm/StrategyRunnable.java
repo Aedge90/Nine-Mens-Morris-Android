@@ -142,12 +142,12 @@ public class StrategyRunnable implements Runnable{
             localGameBoard.executeCompleteTurn(move, player);
         }
         if(localGameBoard.preventedMill(move.getDest(), player)){
-            eval += 5;
+            //eval += 5;
         }
         if(player.getOtherPlayer().getSetCount() >= 1){
             int n = localGameBoard.isInNPotentialMills(move.getDest(), player.getOtherPlayer().getColor());
                 if(n >= 2){
-                    eval += 4;          // do only prevent two potential mills, preventing every single one lead
+              //      eval += 4;          // do only prevent two potential mills, preventing every single one lead
                 }                       // to a bot that does only prevent but not form own mills
         }
         if(player.getSetCount() >= 1){
@@ -155,7 +155,7 @@ public class StrategyRunnable implements Runnable{
             if(n > 0) {
                 // evaluate having a potential future mill better, as otherwise the bot will just randomly place pieces
                 // this causes the bot to be weaker especially on bigger gameboards as he does not really try to build a mill.
-                eval += 2*n;
+                //eval += 2*n;
             }
         }
         move.setEvaluation(eval);

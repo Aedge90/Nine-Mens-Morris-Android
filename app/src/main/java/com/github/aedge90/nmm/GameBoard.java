@@ -61,6 +61,8 @@ public abstract class GameBoard {
         }
     }
 
+    //TODO allValidPositions to GameBoardPosition
+
     void initGameBoardPositions(){
         for(int i = 0; i < LENGTH; i++){
             for(int j = 0; j < LENGTH; j++){
@@ -501,7 +503,7 @@ public abstract class GameBoard {
         return null;
     }
 
-    private LinkedList<Position> getAllValidPositions() {
+    public LinkedList<Position> getAllValidPositions() {
         return allValidPositions;
     }
 
