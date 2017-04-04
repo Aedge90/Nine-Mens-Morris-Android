@@ -90,28 +90,32 @@ public class StrategyTestParameterized {
     }
 
     @Test
-    public void computeMoveShouldFormPotentialMills () throws InterruptedException {
+    public void computeMoveShouldUseIdealPositionsAtStart () throws InterruptedException {
 
-        Options.Color[][] mill5 =
-                {{N , I , I , N , I , I , N },
-                { I , I , I , I , I , I , I },
+        // bots starting with depth 5 should notice, that his enemy is forced to occupy the corners
+        // in order to prevent a mill, which traps his pieces in the corners
+        assumeTrue(mPlayer1.getDifficulty().ordinal() >= Options.Difficulties.HARD.ordinal());
+
+        Options.Color[][] mill9 =
+                {{P2, I , I , N , I , I , N },
+                { I , N , I , N , I , N , I },
                 { I , I , N , N , N , I , I },
-                { N , I , N , I , P1, I , N },
+                { N , N , N , I , N , P1, N },
                 { I , I , N , N , N , I , I },
-                { I , I , I , I , I , I , I },
+                { I , N , I , N , I , N , I },
                 { N , I , I , N , I , I , N}};
 
-        GameBoard gameBoard = new Mill5(mill5);
+        GameBoard gameBoard = new Mill9(mill9);
         ProgressBar progBar = new ProgressBar(new MockContext());
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
         Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
 
-        mPlayer1.setSetCount(4);
-        mPlayer2.setSetCount(4);
+        mPlayer1.setSetCount(9);
+        mPlayer2.setSetCount(9);
 
         Move result = strategy.computeMove();
 
-        assertThat(result.getDest(), anyOf(is(new Position(4,2)), is(new Position(4,4))));
+        assertThat(result.getDest(), anyOf(is(new Position(3,1)), is(new Position(3,5))));
     }
 
     @Test
@@ -901,6 +905,10 @@ public class StrategyTestParameterized {
             if(i % 50 == 0 && list.size() >= 5){
                 break;
             }
+        }
+
+        for(Move m : list){
+            assertTrue(m.getKill() != null);
         }
 
         assertEquals(5, list.size());
