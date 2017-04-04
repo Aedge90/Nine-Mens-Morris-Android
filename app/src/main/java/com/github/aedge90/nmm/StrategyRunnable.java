@@ -118,6 +118,12 @@ public class StrategyRunnable implements Runnable{
 
     private void evaluateMove(Move move, Player player) {
         double eval = 0;
+
+        if(move.getSrc() == null) {     // do this only for moves during the setting phase
+            // evaluate having more space to move better, as it is an important strategy in merels
+            eval += localGameBoard.nEmptyNeighbors(move.getDest());
+        }
+
         if (move.getKill() != null) {
             // next weight will be half the weight
             // this has to be done so players wont do the same move over and over again
@@ -128,8 +134,10 @@ public class StrategyRunnable implements Runnable{
             // as could be the case if all were weighted equally
             eval += 9000000000.;
             move.setEvaluation(eval);
+            //return as the other cases should not return true if its a kill move
+            return;
         }
-        else if(localGameBoard.preventedMill(move.getDest(), player)){
+        if(localGameBoard.preventedMill(move.getDest(), player)){
             // preventedMill is needed to downgrade opening a mill if the enemy can prevent it in his next move
             // still it has to be lower than every kill move, as a sure kill anytime in the future is still
             // better than preventing a mill now
@@ -142,10 +150,6 @@ public class StrategyRunnable implements Runnable{
                 // this causes the bot to be weaker especially on bigger gameboards as he does not really try to build a mill.
                 eval += n*2;
             }
-        }
-        if(move.getSrc() == null) {     // do this only for moves during the setting phase
-            // evaluate having more space to move better, as it is an important strategy in merels
-            eval += localGameBoard.nEmptyNeighbors(move.getDest());
         }
 
         move.setEvaluation(eval);
