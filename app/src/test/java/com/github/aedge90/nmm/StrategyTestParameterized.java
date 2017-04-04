@@ -147,18 +147,18 @@ public class StrategyTestParameterized {
     @Test
     public void computeMoveShouldPreventTwoPotentialMillsInOneMove () throws InterruptedException {
 
-        //check if the bot prevents both potential mills instead of only one, in which case P1 could definitely close a mill
+        //check if the bot prevents both potential mills instead of only one, in which case P2 could definitely close a mill
 
-        Options.Color[][] mill9 =
+        Options.Color[][] mill5 =
                 {{N , I , I , N , I , I , N },
-                { I , N , I , N , I , N , I },
+                { I , I , I , I , I , I , I },
                 { I , I , P2, N , N , I , I },
-                { N , N , P1, I , N , N , N },
+                { N , I , P1, I , N , I , N },
                 { I , I , N , N , P2, I , I },
-                { I , N , I , N , I , N , I },
+                { I , I , I , I , I , I , I },
                 { N , I , I , N , I , I , N}};
 
-        GameBoard gameBoard = new Mill9(mill9);
+        GameBoard gameBoard = new Mill5(mill5);
 
         mPlayer1.setSetCount(7);
         mPlayer2.setSetCount(8);
@@ -695,11 +695,6 @@ public class StrategyTestParameterized {
 
     @Test
     public void computeMoveShouldNotOpenMill() throws InterruptedException {
-
-        //its ok that the EASIER bot can not see that the other player can prevent his next mill
-        if(mPlayer1.getDifficulty().equals(Options.Difficulties.EASIER)){
-            return;
-        }
 
         Options.Color[][] mill9 =
                 {{P1, I , I , N , I , I , N },

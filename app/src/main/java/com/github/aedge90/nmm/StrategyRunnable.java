@@ -131,23 +131,13 @@ public class StrategyRunnable implements Runnable{
             //return as the other cases should not return true if its a kill move
             return;
         }
-        if(move.getSrc() != null && movesToEvaluate.size() == 1){
-            // evaluate opening a mill in the first move better, so the bot will open mills.
-            // There is no need to check if the mill can be opened safely (without the enemy blocking it in the next move)
-            // as even depth 2 bots will already NOT open a mill as preventedMill will be true for the next move
-            localGameBoard.reverseCompleteTurn(move, player);
-            if(localGameBoard.isInMill(move.getSrc(), player.getColor())){
-                eval += 0.1;
-            }
-            localGameBoard.executeCompleteTurn(move, player);
-        }
         if(localGameBoard.preventedMill(move.getDest(), player)){
-            //eval += 5;
+            //eval += 0.005;
         }
         if(player.getOtherPlayer().getSetCount() >= 1){
             int n = localGameBoard.isInNPotentialMills(move.getDest(), player.getOtherPlayer().getColor());
                 if(n >= 2){
-              //      eval += 4;          // do only prevent two potential mills, preventing every single one lead
+                    eval += 0.004;          // do only prevent two potential mills, preventing every single one lead
                 }                       // to a bot that does only prevent but not form own mills
         }
         if(player.getSetCount() >= 1){
@@ -155,7 +145,7 @@ public class StrategyRunnable implements Runnable{
             if(n > 0) {
                 // evaluate having a potential future mill better, as otherwise the bot will just randomly place pieces
                 // this causes the bot to be weaker especially on bigger gameboards as he does not really try to build a mill.
-                //eval += 2*n;
+                eval += 0.002*n;
             }
         }
         move.setEvaluation(eval);
