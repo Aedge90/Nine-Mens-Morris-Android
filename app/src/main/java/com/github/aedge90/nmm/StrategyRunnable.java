@@ -135,12 +135,6 @@ public class StrategyRunnable implements Runnable{
             // better than preventing a mill now
             eval += 5;
         }
-        if(player.getOtherPlayer().getSetCount() >= 1){
-            int n = localGameBoard.isInNPotentialMills(move.getDest(), player.getOtherPlayer().getColor());
-                if(n >= 2){
-                    eval += 4;          // do only prevent two potential mills, preventing every single one lead
-                }                       // to a bot that does only prevent but not form own mills
-        }
         if(player.getSetCount() >= 1){
             int n = localGameBoard.isInNPotentialMills(move.getDest(), player.getColor());
             if(n > 0) {

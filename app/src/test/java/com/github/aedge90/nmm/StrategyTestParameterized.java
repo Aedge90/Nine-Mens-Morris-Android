@@ -175,7 +175,34 @@ public class StrategyTestParameterized {
     }
 
     @Test
-    public void computeMoveShouldForceTheOtherPlayerToPreventHisMill () throws InterruptedException {
+    public void computeMoveShouldForceTheOtherPlayerToPreventHisMill1 () throws InterruptedException {
+
+        Options.Color[][] mill5 =
+                {{P2, I , I , N , I , I , N },
+                { I , I , I , I , I , I , I },
+                { I , I , N , N , N , I , I },
+                { P2, I , N , I , P1, I , N },
+                { I , I , N , N , N , I , I },
+                { I , I , I , I , I , I , I },
+                { P1, I , I , N , I , I , P2}};
+
+        GameBoard gameBoard = new Mill5(mill5);
+        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
+        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+
+        mPlayer1.setSetCount(4);
+        mPlayer2.setSetCount(3);
+
+        Move result = strategy.computeMove();
+
+        assertThat(result.getDest(), anyOf(is(new Position(4,2)), is(new Position(4,4))));
+        assertEquals(null, result.getSrc());
+
+    }
+
+    @Test
+    public void computeMoveShouldForceTheOtherPlayerToPreventHisMill2 () throws InterruptedException {
 
         // Bots with depth 4 will see, that they can prevent an enemy mill ony by not setting to 0,6 or 6,0
         // but by trying to close their own mill which forces the enemy to prevent his mill instead
