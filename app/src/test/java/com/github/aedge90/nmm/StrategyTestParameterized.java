@@ -4,6 +4,7 @@ package com.github.aedge90.nmm;
 import android.test.mock.MockContext;
 import android.widget.ProgressBar;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -89,34 +90,9 @@ public class StrategyTestParameterized {
     }
 
     @Test
-    public void computeMoveShouldFormPotentialMills () throws InterruptedException {
-
-        Options.Color[][] mill5 =
-                {{N , I , I , N , I , I , N },
-                { I , I , I , I , I , I , I },
-                { I , I , N , N , N , I , I },
-                { N , I , N , I , P1, I , N },
-                { I , I , N , N , N , I , I },
-                { I , I , I , I , I , I , I },
-                { N , I , I , N , I , I , N}};
-
-        GameBoard gameBoard = new Mill5(mill5);
-        ProgressBar progBar = new ProgressBar(new MockContext());
-        ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
-        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
-
-        mPlayer1.setSetCount(4);
-        mPlayer2.setSetCount(4);
-
-        Move result = strategy.computeMove();
-
-        assertThat(result.getDest(), anyOf(is(new Position(4,2)), is(new Position(4,4))));
-    }
-
-    @Test
     public void computeMoveShouldFormTwoPotentialMillsInOneMove () throws InterruptedException {
 
-        //check if the bot prevents both potential mills instead of only one, in which case P1 could definitely close a mill
+        //check if the bot P1 forms both potential mills instead of only one, in which case P1 could definitely close a mill
 
         Options.Color[][] mill9 =
                 {{N , I , I , N , I , I , N },
@@ -296,9 +272,7 @@ public class StrategyTestParameterized {
     public void computeMoveShouldCloseMillAndPreventOtherPlayersMill() throws InterruptedException {
 
         //its ok that the EASIER bot can not see that the other player can kill after his move
-        if(mPlayer1.getDifficulty().equals(Options.Difficulties.EASIER)){
-            return;
-        }
+        assumeTrue(mPlayer1.getDifficulty().ordinal() >= Options.Difficulties.EASY.ordinal());
 
         Options.Color[][] mill5 =
                 {{N , I , I , P1, I , I , P2},
@@ -333,12 +307,7 @@ public class StrategyTestParameterized {
     public void computeMoveShouldCloseMillOnHighDifficulties() throws InterruptedException {
 
         //workaround to skip easier difficulties
-        if(mPlayer1.getDifficulty().equals(Options.Difficulties.EASIER)
-                || mPlayer1.getDifficulty().equals(Options.Difficulties.EASY)
-                || mPlayer1.getDifficulty().equals(Options.Difficulties.NORMAL)
-                || mPlayer1.getDifficulty().equals(Options.Difficulties.ADVANCED)){
-            return;
-        }
+        assumeTrue(mPlayer1.getDifficulty().ordinal() >= Options.Difficulties.HARD.ordinal());
 
         Options.Color[][] mill5 =
                 {{N , I , I , N , I , I , P2 },
@@ -465,9 +434,7 @@ public class StrategyTestParameterized {
     public void computeMoveShouldCloseMillAndPreventOtherPlayersMillWhenJumping() throws InterruptedException {
 
         //its ok that the EASIER bot can not see that the other player can kill after his move
-        if(mPlayer1.getDifficulty().equals(Options.Difficulties.EASIER)){
-            return;
-        }
+        assumeTrue(mPlayer1.getDifficulty().ordinal() >= Options.Difficulties.EASY.ordinal());
 
         Options.Color[][] mill5 =
                 {{P2, I , I , N , I , I , N },
@@ -662,10 +629,8 @@ public class StrategyTestParameterized {
     @Test
     public void computeMoveShouldNotOpenMill() throws InterruptedException {
 
-        //its ok that the EASIER bot can not see that the other player can prevent his next mill
-        if(mPlayer1.getDifficulty().equals(Options.Difficulties.EASIER)){
-            return;
-        }
+        //Bots starting with depth 2 should notice that the enemy can prevent the mill
+        assumeTrue(mPlayer1.getDifficulty().ordinal() >= Options.Difficulties.EASY.ordinal());
 
         Options.Color[][] mill9 =
                 {{P1, I , I , N , I , I , N },
@@ -827,6 +792,10 @@ public class StrategyTestParameterized {
             if(i % 50 == 0 && list.size() >= 5){
                 break;
             }
+        }
+
+        for(Move m : list){
+            assertTrue(m.getKill() != null);
         }
 
         assertEquals(5, list.size());
