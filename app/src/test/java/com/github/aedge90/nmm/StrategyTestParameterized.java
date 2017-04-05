@@ -17,6 +17,7 @@ import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assume.assumeTrue;
 
 
 @RunWith(value = Parameterized.class)
@@ -379,7 +380,7 @@ public class StrategyTestParameterized {
     @Test
     // P1 should at least try to prevent a mill, although he cant prevent that the P2 still can close
     // his mill in another way. Is ok that P2 does not make the perfect move on EASIER
-    public void computeMoveShouldTryToPreventLoosingEvenIfItsImpossible() throws InterruptedException {
+    public void computeMoveShouldTryToPreventLoosingEvenIfItsImpossibleWhileJumping() throws InterruptedException {
 
         Options.Color[][] mill5 =
                 {{N , I , I , N , I , I , P1},
@@ -403,6 +404,61 @@ public class StrategyTestParameterized {
         gameBoard.executeCompleteTurn(result3, mPlayer1);
 
         assertThat(result3.getDest(), anyOf(is(new Position(2,2)), is(new Position(4,3))));
+    }
+
+    @Test
+    // P1 should at least try to prevent a mill, an it has to be one that can actually be closed
+    public void computeMoveShouldTryToPreventLoosingEvenIfItsImpossible() throws InterruptedException {
+
+        Options.Color[][] mill9 =
+                {{P2, I , I , N , I , I , N },
+                { I , N , I , N , I , P1, I },
+                { I , I , N , P2, P2, I , I },
+                { N , P2, N , I , N , P1, N },
+                { I , I , N , N , N , I , I },
+                { I , N , I , P2, I , P1, I },
+                { P2, I , I , N , I , I ,P2}};
+
+        GameBoard gameBoard = new Mill9(mill9);
+        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
+        Strategy strategyPlayer1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+
+        mPlayer1.setSetCount(0);
+        mPlayer2.setSetCount(0);
+
+        Move result = strategyPlayer1.computeMove();
+        gameBoard.executeCompleteTurn(result, mPlayer1);
+
+        assertThat(result.getDest(), anyOf(is(new Position(0,3)), is(new Position(3,6))));
+    }
+
+    @Test
+    public void computeMoveShouldTryToPreventLoosingByNotLeavingMill() throws InterruptedException {
+
+        assumeTrue(mPlayer1.getDifficulty().ordinal() >= Options.Difficulties.EASY.ordinal());
+
+        Options.Color[][] mill9 =
+                {{N , I , I , N , I , I , N },
+                { I , P2, I , N , I , P2, I },
+                { I , I , N , N , N , I , I },
+                { P2, P1, P2, I , P2, P1, P2},
+                { I , I , N , N , N , I , I },
+                { I , N , I , N , I , N , I },
+                { P1, I , I , N , I , I , N}};
+
+        GameBoard gameBoard = new Mill9(mill9);
+        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
+        Strategy strategyPlayer1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+
+        mPlayer1.setSetCount(0);
+        mPlayer2.setSetCount(0);
+
+        Move result = strategyPlayer1.computeMove();
+        gameBoard.executeCompleteTurn(result, mPlayer1);
+
+        assertEquals(result.getSrc(), new Position(0,6));
     }
 
     @Test

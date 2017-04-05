@@ -65,7 +65,7 @@ public class StrategyRunnable implements Runnable{
             if(movesToEvaluate.size() > 1) {
                 localGameBoard.reverseCompleteTurn(movesToEvaluate.getLast(), player.getOtherPlayer());
                 //check if the loosing player, prevented a mill in his last move (which is the size-2th move)
-                if (localGameBoard.isInMill(movesToEvaluate.get(movesToEvaluate.size() - 2).getDest(), player.getOtherPlayer().getColor())) {
+                if (localGameBoard.preventedMill(movesToEvaluate.get(movesToEvaluate.size() - 2).getDest(), player)) {
                     //evaluate this better, as it looks stupid if he does not try to prevent one mill even if the other player
                     //can close another mill despite that
                     ret = 1;
@@ -160,9 +160,6 @@ public class StrategyRunnable implements Runnable{
         }
         move.setEvaluation(eval);
     }
-
-    // TODO evaluate creating a double mill. (E one pos in a mill, with inMill(pos.neighbor))
-    // TODO try evaluating only the moves of max player so he is braver
 
     private double max(int depth, double alpha, double beta, Player player) throws InterruptedException {
         if(Thread.interrupted()){
