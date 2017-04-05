@@ -315,7 +315,7 @@ public class GameBoardView {
         }else if (color.equals(Options.Color.GREEN)) {
             bmp = BitmapFactory.decodeResource(c.getResources(), R.drawable.piece_green);
         }else if (color.equals(Options.Color.NOTHING)){
-            bmp = BitmapFactory.decodeResource(c.getResources(), R.drawable.nothing);
+            return;
         }else{
             Log.d("MainActivity", "Error: createSector: Color not found!");
             c.finish();
