@@ -305,24 +305,22 @@ public class GameBoardView {
     }
 
     private void setBitMapForImageView(ImageView imageView, Options.Color color, int size){
-        Bitmap bmp = null;
+        // do not create a bitmap everytime. Using the resource directly will ensure
+        // that android uses the same resource for every view
         if (color.equals(Options.Color.BLACK)) {
-            bmp = BitmapFactory.decodeResource(c.getResources(), R.drawable.piece_black);
+            imageView.setImageResource(R.drawable.piece_black);
         } else if (color.equals(Options.Color.WHITE)) {
-            bmp = BitmapFactory.decodeResource(c.getResources(), R.drawable.piece_white);
+            imageView.setImageResource(R.drawable.piece_white);
         } else if (color.equals(Options.Color.RED)) {
-            bmp = BitmapFactory.decodeResource(c.getResources(), R.drawable.piece_red);
+            imageView.setImageResource(R.drawable.piece_red);
         }else if (color.equals(Options.Color.GREEN)) {
-            bmp = BitmapFactory.decodeResource(c.getResources(), R.drawable.piece_green);
+            imageView.setImageResource(R.drawable.piece_green);
         }else if (color.equals(Options.Color.NOTHING)){
             return;
         }else{
             Log.d("MainActivity", "Error: createSector: Color not found!");
             c.finish();
         }
-        float scaleFactor = 1.16f;    //used to fine tune the size of the pieces
-        bmp = Bitmap.createScaledBitmap(bmp, (int)(size * scaleFactor), (int)(size * scaleFactor), true);
-        imageView.setImageBitmap(bmp);
         imageView.setScaleType(ImageView.ScaleType.CENTER);
     }
     
