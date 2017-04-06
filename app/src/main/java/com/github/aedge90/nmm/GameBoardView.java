@@ -345,18 +345,4 @@ public class GameBoardView {
         fieldLayout.removeView(millSectors[2]);
     }
 
-    public String toString() {
-        String print = "";
-        print += "    0 1 2 3 4 5 6\n------------------\n";
-        for (int y = 0; y < fieldView.length; y++) {
-            print += y + " | ";
-            for (int x = 0; x < fieldView[y].length; x++) {
-                print += getPos(new Position(x, y)) !=null ? "N " : "  ";
-            }
-            print += '\n';
-        }
-        return print;
-
-    }
-
 }
