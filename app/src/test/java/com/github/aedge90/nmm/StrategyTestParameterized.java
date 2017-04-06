@@ -14,6 +14,7 @@ import java.util.LinkedList;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -87,6 +88,55 @@ public class StrategyTestParameterized {
         P2 = mPlayer2.getColor();
 
         this.nThreads = nThreads;
+    }
+
+    @Test
+    public void computeMoveShouldNotMoveAwayFromOpenMill() throws InterruptedException {
+
+        Options.Color[][] mill9 =
+                {{N , I , I , P1, I , I , N},
+                { I , P2, I , N , I , P2, I },
+                { I , I , P1, N , N , I , I },
+                { P1, N , N , I , N , P2, N },
+                { I , I , P2, N , N , I , I },
+                { I , N , I , N , I , N , I },
+                { P1, I , I , N , I , I , P2}};
+
+        GameBoard gameBoard = new Mill9(mill9);
+
+        mPlayer1.setSetCount(0);
+        mPlayer2.setSetCount(0);
+
+        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
+
+        Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+
+        Move result1 = strategyP1.computeMove();
+        gameBoard.executeCompleteTurn(result1, mPlayer1);
+        if(result1.getKill() != null){
+            return;
+        }
+        Move towardsMill1 = new Move(new Position(3,4), new Position(2,4), null);
+        gameBoard.executeCompleteTurn(towardsMill1, mPlayer2);
+
+        Move result2 = strategyP1.computeMove();
+        gameBoard.executeCompleteTurn(result2, mPlayer1);
+        if(result2.getKill() != null){
+            return;
+        }
+        Move towardsMill2 = new Move(new Position(3,5), new Position(3,4), null);
+        gameBoard.executeCompleteTurn(towardsMill2, mPlayer2);
+
+        Move result3 = strategyP1.computeMove();
+        gameBoard.executeCompleteTurn(result3, mPlayer1);
+        if(result3.getKill() != null){
+            return;
+        }
+        Move intoMill = new Move(new Position(5,5), new Position(3,5), null);
+        gameBoard.executeCompleteTurn(intoMill, mPlayer2);
+
+        fail();
     }
 
     @Test
