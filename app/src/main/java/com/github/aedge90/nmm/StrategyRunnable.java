@@ -96,7 +96,7 @@ public class StrategyRunnable implements Runnable{
             }else{
                 ret -= move.getEvaluation() / weight;
             }
-            weight = weight*10;
+            weight = weight*1.01;
             i++;
         }
 
@@ -117,7 +117,12 @@ public class StrategyRunnable implements Runnable{
     }
 
     private void evaluateMove(Move move, Player player) {
+
         double eval = 0;
+
+        // evaluate having more space to move better, as it is an important strategy in merels
+        eval += localGameBoard.nEmptyNeighbors(move.getDest()) * 0.0000001;
+
         if (move.getKill() != null) {
             // next weight will be half the weight
             // this has to be done so players wont do the same move over and over again
@@ -126,7 +131,7 @@ public class StrategyRunnable implements Runnable{
             // thus lowers the evaluation drastically and the game is stalled
             // also this prefers kills in the near future, so they are done now and not later
             // as could be the case if all were weighted equally
-            eval += 9;
+            eval += 8;
             move.setEvaluation(eval);
             //return as the other cases should not return true if its a kill move
             return;
@@ -142,20 +147,17 @@ public class StrategyRunnable implements Runnable{
             localGameBoard.executeCompleteTurn(move, player);
         }
         if(localGameBoard.preventedMill(move.getDest(), player)){
-            eval += 5;
-        }
-        if(player.getOtherPlayer().getSetCount() >= 1){
-            int n = localGameBoard.isInNPotentialMills(move.getDest(), player.getOtherPlayer().getColor());
-                if(n >= 2){
-                    eval += 4;          // do only prevent two potential mills, preventing every single one lead
-                }                       // to a bot that does only prevent but not form own mills
+            eval += 1;
         }
         if(player.getSetCount() >= 1){
             int n = localGameBoard.isInNPotentialMills(move.getDest(), player.getColor());
-            if(n > 0) {
+            if(n == 1) {
                 // evaluate having a potential future mill better, as otherwise the bot will just randomly place pieces
                 // this causes the bot to be weaker especially on bigger gameboards as he does not really try to build a mill.
-                eval += 2*n;
+                eval += n;
+            }
+            if(n >= 2){
+                eval += 9;
             }
         }
         move.setEvaluation(eval);
