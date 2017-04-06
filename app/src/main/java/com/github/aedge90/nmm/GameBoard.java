@@ -67,7 +67,7 @@ public abstract class GameBoard {
                 if(!(field[i][j] == I)) {
                     field[i][j] = new GameBoardPosition(j,i);
                     field[i][j].setColor(Options.Color.NOTHING);
-                    allValidPositions.add(new Position(field[i][j]));
+                    allValidPositions.add(field[i][j]);
                 }
             }
         }
@@ -269,7 +269,7 @@ public abstract class GameBoard {
         for(GameBoardPosition neighbor : neighbors) {
             if (neighbor != null && middlePos.getOpposite(neighbor) != null) {
                 if (belongTo(neighbor, middlePos.getOpposite(neighbor), player, partial)) {
-                    return new Position[]{new Position(neighbor), new Position(middlePos), new Position(middlePos.getOpposite(neighbor))};
+                    return new Position[]{neighbor, middlePos, middlePos.getOpposite(neighbor)};
                 }
             }
         }
@@ -281,7 +281,7 @@ public abstract class GameBoard {
         for(GameBoardPosition neighbor : neighbors) {
             if (neighbor != null && neighbor.getOpposite(cornerPos) != null) {
                 if (belongTo(neighbor.getOpposite(cornerPos), neighbor, player, partial)) {
-                    return new Position[]{new Position(neighbor.getOpposite(cornerPos)), new Position(neighbor), new Position(cornerPos)};
+                    return new Position[]{neighbor.getOpposite(cornerPos), neighbor, cornerPos};
                 }
             }
         }
@@ -472,7 +472,7 @@ public abstract class GameBoard {
     private Move moveUp(Position p) {
         Position dest = getGameBoardPosAt(p).getUp();
         if(dest != null && getColorAt(dest).equals(Options.Color.NOTHING)){
-            return new Move(new Position(dest), new Position(p), null);
+            return new Move(dest, p, null);
         }
         return null;
     }
@@ -480,7 +480,7 @@ public abstract class GameBoard {
     private Move moveDown(Position p) {
         Position dest = getGameBoardPosAt(p).getDown();
         if(dest != null && getColorAt(dest).equals(Options.Color.NOTHING)){
-            return new Move(new Position(dest), new Position(p), null);
+            return new Move(dest, p, null);
         }
         return null;
     }
@@ -488,7 +488,7 @@ public abstract class GameBoard {
     private Move moveLeft(Position p) {
         Position dest = getGameBoardPosAt(p).getLeft();
         if(dest != null && getColorAt(dest).equals(Options.Color.NOTHING)){
-            return new Move(new Position(dest), new Position(p), null);
+            return new Move(dest, p, null);
         }
         return null;
     }
@@ -496,7 +496,7 @@ public abstract class GameBoard {
     private Move moveRight(Position p) {
         Position dest = getGameBoardPosAt(p).getRight();
         if(dest != null && getColorAt(dest).equals(Options.Color.NOTHING)){
-            return new Move(new Position(dest), new Position(p), null);
+            return new Move(dest, p, null);
         }
         return null;
     }
