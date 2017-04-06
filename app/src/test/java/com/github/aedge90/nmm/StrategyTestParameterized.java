@@ -119,37 +119,6 @@ public class StrategyTestParameterized {
 
     }
 
-
-    @Test
-    public void computeMoveShouldPreventTwoPotentialMillsInOneMove () throws InterruptedException {
-
-        //check if the bot prevents both potential mills instead of only one, in which case P1 could definitely close a mill
-
-        Options.Color[][] mill9 =
-                {{N , I , I , N , I , I , N },
-                { I , N , I , N , I , N , I },
-                { I , I , P2, N , N , I , I },
-                { N , N , P1, I , N , N , N },
-                { I , I , N , N , P2, I , I },
-                { I , N , I , N , I , N , I },
-                { N , I , I , N , I , I , N}};
-
-        GameBoard gameBoard = new Mill9(mill9);
-
-        mPlayer1.setSetCount(7);
-        mPlayer2.setSetCount(8);
-
-        ProgressBar progBar = new ProgressBar(new MockContext());
-        ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
-
-        Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
-
-        Move result = strategyP1.computeMove();
-
-        assertEquals(new Position(4,2), result.getDest());
-
-    }
-
     @Test
     public void computeMoveShouldNotPreventSinglePotentialMill () throws InterruptedException {
 
