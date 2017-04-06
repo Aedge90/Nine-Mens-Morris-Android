@@ -12,9 +12,6 @@ import android.support.v4.view.ViewPropertyAnimatorListener;
 import android.view.Gravity;
 import android.support.v4.view.ViewCompat;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-
 import android.view.animation.AnticipateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
@@ -35,6 +32,8 @@ public class GameBoardView {
     private FrameLayout piecesSpaceLayout;
     private ImageView[] millSectors;
 
+    private BitmapManager bitmapManager;
+
     public static int ANIM_DURATION = 1250;
 
     GameBoardView(GameModeActivity c , GridLayout fieldLayout) {
@@ -42,6 +41,8 @@ public class GameBoardView {
         this.fieldLayout = fieldLayout;
 
         millSectors = new ImageView[3];
+
+        bitmapManager = new BitmapManager(c);
 
         fieldView = new ImageView[GameBoard.LENGTH][GameBoard.LENGTH];
 
@@ -52,7 +53,7 @@ public class GameBoardView {
         int remainingPixels = c.screenWidth % GameBoard.LENGTH;
         for (int y = 0; y < GameBoard.LENGTH; y++) {
             for (int x = 0; x < GameBoard.LENGTH; x++) {
-                ImageView sector = createSector(Options.Color.NOTHING, x, y);
+                ImageView sector = createEmptySector(x, y);
                 fieldLayout.addView(sector);
                 fieldView[y][x] = sector;
             }
@@ -271,21 +272,29 @@ public class GameBoardView {
 
     protected ImageView createSector(Options.Color color, int x, int y) {
 
-        ImageView sector = new ImageView(c);
+        ImageView imageView = createEmptySector(x,y);
+
+        imageView.setImageBitmap(bitmapManager.getBitmap(color));
+        imageView.setScaleType(ImageView.ScaleType.CENTER);
+
+        return imageView;
+    }
+
+    protected ImageView createEmptySector(int x, int y) {
+
+        ImageView imageView = new ImageView(c);
         GridLayout.LayoutParams params = new GridLayout.LayoutParams(GridLayout.spec(y), GridLayout.spec(x));
         params.width = c.screenWidth / GameBoard.LENGTH;
         params.height = c.screenWidth / GameBoard.LENGTH;
-        sector.setLayoutParams(params);
-        sector.setAdjustViewBounds(false);
+        imageView.setLayoutParams(params);
+        imageView.setAdjustViewBounds(false);
 
-        setBitMapForImageView(sector, color, params.width);
-
-        return sector;
+        return imageView;
     }
 
     private ImageView createSectorInPiecesSpace(Options.Color color, int margin) {
 
-        final ImageView sector = new ImageView(c);
+        final ImageView imageView = new ImageView(c);
         FrameLayout.LayoutParams params;
         int width = c.screenWidth / GameBoard.LENGTH;
         int height = c.screenWidth / GameBoard.LENGTH;
@@ -296,34 +305,13 @@ public class GameBoardView {
             params = new FrameLayout.LayoutParams(width, height, Gravity.LEFT | Gravity.BOTTOM);
             params.setMargins(margin, 0, 0, 0);
         }
-        sector.setLayoutParams(params);
-        sector.setAdjustViewBounds(false);
+        imageView.setLayoutParams(params);
+        imageView.setAdjustViewBounds(false);
 
-        setBitMapForImageView(sector, color, width);
-
-        return sector;
-    }
-
-    private void setBitMapForImageView(ImageView imageView, Options.Color color, int size){
-        Bitmap bmp = null;
-        if (color.equals(Options.Color.BLACK)) {
-            bmp = BitmapFactory.decodeResource(c.getResources(), R.drawable.piece_black);
-        } else if (color.equals(Options.Color.WHITE)) {
-            bmp = BitmapFactory.decodeResource(c.getResources(), R.drawable.piece_white);
-        } else if (color.equals(Options.Color.RED)) {
-            bmp = BitmapFactory.decodeResource(c.getResources(), R.drawable.piece_red);
-        }else if (color.equals(Options.Color.GREEN)) {
-            bmp = BitmapFactory.decodeResource(c.getResources(), R.drawable.piece_green);
-        }else if (color.equals(Options.Color.NOTHING)){
-            bmp = BitmapFactory.decodeResource(c.getResources(), R.drawable.nothing);
-        }else{
-            Log.d("MainActivity", "Error: createSector: Color not found!");
-            c.finish();
-        }
-        float scaleFactor = 1.16f;    //used to fine tune the size of the pieces
-        bmp = Bitmap.createScaledBitmap(bmp, (int)(size * scaleFactor), (int)(size * scaleFactor), true);
-        imageView.setImageBitmap(bmp);
+        imageView.setImageBitmap(bitmapManager.getBitmap(color));
         imageView.setScaleType(ImageView.ScaleType.CENTER);
+
+        return imageView;
     }
     
     void paintMillOnUIThread(final Position[] mill) throws InterruptedException{
@@ -355,20 +343,6 @@ public class GameBoardView {
         fieldLayout.removeView(millSectors[0]);
         fieldLayout.removeView(millSectors[1]);
         fieldLayout.removeView(millSectors[2]);
-    }
-
-    public String toString() {
-        String print = "";
-        print += "    0 1 2 3 4 5 6\n------------------\n";
-        for (int y = 0; y < fieldView.length; y++) {
-            print += y + " | ";
-            for (int x = 0; x < fieldView[y].length; x++) {
-                print += getPos(new Position(x, y)) !=null ? "N " : "  ";
-            }
-            print += '\n';
-        }
-        return print;
-
     }
 
 }

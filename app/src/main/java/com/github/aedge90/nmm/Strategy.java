@@ -21,7 +21,7 @@ public class Strategy {
     LinkedList<Move> possibleMovesKickoff;
 
     Strategy(final GameBoard field, final Player player, final ProgressUpdater up) {
-        this(field, player, up, 8);
+        this(field, player, up, 7);
     }
 
     @VisibleForTesting
