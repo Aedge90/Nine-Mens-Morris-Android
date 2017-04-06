@@ -18,7 +18,7 @@ public class BitmapManager {
         this.c = c;
 
         int size = c.screenWidth / GameBoard.LENGTH;
-        float scaleFactor = 1.16f;
+        float scaleFactor = 0.95f;
         blackPieceBitmap = createScaledBitmap(R.drawable.piece_black, (int) (size * scaleFactor));
         whitePieceBitmap = createScaledBitmap(R.drawable.piece_white, (int) (size * scaleFactor));
         greenPieceBitmap = createScaledBitmap(R.drawable.piece_green, (int) (size * scaleFactor));
