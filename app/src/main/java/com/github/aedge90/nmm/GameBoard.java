@@ -316,11 +316,11 @@ public abstract class GameBoard {
     }
 
     //is any move possible?
-    private boolean movesPossible(Options.Color player, int setCount) {
-        LinkedList<Position> positionsOfPlayer = getPositions(player);
-        if(setCount > 0){
+    public boolean movesPossible(Player player) {
+        if(player.getSetCount() > 0){
             return true;
         }
+        LinkedList<Position> positionsOfPlayer = getPositions(player.getColor());
         boolean jump = false;
         if (positionsOfPlayer.size() == 3){
             jump = true;
@@ -508,7 +508,7 @@ public abstract class GameBoard {
     GameState getState(Player player) {
 
         //only the other player can have lost as its impossible for maxPlayer to commit suicide
-        if(!movesPossible(player.getOtherPlayer().getColor(), player.getOtherPlayer().getSetCount())){
+        if(!movesPossible(player.getOtherPlayer())){
             return GameState.WON_NO_MOVES;
         }else if ((getPositions(player.getOtherPlayer().getColor()).size() < 3 && player.getOtherPlayer().getSetCount() <= 0)) {
             return GameState.WON_KILLED_ALL;

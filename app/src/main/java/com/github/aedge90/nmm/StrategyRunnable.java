@@ -57,11 +57,11 @@ public class StrategyRunnable implements Runnable{
     // maximizing player has got to return higher values for better situations
     // minimizing player has got to return lower values the better his situation
     @VisibleForTesting
-    double evaluation(Player player, LinkedList<Move> moves, int depth) {
+    double evaluation(Player player, boolean isAnyMovePossible, int depth) {
 
         double ret = 0;
 
-        if (moves.size() == 0) {
+        if (!isAnyMovePossible) {
             if(movesToEvaluate.size() > 1) {
                 localGameBoard.reverseCompleteTurn(movesToEvaluate.getLast(), player.getOtherPlayer());
                 //check if the loosing player, prevented a mill in his last move (which is the size-2th move)
@@ -159,10 +159,12 @@ public class StrategyRunnable implements Runnable{
         if(Thread.interrupted()){
             throw new InterruptedException("Computation of Bot " + player + " was interrupted!");
         }
+        if (depth == 0){
+            return evaluation(player, localGameBoard.movesPossible(player), depth);
+        }
         LinkedList<Move> moves = localGameBoard.possibleMoves(player);
-        //end reached or no more moves available, maybe because he is trapped or because he lost
-        if (depth == 0 || moves.size() == 0){
-            return evaluation(player, moves, depth);
+        if (moves.size() == 0){
+            return evaluation(player, moves.size() > 0, depth);
         }
         double maxWert = alpha;
         for (Move z : moves) {
@@ -219,9 +221,12 @@ public class StrategyRunnable implements Runnable{
         if(Thread.interrupted()){
             throw new InterruptedException("Computation of Bot " + player + " was interrupted!");
         }
+        if (depth == 0){
+            return evaluation(player, localGameBoard.movesPossible(player), depth);
+        }
         LinkedList<Move> moves = localGameBoard.possibleMoves(player);
-        if (depth == 0 || moves.size() == 0){
-            return evaluation(player, moves, depth);
+        if (moves.size() == 0){
+            return evaluation(player, moves.size() > 0, depth);
         }
         double minWert = beta;
         for (Move z : moves) {
