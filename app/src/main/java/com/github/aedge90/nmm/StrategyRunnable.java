@@ -117,7 +117,11 @@ public class StrategyRunnable implements Runnable{
     }
 
     private void evaluateMove(Move move, Player player) {
+
         double eval = 0;
+        // evaluate having more space to move better, as it is an important strategy in merels
+        eval += localGameBoard.nEmptyNeighbors(move.getDest())*0.0000001;
+
         if (move.getKill() != null) {
             // next weight will be half the weight
             // this has to be done so players wont do the same move over and over again

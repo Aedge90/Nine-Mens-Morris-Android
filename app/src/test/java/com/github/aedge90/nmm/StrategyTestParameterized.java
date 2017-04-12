@@ -776,6 +776,9 @@ public class StrategyTestParameterized {
     @Test
     public void computeMoveShouldReturn5DifferentKillMovesOverTime () throws InterruptedException {
 
+        // test only for dumbest bot as others may have preferences what to kill
+        assumeTrue(mPlayer1.getDifficulty().ordinal() == Options.Difficulties.EASIER.ordinal());
+
         Options.Color[][] mill9 =
                 {{P2, I , I , N , I , I , N },
                 { I , P1, I , N , I , P2, I },
