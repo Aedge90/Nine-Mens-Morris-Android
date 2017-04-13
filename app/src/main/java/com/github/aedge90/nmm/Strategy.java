@@ -19,6 +19,7 @@ public class Strategy {
     Move resultMove;
     double resultEvaluation;
     LinkedList<Move> possibleMovesKickoff;
+    int nPossibleMovesKickoff;
 
     Strategy(final GameBoard field, final Player player, final ProgressUpdater up) {
         this(field, player, up, 7);
@@ -42,7 +43,9 @@ public class Strategy {
         // shuffle list, so we dont end up with the same moves every game
         possibleMovesKickoff = shuffleListOfPossMoves();
 
-        up.setMax(possibleMovesKickoff.size());
+        nPossibleMovesKickoff = possibleMovesKickoff.size();
+
+        up.setMax(nPossibleMovesKickoff);
 
         //not Double.MIN_VALUE as thats the number with the smallest magnitude....
         maxWertKickoff = -Double.MAX_VALUE;
