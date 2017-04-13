@@ -22,6 +22,7 @@ public class StrategyRunnable implements Runnable{
     private Move prevMove;
 
     private final int threadNr;
+    private int startDepth;
 
     StrategyRunnable(final GameBoard gameBoard, final Player maxPlayer, final ProgressUpdater up, Strategy strategy, final int threadNr) {
         this.globalGameBoard = gameBoard;
@@ -58,6 +59,8 @@ public class StrategyRunnable implements Runnable{
     // minimizing player has got to return lower values the better his situation
     @VisibleForTesting
     double evaluation(Player player, boolean isAnyMovePossible, int depth) {
+
+        System.out.println(movesToEvaluate.size());
 
         double ret = 0;
 
@@ -155,23 +158,24 @@ public class StrategyRunnable implements Runnable{
         move.setEvaluation(eval);
     }
 
-    private double max(int depth, double alpha, double beta, Player player) throws InterruptedException {
+    private double max(int depth, double alpha, double beta, Player player, int nPrevPossMoves) throws InterruptedException {
         if(Thread.interrupted()){
             throw new InterruptedException("Computation of Bot " + player + " was interrupted!");
         }
-        if (depth == 0){
+        if (depth <= 0){
             return evaluation(player, localGameBoard.movesPossible(player), depth);
         }
         LinkedList<Move> moves = localGameBoard.possibleMoves(player);
         if (moves.size() == 0){
             return evaluation(player, false, depth);
         }
+        depth = lowerDepth (depth, nPrevPossMoves, moves.size());
         double maxWert = alpha;
         for (Move z : moves) {
             localGameBoard.executeCompleteTurn(z, player);
             movesToEvaluate.addLast(z);
             evaluateMove(z, player);
-            double wert = min(depth-1, maxWert, beta, player.getOtherPlayer());
+            double wert = min(depth-1, maxWert, beta, player.getOtherPlayer(), moves.size());
             movesToEvaluate.removeLast();
             localGameBoard.reverseCompleteTurn(z, player);
             if (wert > maxWert) {
@@ -201,7 +205,7 @@ public class StrategyRunnable implements Runnable{
             localGameBoard.executeCompleteTurn(z, player);
             movesToEvaluate.addLast(z);
             evaluateMove(z, player);
-            double wert = min(depth - 1, strategy.maxWertKickoff, Double.MAX_VALUE, player.getOtherPlayer());
+            double wert = min(depth - 1, strategy.maxWertKickoff, Double.MAX_VALUE, player.getOtherPlayer(), strategy.nPossibleMovesKickoff);
             movesToEvaluate.removeLast();
             localGameBoard.reverseCompleteTurn(z, player);
 
@@ -217,23 +221,24 @@ public class StrategyRunnable implements Runnable{
         }
     }
 
-    private double min(int depth, double alpha, double beta, Player player) throws InterruptedException {
+    private double min(int depth, double alpha, double beta, Player player, int nPrevPossMoves) throws InterruptedException {
         if(Thread.interrupted()){
             throw new InterruptedException("Computation of Bot " + player + " was interrupted!");
         }
-        if (depth == 0){
+        if (depth <= 0){
             return evaluation(player, localGameBoard.movesPossible(player), depth);
         }
         LinkedList<Move> moves = localGameBoard.possibleMoves(player);
         if (moves.size() == 0){
             return evaluation(player, false, depth);
         }
+        depth = lowerDepth (depth, nPrevPossMoves, moves.size());
         double minWert = beta;
         for (Move z : moves) {
             localGameBoard.executeCompleteTurn(z, player);
             movesToEvaluate.addLast(z);
             evaluateMove(z, player);
-            double wert = max(depth-1, alpha, minWert, player.getOtherPlayer());
+            double wert = max(depth-1, alpha, minWert, player.getOtherPlayer(), moves.size());
             movesToEvaluate.removeLast();
             localGameBoard.reverseCompleteTurn(z, player);
             if (wert < minWert) {
@@ -249,11 +254,11 @@ public class StrategyRunnable implements Runnable{
 
     private void computeMove() throws InterruptedException {
                 
-        int startDepth = localMaxPlayer.getDifficulty().ordinal() + 1;
+        startDepth = localMaxPlayer.getDifficulty().ordinal() + 1;
 
-        startDepth = lowerDepthOnGameStart(startDepth);
+        //startDepth = lowerDepthOnGameStart(startDepth);
 
-        startDepth = lowerDepthOnGameEnd(startDepth);
+        //startDepth = lowerDepthOnGameEnd(startDepth);
 
         maxKickoff(startDepth, localMaxPlayer);
     }
@@ -278,6 +283,21 @@ public class StrategyRunnable implements Runnable{
             return Math.min(startDepth, 6);
         }
         return startDepth;
+    }
+
+    private int lowerDepth (int depth, int nPrevPossMoves, int nPossMoves) {
+        if(depth <= (startDepth - 3)) {
+            if (nPrevPossMoves * nPossMoves > 20*20) {
+                return Math.min(depth, 0);
+            }
+            if (nPrevPossMoves * nPossMoves > 15*15) {
+                return Math.min(depth, 1);
+            }
+            if (nPrevPossMoves * nPossMoves > 10*10) {
+                return Math.min(depth, 2);
+            }
+        }
+        return depth;
     }
 
     private int lowerDepthOnGameEnd (int startDepth) {
