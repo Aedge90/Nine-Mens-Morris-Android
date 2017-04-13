@@ -59,7 +59,7 @@ public class StrategyRunnable implements Runnable{
     // minimizing player has got to return lower values the better his situation
     @VisibleForTesting
     double evaluation(Player player, boolean isAnyMovePossible, int depth) {
-
+        
         double ret = 0;
 
         if (!isAnyMovePossible) {
@@ -259,14 +259,14 @@ public class StrategyRunnable implements Runnable{
 
     private int lowerDepth (int depth, int nPrevPossMoves, int nPossMoves) {
         if(depth <= (startDepth - 3)) {             //this ensures a minimum depth of 4 has been reached
-            if (nPrevPossMoves * nPossMoves > 24*24) {
-                return Math.min(depth, 0);
-            }
-            if (nPrevPossMoves * nPossMoves > 18*18) {
+            if (nPrevPossMoves * nPossMoves > 20*20) {
                 return Math.min(depth, 1);
             }
-            if (nPrevPossMoves * nPossMoves > 10*10) {
+            if (nPrevPossMoves * nPossMoves > 14*14) {
                 return Math.min(depth, 2);
+            }
+            if (nPrevPossMoves * nPossMoves > 8*8) {
+                return Math.min(depth, 3);
             }
         }
         return depth;
