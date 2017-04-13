@@ -315,33 +315,6 @@ public abstract class GameBoard {
         }
     }
 
-    //is any move possible?
-    public boolean movesPossible(Player player) {
-        if(player.getSetCount() > 0){
-            return true;
-        }
-        LinkedList<Position> positionsOfPlayer = getPositions(player.getColor());
-        boolean jump = false;
-        if (positionsOfPlayer.size() == 3){
-            jump = true;
-        }
-        if (!jump){
-            for (Position p : positionsOfPlayer) {
-                if (moveUp(p) != null)
-                    return true;
-                if (moveDown(p) != null)
-                    return true;
-                if (moveRight(p) != null)
-                    return true;
-                if (moveLeft(p) != null)
-                    return true;
-            }
-        } else {
-            return true;
-        }
-        return false;
-    }
-
     private void addnonJumpMoves(LinkedList<Move> moves, Player player){
         for (Position p : getPositions(player.getColor())) {
             if (moveUp(p) != null) {
@@ -418,6 +391,37 @@ public abstract class GameBoard {
             }
         }
         return nEmptyNeighbors;
+    }
+
+    //is any move possible?
+    public boolean movesPossible(Player player) {
+        if(player.getSetCount() > 0){
+            return true;
+        }
+        // return false if the player has lost, otherwise it breaks the evaluation
+        LinkedList<Position> positionsOfPlayer = getPositions(player.getColor());
+        if(positionsOfPlayer.size() < 3 && player.getSetCount() <= 0){
+            return false;
+        }
+        boolean jump = false;
+        if (positionsOfPlayer.size() == 3){
+            jump = true;
+        }
+        if (!jump){
+            for (Position p : positionsOfPlayer) {
+                if (moveUp(p) != null)
+                    return true;
+                if (moveDown(p) != null)
+                    return true;
+                if (moveRight(p) != null)
+                    return true;
+                if (moveLeft(p) != null)
+                    return true;
+            }
+        } else {
+            return true;
+        }
+        return false;
     }
 
     //returns a list of moves that the player is able to do

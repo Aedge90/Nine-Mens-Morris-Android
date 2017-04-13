@@ -164,7 +164,7 @@ public class StrategyRunnable implements Runnable{
         }
         LinkedList<Move> moves = localGameBoard.possibleMoves(player);
         if (moves.size() == 0){
-            return evaluation(player, moves.size() > 0, depth);
+            return evaluation(player, false, depth);
         }
         double maxWert = alpha;
         for (Move z : moves) {
@@ -226,7 +226,7 @@ public class StrategyRunnable implements Runnable{
         }
         LinkedList<Move> moves = localGameBoard.possibleMoves(player);
         if (moves.size() == 0){
-            return evaluation(player, moves.size() > 0, depth);
+            return evaluation(player, false, depth);
         }
         double minWert = beta;
         for (Move z : moves) {

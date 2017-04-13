@@ -121,6 +121,36 @@ public class StrategyTestParameterized {
         assertEquals(new Position(5,1), result1.getDest());
     }
 
+
+    @Test
+    public void computeMoveShouldNotCloseMillAsHeWillLooseThen () throws InterruptedException {
+
+        // bots starting with depth 4 should see that closing their mill will definitely result in loosing
+        assumeTrue(mPlayer1.getDifficulty().ordinal() >= Options.Difficulties.ADVANCED.ordinal());
+
+        Options.Color[][] mill5 =
+                {{N , I , I , N , I , I , N },
+                { I , I , I , I , I , I , I },
+                { I , I , N , P1, N , I , I },
+                { N , I , P2, I , P1, I , P2},
+                { I , I , N , N , P1, I , I },
+                { I , I , I , I , I , I , I },
+                { P2, I , I , P2, I , I , N}};
+
+        GameBoard gameBoard = new Mill5(mill5);
+        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
+        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+
+        mPlayer1.setSetCount(0);
+        mPlayer2.setSetCount(0);
+
+        Move result = strategy.computeMove();
+
+        assertTrue(result.getKill() == null);
+
+    }
+
     @Test
     public void computeMoveShouldFormTwoPotentialMillsInOneMove () throws InterruptedException {
 
