@@ -286,11 +286,11 @@ public class StrategyRunnable implements Runnable{
     }
 
     private int lowerDepth (int depth, int nPrevPossMoves, int nPossMoves) {
-        if(depth <= (startDepth - 3)) {
-            if (nPrevPossMoves * nPossMoves > 20*20) {
+        if(depth <= (startDepth - 3)) {             //this ensures a minimum depth of 4 has been reached
+            if (nPrevPossMoves * nPossMoves > 24*24) {
                 return Math.min(depth, 0);
             }
-            if (nPrevPossMoves * nPossMoves > 15*15) {
+            if (nPrevPossMoves * nPossMoves > 18*18) {
                 return Math.min(depth, 1);
             }
             if (nPrevPossMoves * nPossMoves > 10*10) {
