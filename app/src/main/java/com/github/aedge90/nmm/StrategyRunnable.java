@@ -97,7 +97,7 @@ public class StrategyRunnable implements Runnable{
             }else{
                 ret -= move.getEvaluation() / weight;
             }
-            weight = weight*10;
+            weight = weight*1.5;
             i++;
         }
 
@@ -137,20 +137,17 @@ public class StrategyRunnable implements Runnable{
             return;
         }
         if(localGameBoard.preventedMill(move.getDest(), player)){
-            eval += 5;
-        }
-        if(player.getOtherPlayer().getSetCount() >= 1){
-            int n = localGameBoard.isInNPotentialMills(move.getDest(), player.getOtherPlayer().getColor());
-                if(n >= 2){
-                    eval += 4;          // do only prevent two potential mills, preventing every single one lead
-                }                       // to a bot that does only prevent but not form own mills
+            eval += 0.001;
         }
         if(player.getSetCount() >= 1){
             int n = localGameBoard.isInNPotentialMills(move.getDest(), player.getColor());
-            if(n > 0) {
+            if(n == 1) {
                 // evaluate having a potential future mill better, as otherwise the bot will just randomly place pieces
                 // this causes the bot to be weaker especially on bigger gameboards as he does not really try to build a mill.
-                eval += 2*n;
+                eval += 0.0001;
+            }
+            if(n >= 2){
+                eval += 9;
             }
         }
         move.setEvaluation(eval);
