@@ -97,7 +97,7 @@ public class StrategyRunnable implements Runnable{
             }else{
                 ret -= move.getEvaluation() / weight;
             }
-            weight = weight*1.5;
+            weight = weight*1.2;    //1.2 ensures that eg. two future kills is better than one kill immediately
             i++;
         }
 
@@ -137,6 +137,7 @@ public class StrategyRunnable implements Runnable{
             return;
         }
         if(localGameBoard.preventedMill(move.getDest(), player)){
+            // needed so the bot does not open mills if they can be prevented
             eval += 0.001;
         }
         if(player.getSetCount() >= 1){
