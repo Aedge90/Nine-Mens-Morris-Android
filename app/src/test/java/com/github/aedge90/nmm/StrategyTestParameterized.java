@@ -251,7 +251,7 @@ public class StrategyTestParameterized {
                 { I , I , I , I , I , I , I },
                 { I , I , P1, N , P2, I , I },
                 { P1, I , P1, I , N , I , N },
-                { I , I , P2, N , N , I , I },
+                { I , I , P2, P2, N , I , I },
                 { I , I , I , I , I , I , I },
                 { P1, I , I , P2, I , I , N}};
 
