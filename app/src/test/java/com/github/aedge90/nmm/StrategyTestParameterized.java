@@ -183,9 +183,11 @@ public class StrategyTestParameterized {
 
 
     @Test
-    public void computeMoveShouldPreventTwoPotentialMillsInOneMove () throws InterruptedException {
+    public void computeMoveShouldPreventUnPreventableMill() throws InterruptedException {
 
-        //check if the bot prevents both potential mills instead of only one, in which case P1 could definitely close a mill
+        //check if the bot prevents P2 from having an unpreventable mill when the sets to 4,2.
+
+        assumeTrue(mPlayer1.getDifficulty().ordinal() >= Options.Difficulties.EASY.ordinal());
 
         Options.Color[][] mill9 =
                 {{N , I , I , N , I , I , N },
@@ -208,7 +210,7 @@ public class StrategyTestParameterized {
 
         Move result = strategyP1.computeMove();
 
-        assertEquals(new Position(4,2), result.getDest());
+        assertThat(result.getDest(), anyOf(is(new Position(3,2)), is(new Position(4,2)), is(new Position(4,3))));
 
     }
 
