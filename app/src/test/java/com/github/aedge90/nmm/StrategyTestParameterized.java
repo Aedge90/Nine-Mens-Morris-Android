@@ -92,13 +92,15 @@ public class StrategyTestParameterized {
 
 
     @Test
-    @Ignore
     public void computeMoveShouldNotCloseMillButFormTwoPotentialMills () throws InterruptedException {
+
+        // bots starting with depth 5 should see that they will kill more if they form two potential mills first
+        assumeTrue(mPlayer1.getDifficulty().ordinal() >= Options.Difficulties.HARD.ordinal());
 
         Options.Color[][] mill9 =
                 {{N , I , I , N , I , I , N },
                 { I , N , I , P1, I , N , I },
-                { I , I , N , N , P2, I , I },
+                { I , I , N , P2, N , I , I },
                 { P1, N , N , I , N , P1, N },
                 { I , I , P2, N , N , I , I },
                 { I , N , I , N , I , N , I },
@@ -277,7 +279,7 @@ public class StrategyTestParameterized {
                 { I , I , I , I , I , I , I },
                 { I , I , P1, N , P2, I , I },
                 { P1, I , N , I , N , I , N },
-                { I , I , P1, N , P2, I , I },
+                { I , I , P1, P2, N , I , I },
                 { I , I , I , I , I , I , I },
                 { P1, I , I , P2, I , I , P2}};
 

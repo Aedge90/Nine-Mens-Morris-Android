@@ -148,7 +148,9 @@ public class StrategyRunnable implements Runnable{
                 eval += 0.0001;
             }
             if(n >= 2){
-                eval += 9;
+                // this is very good. eval still has to be very low, as when a piece in two potential mills is killed over and over
+                // the bot does not get high evaluations for setting there again and again --> he should rather prevent the mills
+                eval += 0.0009;
             }
         }
         move.setEvaluation(eval);
