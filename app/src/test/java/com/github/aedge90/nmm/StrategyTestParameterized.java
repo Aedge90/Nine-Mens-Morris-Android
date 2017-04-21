@@ -300,6 +300,35 @@ public class StrategyTestParameterized {
     }
 
     @Test
+    public void computeMoveShouldForceTheOtherPlayerToPreventHisMill() throws InterruptedException {
+
+        Options.Color[][] mill9 =
+                {{N , I , I , N , I , I , N },
+                { I , N , I , P2, I , N , I },
+                { I , I , N , N , N , I , I },
+                { N , P2, N , I , N , P1, N },
+                { I , I , N , N , N , I , I },
+                { I , N , I , N , I , N , I },
+                { N , I , I , N , I , I , N}};
+
+        GameBoard gameBoard = new Mill9(mill9);
+
+        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
+        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+
+        mPlayer1.setSetCount(8);
+        mPlayer2.setSetCount(7);
+
+        Move result = strategy.computeMove();
+
+        // it should only be this position as it not only forces the other player to prevent the mill
+        // but it also prevents the two potential mills in P2s next move
+        assertEquals(new Position(5,1), result.getDest());
+
+    }
+
+    @Test
     public void computeMoveShouldUseDoubleMill() throws InterruptedException {
 
         Options.Color[][] mill5 =
