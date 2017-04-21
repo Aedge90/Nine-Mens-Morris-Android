@@ -272,6 +272,34 @@ public class StrategyTestParameterized {
     }
 
     @Test
+    public void computeMoveShouldCloseMillEvenIfOtherPlayerCanJumpThen() throws InterruptedException {
+
+        Options.Color[][] mill5 =
+                {{N , I , I , P1, I , I , P2},
+                { I , I , I , I , I , I , I },
+                { I , I , P1, N , P2, I , I },
+                { P1, I , N , I , N , I , N },
+                { I , I , P2, N , N , I , I },
+                { I , I , I , I , I , I , I },
+                { P1, I , I , P2, I , I , N}};
+
+        GameBoard gameBoard = new Mill5(mill5);
+
+        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
+        Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
+
+        mPlayer1.setSetCount(0);
+        mPlayer2.setSetCount(0);
+
+        Move result = strategy.computeMove();
+
+        assertEquals(new Position(0, 0), result.getDest());
+        assertEquals(new Position(3, 0), result.getSrc());
+
+    }
+
+    @Test
     public void computeMoveShouldUseDoubleMill() throws InterruptedException {
 
         Options.Color[][] mill5 =
