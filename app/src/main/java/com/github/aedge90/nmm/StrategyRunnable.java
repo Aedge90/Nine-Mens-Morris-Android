@@ -86,21 +86,6 @@ public class StrategyRunnable implements Runnable{
             return ret;
         }
 
-        //evaluate how often the players can kill, and prefer kills that are in the near future
-        int i = 0;
-        double weight = 1;
-        // it is important that never a evaluation of a subsequent move is better than the one of the current move
-        // a then this path will be chosen, but it contains a move that may not be good
-        for(Move move : movesToEvaluate){
-            if(i % 2 == 0) {    //even numbers are moves of the maximizing player
-                ret += move.getEvaluation() / weight;
-            }else{
-                ret -= move.getEvaluation() / weight;
-            }
-            weight = weight*10;
-            i++;
-        }
-
         //evaluate undoing a move, as its probably of no use. If it is, the other evaluation should overwrite this
         //this should break endless undoing and redoing of moves if all have the same evaluation so far
         if(prevMove != null){
@@ -113,17 +98,26 @@ public class StrategyRunnable implements Runnable{
             }
         }
 
-        localGameBoard.calculateStatsFor(player);
-
-        int nKills = 0;
-        for(Move move : movesToEvaluate) {
-            if (move.getKill() != null) {
-                nKills++;
+        int i = 0;
+        int nKillsMax = 0;
+        int nKillsMin = 0;
+        for(Move move : movesToEvaluate){
+            if(i % 2 == 0) {    //even numbers are moves of the maximizing player
+                if(move.getKill() != null){
+                    nKillsMax++;
+                }
+            }else{
+                if(move.getKill() != null){
+                    nKillsMin++;
+                }
             }
+            i++;
         }
 
+        localGameBoard.calculateStatsFor(player);
+
         int EvalPlayer =
-                + 18* nKills
+                + 18* nKillsMax
                 + 26* localGameBoard.nMills
                 + 1 * localGameBoard.nBlockedEnemyPieces
                 + 6 * localGameBoard.nPieces
@@ -133,6 +127,7 @@ public class StrategyRunnable implements Runnable{
         localGameBoard.calculateStatsFor(player.getOtherPlayer());
 
         int EvalOtherPlayer =
+                + 18* nKillsMin
                 + 26* localGameBoard.nMills
                 + 1 * localGameBoard.nBlockedEnemyPieces
                 + 6 * localGameBoard.nPieces
