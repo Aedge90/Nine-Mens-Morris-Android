@@ -24,7 +24,7 @@ public abstract class GameBoard {
     int nBlockedEnemyPieces;
     int nPieces;
     int nSinglePotMills;
-    int nDoublePotMills;
+    int nMultiPotMills;
 
     enum GameState {
         RUNNING, REMIS, WON_NO_MOVES, WON_KILLED_ALL
@@ -531,11 +531,12 @@ public abstract class GameBoard {
     }
 
     public void calculateStatsFor(Player player){
+        int redundantSinglePotMills = 0;
         nMills = 0;
         nBlockedEnemyPieces = 0;
         nPieces = 0;
         nSinglePotMills = 0;
-        nDoublePotMills = 0;
+        nMultiPotMills = 0;
         for(Position pos : allValidPositions){
             if(getGameBoardPosAt(pos).getColor().equals(player.getColor())){
                 nPieces++;
@@ -547,7 +548,8 @@ public abstract class GameBoard {
                     nSinglePotMills++;
                 }
                 if(n >= 2){
-                    nDoublePotMills++;
+                    nMultiPotMills++;
+                    redundantSinglePotMills += n;
                 }
             }
             if(getGameBoardPosAt(pos).getColor().equals(player.getOtherPlayer().getColor())){
@@ -558,7 +560,11 @@ public abstract class GameBoard {
         }
 
         //divide by 3 as every mill position was in a mill but it should only be counted once
-        nMills = (int)Math.round(nMills /3.0);
+        nMills = (int)Math.round(nMills/3.0);
+        // when counting potential mills, a multiple potential mill covers single potential mills
+        nSinglePotMills = nSinglePotMills - redundantSinglePotMills;
+        //same as for mills for potential mills. they were counted twice.
+        nSinglePotMills = (int)Math.round(nSinglePotMills /2.0);
     }
 
 

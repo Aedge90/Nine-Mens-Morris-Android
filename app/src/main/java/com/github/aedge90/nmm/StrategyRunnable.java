@@ -122,7 +122,7 @@ public class StrategyRunnable implements Runnable{
                 + 1 * localGameBoard.nBlockedEnemyPieces
                 + 6 * localGameBoard.nPieces
                 + 12* localGameBoard.nSinglePotMills
-                + 7 * localGameBoard.nDoublePotMills;
+                + 7 * localGameBoard.nMultiPotMills;
 
         localGameBoard.calculateStatsFor(player.getOtherPlayer());
 
@@ -132,7 +132,7 @@ public class StrategyRunnable implements Runnable{
                 + 1 * localGameBoard.nBlockedEnemyPieces
                 + 6 * localGameBoard.nPieces
                 + 12* localGameBoard.nSinglePotMills
-                + 7 * localGameBoard.nDoublePotMills;
+                + 7 * localGameBoard.nMultiPotMills;
 
         return EvalPlayer - EvalOtherPlayer;
 

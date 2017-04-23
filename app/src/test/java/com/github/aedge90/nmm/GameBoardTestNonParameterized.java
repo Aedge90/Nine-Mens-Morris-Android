@@ -631,20 +631,15 @@ public class GameBoardTestNonParameterized {
     @Test
     public void getPossibleMovesShouldHaveSize56(){
 
-        final Options.Color B = Options.Color.BLACK;
-        final Options.Color W = Options.Color.WHITE;
-        final Options.Color N = Options.Color.NOTHING;
-        final Options.Color I = Options.Color.INVALID;
-
         Options.Color[][] mill9 =
 
                 {{N, I, I, N, I, I, N},
-                        { I, N, I, B, I, N, I},
-                        { I, I, N, N, N, I, I},
-                        { N, N, N, I, N, N, N},
-                        { I, I, W, N, N, I, I},
-                        { I, W, I, B, I, N, I},
-                        { W, I, I, B, I, I, N}};
+                { I, N, I, B, I, N, I},
+                { I, I, N, N, N, I, I},
+                { N, N, N, I, N, N, N},
+                { I, I, W, N, N, I, I},
+                { I, W, I, B, I, N, I},
+                { W, I, I, B, I, I, N}};
 
         GameBoard gameBoard = new Mill9(mill9);
 
@@ -661,19 +656,14 @@ public class GameBoardTestNonParameterized {
     @Test
     public void getPossibleMovesShouldHaveKillsAtBeginning(){
 
-        final Options.Color B = Options.Color.BLACK;
-        final Options.Color W = Options.Color.WHITE;
-        final Options.Color N = Options.Color.NOTHING;
-        final Options.Color I = Options.Color.INVALID;
-
         Options.Color[][] mill5 =
                 {{N , I , I , B , I , I , W },
-                        { I , I , I , I , I , I , I },
-                        { I , I , B , N , W , I , I },
-                        { B , I , B , I , N , I , N },
-                        { I , I , N , N , W , I , I },
-                        { I , I , I , I , I , I , I },
-                        { B , I , I , W , I , I , N}};
+                { I , I , I , I , I , I , I },
+                { I , I , B , N , W , I , I },
+                { B , I , B , I , N , I , N },
+                { I , I , N , N , W , I , I },
+                { I , I , I , I , I , I , I },
+                { B , I , I , W , I , I , N}};
 
         GameBoard gameBoard = new Mill5(mill5);
 
@@ -688,6 +678,43 @@ public class GameBoardTestNonParameterized {
         assertTrue(moves.get(1).getKill() != null);
         assertTrue(moves.get(2).getKill() != null);
         assertTrue(moves.get(3).getKill() != null);
+
+    }
+
+
+    @Test
+    public void calculateStatsShouldReturnCorrectValues(){
+
+        Options.Color[][] mill9 =
+
+                {{B, I, I, B, I, I, W},
+                { I, W, I, N, I, N, I},
+                { I, I, W, W, N, I, I},
+                { B, N, N, I, N, B, B},
+                { I, I, N, W, N, I, I},
+                { I, W, I, N, I, B, I},
+                { B, I, I, N, I, I, N}};
+
+        GameBoard gameBoard = new Mill9(mill9);
+
+        mPlayerBlack.setSetCount(2);
+        mPlayerWhite.setSetCount(3);
+
+        gameBoard.calculateStatsFor(mPlayerBlack);
+
+        assertEquals(1, gameBoard.nMills);
+        assertEquals(1, gameBoard.nBlockedEnemyPieces);
+        assertEquals(7, gameBoard.nPieces);
+        assertEquals(0, gameBoard.nSinglePotMills);
+        assertEquals(1, gameBoard.nMultiPotMills);
+
+        gameBoard.calculateStatsFor(mPlayerWhite);
+
+        assertEquals(0, gameBoard.nMills);
+        assertEquals(1, gameBoard.nBlockedEnemyPieces);
+        assertEquals(6, gameBoard.nPieces);
+        assertEquals(2, gameBoard.nSinglePotMills);
+        assertEquals(0, gameBoard.nMultiPotMills);
 
     }
 
