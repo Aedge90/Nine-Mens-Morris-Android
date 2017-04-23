@@ -97,7 +97,7 @@ public class StrategyRunnable implements Runnable{
             }else{
                 ret -= move.getEvaluation() / weight;
             }
-            weight = weight*1.2;    //1.2 ensures that eg. two future kills is better than one kill immediately
+            weight = weight*1.25;    //1.25 ensures that eg. two future kills is better than one kill immediately
             i++;
         }
 
