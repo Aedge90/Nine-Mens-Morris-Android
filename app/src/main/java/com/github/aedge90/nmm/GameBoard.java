@@ -20,6 +20,12 @@ public abstract class GameBoard {
     private int remisCount = 0;
     private int remisCountBeforeKill = 0;
 
+    int nMills;
+    int nBlockedEnemyPieces;
+    int nPieces;
+    int nSinglePotMills;
+    int nDoublePotMills;
+
     enum GameState {
         RUNNING, REMIS, WON_NO_MOVES, WON_KILLED_ALL
     }
@@ -523,6 +529,38 @@ public abstract class GameBoard {
 
         return GameState.RUNNING;
     }
+
+    public void calculateStatsFor(Player player){
+        nMills = 0;
+        nBlockedEnemyPieces = 0;
+        nPieces = 0;
+        nSinglePotMills = 0;
+        nDoublePotMills = 0;
+        for(Position pos : allValidPositions){
+            if(getGameBoardPosAt(pos).getColor().equals(player.getColor())){
+                nPieces++;
+                if(isInMill(pos, player.getColor())) {
+                    nMills++;
+                }
+                int n = isInNPotentialMills(pos, player.getColor());
+                if(n == 1){
+                    nSinglePotMills++;
+                }
+                if(n >= 2){
+                    nDoublePotMills++;
+                }
+            }
+            if(getGameBoardPosAt(pos).getColor().equals(player.getOtherPlayer().getColor())){
+                if(nEmptyNeighbors(pos) == 0){
+                    nBlockedEnemyPieces++;
+                }
+            }
+        }
+
+        //divide by 3 as every mill position was in a mill but it should only be counted once
+        nMills = (int)Math.round(nMills /3.0);
+    }
+
 
     public int getRemisCount() {
         return remisCount;
