@@ -114,27 +114,34 @@ public class StrategyRunnable implements Runnable{
             i++;
         }
 
-        localGameBoard.calculateStatsFor(player);
+        int c1 = 18;
+        int c2 = 26;
+        int c3 = 1;
+        int c4 = 6;
+        int c5 = 12;
+        int c6 = 7;
 
-        int EvalPlayer =
-                + 18* nKillsMax
-                + 26* localGameBoard.nMills
-                + 1 * localGameBoard.nBlockedEnemyPieces
-                + 6 * localGameBoard.nPieces
-                + 12* localGameBoard.nSinglePotMills
-                + 7 * localGameBoard.nMultiPotMills;
+        localGameBoard.calculateStatsFor(localMaxPlayer);
 
-        localGameBoard.calculateStatsFor(player.getOtherPlayer());
+        int EvalMaxPlayer =
+                + c1 * nKillsMax
+                + c2 * localGameBoard.nMills
+                + c3 * localGameBoard.nBlockedEnemyPieces
+                + c4 * localGameBoard.nPieces
+                + c5 * localGameBoard.nSinglePotMills
+                + c6 * localGameBoard.nMultiPotMills;
 
-        int EvalOtherPlayer =
-                + 18* nKillsMin
-                + 26* localGameBoard.nMills
-                + 1 * localGameBoard.nBlockedEnemyPieces
-                + 6 * localGameBoard.nPieces
-                + 12* localGameBoard.nSinglePotMills
-                + 7 * localGameBoard.nMultiPotMills;
+        localGameBoard.calculateStatsFor(localMaxPlayer.getOtherPlayer());
 
-        return EvalPlayer - EvalOtherPlayer;
+        int EvalMinPlayer =
+                + c1 * nKillsMin
+                + c2 * localGameBoard.nMills
+                + c3 * localGameBoard.nBlockedEnemyPieces
+                + c4 * localGameBoard.nPieces
+                + c5 * localGameBoard.nSinglePotMills
+                + c6 * localGameBoard.nMultiPotMills;
+
+        return EvalMaxPlayer - EvalMinPlayer;
 
     }
 
