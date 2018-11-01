@@ -1,5 +1,6 @@
 package com.github.aedge90.nmm;
 
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.Toast;
 import android.app.Activity;
@@ -21,7 +22,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class GameModeActivity extends android.support.v4.app.FragmentActivity{
+public class GameModeActivity extends FragmentActivity {
 
     protected final static int RESULT_RESTART = Activity.RESULT_FIRST_USER + 1;
     

@@ -5,8 +5,6 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import android.util.Log;
-
 import android.view.View;
 import android.support.v4.view.ViewPropertyAnimatorListener;
 import android.view.Gravity;
