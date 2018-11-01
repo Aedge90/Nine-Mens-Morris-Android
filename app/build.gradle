@@ -8,8 +8,8 @@ android {
         applicationId "com.github.aedge90.nmm"
         minSdkVersion 14
         targetSdkVersion 28
-        versionCode 9
-        versionName "1.7"
+        versionCode 10
+        versionName "1.8"
     }
 
     buildTypes {
