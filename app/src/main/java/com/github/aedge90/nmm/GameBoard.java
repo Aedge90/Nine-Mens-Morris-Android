@@ -512,11 +512,14 @@ public abstract class GameBoard {
     GameState getState(Player player) {
 
         //only the other player can have lost as its impossible for maxPlayer to commit suicide
+        if ((getPositions(player.getOtherPlayer().getColor()).size() < 3 && player.getOtherPlayer().getSetCount() <= 0)) {
+            return GameState.WON_KILLED_ALL;
+        }
+        // its important that this is second, as this is also false if only 2 pieces are left.
         if(!movesPossible(player.getOtherPlayer())){
             return GameState.WON_NO_MOVES;
-        }else if ((getPositions(player.getOtherPlayer().getColor()).size() < 3 && player.getOtherPlayer().getSetCount() <= 0)) {
-            return GameState.WON_KILLED_ALL;
-        }else if(remisCount >= REMISMAX){
+        }
+        if(remisCount >= REMISMAX){
             //important to do this last, as remisCount is not reset when the opponent can not make any move
             return GameState.REMIS;
         }
