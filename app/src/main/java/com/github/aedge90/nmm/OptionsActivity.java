@@ -16,16 +16,16 @@
 
 package com.github.aedge90.nmm;
 
-import java.util.ArrayList;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
@@ -41,16 +41,23 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 public class OptionsActivity extends android.support.v4.app.FragmentActivity{
 
+    private static final String MILL_VARIANT = "MILL_VARIANT";
+    private static final String WHO_STARTS = "WHO_STARTS";
+    private SharedPreferences prefs;
     private Options options;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         setContentView(R.layout.options_layout);
         this.options = getIntent().getParcelableExtra("own.projects.lemiroapp.Options");
+
+        this.prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         setMillVariant();
         setPlayerDifficultyFor(options.playerWhite);
@@ -66,13 +73,13 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
                 Intent i = new Intent();
                 setResult(RESULT_OK, i.putExtra("own.projects.lemiroapp.Options", options));
                 finish();
-                
+
             }
-            
+
         });
-        
+
     }
-    
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
@@ -93,27 +100,29 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
     }
 
     private void setMillVariant() {
-        
+
         final ItemsAdapter items = new ItemsAdapter(this, R.layout.spinner_item);
         items.add(getResources().getString(R.string.five_mens_morris), R.drawable.gameboard5);
         items.add(getResources().getString(R.string.seven_mens_morris), R.drawable.gameboard7);
         items.add(getResources().getString(R.string.nine_mens_morris), R.drawable.gameboard9);
 
         Spinner millModeSpinner = (Spinner) findViewById(R.id.millModeSpinner);
-        
+
         millModeSpinner.setAdapter(items);
         //set current selection to previously chosen value (or the initial value)
-        millModeSpinner.setSelection(Options.MillVariant.valueOf(options.millVariant.name()).ordinal());
+        int defaultMillVariant = Options.MillVariant.valueOf(options.millVariant.name()).ordinal();
+        millModeSpinner.setSelection(prefs.getInt(MILL_VARIANT, defaultMillVariant));
         millModeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 options.millVariant = Options.MillVariant.values()[pos];
+                saveOption(MILL_VARIANT, Options.MillVariant.valueOf(options.millVariant.name()).ordinal());
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
-            
+
         });
 
     }
@@ -141,8 +150,9 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
 
         spinner.setAdapter(items);
         //set current selection to previously chosen value (or the initial value)
+        final int defaultDifficulty = Options.Difficulties.values().length;
         if(player.getDifficulty() == null){
-            spinner.setSelection(Options.Difficulties.values().length);
+            spinner.setSelection(prefs.getInt(player.getColor().name(), defaultDifficulty));
         }else {
             spinner.setSelection(Options.Difficulties.valueOf(player.getDifficulty().name()).ordinal());
         }
@@ -151,26 +161,27 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
 
-                if(pos == Options.Difficulties.values().length){
+                if(pos == defaultDifficulty){
                     // no difficulty for human player. Set difficulty to null if human is reselected
                     player.setDifficulty(null);
-                    return;
+                    saveOption(player.getColor().name(), defaultDifficulty);
                 }else {
                     player.setDifficulty(Options.Difficulties.values()[pos]);
+                    saveOption(player.getColor().name(), Options.Difficulties.valueOf(player.getDifficulty().name()).ordinal());
                 }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                
+
             }
-            
+
         });
-        
+
     }
 
     private void setWhoStarts() {
-        
+
         final ArrayAdapter<String> items = new ArrayAdapter<String>(this, R.layout.spinner_item);
         items.add(getResources().getString(R.string.white));
         items.add(getResources().getString(R.string.black));
@@ -179,23 +190,31 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
 
         whoStartsSpinner.setAdapter(items);
         //set current selection to previously chosen value (or the initial value)
-        whoStartsSpinner.setSelection(Options.Color.valueOf(options.whoStarts.name()).ordinal());
+        final int defaultBeginner = Options.Color.valueOf(options.whoStarts.name()).ordinal();
+        whoStartsSpinner.setSelection(prefs.getInt(WHO_STARTS, defaultBeginner));
         whoStartsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 options.whoStarts = Options.Color.values()[pos];
+                saveOption(WHO_STARTS, Options.Color.valueOf(options.whoStarts.name()).ordinal());
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                
+
             }
-            
+
         });
 
     }
-    
+
+    private void saveOption(String key, int value) {
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(key, value);
+        editor.apply();
+    }
+
     private class ItemsAdapter extends ArrayAdapter<String> {
 
         private ArrayList<String> str;
@@ -232,7 +251,7 @@ public class OptionsActivity extends android.support.v4.app.FragmentActivity{
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT);
             margin.setMargins(0, 0, 0, 0);
-            
+
             Display display = getWindowManager().getDefaultDisplay();
             Point size = new Point();
             display.getSize(size);
