@@ -1,15 +1,15 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion '28.0.3'
+
+    namespace = "com.github.aedge90.nmm"
 
     defaultConfig {
         applicationId "com.github.aedge90.nmm"
-        minSdkVersion 14
-        targetSdkVersion 28
-        versionCode 10
-        versionName "1.8"
+        minSdkVersion 20
+        compileSdk 33
+        versionCode 11
+        versionName "1.9"
     }
 
     buildTypes {
@@ -18,6 +18,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
+
+    useLibrary 'android.test.mock'
 
     testOptions {
         unitTests.returnDefaultValues = true
