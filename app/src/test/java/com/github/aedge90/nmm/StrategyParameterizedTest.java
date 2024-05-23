@@ -1,14 +1,18 @@
 package com.github.aedge90.nmm;
 
 
-import android.test.mock.MockContext;
+import android.content.Context;
 import android.widget.ProgressBar;
 
-import org.junit.Assert;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -23,7 +27,14 @@ import static org.junit.Assume.assumeTrue;
 
 
 @RunWith(value = Parameterized.class)
-public class StrategyTestParameterized {
+public class StrategyParameterizedTest {
+
+
+    @Rule
+    public MockitoRule rule = MockitoJUnit.rule();
+
+    @Mock
+    private Context mockContext;
 
     private final Options.Color P1;
     private final Options.Color P2;
@@ -36,8 +47,8 @@ public class StrategyTestParameterized {
 
     // name attribute is optional, provide an unique name for test
     // multiple parameters, uses Collection<Object[]>
-    @Parameterized.Parameters(name = "P1 is {0}, nThreads: {1}")
-    public static Collection<Object[] > data() {
+    @Parameters(name = "P1 is {0}, nThreads: {1}")
+    public static Collection<Object[]> data() {
 
         LinkedList<Object[]> player1andnThreadsList = new LinkedList<>();
         for (int i = 0; i < Options.Difficulties.values().length; i++) {
@@ -71,10 +82,10 @@ public class StrategyTestParameterized {
     }
 
     // Inject paremeters via constructor, constructor is called before each test
-    public StrategyTestParameterized(Player player1, int nThreads){
+    public StrategyParameterizedTest(Player player1, int nThreads) {
 
         mPlayer1 = player1;
-        if(mPlayer1.getColor().equals(Options.Color.BLACK)){
+        if (mPlayer1.getColor().equals(Options.Color.BLACK)) {
             mPlayer2 = new Player(Options.Color.WHITE);
         } else {
             mPlayer2 = new Player(Options.Color.BLACK);
@@ -93,23 +104,23 @@ public class StrategyTestParameterized {
 
     @Test
     @Ignore
-    public void computeMoveShouldNotCloseMillButFormTwoPotentialMills () throws InterruptedException {
+    public void computeMoveShouldNotCloseMillButFormTwoPotentialMills() throws InterruptedException {
 
         Options.Color[][] mill9 =
-                {{N , I , I , N , I , I , N },
-                { I , N , I , P1, I , N , I },
-                { I , I , N , N , P2, I , I },
-                { P1, N , N , I , N , P1, N },
-                { I , I , P2, N , N , I , I },
-                { I , N , I , N , I , N , I },
-                { P1, I , I , P2, I , I , P2}};
+                {{N, I, I, N, I, I, N},
+                        {I, N, I, P1, I, N, I},
+                        {I, I, N, N, P2, I, I},
+                        {P1, N, N, I, N, P1, N},
+                        {I, I, P2, N, N, I, I},
+                        {I, N, I, N, I, N, I},
+                        {P1, I, I, P2, I, I, P2}};
 
         GameBoard gameBoard = new Mill9(mill9);
 
         mPlayer1.setSetCount(5);
         mPlayer2.setSetCount(5);
 
-        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressBar progBar = new ProgressBar(mockContext);
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
 
         Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
@@ -118,27 +129,27 @@ public class StrategyTestParameterized {
         Move result1 = strategyP1.computeMove();
         gameBoard.executeCompleteTurn(result1, mPlayer1);
 
-        assertEquals(new Position(5,1), result1.getDest());
+        assertEquals(new Position(5, 1), result1.getDest());
     }
 
 
     @Test
-    public void computeMoveShouldNotCloseMillAsHeWillLooseThen () throws InterruptedException {
+    public void computeMoveShouldNotCloseMillAsHeWillLooseThen() throws InterruptedException {
 
         // bots starting with depth 4 should see that closing their mill will definitely result in loosing
         assumeTrue(mPlayer1.getDifficulty().ordinal() >= Options.Difficulties.ADVANCED.ordinal());
 
         Options.Color[][] mill5 =
-                {{N , I , I , N , I , I , N },
-                { I , I , I , I , I , I , I },
-                { I , I , N , P1, N , I , I },
-                { N , I , P2, I , P1, I , P2},
-                { I , I , N , N , P1, I , I },
-                { I , I , I , I , I , I , I },
-                { P2, I , I , P2, I , I , N}};
+                {{N, I, I, N, I, I, N},
+                        {I, I, I, I, I, I, I},
+                        {I, I, N, P1, N, I, I},
+                        {N, I, P2, I, P1, I, P2},
+                        {I, I, N, N, P1, I, I},
+                        {I, I, I, I, I, I, I},
+                        {P2, I, I, P2, I, I, N}};
 
         GameBoard gameBoard = new Mill5(mill5);
-        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressBar progBar = new ProgressBar(mockContext);
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
         Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
 
@@ -152,80 +163,80 @@ public class StrategyTestParameterized {
     }
 
     @Test
-    public void computeMoveShouldFormTwoPotentialMillsInOneMove () throws InterruptedException {
+    public void computeMoveShouldFormTwoPotentialMillsInOneMove() throws InterruptedException {
 
         //check if the bot P1 forms both potential mills instead of only one, in which case P1 could definitely close a mill
 
         Options.Color[][] mill9 =
-                {{N , I , I , N , I , I , N },
-                { I , N , I , N , I , N , I },
-                { I , I , P1, N , N , I , I },
-                { N , N , P2, I , N , N , N },
-                { I , I , P2, N , P1, I , I },
-                { I , N , I , N , I , N , I },
-                { N , I , I , N , I , I , N}};
+                {{N, I, I, N, I, I, N},
+                        {I, N, I, N, I, N, I},
+                        {I, I, P1, N, N, I, I},
+                        {N, N, P2, I, N, N, N},
+                        {I, I, P2, N, P1, I, I},
+                        {I, N, I, N, I, N, I},
+                        {N, I, I, N, I, I, N}};
 
         GameBoard gameBoard = new Mill9(mill9);
 
         mPlayer1.setSetCount(7);
         mPlayer2.setSetCount(7);
 
-        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressBar progBar = new ProgressBar(mockContext);
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
 
         Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
 
         Move result = strategyP1.computeMove();
 
-        assertEquals(new Position(4,2), result.getDest());
+        assertEquals(new Position(4, 2), result.getDest());
 
     }
 
 
     @Test
-    public void computeMoveShouldPreventTwoPotentialMillsInOneMove () throws InterruptedException {
+    public void computeMoveShouldPreventTwoPotentialMillsInOneMove() throws InterruptedException {
 
         //check if the bot prevents both potential mills instead of only one, in which case P1 could definitely close a mill
 
         Options.Color[][] mill9 =
-                {{N , I , I , N , I , I , N },
-                { I , N , I , N , I , N , I },
-                { I , I , P2, N , N , I , I },
-                { N , N , P1, I , N , N , N },
-                { I , I , N , N , P2, I , I },
-                { I , N , I , N , I , N , I },
-                { N , I , I , N , I , I , N}};
+                {{N, I, I, N, I, I, N},
+                        {I, N, I, N, I, N, I},
+                        {I, I, P2, N, N, I, I},
+                        {N, N, P1, I, N, N, N},
+                        {I, I, N, N, P2, I, I},
+                        {I, N, I, N, I, N, I},
+                        {N, I, I, N, I, I, N}};
 
         GameBoard gameBoard = new Mill9(mill9);
 
         mPlayer1.setSetCount(7);
         mPlayer2.setSetCount(8);
 
-        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressBar progBar = new ProgressBar(mockContext);
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
 
         Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
 
         Move result = strategyP1.computeMove();
 
-        assertEquals(new Position(4,2), result.getDest());
+        assertEquals(new Position(4, 2), result.getDest());
 
     }
 
     @Test
-    public void computeMoveShouldPreventMillWhileSetting () throws InterruptedException {
+    public void computeMoveShouldPreventMillWhileSetting() throws InterruptedException {
 
         Options.Color[][] mill5 =
-                {{N , I , I , P1, I , I , P2},
-                { I , I , I , I , I , I , I },
-                { I , I , P1, N , N , I , I },
-                { N , I , N , I , N , I , N },
-                { I , I , P2, P2, N , I , I },
-                { I , I , I , I , I , I , I },
-                { P1, I , I , N , I , I , N}};
+                {{N, I, I, P1, I, I, P2},
+                        {I, I, I, I, I, I, I},
+                        {I, I, P1, N, N, I, I},
+                        {N, I, N, I, N, I, N},
+                        {I, I, P2, P2, N, I, I},
+                        {I, I, I, I, I, I, I},
+                        {P1, I, I, N, I, I, N}};
 
         GameBoard gameBoard = new Mill5(mill5);
-        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressBar progBar = new ProgressBar(mockContext);
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
         Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
 
@@ -243,17 +254,17 @@ public class StrategyTestParameterized {
     public void computeMoveShouldCloseMill() throws InterruptedException {
 
         Options.Color[][] mill5 =
-                {{N , I , I , P1, I , I , P2},
-                { I , I , I , I , I , I , I },
-                { I , I , P1, N , P2, I , I },
-                { P1, I , P1, I , N , I , N },
-                { I , I , P2, N , N , I , I },
-                { I , I , I , I , I , I , I },
-                { P1, I , I , P2, I , I , N}};
+                {{N, I, I, P1, I, I, P2},
+                        {I, I, I, I, I, I, I},
+                        {I, I, P1, N, P2, I, I},
+                        {P1, I, P1, I, N, I, N},
+                        {I, I, P2, N, N, I, I},
+                        {I, I, I, I, I, I, I},
+                        {P1, I, I, P2, I, I, N}};
 
         GameBoard gameBoard = new Mill5(mill5);
 
-        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressBar progBar = new ProgressBar(mockContext);
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
         Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
 
@@ -271,16 +282,16 @@ public class StrategyTestParameterized {
     public void computeMoveShouldUseDoubleMill() throws InterruptedException {
 
         Options.Color[][] mill5 =
-                {{P1, I , I , N , I , I , P2},
-                { I , I , I , I , I , I , I },
-                { I , I , P1, N , P2, I , I },
-                { P1, I , N , I , N , I , N },
-                { I , I , P1, N , P2, I , I },
-                { I , I , I , I , I , I , I },
-                { P1, I , I , P2, I , I , P2}};
+                {{P1, I, I, N, I, I, P2},
+                        {I, I, I, I, I, I, I},
+                        {I, I, P1, N, P2, I, I},
+                        {P1, I, N, I, N, I, N},
+                        {I, I, P1, N, P2, I, I},
+                        {I, I, I, I, I, I, I},
+                        {P1, I, I, P2, I, I, P2}};
 
         GameBoard gameBoard = new Mill5(mill5);
-        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressBar progBar = new ProgressBar(mockContext);
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
         Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
 
@@ -289,16 +300,16 @@ public class StrategyTestParameterized {
 
         Move result1 = strategy.computeMove();
 
-        assertEquals(new Position(2,3), result1.getDest());
-        assertEquals(new Position(0,3), result1.getSrc());
+        assertEquals(new Position(2, 3), result1.getDest());
+        assertEquals(new Position(0, 3), result1.getSrc());
 
         gameBoard.executeCompleteTurn(result1, mPlayer1);
 
         //just let black do the next move again, white cant do anything
         Move result2 = strategy.computeMove();
 
-        assertEquals(new Position(0,3), result2.getDest());
-        assertEquals(new Position(2,3), result2.getSrc());
+        assertEquals(new Position(0, 3), result2.getDest());
+        assertEquals(new Position(2, 3), result2.getSrc());
 
     }
 
@@ -309,16 +320,16 @@ public class StrategyTestParameterized {
         assumeTrue(mPlayer1.getDifficulty().ordinal() >= Options.Difficulties.EASY.ordinal());
 
         Options.Color[][] mill5 =
-                {{N , I , I , P1, I , I , P2},
-                { I , I , I , I , I , I , I },
-                { I , I , P1, N , N , I , I },
-                { P1, I , P1, I , P2, I , N },
-                { I , I , P2, N , N , I , I },
-                { I , I , I , I , I , I , I },
-                { P1, I , I , P2, I , I , P2}};
+                {{N, I, I, P1, I, I, P2},
+                        {I, I, I, I, I, I, I},
+                        {I, I, P1, N, N, I, I},
+                        {P1, I, P1, I, P2, I, N},
+                        {I, I, P2, N, N, I, I},
+                        {I, I, I, I, I, I, I},
+                        {P1, I, I, P2, I, I, P2}};
 
         GameBoard gameBoard = new Mill5(mill5);
-        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressBar progBar = new ProgressBar(mockContext);
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
         Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
 
@@ -344,16 +355,16 @@ public class StrategyTestParameterized {
         assumeTrue(mPlayer1.getDifficulty().ordinal() >= Options.Difficulties.HARD.ordinal());
 
         Options.Color[][] mill5 =
-                {{N , I , I , N , I , I , P2 },
-                { I , I , I , I , I , I , I },
-                { I , I , P1, P2, N , I , I },
-                { P1, I , N , I , N , I , P1},
-                { I , I , P2, N , P2, I , I },
-                { I , I , I , I , I , I , I },
-                { N , I , I , N , I , I , P1}};
+                {{N, I, I, N, I, I, P2},
+                        {I, I, I, I, I, I, I},
+                        {I, I, P1, P2, N, I, I},
+                        {P1, I, N, I, N, I, P1},
+                        {I, I, P2, N, P2, I, I},
+                        {I, I, I, I, I, I, I},
+                        {N, I, I, N, I, I, P1}};
 
         GameBoard gameBoard = new Mill5(mill5);
-        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressBar progBar = new ProgressBar(mockContext);
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
         Strategy strategyPlayer1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
         Strategy strategyPlayer2 = new Strategy(gameBoard, mPlayer2, updater, nThreads);
@@ -386,16 +397,16 @@ public class StrategyTestParameterized {
     public void computeMoveShouldTryToPreventLoosingEvenIfItsImpossibleWhileJumping() throws InterruptedException {
 
         Options.Color[][] mill5 =
-                {{N , I , I , N , I , I , P1},
-                { I , I , I , I , I , I , I },
-                { I , I , N , P2, P2, I , I },
-                { N , I , N , I , N , I , P1},
-                { I , I , N , N , P2, I , I },
-                { I , I , I , I , I , I , I },
-                { N , I , I , N , I , I , P1}};
+                {{N, I, I, N, I, I, P1},
+                        {I, I, I, I, I, I, I},
+                        {I, I, N, P2, P2, I, I},
+                        {N, I, N, I, N, I, P1},
+                        {I, I, N, N, P2, I, I},
+                        {I, I, I, I, I, I, I},
+                        {N, I, I, N, I, I, P1}};
 
         GameBoard gameBoard = new Mill5(mill5);
-        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressBar progBar = new ProgressBar(mockContext);
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
         Strategy strategyPlayer1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
         Strategy strategyPlayer2 = new Strategy(gameBoard, mPlayer2, updater, nThreads);
@@ -406,7 +417,7 @@ public class StrategyTestParameterized {
         Move result3 = strategyPlayer1.computeMove();
         gameBoard.executeCompleteTurn(result3, mPlayer1);
 
-        assertThat(result3.getDest(), anyOf(is(new Position(2,2)), is(new Position(4,3))));
+        assertThat(result3.getDest(), anyOf(is(new Position(2, 2)), is(new Position(4, 3))));
     }
 
     @Test
@@ -414,16 +425,16 @@ public class StrategyTestParameterized {
     public void computeMoveShouldTryToPreventLoosingEvenIfItsImpossible() throws InterruptedException {
 
         Options.Color[][] mill9 =
-                {{P2, I , I , N , I , I , N },
-                { I , N , I , N , I , P1, I },
-                { I , I , N , P2, P2, I , I },
-                { N , P2, N , I , N , P1, N },
-                { I , I , N , N , N , I , I },
-                { I , N , I , P2, I , P1, I },
-                { P2, I , I , N , I , I ,P2}};
+                {{P2, I, I, N, I, I, N},
+                        {I, N, I, N, I, P1, I},
+                        {I, I, N, P2, P2, I, I},
+                        {N, P2, N, I, N, P1, N},
+                        {I, I, N, N, N, I, I},
+                        {I, N, I, P2, I, P1, I},
+                        {P2, I, I, N, I, I, P2}};
 
         GameBoard gameBoard = new Mill9(mill9);
-        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressBar progBar = new ProgressBar(mockContext);
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
         Strategy strategyPlayer1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
 
@@ -433,7 +444,7 @@ public class StrategyTestParameterized {
         Move result = strategyPlayer1.computeMove();
         gameBoard.executeCompleteTurn(result, mPlayer1);
 
-        assertThat(result.getDest(), anyOf(is(new Position(0,3)), is(new Position(3,6))));
+        assertThat(result.getDest(), anyOf(is(new Position(0, 3)), is(new Position(3, 6))));
     }
 
     @Test
@@ -442,16 +453,16 @@ public class StrategyTestParameterized {
         assumeTrue(mPlayer1.getDifficulty().ordinal() >= Options.Difficulties.EASY.ordinal());
 
         Options.Color[][] mill9 =
-                {{N , I , I , N , I , I , N },
-                { I , P2, I , N , I , P2, I },
-                { I , I , N , N , N , I , I },
-                { P2, P1, P2, I , P2, P1, P2},
-                { I , I , N , N , N , I , I },
-                { I , N , I , N , I , N , I },
-                { P1, I , I , N , I , I , N}};
+                {{N, I, I, N, I, I, N},
+                        {I, P2, I, N, I, P2, I},
+                        {I, I, N, N, N, I, I},
+                        {P2, P1, P2, I, P2, P1, P2},
+                        {I, I, N, N, N, I, I},
+                        {I, N, I, N, I, N, I},
+                        {P1, I, I, N, I, I, N}};
 
         GameBoard gameBoard = new Mill9(mill9);
-        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressBar progBar = new ProgressBar(mockContext);
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
         Strategy strategyPlayer1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
 
@@ -461,7 +472,7 @@ public class StrategyTestParameterized {
         Move result = strategyPlayer1.computeMove();
         gameBoard.executeCompleteTurn(result, mPlayer1);
 
-        assertEquals(result.getSrc(), new Position(0,6));
+        assertEquals(result.getSrc(), new Position(0, 6));
     }
 
     @Test
@@ -471,16 +482,16 @@ public class StrategyTestParameterized {
         assumeTrue(mPlayer1.getDifficulty().ordinal() >= Options.Difficulties.EASY.ordinal());
 
         Options.Color[][] mill5 =
-                {{P2, I , I , N , I , I , N },
-                { I , I , I , I , I , I , I },
-                { I , I , N , N , P1, I , I },
-                { N , I , N , I , N , I , P1},
-                { I , I , P2, N , P2, I , I },
-                { I , I , I , I , I , I , I },
-                { N , I , I , P2, I , I , P1}};
+                {{P2, I, I, N, I, I, N},
+                        {I, I, I, I, I, I, I},
+                        {I, I, N, N, P1, I, I},
+                        {N, I, N, I, N, I, P1},
+                        {I, I, P2, N, P2, I, I},
+                        {I, I, I, I, I, I, I},
+                        {N, I, I, P2, I, I, P1}};
 
         GameBoard gameBoard = new Mill5(mill5);
-        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressBar progBar = new ProgressBar(mockContext);
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
         Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
 
@@ -490,8 +501,8 @@ public class StrategyTestParameterized {
         Move result = strategy.computeMove();
         gameBoard.executeCompleteTurn(result, mPlayer1);
 
-        assertEquals(new Position(6,0), result.getDest());
-        assertThat(result.getKill(), anyOf(is(new Position(2,4)), is(new Position(4,4))));
+        assertEquals(new Position(6, 0), result.getDest());
+        assertThat(result.getKill(), anyOf(is(new Position(2, 4)), is(new Position(4, 4))));
 
     }
 
@@ -499,16 +510,16 @@ public class StrategyTestParameterized {
     public void computeMoveShouldNotUndoHisMove() throws InterruptedException {
 
         Options.Color[][] mill5 =
-                {{N , I , I , P1, I , I , N },
-                { I , I , I , I , I , I , I },
-                { I , I , P1, P2, P1, I , I },
-                { P1, I , N , I , N , I , N },
-                { I , I , P2, P2, N , I , I },
-                { I , I , I , I , I , I , I },
-                { P2, I , I , P1, I , I , P2}};
+                {{N, I, I, P1, I, I, N},
+                        {I, I, I, I, I, I, I},
+                        {I, I, P1, P2, P1, I, I},
+                        {P1, I, N, I, N, I, N},
+                        {I, I, P2, P2, N, I, I},
+                        {I, I, I, I, I, I, I},
+                        {P2, I, I, P1, I, I, P2}};
 
         GameBoard gameBoard = new Mill5(mill5);
-        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressBar progBar = new ProgressBar(mockContext);
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
         Strategy strategyPlayer1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
         Strategy strategyPlayer2 = new Strategy(gameBoard, mPlayer2, updater, nThreads);
@@ -523,7 +534,7 @@ public class StrategyTestParameterized {
 
         strategyPlayer2.computeMove();
         //do not use this move, but compute it to check that it doesnt influence Player1s decision
-        gameBoard.executeCompleteTurn(new Move(new Position(4,4), new Position(3,4), null), mPlayer2);
+        gameBoard.executeCompleteTurn(new Move(new Position(4, 4), new Position(3, 4), null), mPlayer2);
 
         Move result2 = strategyPlayer1.computeMove();
         gameBoard.executeCompleteTurn(result2, mPlayer1);
@@ -541,16 +552,16 @@ public class StrategyTestParameterized {
         assumeTrue(mPlayer1.getDifficulty().ordinal() >= Options.Difficulties.NORMAL.ordinal());
 
         Options.Color[][] mill5 =
-                {{N , I , I , P1, I , I , P1 },
-                { I , I , I , I , I , I , I },
-                { I , I , P1, P2, N , I , I },
-                { P1, I , N , I , N , I , P2},
-                { I , I , P2, P2, N , I , I },
-                { I , I , I , I , I , I , I },
-                { N , I , I , P1, I , I , P2}};
+                {{N, I, I, P1, I, I, P1},
+                        {I, I, I, I, I, I, I},
+                        {I, I, P1, P2, N, I, I},
+                        {P1, I, N, I, N, I, P2},
+                        {I, I, P2, P2, N, I, I},
+                        {I, I, I, I, I, I, I},
+                        {N, I, I, P1, I, I, P2}};
 
         GameBoard gameBoard = new Mill5(mill5);
-        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressBar progBar = new ProgressBar(mockContext);
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
         Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
 
@@ -558,20 +569,20 @@ public class StrategyTestParameterized {
         mPlayer2.setSetCount(0);
 
         Move result1 = strategy.computeMove();
-        assertEquals(new Position(0,3), result1.getSrc());
-        assertEquals(new Position(0,0), result1.getDest());
+        assertEquals(new Position(0, 3), result1.getSrc());
+        assertEquals(new Position(0, 0), result1.getDest());
 
         //change kill of the move, as it may be another equally evaluated kill, but we want to test with this one
-        result1 = new Move(result1.getDest(), result1.getSrc(), new Position(6,6));
+        result1 = new Move(result1.getDest(), result1.getSrc(), new Position(6, 6));
         gameBoard.executeCompleteTurn(result1, mPlayer1);
 
-        gameBoard.executeCompleteTurn(new Move(new Position(4,4), new Position(3,4), null), mPlayer2);
+        gameBoard.executeCompleteTurn(new Move(new Position(4, 4), new Position(3, 4), null), mPlayer2);
 
         Move result2 = strategy.computeMove();
         gameBoard.executeCompleteTurn(result2, mPlayer1);
 
-        assertEquals(new Position(0,0), result2.getSrc());
-        assertEquals(new Position(0,3), result2.getDest());
+        assertEquals(new Position(0, 0), result2.getSrc());
+        assertEquals(new Position(0, 3), result2.getDest());
 
     }
 
@@ -582,16 +593,16 @@ public class StrategyTestParameterized {
         assumeTrue(mPlayer1.getDifficulty().ordinal() >= Options.Difficulties.NORMAL.ordinal());
 
         Options.Color[][] mill5 =
-                {{P1, I , I , P1, I , I , P1},
-                { I , I , I , I , I , I , I },
-                { I , I , P1, P2, N , I , I },
-                { N , I , N , I , N , I , P2},
-                { I , I , P2, P2, N , I , I },
-                { I , I , I , I , I , I , I },
-                { N , I , I , P1, I , I , P2}};
+                {{P1, I, I, P1, I, I, P1},
+                        {I, I, I, I, I, I, I},
+                        {I, I, P1, P2, N, I, I},
+                        {N, I, N, I, N, I, P2},
+                        {I, I, P2, P2, N, I, I},
+                        {I, I, I, I, I, I, I},
+                        {N, I, I, P1, I, I, P2}};
 
         GameBoard gameBoard = new Mill5(mill5);
-        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressBar progBar = new ProgressBar(mockContext);
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
         Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
 
@@ -601,14 +612,14 @@ public class StrategyTestParameterized {
         Move result1 = strategy.computeMove();
         gameBoard.executeCompleteTurn(result1, mPlayer1);
 
-        assertEquals(new Position(0,3), result1.getDest());
+        assertEquals(new Position(0, 3), result1.getDest());
 
-        gameBoard.executeCompleteTurn(new Move(new Position(4,4), new Position(3,4), null), mPlayer2);
+        gameBoard.executeCompleteTurn(new Move(new Position(4, 4), new Position(3, 4), null), mPlayer2);
 
         Move result2 = strategy.computeMove();
         gameBoard.executeCompleteTurn(result2, mPlayer1);
 
-        assertEquals(new Position(0,0), result2.getDest());
+        assertEquals(new Position(0, 0), result2.getDest());
 
     }
 
@@ -616,16 +627,16 @@ public class StrategyTestParameterized {
     public void computeMoveShouldWinAsNoMovesLeft() throws InterruptedException {
 
         Options.Color[][] mill5 =
-                {{P1, I , I , N , I , I , N },
-                { I , I , I , I , I , I , I },
-                { I , I , P2, P1, P2, I , I },
-                { N , I , P1, I , N , I , P1},
-                { I , I , P2, P1, P2, I , I },
-                { I , I , I , I , I , I , I },
-                { N , I , I , N , I , I , N}};
+                {{P1, I, I, N, I, I, N},
+                        {I, I, I, I, I, I, I},
+                        {I, I, P2, P1, P2, I, I},
+                        {N, I, P1, I, N, I, P1},
+                        {I, I, P2, P1, P2, I, I},
+                        {I, I, I, I, I, I, I},
+                        {N, I, I, N, I, I, N}};
 
         GameBoard gameBoard = new Mill5(mill5);
-        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressBar progBar = new ProgressBar(mockContext);
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
         Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
 
@@ -646,16 +657,16 @@ public class StrategyTestParameterized {
         assumeTrue(mPlayer1.getDifficulty().ordinal() >= Options.Difficulties.NORMAL.ordinal());
 
         Options.Color[][] mill9 =
-                {{P1, I , I , N , I , I , N },
-                { I , N , I , P2, I , P1, I },
-                { I , I , N , N , P2, I , I },
-                { N , N , N , I , N , P1, N },
-                { I , I , N , N , N , I , I },
-                { I , N , I , P2, I , P1, I },
-                { P2, I , I , N , I , I , N}};
+                {{P1, I, I, N, I, I, N},
+                        {I, N, I, P2, I, P1, I},
+                        {I, I, N, N, P2, I, I},
+                        {N, N, N, I, N, P1, N},
+                        {I, I, N, N, N, I, I},
+                        {I, N, I, P2, I, P1, I},
+                        {P2, I, I, N, I, I, N}};
 
         GameBoard gameBoard = new Mill9(mill9);
-        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressBar progBar = new ProgressBar(mockContext);
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
         Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
 
@@ -664,7 +675,7 @@ public class StrategyTestParameterized {
 
         Move result = strategy.computeMove();
 
-        assertThat(result.getDest(), anyOf(is(new Position(6,3)), is(new Position(4,3))));
+        assertThat(result.getDest(), anyOf(is(new Position(6, 3)), is(new Position(4, 3))));
 
     }
 
@@ -675,16 +686,16 @@ public class StrategyTestParameterized {
         assumeTrue(mPlayer1.getDifficulty().ordinal() >= Options.Difficulties.EASY.ordinal());
 
         Options.Color[][] mill9 =
-                {{P1, I , I , N , I , I , N },
-                { I , N , I , P2, I , P1, I },
-                { I , I , N , N , N , I , I },
-                { N , N , N , I , P2, P1, N },
-                { I , I , N , N , N , I , I },
-                { I , N , I , P2, I , P1, I },
-                { P2, I , I , N , I , I , N}};
+                {{P1, I, I, N, I, I, N},
+                        {I, N, I, P2, I, P1, I},
+                        {I, I, N, N, N, I, I},
+                        {N, N, N, I, P2, P1, N},
+                        {I, I, N, N, N, I, I},
+                        {I, N, I, P2, I, P1, I},
+                        {P2, I, I, N, I, I, N}};
 
         GameBoard gameBoard = new Mill9(mill9);
-        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressBar progBar = new ProgressBar(mockContext);
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
         Strategy strategy = new Strategy(gameBoard, mPlayer1, updater, nThreads);
 
@@ -693,7 +704,7 @@ public class StrategyTestParameterized {
 
         Move result = strategy.computeMove();
 
-        assertEquals(result.getSrc(), new Position(0,0));
+        assertEquals(result.getSrc(), new Position(0, 0));
 
     }
 
@@ -708,20 +719,20 @@ public class StrategyTestParameterized {
         Player mPlayer1Before = new Player(mPlayer1);
         Player mPlayer2Before = new Player(mPlayer2);
 
-        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressBar progBar = new ProgressBar(mockContext);
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
         Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
         Strategy strategyP2 = new Strategy(gameBoard, mPlayer2, updater, nThreads);
 
-        for(int i = 0; i<30; i++){
+        for (int i = 0; i < 30; i++) {
 
             GameBoard gameBoardBefore1 = gameBoard.getCopy();
 
             //test if computeMove makes unallowed changed to gameBoard or players now
             Move result1 = strategyP1.computeMove();
             gameBoard.executeCompleteTurn(result1, mPlayer1);
-            if(!gameBoard.getState(mPlayer1).equals(GameBoard.GameState.RUNNING)){
-                if(!gameBoard.getState(mPlayer1).equals(GameBoard.GameState.REMIS)) {
+            if (!gameBoard.getState(mPlayer1).equals(GameBoard.GameState.RUNNING)) {
+                if (!gameBoard.getState(mPlayer1).equals(GameBoard.GameState.REMIS)) {
                     break;
                 }
             }
@@ -739,8 +750,8 @@ public class StrategyTestParameterized {
             GameBoard gameBoardBefore2 = gameBoard.getCopy();
             Move result2 = strategyP2.computeMove();
             gameBoard.executeCompleteTurn(result2, mPlayer2);
-            if(!gameBoard.getState(mPlayer2).equals(GameBoard.GameState.RUNNING)){
-                if(!gameBoard.getState(mPlayer2).equals(GameBoard.GameState.REMIS)) {
+            if (!gameBoard.getState(mPlayer2).equals(GameBoard.GameState.RUNNING)) {
+                if (!gameBoard.getState(mPlayer2).equals(GameBoard.GameState.REMIS)) {
                     break;
                 }
             }
@@ -758,18 +769,18 @@ public class StrategyTestParameterized {
 
     //if this test fails may (but probably not) be because of a tiny chance that not all possible moves were chosen
     @Test
-    public void computeMoveShouldReturn8DifferentMovesOverTime () throws InterruptedException {
+    public void computeMoveShouldReturn8DifferentMovesOverTime() throws InterruptedException {
 
         int nPosExpected = 8;
 
         Options.Color[][] mill5 =
-                {{N , I , I , N , I , I , N },
-                { I , I , I , I , I , I , I },
-                { I , I , N , N , N , I , I },
-                { N , I , N , I , N , I , N },
-                { I , I , N , N , N , I , I },
-                { I , I , I , I , I , I , I },
-                { N , I , I , N , I , I , N}};
+                {{N, I, I, N, I, I, N},
+                        {I, I, I, I, I, I, I},
+                        {I, I, N, N, N, I, I},
+                        {N, I, N, I, N, I, N},
+                        {I, I, N, N, N, I, I},
+                        {I, I, I, I, I, I, I},
+                        {N, I, I, N, I, I, N}};
 
         GameBoard gameBoard = new Mill5(mill5);
 
@@ -778,17 +789,17 @@ public class StrategyTestParameterized {
 
         LinkedList<Move> list = new LinkedList<Move>();
 
-        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressBar progBar = new ProgressBar(mockContext);
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
 
-        for(int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 1000; i++) {
             Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
             Move result = strategyP1.computeMove();
-            if(!list.contains(result)) {
+            if (!list.contains(result)) {
                 list.add(result);
             }
             //check after 100 iterations if list contains enough (or too much) elements and break
-            if(i % 100 == 0 && list.size() >= nPosExpected){
+            if (i % 100 == 0 && list.size() >= nPosExpected) {
                 break;
             }
         }
@@ -796,19 +807,19 @@ public class StrategyTestParameterized {
     }
 
     @Test
-    public void computeMoveShouldReturn5DifferentKillMovesOverTime () throws InterruptedException {
+    public void computeMoveShouldReturn5DifferentKillMovesOverTime() throws InterruptedException {
 
         // test only for dumbest bot as others may have preferences what to kill
         assumeTrue(mPlayer1.getDifficulty().ordinal() == Options.Difficulties.EASIER.ordinal());
 
         Options.Color[][] mill9 =
-                {{P2, I , I , N , I , I , N },
-                { I , P1, I , N , I , P2, I },
-                { I , I , N , N , N , I , I },
-                { P1, N , N , I , N , N , P2},
-                { I , I , P2, N , N , I , I },
-                { I , P1, I , N , I , N , I },
-                { P2, I , I , N , I , I , N }};
+                {{P2, I, I, N, I, I, N},
+                        {I, P1, I, N, I, P2, I},
+                        {I, I, N, N, N, I, I},
+                        {P1, N, N, I, N, N, P2},
+                        {I, I, P2, N, N, I, I},
+                        {I, P1, I, N, I, N, I},
+                        {P2, I, I, N, I, I, N}};
 
         GameBoard gameBoard = new Mill9(mill9);
 
@@ -817,22 +828,22 @@ public class StrategyTestParameterized {
 
         LinkedList<Move> list = new LinkedList<Move>();
 
-        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressBar progBar = new ProgressBar(mockContext);
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
 
-        for(int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 1000; i++) {
             Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);
             Move result = strategyP1.computeMove();
-            if(!list.contains(result)) {
+            if (!list.contains(result)) {
                 list.add(result);
             }
             //check after 50 iterations if list contains enough (or too much) elements and break
-            if(i % 50 == 0 && list.size() >= 5){
+            if (i % 50 == 0 && list.size() >= 5) {
                 break;
             }
         }
 
-        for(Move m : list){
+        for (Move m : list) {
             assertTrue(m.getKill() != null);
         }
 
@@ -840,23 +851,23 @@ public class StrategyTestParameterized {
     }
 
     @Test
-    public void shuffleListShouldHaveKillsAtBeginning(){
+    public void shuffleListShouldHaveKillsAtBeginning() {
 
         Options.Color[][] mill9 =
-                {{N , I , I , N , I , I , P2},
-                { I , N , I , N , I , N , I },
-                { I , I , N , P1, P1, I , I },
-                { P2, N , P1, I , P2, N , N },
-                { I , I , N , P1, N , I , I },
-                { I , N , I , N , I , P2, I },
-                { N , I , I , P2, I , I , N }};
+                {{N, I, I, N, I, I, P2},
+                        {I, N, I, N, I, N, I},
+                        {I, I, N, P1, P1, I, I},
+                        {P2, N, P1, I, P2, N, N},
+                        {I, I, N, P1, N, I, I},
+                        {I, N, I, N, I, P2, I},
+                        {N, I, I, P2, I, I, N}};
 
         GameBoard gameBoard = new Mill9(mill9);
 
         mPlayer1.setSetCount(0);
         mPlayer2.setSetCount(0);
 
-        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressBar progBar = new ProgressBar(mockContext);
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
 
         Strategy strategyP1 = new Strategy(gameBoard, mPlayer1, updater, nThreads);

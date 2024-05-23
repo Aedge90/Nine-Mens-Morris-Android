@@ -1,14 +1,22 @@
 package com.github.aedge90.nmm;
 
 
-import android.test.mock.MockContext;
+import android.content.Context;
 import android.widget.ProgressBar;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static junit.framework.Assert.assertEquals;
 
+@RunWith(MockitoJUnitRunner.class)
 public class StrategyTestNonParameterized {
+
+    @Mock
+    private Context mockContext;
+
 
     @Test
     //Run this test more than once to be sure, as it may fail with very low probability
@@ -23,7 +31,7 @@ public class StrategyTestNonParameterized {
 
         int nThreads = 12;
 
-        ProgressBar progBar = new ProgressBar(new MockContext());
+        ProgressBar progBar = new ProgressBar(mockContext);
         ProgressUpdater updater = new ProgressUpdater(progBar, new GameModeActivity());
 
         GameBoard[] gameBoards = new Mill9[nThreads];
