@@ -6,10 +6,11 @@ android {
 
     defaultConfig {
         applicationId "com.github.aedge90.nmm"
-        minSdkVersion 20
+        minSdk 26
         compileSdk 33
         versionCode 11
         versionName "1.9"
+        targetSdk 34
     }
 
     buildTypes {
@@ -26,7 +27,7 @@ android {
 
 dependencies {
     //JUnit 4 framework
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13.2'
     implementation 'com.android.support:support-v4:28.0.0'
-    testImplementation "org.mockito:mockito-core:5.3.1"
+    testImplementation 'org.mockito:mockito-core:5.12.0'
 }
